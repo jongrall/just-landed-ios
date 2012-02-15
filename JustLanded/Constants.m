@@ -24,4 +24,8 @@ NSString * const BASE_URL = @"http://just-landed.appspot.com/api/v1/";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#if defined(LOCAL)
+NSString * const FLURRY_APPLICATION_KEY = @"LH6F2XN2C6HAX4NIB3QS";
+#else
 NSString * const FLURRY_APPLICATION_KEY = @"2TZMR1NGCSTZ395GHUZS";
+#endif
