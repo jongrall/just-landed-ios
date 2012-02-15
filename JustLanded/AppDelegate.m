@@ -9,7 +9,6 @@
 #import "AppDelegate.h"
 
 #import "MainViewController.h"
-#import "ASIHTTPRequest.h"
 
 @implementation AppDelegate
 
@@ -18,6 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.mainViewController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];

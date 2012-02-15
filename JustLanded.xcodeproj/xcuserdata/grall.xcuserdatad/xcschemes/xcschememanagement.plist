@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>ABTableViewCell.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 		<key>ASIHTTPRequest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -17,7 +22,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>117C48C114EB64F60049452F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>11AE975514EB57EF00F7ED46</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>11AE980C14EB624A00F7ED46</key>
 		<dict>
 			<key>primary</key>
 			<true/>
