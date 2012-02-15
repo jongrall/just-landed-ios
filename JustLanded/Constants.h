@@ -14,6 +14,10 @@
 
 
 extern NSString * const BASE_URL;
+extern NSString * const LOOKUP_URL_FORMAT;
+extern NSString * const TRACK_URL_FORMAT;
+extern NSString * const TRACK_URL_FORMAT_NO_LOC;
+extern NSString * const UNTRACK_URL_FORMAT;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

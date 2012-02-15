@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		114ADBAD14EC354700463F0C /* Flight.m in Sources */ = {isa = PBXBuildFile; fileRef = 114ADBAC14EC354700463F0C /* Flight.m */; };
+		114ADBB114EC41C700463F0C /* Airport.m in Sources */ = {isa = PBXBuildFile; fileRef = 114ADBB014EC41C700463F0C /* Airport.m */; };
 		117C48C314EB64F60049452F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
 		117C48D014EB652F0049452F /* ABTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 117C48CE14EB652F0049452F /* ABTableViewCell.m */; };
 		117C48D114EB65530049452F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAB14DCCDDF006D1DB4 /* UIKit.framework */; };
@@ -92,6 +94,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		114ADBAB14EC354700463F0C /* Flight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flight.h; sourceTree = "<group>"; };
+		114ADBAC14EC354700463F0C /* Flight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Flight.m; sourceTree = "<group>"; };
+		114ADBAF14EC41C700463F0C /* Airport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Airport.h; sourceTree = "<group>"; };
+		114ADBB014EC41C700463F0C /* Airport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Airport.m; sourceTree = "<group>"; };
 		117C48C214EB64F60049452F /* libABTableViewCell.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libABTableViewCell.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		117C48CD14EB652F0049452F /* ABTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ABTableViewCell.h; sourceTree = SOURCE_ROOT; };
 		117C48CE14EB652F0049452F /* ABTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ABTableViewCell.m; sourceTree = SOURCE_ROOT; };
@@ -277,6 +283,10 @@
 		11AE97FF14EB602400F7ED46 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				114ADBAF14EC41C700463F0C /* Airport.h */,
+				114ADBB014EC41C700463F0C /* Airport.m */,
+				114ADBAB14EC354700463F0C /* Flight.h */,
+				114ADBAC14EC354700463F0C /* Flight.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -642,6 +652,8 @@
 				11C5DFBF14DCCDDF006D1DB4 /* MainViewController.m in Sources */,
 				11C5DFC214DCCDDF006D1DB4 /* FlipsideViewController.m in Sources */,
 				117C48D714EB66140049452F /* Constants.m in Sources */,
+				114ADBAD14EC354700463F0C /* Flight.m in Sources */,
+				114ADBB114EC41C700463F0C /* Airport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -883,6 +895,7 @@
 				117C48CC14EB64F60049452F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		11AE976014EB57F000F7ED46 /* Build configuration list for PBXNativeTarget "ASIHTTPRequest" */ = {
 			isa = XCConfigurationList;
