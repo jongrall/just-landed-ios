@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 
 #import "MainViewController.h"
+#import "ASIHTTPRequest.h"
 
 @implementation AppDelegate
 
