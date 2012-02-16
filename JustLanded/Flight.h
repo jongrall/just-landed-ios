@@ -23,26 +23,24 @@ typedef enum {
 
 @interface Flight : NSObject
 
-@property (nonatomic, retain) NSDate *actualArrivalTime;
-@property (nonatomic, retain) NSDate *actualDepartureTime;
-@property (nonatomic, retain) Airport *destination;
-@property (nonatomic, retain) NSString *detailedStatus;
-@property (nonatomic, retain) NSDate *estimatedArrivalTime;
-@property (nonatomic, retain) NSString *flightID;
-@property (nonatomic, retain) NSString *flightNumber;
-@property (nonatomic, retain) NSDate *lastUpdated;
-@property (nonatomic, retain) NSDate *leaveForAirporTime;
-@property (nonatomic, retain) NSString *leaveForAirportRecommendation;
-@property (nonatomic, retain) Airport *origin;
-@property (nonatomic, retain) NSDate *scheduledDepartureTime;
+@property (strong, nonatomic) NSDate *actualArrivalTime;
+@property (strong, nonatomic) NSDate *actualDepartureTime;
+@property (strong, nonatomic) Airport *destination;
+@property (strong, nonatomic) NSString *detailedStatus;
+@property (strong, nonatomic) NSDate *estimatedArrivalTime;
+@property (strong, nonatomic) NSString *flightID;
+@property (strong, nonatomic) NSString *flightNumber;
+@property (strong, nonatomic) NSDate *lastUpdated;
+@property (strong, nonatomic) NSDate *leaveForAirporTime;
+@property (strong, nonatomic) NSString *leaveForAirportRecommendation;
+@property (strong, nonatomic) Airport *origin;
+@property (strong, nonatomic) NSDate *scheduledDepartureTime;
 @property (nonatomic) NSTimeInterval scheduledFlightTime;
 @property (nonatomic) FlightStatus status;
 
 + (void)lookupFlights:(NSString *)flightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;
-- (void)beginTrackingWithLocation:(CLLocation *)loc 
-                      pushEnabled:(BOOL)pushFlag;
-- (void)updateWithLocation:(CLLocation *)loc;
+- (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag;
 - (void)stopTracking;
 
 @end

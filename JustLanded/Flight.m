@@ -9,16 +9,15 @@
 #import "Flight.h"
 #import "ASIHTTPRequest.h"
 
-@interface Flight ()
+@interface Flight () {
+    BOOL didBeginTracking;
+}
 
 + (NSURL *)lookupURL:(NSString *)flightNumber;
 - (NSURL *)trackURLwithLocation:(CLLocation *)loc
                     pushEnabled:(BOOL)pushFlag
                   beginTracking:(BOOL)beginFlag;
 - (NSURL *)stopTrackingURL;
-- (void)trackWithLocation:(CLLocation *)loc 
-              pushEnabled:(BOOL)pushFlag
-            beginTracking:(BOOL)beginFlag;
         
 @end
 
@@ -88,7 +87,7 @@
 
 + (void)lookupFlights:(NSString *)flightNumber {
     NSURL *lookupURL = [self lookupURL:flightNumber];
-    __block ASIHTTPRequest *req = [[ASIHTTPRequest alloc] initWithURL:lookupURL];
+    __weak ASIHTTPRequest *req = [ASIHTTPRequest requestWithURL:lookupURL];
     
     [req setCompletionBlock:^{
         NSInteger status = [req responseStatusCode];
@@ -145,27 +144,17 @@
 }
 
 
-- (void)beginTrackingWithLocation:(CLLocation *)loc
-                      pushEnabled:(BOOL)pushFlag {
-    [self trackWithLocation:loc 
-                pushEnabled:pushFlag 
-              beginTracking:YES];
-}
-
-
-- (void)updateWithLocation:(CLLocation *)loc {
-    [self trackWithLocation:loc 
-                pushEnabled:NO 
-              beginTracking:NO];
-}
-
-
-- (void)trackWithLocation:(CLLocation *)loc 
-              pushEnabled:(BOOL)pushFlag 
-            beginTracking:(BOOL)beginFlag {
+- (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag {
+    NSURL *trackingURL = [self trackURLwithLocation:loc 
+                                        pushEnabled:pushFlag 
+                                      beginTracking:!didBeginTracking];
     // TODO: Implement me
+    
+    // beginTracking flag is set only once for this instance
+    if (!didBeginTracking) {
+        didBeginTracking = YES;
+    }
 }
-
 
 - (void)stopTracking {
     // TODO: Implement me

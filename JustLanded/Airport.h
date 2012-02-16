@@ -11,13 +11,13 @@
 
 @interface Airport : NSObject
 
-@property (nonatomic, retain) NSString *bagClaim;
-@property (nonatomic, retain) NSString *city;
-@property (nonatomic, retain) NSString *iataCode;
-@property (nonatomic, retain) NSString *icaoCode;
+@property (strong, nonatomic) NSString *bagClaim;
+@property (strong, nonatomic) NSString *city;
+@property (strong, nonatomic) NSString *iataCode;
+@property (strong, nonatomic) NSString *icaoCode;
 @property (nonatomic) BOOL isDestination;
-@property (nonatomic, retain) CLLocation *location;
-@property (nonatomic, retain) NSString *name;
-@property (nonatomic, retain) NSString *terminal;
+@property (strong, nonatomic) CLLocation *location;
+@property (strong, nonatomic) NSString *name;
+@property (strong, nonatomic) NSString *terminal;
 
 @end
