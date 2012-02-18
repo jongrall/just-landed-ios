@@ -27,14 +27,14 @@ NSString * const UUIDKey = @"UUIDKey";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined(LOCAL)
-NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1";
+NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1/";
 #else
-NSString * const BASE_URL = @"http://just-landed.appspot.com/api/v1";
+NSString * const BASE_URL = @"http://just-landed.appspot. com/api/v1/";
 #endif
 
-NSString * const LOOKUP_URL_FORMAT = @"/search/%@";
-NSString * const TRACK_URL_FORMAT = @"/track/%@/%@";
-NSString * const UNTRACK_URL_FORMAT = @"/untrack/%@";
+NSString * const LOOKUP_URL_FORMAT = @"search/%@";
+NSString * const TRACK_URL_FORMAT = @"track/%@/%@";
+NSString * const UNTRACK_URL_FORMAT = @"untrack/%@";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

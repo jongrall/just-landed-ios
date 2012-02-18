@@ -33,6 +33,9 @@
     // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
 	[self setDefaultHeader:@"Accept" value:@"application/json"];
     
+    // Override accepted languages
+    [self setDefaultHeader:@"Accept-Language" value:@"en, en-us;q=0.8"];
+    
     // X-Just-Landed-API-Key HTTP Header
 	//[self setDefaultHeader:@"X-Just-Landed-API-Key" value:@"foo"];
 	

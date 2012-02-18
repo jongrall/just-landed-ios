@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 
 #import "MainViewController.h"
+#import "Flight.h"
 
 @implementation AppDelegate
 
@@ -23,6 +24,8 @@
     self.mainViewController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
     self.window.rootViewController = self.mainViewController;
     [self.window makeKeyAndVisible];
+    [Flight lookupFlights:@"CO1101"];
+    
     return YES;
 }
 

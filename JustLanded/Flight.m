@@ -56,7 +56,7 @@
 + (void)lookupFlights:(NSString *)flightNumber {
     NSString *lookupPath = [self lookupPath:flightNumber];
     JustLandedAPIClient *client = [JustLandedAPIClient sharedClient];
-   
+       
     [client getPath:lookupPath 
          parameters:nil 
             success:^(AFHTTPRequestOperation *operation, id JSON){                
@@ -64,18 +64,18 @@
                     NSArray *listOfFlightInfo = (NSArray *)JSON;
                     
                     // Got the flight data, return a list of flights
-                    NSMutableArray *listOfFlights = [[NSMutableArray alloc] init];
+//                    NSMutableArray *listOfFlights = [[NSMutableArray alloc] init];
                     
-                    for (NSDictionary *info in listOfFlightInfo) {
-                        [listOfFlights addObject:[[Flight alloc] initWithFlightInfo:info]];
-                    }
+//                    for (NSDictionary *info in listOfFlightInfo) {
+//                        [listOfFlights addObject:[[Flight alloc] initWithFlightInfo:info]];
+//                    }
                     
                     // TODO: Post success notification with fetched flights attached
-                    
+                    NSLog(@"%@", listOfFlightInfo);
                 }
 
             }
-            failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            failure:^(AFHTTPRequestOperation *operation, NSError *error) {                
                 // TODO: Post lookup failed notification
                 NSHTTPURLResponse *response = [operation response];
                 
@@ -103,6 +103,11 @@
 
 - (id)initWithFlightInfo:(NSDictionary *)info {
     // TODO: Implement me
+    self = [super init];
+    
+    if (self) {
+        return self;
+    }
     return nil;
 }
 
