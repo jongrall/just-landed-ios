@@ -7,17 +7,14 @@
 //
 
 #import "Flight.h"
-#import "ASIHTTPRequest.h"
 
-@interface Flight () {
-    BOOL didBeginTracking;
-}
+@interface Flight () 
 
-+ (NSURL *)lookupURL:(NSString *)flightNumber;
-- (NSURL *)trackURLwithLocation:(CLLocation *)loc
-                    pushEnabled:(BOOL)pushFlag
-                  beginTracking:(BOOL)beginFlag;
-- (NSURL *)stopTrackingURL;
+@property (nonatomic) BOOL didBeginTracking;
+
++ (NSString *)lookupPath:(NSString *)flightNumber;
+- (NSString *)trackPath;
+- (NSString *)stopTrackingPath;
         
 @end
 
@@ -28,6 +25,7 @@
 @synthesize actualDepartureTime;
 @synthesize destination;
 @synthesize detailedStatus;
+@synthesize didBeginTracking;
 @synthesize estimatedArrivalTime;
 @synthesize flightID;
 @synthesize flightNumber;
@@ -40,69 +38,31 @@
 @synthesize status;
 
 
-+ (NSURL *)lookupURL:(NSString *)flightNumber {
-    NSString *urlString = [NSString stringWithFormat:LOOKUP_URL_FORMAT,
-                           BASE_URL,
-                           flightNumber];
-    return [[NSURL alloc] initWithString:urlString];
-            
++ (NSString *)lookupPath:(NSString *)flightNumber {
+    return [NSString stringWithFormat:LOOKUP_URL_FORMAT, flightNumber];
 }
 
 
-- (NSURL *)trackURLwithLocation:(CLLocation *)loc
-                    pushEnabled:(BOOL)pushFlag
-                  beginTracking:(BOOL)beginFlag {
-    NSString *urlString;
-    
-    if (loc) {
-        urlString = [NSString stringWithFormat:TRACK_URL_FORMAT,
-                     BASE_URL,
-                     self.flightNumber,
-                     self.flightID,
-                     loc.coordinate.latitude,
-                     loc.coordinate.longitude,
-                     beginFlag,
-                     pushFlag];
-    }
-    else {
-        urlString = [NSString stringWithFormat:TRACK_URL_FORMAT_NO_LOC,
-                     BASE_URL,
-                     self.flightNumber,
-                     self.flightID,
-                     beginFlag,
-                     pushFlag];
-    }
-    
-    return [[NSURL alloc] initWithString:urlString];
+- (NSString *)trackPath {
+    return [NSString stringWithFormat:TRACK_URL_FORMAT, self.flightNumber, self.flightID];
 }
 
 
-- (NSURL *)stopTrackingURL {
-    NSString *urlString = [NSString stringWithFormat:UNTRACK_URL_FORMAT,
-                           BASE_URL,
-                           self.flightID];
-    return [[NSURL alloc] initWithString:urlString];
+- (NSString *)stopTrackingPath {
+    return [NSString stringWithFormat:UNTRACK_URL_FORMAT, self.flightID];
 }
 
 
 + (void)lookupFlights:(NSString *)flightNumber {
-    NSURL *lookupURL = [self lookupURL:flightNumber];
-    __weak ASIHTTPRequest *req = [ASIHTTPRequest requestWithURL:lookupURL];
-    
-    [req setCompletionBlock:^{
-        NSInteger status = [req responseStatusCode];
-        
-        switch (status) {
-            case 200: {
-                //Flights found
-                NSData *data = [req responseData];
-                
-                NSError *parsingError;
-                NSArray *listOfFlightInfo = [NSJSONSerialization
-                                          JSONObjectWithData:data
-                                                     options:NULL
-                                                       error:&parsingError];
-                if (!parsingError && listOfFlightInfo) {
+    NSString *lookupPath = [self lookupPath:flightNumber];
+    JustLandedAPIClient *client = [JustLandedAPIClient sharedClient];
+   
+    [client getPath:lookupPath 
+         parameters:nil 
+            success:^(AFHTTPRequestOperation *operation, id JSON){                
+                if (JSON && [JSON isKindOfClass:[NSArray class]]) {
+                    NSArray *listOfFlightInfo = (NSArray *)JSON;
+                    
                     // Got the flight data, return a list of flights
                     NSMutableArray *listOfFlights = [[NSMutableArray alloc] init];
                     
@@ -110,31 +70,34 @@
                         [listOfFlights addObject:[[Flight alloc] initWithFlightInfo:info]];
                     }
                     
-                    // TODO: Post success notification
+                    // TODO: Post success notification with fetched flights attached
                     
                 }
-                break;
+
             }
-            case 400:
-                // Invalid flight number
+            failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 // TODO: Post lookup failed notification
-                break;
-            case 404:
-                // Flight not found
-                // TODO: Post lookup failed notification
-                break;
-            default:
-                break;
-        }
-    }];
-    
-    [req setFailedBlock:^{
-        NSError *error = [req error];
-        
-        // TODO: Post lookup failed notification
-    }];
-    
-    [req startAsynchronous];
+                NSHTTPURLResponse *response = [operation response];
+                
+                if (response) {
+                    switch ([response statusCode]) {
+                        case 400:
+                            // Invalid flight number
+                            // TODO: Post lookup failed notification
+                            break;
+                        case 404:
+                            // Flight not found
+                            // TODO: Post lookup failed notification
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    // TODO: Handle connection problem
+                    
+                }
+            }];
 }
 
 
@@ -145,15 +108,27 @@
 
 
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag {
-    NSURL *trackingURL = [self trackURLwithLocation:loc 
-                                        pushEnabled:pushFlag 
-                                      beginTracking:!didBeginTracking];
-    // TODO: Implement me
+    NSString *trackingPath = [self trackPath];
+    NSDictionary *trackingParams = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                    @"latitude", [NSNumber numberWithFloat:loc.coordinate.latitude],
+                                    @"longitude", [NSNumber numberWithFloat:loc.coordinate.longitude],
+                                    @"begin_tracking", !self.didBeginTracking,
+                                    @"push", [NSNumber numberWithBool:pushFlag], nil];
     
-    // beginTracking flag is set only once for this instance
-    if (!didBeginTracking) {
-        didBeginTracking = YES;
-    }
+    JustLandedAPIClient *client = [JustLandedAPIClient sharedClient];
+    [client getPath:trackingPath 
+         parameters:trackingParams 
+            success:^(AFHTTPRequestOperation *operation, id JSON){
+                // TODO: Implement me
+    
+                // beginTracking flag is set only once for this instance
+                if (!self.didBeginTracking) {
+                    self.didBeginTracking = YES;
+                }
+            }
+            failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            
+            }];
 }
 
 - (void)stopTracking {

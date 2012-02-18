@@ -9,6 +9,20 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+#pragma mark NSUserDefaults Keys
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//Separate NSUserDefaults for local and prod
+#if defined(LOCAL)
+NSString * const UUIDKey = @"UUIDKeyLocal";
+#else
+NSString * const UUIDKey = @"UUIDKey";
+#endif
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 #pragma mark Server Constants
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,10 +32,9 @@ NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1"
 NSString * const BASE_URL = @"http://just-landed.appspot.com/api/v1";
 #endif
 
-NSString * const LOOKUP_URL_FORMAT = @"%@/search/%@";
-NSString * const TRACK_URL_FORMAT = @"%@/track/%@/%@?latitude=%.6f&longitude=%.6f&begin_track=%d&push=%d";
-NSString * const TRACK_URL_FORMAT_NO_LOC = @"%@/track/%@/%@?begin_track=%d&push=%d";
-NSString * const UNTRACK_URL_FORMAT = @"%@/untrack/%@";
+NSString * const LOOKUP_URL_FORMAT = @"/search/%@";
+NSString * const TRACK_URL_FORMAT = @"/track/%@/%@";
+NSString * const UNTRACK_URL_FORMAT = @"/untrack/%@";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -34,3 +47,13 @@ NSString * const FLURRY_APPLICATION_KEY = @"LH6F2XN2C6HAX4NIB3QS";
 #else
 NSString * const FLURRY_APPLICATION_KEY = @"2TZMR1NGCSTZ395GHUZS";
 #endif
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark CLLocation Constants
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+CLLocationDistance const DesiredLocationAccuracy = 150.0;
+NSTimeInterval const DesiredLocationFreshness = 120.0;

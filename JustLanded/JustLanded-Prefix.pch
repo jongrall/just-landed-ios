@@ -13,4 +13,8 @@
     #import <UIKit/UIKit.h>
     #import "Constants.h"
     #import "FlurryAnalytics.h"
+    #import "JustLandedSession.h"
+    #import "JustLandedAPIClient.h"
+    #import "AFHTTPRequestOperation.h"
+    #import "AFJSONRequestOperation.h"
 #endif

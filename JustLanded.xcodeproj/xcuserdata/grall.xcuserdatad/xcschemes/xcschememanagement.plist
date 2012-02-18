@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
+		<key>AFNetworking.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
 		<key>ASIHTTPRequest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -22,6 +27,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>116CB8E714EF4E67003AB446</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>117C48C114EB64F60049452F</key>
 		<dict>
 			<key>primary</key>
