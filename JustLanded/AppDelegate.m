@@ -24,7 +24,7 @@
     self.mainViewController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
     self.window.rootViewController = self.mainViewController;
     [self.window makeKeyAndVisible];
-    [Flight lookupFlights:@"CO1101"];
+    [Flight lookupFlights:@"VS 012"];
     
     return YES;
 }

@@ -20,4 +20,11 @@
 @property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSString *terminal;
 
+- (id)initWithAirportCode:(NSString *)aCode 
+                     name:(NSString *)aName 
+                     city:(NSString *)aCity;
+
+- (id)initWithAirportInfo:(NSDictionary *)info;
+- (NSDictionary *)toDict;
+
 @end

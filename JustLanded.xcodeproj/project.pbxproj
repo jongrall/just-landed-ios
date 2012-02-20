@@ -35,6 +35,8 @@
 		116CB92114EF7ABE003AB446 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A914EB5ADE00F7ED46 /* SystemConfiguration.framework */; };
 		116CB92814EF7E31003AB446 /* JustLandedAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB92714EF7E31003AB446 /* JustLandedAPIClient.m */; };
 		116CB96414EF85F0003AB446 /* JustLandedSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB96314EF85F0003AB446 /* JustLandedSession.m */; };
+		116CB9DF14F058EE003AB446 /* NSDate+SLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB9DC14F058EE003AB446 /* NSDate+SLExtensions.m */; };
+		116CB9E014F058EE003AB446 /* NSDictionary+SLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB9DE14F058EE003AB446 /* NSDictionary+SLExtensions.m */; };
 		117C48C314EB64F60049452F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
 		117C48D014EB652F0049452F /* ABTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 117C48CE14EB652F0049452F /* ABTableViewCell.m */; };
 		117C48D114EB65530049452F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAB14DCCDDF006D1DB4 /* UIKit.framework */; };
@@ -119,8 +121,12 @@
 		116CB90814EF4E9F003AB446 /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		116CB92614EF7E31003AB446 /* JustLandedAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JustLandedAPIClient.h; sourceTree = "<group>"; };
 		116CB92714EF7E31003AB446 /* JustLandedAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JustLandedAPIClient.m; sourceTree = "<group>"; };
-		116CB96214EF85F0003AB446 /* JustLandedSession.h */ = {isa = PBXFileReference; fileEncoding = 4; path = JustLandedSession.h; sourceTree = "<group>"; };
+		116CB96214EF85F0003AB446 /* JustLandedSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JustLandedSession.h; sourceTree = "<group>"; };
 		116CB96314EF85F0003AB446 /* JustLandedSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JustLandedSession.m; sourceTree = "<group>"; };
+		116CB9DB14F058EE003AB446 /* NSDate+SLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+SLExtensions.h"; sourceTree = "<group>"; };
+		116CB9DC14F058EE003AB446 /* NSDate+SLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+SLExtensions.m"; sourceTree = "<group>"; };
+		116CB9DD14F058EE003AB446 /* NSDictionary+SLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+SLExtensions.h"; sourceTree = "<group>"; };
+		116CB9DE14F058EE003AB446 /* NSDictionary+SLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+SLExtensions.m"; sourceTree = "<group>"; };
 		117C48C214EB64F60049452F /* libABTableViewCell.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libABTableViewCell.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		117C48CD14EB652F0049452F /* ABTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ABTableViewCell.h; sourceTree = SOURCE_ROOT; };
 		117C48CE14EB652F0049452F /* ABTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ABTableViewCell.m; sourceTree = SOURCE_ROOT; };
@@ -341,6 +347,10 @@
 		11AE980814EB613D00F7ED46 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				116CB9DB14F058EE003AB446 /* NSDate+SLExtensions.h */,
+				116CB9DC14F058EE003AB446 /* NSDate+SLExtensions.m */,
+				116CB9DD14F058EE003AB446 /* NSDictionary+SLExtensions.h */,
+				116CB9DE14F058EE003AB446 /* NSDictionary+SLExtensions.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -638,6 +648,8 @@
 				114ADBB114EC41C700463F0C /* Airport.m in Sources */,
 				116CB92814EF7E31003AB446 /* JustLandedAPIClient.m in Sources */,
 				116CB96414EF85F0003AB446 /* JustLandedSession.m in Sources */,
+				116CB9DF14F058EE003AB446 /* NSDate+SLExtensions.m in Sources */,
+				116CB9E014F058EE003AB446 /* NSDictionary+SLExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -879,6 +891,7 @@
 				116CB8F214EF4E67003AB446 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		117C48CA14EB64F60049452F /* Build configuration list for PBXNativeTarget "ABTableViewCell" */ = {
 			isa = XCConfigurationList;

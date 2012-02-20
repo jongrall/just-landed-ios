@@ -17,4 +17,6 @@
     #import "JustLandedAPIClient.h"
     #import "AFHTTPRequestOperation.h"
     #import "AFJSONRequestOperation.h"
+    #import "NSDate+SLExtensions.h"
+    #import "NSDictionary+SLExtensions.h"
 #endif

@@ -11,14 +11,37 @@
 #import "Airport.h"
 
 typedef enum {
-    SCHEDULED,
+    SCHEDULED = 0,
     ON_TIME,
     DELAYED,
     CANCELED,
     DIVERTED,
     LANDED,
-    EARLY    
+    EARLY,
+    UNKNOWN,
 } FlightStatus;
+
+typedef enum {
+    LookupFailureInvalidFlightNumber,
+    LookupFailureFlightNotFound,
+} FlightLookupFailedReason;
+
+typedef enum {
+    TrackFailureInvalidFlightNumber,
+    TrackFailureFlightNotFound,
+    TrackFailureOldFlight,
+} FlightTrackFailedReason;
+
+
+extern NSString * const WillLookupFlightNotification;
+extern NSString * const DidLookupFlightNotification;
+extern NSString * const FlightLookupFailedNotification;
+extern NSString * const FlightLookupFailedReasonKey;
+
+extern NSString * const WillTrackFlightNotification;
+extern NSString * const DidTrackFlightNotification;
+extern NSString * const FlightTrackFailedNotification;
+extern NSString * const FlightTrackFailedReasonKey;
 
 
 @interface Flight : NSObject
@@ -38,7 +61,7 @@ typedef enum {
 @property (nonatomic) NSTimeInterval scheduledFlightTime;
 @property (nonatomic) FlightStatus status;
 
-+ (void)lookupFlights:(NSString *)flightNumber;
++ (void)lookupFlights:(NSString *)aFlightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag;
 - (void)stopTracking;

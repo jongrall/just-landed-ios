@@ -1,9 +1,8 @@
 //
 //  JustLandedAPIClient.h
-//  JustLanded
+//  Just Landed
 //
-//  Created by Jon Grall on 2/17/12.
-//  Copyright (c) 2012 SimplyListed. All rights reserved.
+//  Created by Jon Grall on 2/17/12
 //
 
 #import <Foundation/Foundation.h>
