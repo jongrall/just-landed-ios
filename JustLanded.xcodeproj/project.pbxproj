@@ -37,6 +37,7 @@
 		116CB96414EF85F0003AB446 /* JustLandedSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB96314EF85F0003AB446 /* JustLandedSession.m */; };
 		116CB9DF14F058EE003AB446 /* NSDate+SLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB9DC14F058EE003AB446 /* NSDate+SLExtensions.m */; };
 		116CB9E014F058EE003AB446 /* NSDictionary+SLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB9DE14F058EE003AB446 /* NSDictionary+SLExtensions.m */; };
+		116CBA5614F343A8003AB446 /* FlightResultTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CBA5514F343A8003AB446 /* FlightResultTableViewCell.m */; };
 		117C48C314EB64F60049452F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
 		117C48D014EB652F0049452F /* ABTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 117C48CE14EB652F0049452F /* ABTableViewCell.m */; };
 		117C48D114EB65530049452F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAB14DCCDDF006D1DB4 /* UIKit.framework */; };
@@ -57,10 +58,8 @@
 		11C5DFB614DCCDDF006D1DB4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 11C5DFB414DCCDDF006D1DB4 /* InfoPlist.strings */; };
 		11C5DFB814DCCDDF006D1DB4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 11C5DFB714DCCDDF006D1DB4 /* main.m */; };
 		11C5DFBC14DCCDDF006D1DB4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 11C5DFBB14DCCDDF006D1DB4 /* AppDelegate.m */; };
-		11C5DFBF14DCCDDF006D1DB4 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11C5DFBE14DCCDDF006D1DB4 /* MainViewController.m */; };
-		11C5DFC214DCCDDF006D1DB4 /* FlipsideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11C5DFC114DCCDDF006D1DB4 /* FlipsideViewController.m */; };
-		11C5DFC514DCCDDF006D1DB4 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 11C5DFC314DCCDDF006D1DB4 /* MainViewController.xib */; };
-		11C5DFC814DCCDDF006D1DB4 /* FlipsideViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 11C5DFC614DCCDDF006D1DB4 /* FlipsideViewController.xib */; };
+		11C5DFBF14DCCDDF006D1DB4 /* FlightLookupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11C5DFBE14DCCDDF006D1DB4 /* FlightLookupViewController.m */; };
+		11C5DFC214DCCDDF006D1DB4 /* FlightTrackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11C5DFC114DCCDDF006D1DB4 /* FlightTrackViewController.m */; };
 		11C5DFD014DCCDDF006D1DB4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFCF14DCCDDF006D1DB4 /* SenTestingKit.framework */; };
 		11C5DFD114DCCDDF006D1DB4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAB14DCCDDF006D1DB4 /* UIKit.framework */; };
 		11C5DFD214DCCDDF006D1DB4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
@@ -127,6 +126,8 @@
 		116CB9DC14F058EE003AB446 /* NSDate+SLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+SLExtensions.m"; sourceTree = "<group>"; };
 		116CB9DD14F058EE003AB446 /* NSDictionary+SLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+SLExtensions.h"; sourceTree = "<group>"; };
 		116CB9DE14F058EE003AB446 /* NSDictionary+SLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+SLExtensions.m"; sourceTree = "<group>"; };
+		116CBA5414F343A8003AB446 /* FlightResultTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlightResultTableViewCell.h; sourceTree = "<group>"; };
+		116CBA5514F343A8003AB446 /* FlightResultTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlightResultTableViewCell.m; sourceTree = "<group>"; };
 		117C48C214EB64F60049452F /* libABTableViewCell.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libABTableViewCell.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		117C48CD14EB652F0049452F /* ABTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ABTableViewCell.h; sourceTree = SOURCE_ROOT; };
 		117C48CE14EB652F0049452F /* ABTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ABTableViewCell.m; sourceTree = SOURCE_ROOT; };
@@ -152,12 +153,10 @@
 		11C5DFB914DCCDDF006D1DB4 /* JustLanded-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JustLanded-Prefix.pch"; sourceTree = "<group>"; };
 		11C5DFBA14DCCDDF006D1DB4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		11C5DFBB14DCCDDF006D1DB4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		11C5DFBD14DCCDDF006D1DB4 /* MainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
-		11C5DFBE14DCCDDF006D1DB4 /* MainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
-		11C5DFC014DCCDDF006D1DB4 /* FlipsideViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlipsideViewController.h; sourceTree = "<group>"; };
-		11C5DFC114DCCDDF006D1DB4 /* FlipsideViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlipsideViewController.m; sourceTree = "<group>"; };
-		11C5DFC414DCCDDF006D1DB4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainViewController.xib; sourceTree = "<group>"; };
-		11C5DFC714DCCDDF006D1DB4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/FlipsideViewController.xib; sourceTree = "<group>"; };
+		11C5DFBD14DCCDDF006D1DB4 /* FlightLookupViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlightLookupViewController.h; sourceTree = "<group>"; };
+		11C5DFBE14DCCDDF006D1DB4 /* FlightLookupViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlightLookupViewController.m; sourceTree = "<group>"; };
+		11C5DFC014DCCDDF006D1DB4 /* FlightTrackViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlightTrackViewController.h; sourceTree = "<group>"; };
+		11C5DFC114DCCDDF006D1DB4 /* FlightTrackViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlightTrackViewController.m; sourceTree = "<group>"; };
 		11C5DFCE14DCCDDF006D1DB4 /* JustLandedTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JustLandedTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		11C5DFCF14DCCDDF006D1DB4 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		11C5DFD714DCCDDF006D1DB4 /* JustLandedTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "JustLandedTests-Info.plist"; sourceTree = "<group>"; };
@@ -279,10 +278,10 @@
 		11AE980014EB602E00F7ED46 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				11C5DFC014DCCDDF006D1DB4 /* FlipsideViewController.h */,
-				11C5DFBD14DCCDDF006D1DB4 /* MainViewController.h */,
-				11C5DFC114DCCDDF006D1DB4 /* FlipsideViewController.m */,
-				11C5DFBE14DCCDDF006D1DB4 /* MainViewController.m */,
+				11C5DFC014DCCDDF006D1DB4 /* FlightTrackViewController.h */,
+				11C5DFC114DCCDDF006D1DB4 /* FlightTrackViewController.m */,
+				11C5DFBD14DCCDDF006D1DB4 /* FlightLookupViewController.h */,
+				11C5DFBE14DCCDDF006D1DB4 /* FlightLookupViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -290,6 +289,8 @@
 		11AE980114EB603700F7ED46 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				116CBA5414F343A8003AB446 /* FlightResultTableViewCell.h */,
+				116CBA5514F343A8003AB446 /* FlightResultTableViewCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -404,8 +405,6 @@
 				11AE980414EB60DD00F7ED46 /* Resources */,
 				11C5DFB214DCCDDF006D1DB4 /* Supporting Files */,
 				11AE980214EB606500F7ED46 /* Classes */,
-				11C5DFC614DCCDDF006D1DB4 /* FlipsideViewController.xib */,
-				11C5DFC314DCCDDF006D1DB4 /* MainViewController.xib */,
 			);
 			path = JustLanded;
 			sourceTree = "<group>";
@@ -578,8 +577,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				11C5DFB614DCCDDF006D1DB4 /* InfoPlist.strings in Resources */,
-				11C5DFC514DCCDDF006D1DB4 /* MainViewController.xib in Resources */,
-				11C5DFC814DCCDDF006D1DB4 /* FlipsideViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,8 +638,8 @@
 			files = (
 				11C5DFB814DCCDDF006D1DB4 /* main.m in Sources */,
 				11C5DFBC14DCCDDF006D1DB4 /* AppDelegate.m in Sources */,
-				11C5DFBF14DCCDDF006D1DB4 /* MainViewController.m in Sources */,
-				11C5DFC214DCCDDF006D1DB4 /* FlipsideViewController.m in Sources */,
+				11C5DFBF14DCCDDF006D1DB4 /* FlightLookupViewController.m in Sources */,
+				11C5DFC214DCCDDF006D1DB4 /* FlightTrackViewController.m in Sources */,
 				117C48D714EB66140049452F /* Constants.m in Sources */,
 				114ADBAD14EC354700463F0C /* Flight.m in Sources */,
 				114ADBB114EC41C700463F0C /* Airport.m in Sources */,
@@ -650,6 +647,7 @@
 				116CB96414EF85F0003AB446 /* JustLandedSession.m in Sources */,
 				116CB9DF14F058EE003AB446 /* NSDate+SLExtensions.m in Sources */,
 				116CB9E014F058EE003AB446 /* NSDictionary+SLExtensions.m in Sources */,
+				116CBA5614F343A8003AB446 /* FlightResultTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -688,22 +686,6 @@
 				11C5DFB514DCCDDF006D1DB4 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		11C5DFC314DCCDDF006D1DB4 /* MainViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				11C5DFC414DCCDDF006D1DB4 /* en */,
-			);
-			name = MainViewController.xib;
-			sourceTree = "<group>";
-		};
-		11C5DFC614DCCDDF006D1DB4 /* FlipsideViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				11C5DFC714DCCDDF006D1DB4 /* en */,
-			);
-			name = FlipsideViewController.xib;
 			sourceTree = "<group>";
 		};
 		11C5DFD814DCCDDF006D1DB4 /* InfoPlist.strings */ = {

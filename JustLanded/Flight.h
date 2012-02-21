@@ -10,6 +10,10 @@
 #import <CoreLocation/CLLocation.h>
 #import "Airport.h"
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Constants Associated w/ Flight Class
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef enum {
     SCHEDULED = 0,
     ON_TIME,
@@ -43,9 +47,13 @@ extern NSString * const DidTrackFlightNotification;
 extern NSString * const FlightTrackFailedNotification;
 extern NSString * const FlightTrackFailedReasonKey;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Flight Interface
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface Flight : NSObject
 
+// Flight data properties
 @property (strong, nonatomic) NSDate *actualArrivalTime;
 @property (strong, nonatomic) NSDate *actualDepartureTime;
 @property (strong, nonatomic) Airport *destination;
@@ -60,6 +68,10 @@ extern NSString * const FlightTrackFailedReasonKey;
 @property (strong, nonatomic) NSDate *scheduledDepartureTime;
 @property (nonatomic) NSTimeInterval scheduledFlightTime;
 @property (nonatomic) FlightStatus status;
+
+// Other properties
+@property (nonatomic, readonly) NSDate *lastTracked;
+@property (nonatomic, readonly) NSDate *scheduledArrivalTime;
 
 + (void)lookupFlights:(NSString *)aFlightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;

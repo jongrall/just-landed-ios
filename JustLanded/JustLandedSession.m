@@ -43,7 +43,7 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 		CLLocationManager *locMgr = [[CLLocationManager alloc] init]; 
 		locMgr.delegate = self;
 		locMgr.desiredAccuracy = kCLLocationAccuracyBest;
-		locMgr.purpose = NSLocalizedString(@"With your location Just Landed can estimate your driving time to the airport.",
+		locMgr.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
 										   @"Reason we need your location");
 		self._locationManager = locMgr;
 	}
@@ -96,10 +96,17 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
     if (_locationManager.location == nil || 
         [[NSDate date] timeIntervalSinceDate:_locationManager.location.timestamp] > DesiredLocationFreshness) {
 		[self startLocationServices];
+        return nil;
     }
     
     //Return whatever we have
     return _locationManager.location;
+}
+
+
+- (BOOL)pushEnabled {
+    // Returns true if alerts are allowed - minimum to consider push enabled for the app (badge & sound not required)
+    return [[UIApplication sharedApplication] enabledRemoteNotificationTypes] & UIRemoteNotificationTypeAlert;
 }
 
 

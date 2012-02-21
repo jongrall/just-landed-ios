@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 
-#import "MainViewController.h"
+#import "FlightLookupViewController.h"
 #import "Flight.h"
 
 @implementation AppDelegate
@@ -20,12 +20,16 @@
 {
     [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    self.mainViewController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
-    self.window.rootViewController = self.mainViewController;
-    [self.window makeKeyAndVisible];
-    [Flight lookupFlights:@"VS 012"];
     
+    // Show the status bar
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    
+    // TODO: Were we tracking a flight that isn't old? if so, show the tracking info
+    
+    // Show the flight lookup UI    
+    self.mainViewController = [[FlightLookupViewController alloc] init];
+    self.window.rootViewController = self.mainViewController;
+    [self.window makeKeyAndVisible];    
     return YES;
 }
 

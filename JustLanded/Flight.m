@@ -8,7 +8,6 @@
 
 #import "Flight.h"
 
-
 NSString * const WillLookupFlightNotification = @"WillLookupFlightNotification";
 NSString * const DidLookupFlightNotification = @"DidLookupFlightNotification";
 NSString * const FlightLookupFailedNotification = @"FlightLookupFailedNotification";
@@ -19,10 +18,14 @@ NSString * const DidTrackFlightNotification = @"DidTrackFlightNotification";
 NSString * const FlightTrackFailedNotification = @"FlightTrackFailedNotification";
 NSString * const FlightTrackFailedReasonKey = @"FlightTrackFailedReasonKey";
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Private Interface
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface Flight () 
 
 @property (nonatomic) BOOL _didBeginTracking;
+@property (strong, nonatomic) NSDate *_lastTracked;
 
 + (NSString *)lookupPath:(NSString *)flightNumber;
 - (NSString *)trackPath;
@@ -31,6 +34,9 @@ NSString * const FlightTrackFailedReasonKey = @"FlightTrackFailedReasonKey";
         
 @end
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Begin Implementation
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation Flight
 
@@ -42,6 +48,7 @@ NSString * const FlightTrackFailedReasonKey = @"FlightTrackFailedReasonKey";
 @synthesize estimatedArrivalTime;
 @synthesize flightID;
 @synthesize flightNumber;
+@synthesize _lastTracked;
 @synthesize lastUpdated;
 @synthesize leaveForAirporTime;
 @synthesize leaveForAirportRecommendation;
@@ -51,6 +58,10 @@ NSString * const FlightTrackFailedReasonKey = @"FlightTrackFailedReasonKey";
 @synthesize status;
 
 static NSArray *_statuses;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Class Methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 + (void)initialize {
 	if (self == [Flight class]) {
@@ -65,25 +76,11 @@ static NSArray *_statuses;
 	}
 }
 
-+ (NSString *)lookupPath:(NSString *)flightNumber {
-    return [[NSString stringWithFormat:LOOKUP_URL_FORMAT, flightNumber] 
-            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];;
-}
-
-
-- (NSString *)trackPath {
-    return [[NSString stringWithFormat:TRACK_URL_FORMAT, self.flightNumber, self.flightID] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
-}
-
-
-- (NSString *)stopTrackingPath {
-    return [[NSString stringWithFormat:UNTRACK_URL_FORMAT, self.flightID]
-            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
-}
-
 
 + (void)lookupFlights:(NSString *)aFlightNumber {
     [[NSNotificationCenter defaultCenter] postNotificationName:WillLookupFlightNotification object:nil];
+    
+    // TODO: Check if flight number valid
     
     NSString *lookupPath = [self lookupPath:aFlightNumber];
     
@@ -111,10 +108,8 @@ static NSArray *_statuses;
             }
             failure:^(AFHTTPRequestOperation *operation, NSError *error) {                
                 NSHTTPURLResponse *response = [operation response];
-                NSLog(@"FAILED");
                 
                 if (response) {
-                    NSLog(@"GOT RESPONSE");
                     NSMutableDictionary *reasonDict = [[NSMutableDictionary alloc] init];
                     
                     switch ([response statusCode]) {
@@ -138,22 +133,28 @@ static NSArray *_statuses;
                 }
                 else {
                     // TODO: Handle connection problem
-                    NSLog(@"NO RESPONSE");
                 }
             }];
 }
 
+
++ (NSString *)lookupPath:(NSString *)flightNumber {
+    return [[NSString stringWithFormat:LOOKUP_URL_FORMAT, flightNumber] 
+            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Instance Methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (id)initWithFlightInfo:(NSDictionary *)info {
     self = [super init];
     
     if (self && info) {
         [self updateWithFlightInfo:info];
-        return self;
     }
-    return nil;
+    return self;
 }
-
 
 
 - (void)updateWithFlightInfo:(NSDictionary *)info {
@@ -208,15 +209,15 @@ static NSArray *_statuses;
     
     if (loc) {
         trackingParams = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          @"latitude", [NSNumber numberWithFloat:loc.coordinate.latitude],
-                          @"longitude", [NSNumber numberWithFloat:loc.coordinate.longitude],
-                          @"begin_tracking", !self._didBeginTracking,
-                          @"push", [NSNumber numberWithBool:pushFlag], nil]; 
+                          [NSNumber numberWithFloat:loc.coordinate.latitude], @"latitude",
+                          [NSNumber numberWithFloat:loc.coordinate.longitude], @"longitude", 
+                          [NSNumber numberWithBool:self._didBeginTracking], @"begin_tracking",
+                          [NSNumber numberWithBool:pushFlag], @"push", nil]; 
     }
     else {
         trackingParams = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          @"begin_tracking", !self._didBeginTracking,
-                          @"push", [NSNumber numberWithBool:pushFlag], nil]; 
+                          [NSNumber numberWithBool:!self._didBeginTracking], @"begin_tracking",
+                          [NSNumber numberWithBool:pushFlag], @"push", nil]; 
     }
     
     [[JustLandedAPIClient sharedClient] getPath:trackingPath 
@@ -231,6 +232,8 @@ static NSArray *_statuses;
                     if (!self._didBeginTracking) {
                         self._didBeginTracking = YES;
                     }
+                    
+                    self._lastTracked = [NSDate date];
                     
                     [[NSNotificationCenter defaultCenter] postNotificationName:DidTrackFlightNotification object:self];
                 }
@@ -270,8 +273,30 @@ static NSArray *_statuses;
             }];
 }
 
+
 - (void)stopTracking {
     // TODO: Implement me
+}
+
+
+- (NSDate *)lastTracked {
+    return self._lastTracked;
+}
+
+
+- (NSDate *)scheduledArrivalTime {
+    return [NSDate dateWithTimeInterval:self.scheduledFlightTime sinceDate:self.scheduledDepartureTime];
+}
+
+
+- (NSString *)trackPath {
+    return [[NSString stringWithFormat:TRACK_URL_FORMAT, self.flightNumber, self.flightID] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+}
+
+
+- (NSString *)stopTrackingPath {
+    return [[NSString stringWithFormat:UNTRACK_URL_FORMAT, self.flightID]
+            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
 }
 
 

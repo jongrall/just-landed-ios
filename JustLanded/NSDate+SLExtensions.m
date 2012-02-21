@@ -19,7 +19,7 @@ static NSDateFormatter *_naturalDateFormatter;
 		[_naturalDateFormatter setCalendar:[NSCalendar autoupdatingCurrentCalendar]];
 		[_naturalDateFormatter setTimeZone:[NSTimeZone localTimeZone]];
 		[_naturalDateFormatter setLocale:[NSLocale currentLocale]];
-		[_naturalDateFormatter setDateFormat:@"EEEE, MMMM d 'at' h:mm a"];
+		[_naturalDateFormatter setDateFormat:@"E, MMM d 'at' h:mm a"];
 	}
 }
 

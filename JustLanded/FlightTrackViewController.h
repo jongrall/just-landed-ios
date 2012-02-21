@@ -1,0 +1,28 @@
+//
+//  FlightTrackViewController.h
+//  JustLanded
+//
+//  Created by Jon Grall on 2/3/12.
+//  Copyright (c) 2012 Just Landed. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "Flight.h"
+
+@class FlightTrackViewController;
+
+@protocol FlightTrackViewControllerDelegate
+- (void)didFinishTracking:(FlightTrackViewController *)controller;
+@end
+
+@interface FlightTrackViewController : UIViewController
+
+@property (weak, nonatomic) IBOutlet id <FlightTrackViewControllerDelegate> delegate;
+@property (readonly, nonatomic) Flight *trackedFlight;
+
+- (id)initWithFlight:(Flight *)aFlight;
+- (void)stopTracking;
+- (void)refresh;
+- (void)showPickupDirections;
+
+@end

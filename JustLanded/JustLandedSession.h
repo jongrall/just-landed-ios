@@ -15,6 +15,7 @@ extern NSString * const LastKnownLocationDidFailToUpdateNotification;
 @interface JustLandedSession : NSObject <CLLocationManagerDelegate>
 
 @property (readonly, nonatomic) CLLocation *lastKnownLocation;
+@property (readonly, nonatomic) BOOL pushEnabled;
 @property (copy, nonatomic) NSString *pushToken;
 
 + (JustLandedSession *)sharedSession;
