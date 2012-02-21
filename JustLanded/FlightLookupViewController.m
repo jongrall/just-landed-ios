@@ -97,6 +97,30 @@ static NSRegularExpression *_flightNumberRegex;
     self._flightNumberField.enabled = YES;
     
     // TODO: Show the failure reason, allow them to try again
+    FlightLookupFailedReason reason = [[[notification userInfo] valueForKey:FlightLookupFailedReasonKey] integerValue];
+    
+    switch (reason) {
+        case LookupFailureInvalidFlightNumber: {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Flight Number", @"Invalid Flight Number") 
+                                                            message:@"Please check that you entered your flight number correctly."
+                                                           delegate:self 
+                                                  cancelButtonTitle:@"Try Again"
+                                                  otherButtonTitles:nil];
+            [alert show];
+            break;   
+        }
+        case LookupFailureFlightNotFound: {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Flight Not Found", @"Flight Not Found") 
+                                                            message:@"Please check that you entered your flight number correctly."
+                                                           delegate:self 
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 
@@ -115,7 +139,15 @@ static NSRegularExpression *_flightNumberRegex;
     if (flights) {
         self._flightResults = flights;
     
-        if ([flights count] == 1) {
+        if ([flights count] == 0) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Flight Not Found", @"Flight Not Found") 
+                                                            message:@"Just Landed can only track U.S. domestic flights that are arriving within the next 48 hours."
+                                                           delegate:self 
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+        }
+        else if ([flights count] == 1) {
             [self beginTrackingFlight:[flights objectAtIndex:0] animated:YES];
         }
         else {
