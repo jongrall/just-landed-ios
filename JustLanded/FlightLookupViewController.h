@@ -11,6 +11,8 @@
 
 @interface FlightLookupViewController : UIViewController <FlightTrackViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
+@property (nonatomic, readonly) UITextField *flightNumberField;
+
 - (void)beginTrackingFlight:(Flight *)aFlight animated:(BOOL)animateFlip;
 
 @end

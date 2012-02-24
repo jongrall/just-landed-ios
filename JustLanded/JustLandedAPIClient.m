@@ -21,6 +21,25 @@
     return _sharedClient;
 }
 
+
++ (NSString *)lookupPathWithFlightNumber:(NSString *)flightNumber {
+    return [[NSString stringWithFormat:LOOKUP_URL_FORMAT, flightNumber] 
+            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];;
+}
+
+
++ (NSString *)trackPathWithFlightNumber:(NSString *)flightNumber flightID:(NSString *)flightID {
+    return [[NSString stringWithFormat:TRACK_URL_FORMAT, flightNumber, flightID] 
+            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+}
+
+
++ (NSString *)stopTrackingPathWithFlightID:(NSString *)flightID {
+    return [[NSString stringWithFormat:UNTRACK_URL_FORMAT, flightID]
+            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+}
+
+
 - (id)initWithBaseURL:(NSURL *)url {
     self = [super initWithBaseURL:url];
     if (!self) {

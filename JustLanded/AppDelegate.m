@@ -10,66 +10,181 @@
 
 #import "FlightLookupViewController.h"
 #import "Flight.h"
+#import <CoreLocation/CoreLocation.h>
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Private Interface
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@interface AppDelegate ()
+
+- (void)didTrackFlight:(NSNotification *)notification;
+- (void)didUntrackFlight:(NSNotification *)notification;
+- (void)handleLocalNotification:(UILocalNotification *)notification;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Begin Implementation
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation AppDelegate
 
 @synthesize window = _window;
 @synthesize mainViewController = _mainViewController;
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     // Show the status bar
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
     
-    // TODO: Were we tracking a flight that isn't old? if so, show the tracking info
+    // Register for push notifications
+    [[JustLandedSession sharedSession] registerForPushNotifications];
+    
+    // Listen for tracking and untracking of any flights so we can set and unset leave alerts
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(didTrackFlight:)
+                                                 name:DidTrackFlightNotification 
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didUntrackFlight:)
+                                                 name:DidStopTrackingFlightNotification 
+                                               object:nil];
     
     // Show the flight lookup UI    
     self.mainViewController = [[FlightLookupViewController alloc] init];
     self.window.rootViewController = self.mainViewController;
-    [self.window makeKeyAndVisible];    
+    [self.window makeKeyAndVisible];
+    
+    // Handle local notification on launch
+    UILocalNotification *localNotif = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    if (localNotif) {
+        [self handleLocalNotification:localNotif];
+    }
+    
+    // Show previous flights being tracked, if any
+    NSArray *prevFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
+    
+    if ([prevFlights count] > 0) {
+        // Display the most recently tracked flight
+        [self.mainViewController beginTrackingFlight:[prevFlights lastObject] animated:NO];
+    }
+    else {
+        [self.mainViewController.flightNumberField becomeFirstResponder];
+    }
+    
     return YES;
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application
-{
+
+- (void)applicationWillResignActive:(UIApplication *)application {
     /*
      Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
      Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
      */
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application
-{
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
     /*
      Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
      If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
      */
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
     /*
      Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
      */
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
 }
 
-- (void)applicationWillTerminate:(UIApplication *)application
-{
+
+- (void)applicationWillTerminate:(UIApplication *)application {
     /*
      Called when the application is about to terminate.
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Responding to NSNotificationCenter Notifications
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)didTrackFlight:(NSNotification *)notification {
+    Flight *aFlight = [notification object];
+    [aFlight createOrUpdateLeaveAlerts];
+}
+
+
+- (void)didUntrackFlight:(NSNotification *)notification {
+    Flight *aFlight = [notification object];
+    [aFlight cancelLeaveAlerts];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Push & Local Notifications
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    //Keep the server up to date with the latest push token
+	[[JustLandedSession sharedSession] updatePushTokenAfterRegisteringWithApple:[deviceToken hexString]];
+}
+
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    NSLog(@"Just Landed failed to register for remote notifications: %@", error);
+}
+
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    
+}
+
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {    
+    // App is currently running - display an alert and sound
+    for (Flight *f in [[JustLandedSession sharedSession] currentlyTrackedFlights]) {
+        if ([f matchesAlert:notification]) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil 
+                                                            message:notification.alertBody 
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [[JustLandedSession sharedSession] playSound:AnnouncementSound];
+            [[JustLandedSession sharedSession] vibrateDevice];
+            break;
+        }
+    }
+    
+    [self handleLocalNotification:notification];
+}
+
+
+- (void)handleLocalNotification:(UILocalNotification *)notification {
+    NSArray *trackedFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
+    
+    for (Flight *f in trackedFlights) {
+        if ([f matchesAlert:notification]) {
+            [f.deliveredAlerts addObject:notification];
+            
+            // Update the flight information
+            [f trackWithLocation:[[JustLandedSession sharedSession] lastKnownLocation] 
+                     pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
+        }
+    }
 }
 
 @end

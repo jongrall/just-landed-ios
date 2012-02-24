@@ -14,9 +14,10 @@
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface FlightTrackViewController()
+@interface FlightTrackViewController() {
+    __strong Flight *_trackedFlight;
+}
 
-@property (strong, nonatomic) Flight *_trackedFlight;
 @property (strong, nonatomic) UITextView *_textView;
 @property (strong, nonatomic) UILabel *_lastTrackedLabel;
 @property (strong, nonatomic) UIButton *_refreshButton;
@@ -29,6 +30,7 @@
 - (void)willTrackFlight:(NSNotification *)notification;
 - (void)didTrackFlight:(NSNotification *)notification;
 - (void)flightTrackFailed:(NSNotification *)notification;
+- (void)refreshOnResume;
 
 @end
 
@@ -39,7 +41,7 @@
 @implementation FlightTrackViewController
 
 @synthesize delegate;
-@synthesize _trackedFlight;
+@synthesize trackedFlight=_trackedFlight;
 @synthesize _textView;
 @synthesize _lastTrackedLabel;
 @synthesize _refreshButton;
@@ -50,7 +52,8 @@
     self = [super init];
     
     if (self) {
-        self._trackedFlight = aFlight;
+        NSAssert((aFlight != nil), @"Flight to track is nil!");
+        _trackedFlight = aFlight;
         
         // Listen for location update notifications
         [[NSNotificationCenter defaultCenter] addObserver:self 
@@ -77,10 +80,10 @@
                                                      name:FlightTrackFailedNotification 
                                                    object:aFlight];
         
-        // Listen for resume notifications and refresh on resume
+        // Setup refresh on resume
         [[NSNotificationCenter defaultCenter] addObserver:self 
-                                                 selector:@selector(refresh) 
-                                                     name:UIApplicationDidBecomeActiveNotification 
+                                                 selector:@selector(refreshOnResume) 
+                                                     name:UIApplicationWillResignActiveNotification 
                                                    object:[UIApplication sharedApplication]];
     }
     
@@ -88,13 +91,19 @@
 }
 
 - (void)trackFlightWithLocation:(CLLocation *)loc {
-    [self._trackedFlight trackWithLocation:loc
-                               pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
+    [_trackedFlight trackWithLocation:loc pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
 }
 
 
-- (Flight *)trackedFlight {
-    return self._trackedFlight;
+- (void)refreshOnResume {
+    // Listen for resume notifications and refresh on resume
+    [[NSNotificationCenter defaultCenter] removeObserver:self 
+                                                    name:UIApplicationDidBecomeActiveNotification 
+                                                  object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(refresh) 
+                                                 name:UIApplicationDidBecomeActiveNotification 
+                                               object:[UIApplication sharedApplication]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +126,6 @@
 
 
 - (void)willTrackFlight:(NSNotification *)notification {
-    // TODO: Show loading animation
     self._lastTrackedLabel.hidden = YES;
     self._refreshButton.enabled = NO;
     [self._updatingSpinner startAnimating];
@@ -127,13 +135,13 @@
 
 - (void)didTrackFlight:(NSNotification *)notification {
     // Stop loading animation
-    self._lastTrackedLabel.text = [NSString stringWithFormat:@"Last updated %@", [NSDate naturalDateStringFromDate:[self._trackedFlight lastTracked]]];
+    self._lastTrackedLabel.text = [NSString stringWithFormat:@"Last updated %@", [NSDate naturalDateStringFromDate:[_trackedFlight lastTracked]]];
     [self._updatingSpinner stopAnimating];
     self._lastTrackedLabel.hidden = NO;
     self._refreshButton.enabled = YES;
     
     // Update displayed information
-    self._textView.text = [self._trackedFlight description];
+    self._textView.text = [_trackedFlight description];
 }
 
 
@@ -142,7 +150,14 @@
     self._lastTrackedLabel.hidden = NO;
     self._refreshButton.enabled = YES;
     
-    // TODO: Display error?
+    FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
+    
+    if (reason != TrackFailureNoConnection) {
+        [delegate didFinishTracking:self];
+    }
+    else {
+        // TODO: Handle no connection
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,14 +222,6 @@
 }
 
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    // Update the display
-    [self refresh];
-}
-
-
 - (void)viewDidUnload {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
@@ -236,6 +243,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -(void)stopTracking {
+    [_trackedFlight stopTracking];
     [self.delegate didFinishTracking:self];
 }
 

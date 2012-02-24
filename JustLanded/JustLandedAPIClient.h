@@ -12,5 +12,8 @@
 @interface JustLandedAPIClient : AFHTTPClient
 
 + (JustLandedAPIClient *)sharedClient;
++ (NSString *)lookupPathWithFlightNumber:(NSString *)flightNumber;
++ (NSString *)trackPathWithFlightNumber:(NSString *)flightNumber flightID:(NSString *)flightID;
++ (NSString *)stopTrackingPathWithFlightID:(NSString *)flightID;
 
 @end

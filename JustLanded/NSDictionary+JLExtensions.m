@@ -1,14 +1,14 @@
 //
-//  NSDictionary+SLExtensions.m
+//  NSDictionary+JLExtensions.m
 //  Just Landed
 //
 //  Created by Jon Grall on 2/18/12
 //
 
-#import "NSDictionary+SLExtensions.h"
+#import "NSDictionary+JLExtensions.h"
 
 
-@implementation NSDictionary (SLExtensions)
+@implementation NSDictionary (JLExtensions)
 
 - (id)objectForKeyOrNil:(id)key {
 	id obj = [self objectForKey:key];

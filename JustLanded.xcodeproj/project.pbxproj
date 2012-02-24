@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		114ADBAD14EC354700463F0C /* Flight.m in Sources */ = {isa = PBXBuildFile; fileRef = 114ADBAC14EC354700463F0C /* Flight.m */; };
 		114ADBB114EC41C700463F0C /* Airport.m in Sources */ = {isa = PBXBuildFile; fileRef = 114ADBB014EC41C700463F0C /* Airport.m */; };
+		115E8F3B14F6C8CA00E9F06B /* OriginAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3A14F6C8CA00E9F06B /* OriginAirport.m */; };
+		115E8F3F14F6C8EE00E9F06B /* DestinationAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3E14F6C8EE00E9F06B /* DestinationAirport.m */; };
+		115E8F4314F7354600E9F06B /* announcement.caf in Resources */ = {isa = PBXBuildFile; fileRef = 115E8F4014F7354600E9F06B /* announcement.caf */; };
+		115E8F4414F7354600E9F06B /* landing.caf in Resources */ = {isa = PBXBuildFile; fileRef = 115E8F4114F7354600E9F06B /* landing.caf */; };
+		115E8F4514F7354600E9F06B /* takeoff.caf in Resources */ = {isa = PBXBuildFile; fileRef = 115E8F4214F7354600E9F06B /* takeoff.caf */; };
 		116CB8E914EF4E67003AB446 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
 		116CB90914EF4E9F003AB446 /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8F414EF4E9F003AB446 /* AFHTTPClient.h */; };
 		116CB90A14EF4E9F003AB446 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8F514EF4E9F003AB446 /* AFHTTPClient.m */; };
@@ -35,9 +40,10 @@
 		116CB92114EF7ABE003AB446 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A914EB5ADE00F7ED46 /* SystemConfiguration.framework */; };
 		116CB92814EF7E31003AB446 /* JustLandedAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB92714EF7E31003AB446 /* JustLandedAPIClient.m */; };
 		116CB96414EF85F0003AB446 /* JustLandedSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB96314EF85F0003AB446 /* JustLandedSession.m */; };
-		116CB9DF14F058EE003AB446 /* NSDate+SLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB9DC14F058EE003AB446 /* NSDate+SLExtensions.m */; };
-		116CB9E014F058EE003AB446 /* NSDictionary+SLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB9DE14F058EE003AB446 /* NSDictionary+SLExtensions.m */; };
+		116CB9DF14F058EE003AB446 /* NSDate+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB9DC14F058EE003AB446 /* NSDate+JLExtensions.m */; };
+		116CB9E014F058EE003AB446 /* NSDictionary+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB9DE14F058EE003AB446 /* NSDictionary+JLExtensions.m */; };
 		116CBA5614F343A8003AB446 /* FlightResultTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CBA5514F343A8003AB446 /* FlightResultTableViewCell.m */; };
+		116CBA9214F45BF9003AB446 /* NSData+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CBA9114F45BF8003AB446 /* NSData+JLExtensions.m */; };
 		117C48C314EB64F60049452F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
 		117C48D014EB652F0049452F /* ABTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 117C48CE14EB652F0049452F /* ABTableViewCell.m */; };
 		117C48D114EB65530049452F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAB14DCCDDF006D1DB4 /* UIKit.framework */; };
@@ -96,6 +102,13 @@
 		114ADBAC14EC354700463F0C /* Flight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Flight.m; sourceTree = "<group>"; };
 		114ADBAF14EC41C700463F0C /* Airport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Airport.h; sourceTree = "<group>"; };
 		114ADBB014EC41C700463F0C /* Airport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Airport.m; sourceTree = "<group>"; };
+		115E8F3914F6C8C900E9F06B /* OriginAirport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginAirport.h; sourceTree = "<group>"; };
+		115E8F3A14F6C8CA00E9F06B /* OriginAirport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OriginAirport.m; sourceTree = "<group>"; };
+		115E8F3D14F6C8EE00E9F06B /* DestinationAirport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationAirport.h; sourceTree = "<group>"; };
+		115E8F3E14F6C8EE00E9F06B /* DestinationAirport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationAirport.m; sourceTree = "<group>"; };
+		115E8F4014F7354600E9F06B /* announcement.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = announcement.caf; sourceTree = "<group>"; };
+		115E8F4114F7354600E9F06B /* landing.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = landing.caf; sourceTree = "<group>"; };
+		115E8F4214F7354600E9F06B /* takeoff.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = takeoff.caf; sourceTree = "<group>"; };
 		116CB8E814EF4E67003AB446 /* libAFNetworking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAFNetworking.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		116CB8F414EF4E9F003AB446 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
 		116CB8F514EF4E9F003AB446 /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
@@ -122,12 +135,14 @@
 		116CB92714EF7E31003AB446 /* JustLandedAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JustLandedAPIClient.m; sourceTree = "<group>"; };
 		116CB96214EF85F0003AB446 /* JustLandedSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JustLandedSession.h; sourceTree = "<group>"; };
 		116CB96314EF85F0003AB446 /* JustLandedSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JustLandedSession.m; sourceTree = "<group>"; };
-		116CB9DB14F058EE003AB446 /* NSDate+SLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+SLExtensions.h"; sourceTree = "<group>"; };
-		116CB9DC14F058EE003AB446 /* NSDate+SLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+SLExtensions.m"; sourceTree = "<group>"; };
-		116CB9DD14F058EE003AB446 /* NSDictionary+SLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+SLExtensions.h"; sourceTree = "<group>"; };
-		116CB9DE14F058EE003AB446 /* NSDictionary+SLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+SLExtensions.m"; sourceTree = "<group>"; };
+		116CB9DB14F058EE003AB446 /* NSDate+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+JLExtensions.h"; sourceTree = "<group>"; };
+		116CB9DC14F058EE003AB446 /* NSDate+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+JLExtensions.m"; sourceTree = "<group>"; };
+		116CB9DD14F058EE003AB446 /* NSDictionary+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+JLExtensions.h"; sourceTree = "<group>"; };
+		116CB9DE14F058EE003AB446 /* NSDictionary+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+JLExtensions.m"; sourceTree = "<group>"; };
 		116CBA5414F343A8003AB446 /* FlightResultTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlightResultTableViewCell.h; sourceTree = "<group>"; };
 		116CBA5514F343A8003AB446 /* FlightResultTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlightResultTableViewCell.m; sourceTree = "<group>"; };
+		116CBA9014F45BF7003AB446 /* NSData+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+JLExtensions.h"; sourceTree = "<group>"; };
+		116CBA9114F45BF8003AB446 /* NSData+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+JLExtensions.m"; sourceTree = "<group>"; };
 		117C48C214EB64F60049452F /* libABTableViewCell.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libABTableViewCell.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		117C48CD14EB652F0049452F /* ABTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ABTableViewCell.h; sourceTree = SOURCE_ROOT; };
 		117C48CE14EB652F0049452F /* ABTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ABTableViewCell.m; sourceTree = SOURCE_ROOT; };
@@ -269,8 +284,12 @@
 			children = (
 				114ADBAF14EC41C700463F0C /* Airport.h */,
 				114ADBB014EC41C700463F0C /* Airport.m */,
+				115E8F3D14F6C8EE00E9F06B /* DestinationAirport.h */,
+				115E8F3E14F6C8EE00E9F06B /* DestinationAirport.m */,
 				114ADBAB14EC354700463F0C /* Flight.h */,
 				114ADBAC14EC354700463F0C /* Flight.m */,
+				115E8F3914F6C8C900E9F06B /* OriginAirport.h */,
+				115E8F3A14F6C8CA00E9F06B /* OriginAirport.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -327,6 +346,9 @@
 		11AE980514EB60E500F7ED46 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				115E8F4014F7354600E9F06B /* announcement.caf */,
+				115E8F4114F7354600E9F06B /* landing.caf */,
+				115E8F4214F7354600E9F06B /* takeoff.caf */,
 			);
 			name = Sounds;
 			sourceTree = "<group>";
@@ -348,10 +370,12 @@
 		11AE980814EB613D00F7ED46 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				116CB9DB14F058EE003AB446 /* NSDate+SLExtensions.h */,
-				116CB9DC14F058EE003AB446 /* NSDate+SLExtensions.m */,
-				116CB9DD14F058EE003AB446 /* NSDictionary+SLExtensions.h */,
-				116CB9DE14F058EE003AB446 /* NSDictionary+SLExtensions.m */,
+				116CBA9014F45BF7003AB446 /* NSData+JLExtensions.h */,
+				116CBA9114F45BF8003AB446 /* NSData+JLExtensions.m */,
+				116CB9DB14F058EE003AB446 /* NSDate+JLExtensions.h */,
+				116CB9DC14F058EE003AB446 /* NSDate+JLExtensions.m */,
+				116CB9DD14F058EE003AB446 /* NSDictionary+JLExtensions.h */,
+				116CB9DE14F058EE003AB446 /* NSDictionary+JLExtensions.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -577,6 +601,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				11C5DFB614DCCDDF006D1DB4 /* InfoPlist.strings in Resources */,
+				115E8F4314F7354600E9F06B /* announcement.caf in Resources */,
+				115E8F4414F7354600E9F06B /* landing.caf in Resources */,
+				115E8F4514F7354600E9F06B /* takeoff.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,9 +672,12 @@
 				114ADBB114EC41C700463F0C /* Airport.m in Sources */,
 				116CB92814EF7E31003AB446 /* JustLandedAPIClient.m in Sources */,
 				116CB96414EF85F0003AB446 /* JustLandedSession.m in Sources */,
-				116CB9DF14F058EE003AB446 /* NSDate+SLExtensions.m in Sources */,
-				116CB9E014F058EE003AB446 /* NSDictionary+SLExtensions.m in Sources */,
+				116CB9DF14F058EE003AB446 /* NSDate+JLExtensions.m in Sources */,
+				116CB9E014F058EE003AB446 /* NSDictionary+JLExtensions.m in Sources */,
 				116CBA5614F343A8003AB446 /* FlightResultTableViewCell.m in Sources */,
+				116CBA9214F45BF9003AB446 /* NSData+JLExtensions.m in Sources */,
+				115E8F3B14F6C8CA00E9F06B /* OriginAirport.m in Sources */,
+				115E8F3F14F6C8EE00E9F06B /* DestinationAirport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

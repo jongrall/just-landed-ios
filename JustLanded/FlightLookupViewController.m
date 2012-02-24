@@ -80,10 +80,14 @@ static NSRegularExpression *_flightNumberRegex;
 
 
 - (void)beginTrackingFlight:(Flight *)aFlight animated:(BOOL)animateFlip {
+    [[JustLandedSession sharedSession] addTrackedFlight:aFlight];
     FlightTrackViewController *controller = [[FlightTrackViewController alloc] initWithFlight:aFlight];
     controller.delegate = self;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self presentModalViewController:controller animated:animateFlip];
+    
+    // Initiate a refresh to get the initial flight information
+    [controller refresh];
 }
 
 
@@ -159,6 +163,10 @@ static NSRegularExpression *_flightNumberRegex;
 }
 
 
+- (UITextField *)flightNumberField {
+    return _flightNumberField;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - View Lifecycle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -230,13 +238,6 @@ static NSRegularExpression *_flightNumberRegex;
                                spinner.frame.size.height);
     self._lookupSpinner = spinner;
     [self.view addSubview:_lookupSpinner];
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-	// Bring up the keyboard
-    [self._flightNumberField becomeFirstResponder];
 }
 
 - (void)viewDidUnload {
@@ -328,6 +329,7 @@ static NSRegularExpression *_flightNumberRegex;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     Flight *chosenFlight = [self._flightResults objectAtIndex:[indexPath row]];
     [self beginTrackingFlight:chosenFlight animated:YES];
+    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -376,11 +378,12 @@ static NSRegularExpression *_flightNumberRegex;
         case ON_TIME:
         case EARLY:
         case DELAYED:
-            cell.statusColor = [UIColor greenColor];
             if (aFlight.actualDepartureTime) {
+                cell.statusColor = [UIColor yellowColor];
                 cell.status = NSLocalizedString(@"EN ROUTE", @"En Route");
             }
             else {
+                cell.statusColor = [UIColor grayColor];
                 cell.status = NSLocalizedString(@"SCHEDULED", @"Scheduled");
             }
             break;
@@ -393,7 +396,7 @@ static NSRegularExpression *_flightNumberRegex;
             cell.status = NSLocalizedString(@"CANCELED", @"Canceled");
             break;
         case LANDED:
-            cell.statusColor = [UIColor redColor];
+            cell.statusColor = [UIColor greenColor];
             cell.status = NSLocalizedString(@"LANDED", @"Landed");
             break;
         default:
@@ -418,6 +421,7 @@ static NSRegularExpression *_flightNumberRegex;
     self._flightResultsTable.hidden = YES;
     self._flightNumberField.text = @"";
     [self dismissModalViewControllerAnimated:YES];
+    [[JustLandedSession sharedSession] removeTrackedFlight:controller.trackedFlight];
     [self._flightNumberField becomeFirstResponder];
 }
 

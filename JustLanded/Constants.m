@@ -12,14 +12,13 @@
 #pragma mark NSUserDefaults Keys
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-//Separate NSUserDefaults for local and prod
 #if defined(LOCAL)
 NSString * const UUIDKey = @"UUIDKeyLocal";
+NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightLocal.data";
 #else
 NSString * const UUIDKey = @"UUIDKey";
+NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data"
 #endif
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

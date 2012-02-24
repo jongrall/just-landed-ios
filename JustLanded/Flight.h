@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLLocation.h>
-#import "Airport.h"
+#import "OriginAirport.h"
+#import "DestinationAirport.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Constants Associated w/ Flight Class
@@ -28,13 +29,20 @@ typedef enum {
 typedef enum {
     LookupFailureInvalidFlightNumber,
     LookupFailureFlightNotFound,
+    LookupFailureNoConnection,
 } FlightLookupFailedReason;
 
 typedef enum {
     TrackFailureInvalidFlightNumber,
     TrackFailureFlightNotFound,
     TrackFailureOldFlight,
+    TrackFailureNoConnection,
 } FlightTrackFailedReason;
+
+typedef enum {
+    LeaveInFifteenMinutesReminder,
+    LeaveNowReminder,
+} LeaveForAirportReminderType;
 
 
 extern NSString * const WillLookupFlightNotification;
@@ -47,35 +55,45 @@ extern NSString * const DidTrackFlightNotification;
 extern NSString * const FlightTrackFailedNotification;
 extern NSString * const FlightTrackFailedReasonKey;
 
+extern NSString * const WillStopTrackingFlightNotification;
+extern NSString * const DidStopTrackingFlightNotification;
+extern NSString * const StopTrackingFlightFailedNotification;
+extern NSString * const StopTrackingFailedReasonKey;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Flight Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface Flight : NSObject
+@interface Flight : NSObject <NSCoding>
 
 // Flight data properties
-@property (strong, nonatomic) NSDate *actualArrivalTime;
-@property (strong, nonatomic) NSDate *actualDepartureTime;
-@property (strong, nonatomic) Airport *destination;
-@property (strong, nonatomic) NSString *detailedStatus;
-@property (strong, nonatomic) NSDate *estimatedArrivalTime;
 @property (strong, nonatomic) NSString *flightID;
 @property (strong, nonatomic) NSString *flightNumber;
+
+@property (strong, nonatomic) NSDate *actualArrivalTime;
+@property (strong, nonatomic) NSDate *actualDepartureTime;
+@property (strong, nonatomic) NSDate *estimatedArrivalTime;
+@property (strong, nonatomic) NSDate *scheduledDepartureTime;
+@property (nonatomic, readonly) NSDate *scheduledArrivalTime; // Derived from other information (readonly)
 @property (strong, nonatomic) NSDate *lastUpdated;
 @property (strong, nonatomic) NSDate *leaveForAirporTime;
-@property (strong, nonatomic) NSString *leaveForAirportRecommendation;
-@property (strong, nonatomic) Airport *origin;
-@property (strong, nonatomic) NSDate *scheduledDepartureTime;
-@property (nonatomic) NSTimeInterval scheduledFlightTime;
-@property (nonatomic) FlightStatus status;
+@property (nonatomic) NSTimeInterval scheduledFlightDuration;
 
-// Other properties
+@property (strong, nonatomic) OriginAirport *origin;
+@property (strong, nonatomic) DestinationAirport *destination;
+
+@property (nonatomic) FlightStatus status;
+@property (strong, nonatomic) NSString *detailedStatus;
+
 @property (nonatomic, readonly) NSDate *lastTracked;
-@property (nonatomic, readonly) NSDate *scheduledArrivalTime;
+@property (strong, nonatomic) NSMutableArray *deliveredAlerts;
 
 + (void)lookupFlights:(NSString *)aFlightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag;
 - (void)stopTracking;
+- (void)createOrUpdateLeaveAlerts;
+- (void)cancelLeaveAlerts;
+- (BOOL)matchesAlert:(UILocalNotification *)alert;
 
 @end

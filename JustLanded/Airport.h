@@ -9,20 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface Airport : NSObject
+@interface Airport : NSObject <NSCoding>
 
-@property (strong, nonatomic) NSString *bagClaim;
-@property (strong, nonatomic) NSString *city;
 @property (strong, nonatomic) NSString *iataCode;
 @property (strong, nonatomic) NSString *icaoCode;
-@property (nonatomic) BOOL isDestination;
-@property (strong, nonatomic) CLLocation *location;
 @property (strong, nonatomic) NSString *name;
+@property (strong, nonatomic) NSString *city;
+@property (strong, nonatomic) CLLocation *location;
 @property (strong, nonatomic) NSString *terminal;
-
-- (id)initWithAirportCode:(NSString *)aCode 
-                     name:(NSString *)aName 
-                     city:(NSString *)aCity;
 
 - (id)initWithAirportInfo:(NSDictionary *)info;
 - (NSDictionary *)toDict;

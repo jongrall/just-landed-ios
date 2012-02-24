@@ -6,18 +6,33 @@
 //
 
 #import "JustLandedSession.h"
+#import "Flight.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 NSString * const LastKnownLocationDidUpdateNotification = @"LastKnownLocationUpdatedNotification";
 NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdateFailedNotification";
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Private Interface
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface JustLandedSession ()
+@interface JustLandedSession () {
+    __strong NSMutableArray *_currentlyTrackedFlights;
+    __strong CLLocation *_lastLocation;
+}
 
 @property (strong, nonatomic) CLLocationManager *_locationManager;
 
+- (NSString *)archivedFlightsPath;
+- (void)archiveCurrentlyTrackedFlights;
+- (NSMutableArray *)unarchiveTrackedFlights;
+- (void)deleteArchivedTrackedFlights;
+
 @end
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Begin Implementation
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation JustLandedSession
 
@@ -37,6 +52,95 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 }
 
 
+- (id)init {
+    self = [super init];
+    
+    if (self) {
+        // Checks file archive to recover any flights we were tracking on a previous run
+        _currentlyTrackedFlights = [self unarchiveTrackedFlights];
+ 
+        if (_currentlyTrackedFlights == nil) {
+            _currentlyTrackedFlights = [[NSMutableArray alloc] init];
+        }
+
+        // Re-archive tracked flights whenever resigning active or going to the background
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(archiveCurrentlyTrackedFlights) 
+                                                     name:UIApplicationWillResignActiveNotification 
+                                                   object:[UIApplication sharedApplication]];
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(archiveCurrentlyTrackedFlights) 
+                                                     name:UIApplicationDidEnterBackgroundNotification 
+                                                   object:[UIApplication sharedApplication]];
+    }
+    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Currently Tracked Flights & Archiving Flights
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (NSArray *)currentlyTrackedFlights {
+    return [NSArray arrayWithArray:_currentlyTrackedFlights];
+}
+
+
+- (void)addTrackedFlight:(Flight *)aFlight {
+    if (![_currentlyTrackedFlights containsObject:aFlight]) { // Don't allow duplicates
+        [_currentlyTrackedFlights addObject:aFlight];
+    
+        // Re-archive whenever a new flight is added
+        [self archiveCurrentlyTrackedFlights];
+    }
+}
+
+
+- (void)removeTrackedFlight:(Flight *)aFlight {
+    [_currentlyTrackedFlights removeObject:aFlight];
+    
+    // Re-archive whenever a flight is removed
+    [self archiveCurrentlyTrackedFlights];
+}
+
+
+- (NSString *)archivedFlightsPath {
+    NSFileManager *mgr = [NSFileManager defaultManager];
+    NSArray *urls = [mgr URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
+    NSURL *cacheDirURL = nil;
+    
+    @try {
+        cacheDirURL = [urls objectAtIndex:0];
+    }
+    @catch (NSException *exception) {
+        return nil;
+    }
+    
+    NSURL *archivedFlightsURL = [cacheDirURL URLByAppendingPathComponent:ARCHIVED_FLIGHTS_FILE];
+    return [archivedFlightsURL path];
+}
+
+
+- (void)archiveCurrentlyTrackedFlights {
+    if (_currentlyTrackedFlights) {
+        [NSKeyedArchiver archiveRootObject:_currentlyTrackedFlights toFile:[self archivedFlightsPath]];
+    }
+}
+
+
+- (NSMutableArray *)unarchiveTrackedFlights {
+    return [NSKeyedUnarchiver unarchiveObjectWithFile:[self archivedFlightsPath]];
+}
+
+
+- (void)deleteArchivedTrackedFlights {
+    NSFileManager *mgr = [NSFileManager defaultManager];
+    [mgr removeItemAtPath:[self archivedFlightsPath] error:nil]; 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Location Services & CLLocationManagerDelegate Methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 - (void)startLocationServices {
     //Create the location manager if needed
 	if (!self._locationManager) {
@@ -48,14 +152,72 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 		self._locationManager = locMgr;
 	}
     
-	[self._locationManager startUpdatingLocation];   
+	[self._locationManager startMonitoringSignificantLocationChanges];   
 }
 
 
 - (void)stopLocationServices {
-	[self._locationManager stopUpdatingLocation];
+	[self._locationManager stopMonitoringSignificantLocationChanges];
 }
 
+
+- (CLLocation *)lastKnownLocation {
+    if (!self._locationManager) {
+        [self startLocationServices];
+        return nil;
+    }
+    
+    return _lastLocation;
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {	
+	//Notify observers that the location has been updated
+    _lastLocation = newLocation;
+	NSDictionary *dict = [NSDictionary dictionaryWithObject:newLocation forKey:@"location"];
+	[[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidUpdateNotification 
+                                                        object:self 
+                                                      userInfo:dict];
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+	[self._locationManager stopUpdatingLocation];
+    [[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidFailToUpdateNotification 
+                                                        object:self];
+}
+
+
+- (void)playSound:(JustLandedSoundType)type {
+    NSString *soundPath = nil;
+    
+    switch (type) {
+        case TakeOffSound:
+            soundPath = [[NSBundle mainBundle] pathForResource:@"takeoff" ofType:@"caf"];
+            break;
+        case LandingSound:
+            soundPath = [[NSBundle mainBundle] pathForResource:@"landing" ofType:@"caf"];
+            break;
+        default:
+            soundPath = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"caf"];              
+            break;
+    }
+    
+    SystemSoundID soundID;
+    
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath: soundPath], &soundID);
+    AudioServicesPlaySystemSound (soundID);
+}
+
+
+- (void)vibrateDevice {
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Push Notifications
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (NSString *)UUID {
     NSString *currentUUID = [[NSUserDefaults standardUserDefaults] objectForKey:UUIDKey];
@@ -85,57 +247,9 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark Custom Accessors / Mutators
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-- (CLLocation *)lastKnownLocation {
-    //If we don't have their last location, or it is too old, update it
-    if (_locationManager.location == nil || 
-        [[NSDate date] timeIntervalSinceDate:_locationManager.location.timestamp] > DesiredLocationFreshness) {
-		[self startLocationServices];
-        return nil;
-    }
-    
-    //Return whatever we have
-    return _locationManager.location;
-}
-
-
 - (BOOL)pushEnabled {
     // Returns true if alerts are allowed - minimum to consider push enabled for the app (badge & sound not required)
-    return [[UIApplication sharedApplication] enabledRemoteNotificationTypes] & UIRemoteNotificationTypeAlert;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark CLLocationManagerDelegate Methods
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {	
-	if ([[NSDate date] timeIntervalSinceDate:newLocation.timestamp] > DesiredLocationFreshness) {
-        //The location is stale, throw it out
-        return;
-    }
-	
-	//Notify observers that the location has been updated
-	NSDictionary *dict = [NSDictionary dictionaryWithObject:newLocation forKey:@"location"];
-	[[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidUpdateNotification 
-                                                        object:self 
-                                                      userInfo:dict];
-	
-    [self._locationManager stopUpdatingLocation];
-}
-
-
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-	[self._locationManager stopUpdatingLocation];
-    [[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidFailToUpdateNotification 
-                                                        object:self];
+    return ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] & UIRemoteNotificationTypeAlert) && pushToken;
 }
 
 @end

@@ -18,20 +18,25 @@ NSString * const DidTrackFlightNotification = @"DidTrackFlightNotification";
 NSString * const FlightTrackFailedNotification = @"FlightTrackFailedNotification";
 NSString * const FlightTrackFailedReasonKey = @"FlightTrackFailedReasonKey";
 
+NSString * const WillStopTrackingFlightNotification = @"WillStopTrackingFlightNotification";
+NSString * const DidStopTrackingFlightNotification = @"DidStopTrackingFlightNotification";
+NSString * const StopTrackingFlightFailedNotification = @"StopTrackingFlightFailedNotification";
+NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface Flight () 
+@interface Flight () {
+    __strong NSDate *_scheduledArrivalTime;
+    __strong NSDate *_lastTracked;
+}
 
-@property (nonatomic) BOOL _didBeginTracking;
-@property (strong, nonatomic) NSDate *_lastTracked;
-
-+ (NSString *)lookupPath:(NSString *)flightNumber;
-- (NSString *)trackPath;
-- (NSString *)stopTrackingPath;
++ (void)failToLookupWithReason:(FlightLookupFailedReason)reason;
 - (void)updateWithFlightInfo:(NSDictionary *)info;
-        
+- (void)failToTrackWithReason:(FlightTrackFailedReason)reason;
+- (BOOL)hasDeliveredAlertType:(LeaveForAirportReminderType)type;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,28 +45,28 @@ NSString * const FlightTrackFailedReasonKey = @"FlightTrackFailedReasonKey";
 
 @implementation Flight
 
-@synthesize actualArrivalTime;
-@synthesize actualDepartureTime;
-@synthesize destination;
-@synthesize detailedStatus;
-@synthesize _didBeginTracking;
-@synthesize estimatedArrivalTime;
 @synthesize flightID;
 @synthesize flightNumber;
-@synthesize _lastTracked;
+
+@synthesize actualArrivalTime;
+@synthesize actualDepartureTime;
+@synthesize estimatedArrivalTime;
+@synthesize scheduledDepartureTime;
+@synthesize scheduledArrivalTime=_scheduledArrivalTime;
 @synthesize lastUpdated;
 @synthesize leaveForAirporTime;
-@synthesize leaveForAirportRecommendation;
+@synthesize scheduledFlightDuration;
+
 @synthesize origin;
-@synthesize scheduledDepartureTime;
-@synthesize scheduledFlightTime;
+@synthesize destination;
+
 @synthesize status;
+@synthesize detailedStatus;
+
+@synthesize lastTracked=_lastTracked;
+@synthesize deliveredAlerts;
 
 static NSArray *_statuses;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Class Methods
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 + (void)initialize {
 	if (self == [Flight class]) {
@@ -77,14 +82,53 @@ static NSArray *_statuses;
 }
 
 
+- (id)initWithFlightInfo:(NSDictionary *)info {
+    self = [super init];
+    
+    if (self) {
+        self.deliveredAlerts = [[NSMutableArray alloc] init];
+        [self updateWithFlightInfo:info];
+    }
+    return self;
+}
+
+
+- (void)updateWithFlightInfo:(NSDictionary *)info {
+    // Process flight ID and number
+    self.flightID = [info valueForKeyOrNil:@"flightID"];
+    self.flightNumber = [info valueForKeyOrNil:@"flightNumber"];
+    
+    // Process and set all the flight date and time information
+    self.actualArrivalTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"actualArrivalTime"] returnNilForZero:YES];
+    self.actualDepartureTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"actualDepartureTime"] returnNilForZero:YES];
+    self.estimatedArrivalTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"estimatedArrivalTime"] returnNilForZero:YES];
+    self.scheduledDepartureTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"scheduledDepartureTime"] returnNilForZero:YES];
+    self.lastUpdated = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"lastUpdated"] returnNilForZero:YES];
+    self.leaveForAirporTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"leaveForAirportTime"] returnNilForZero:YES];
+    self.scheduledFlightDuration = [[info valueForKeyOrNil:@"scheduledFlightDuration"] doubleValue];
+    _scheduledArrivalTime = [NSDate dateWithTimeInterval:scheduledFlightDuration sinceDate:scheduledDepartureTime];
+    
+    // Process origin and destination
+    self.origin = [[OriginAirport alloc] initWithAirportInfo:[info valueForKeyOrNil:@"origin"]];
+    self.destination = [[DestinationAirport alloc] initWithAirportInfo:[info valueForKeyOrNil:@"destination"]];
+    
+    // Process status
+    NSUInteger parsed_status = [_statuses indexOfObject:[info valueForKeyOrNil:@"status"]];
+    self.status = (parsed_status == NSNotFound) ? UNKNOWN : parsed_status;
+    self.detailedStatus = [info valueForKeyOrNil:@"detailedStatus"];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Flight Lookup
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 + (void)lookupFlights:(NSString *)aFlightNumber {
     [[NSNotificationCenter defaultCenter] postNotificationName:WillLookupFlightNotification object:nil];
     
-    // TODO: Check if flight number valid
+    NSString *lookupPath = [JustLandedAPIClient lookupPathWithFlightNumber:aFlightNumber];
     
-    NSString *lookupPath = [self lookupPath:aFlightNumber];
-    
-    [[JustLandedAPIClient sharedClient] getPath:lookupPath 
+    [[JustLandedAPIClient sharedClient] 
+            getPath:lookupPath 
          parameters:nil 
             success:^(AFHTTPRequestOperation *operation, id JSON){                
                 if (JSON && [JSON isKindOfClass:[NSArray class]]) {
@@ -108,231 +152,343 @@ static NSArray *_statuses;
             }
             failure:^(AFHTTPRequestOperation *operation, NSError *error) {                
                 NSHTTPURLResponse *response = [operation response];
-                
                 if (response) {
-                    NSMutableDictionary *reasonDict = [[NSMutableDictionary alloc] init];
-                    
                     switch ([response statusCode]) {
                         case 400:
                             // Invalid flight number
-                            [reasonDict setValue:[NSNumber numberWithInt:LookupFailureInvalidFlightNumber]
-                                          forKey:FlightLookupFailedReasonKey];
+                            [self failToLookupWithReason:LookupFailureInvalidFlightNumber];
                             break;
                         case 404:
                             // Flight not found
-                            [reasonDict setValue:[NSNumber numberWithInt:LookupFailureFlightNotFound]
-                                          forKey:FlightLookupFailedReasonKey];
+                            [self failToLookupWithReason:LookupFailureFlightNotFound];
                             break;
                         default:
                             break;
                     }
-                    
-                    [[NSNotificationCenter defaultCenter] postNotificationName:FlightLookupFailedNotification 
-                                                                        object:nil 
-                                                                      userInfo:reasonDict];
                 }
                 else {
-                    // TODO: Handle connection problem
+                    // Handle connection problem
+                    [self failToLookupWithReason:LookupFailureNoConnection];
                 }
             }];
 }
 
 
-+ (NSString *)lookupPath:(NSString *)flightNumber {
-    return [[NSString stringWithFormat:LOOKUP_URL_FORMAT, flightNumber] 
-            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];;
++ (void)failToLookupWithReason:(FlightLookupFailedReason)reason {
+    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:reason] 
+                                                           forKey:FlightLookupFailedReasonKey];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:FlightLookupFailedNotification 
+                                                        object:nil 
+                                                      userInfo:reasonDict];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Instance Methods
+#pragma mark - Flight Tracking
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (id)initWithFlightInfo:(NSDictionary *)info {
-    self = [super init];
-    
-    if (self && info) {
-        [self updateWithFlightInfo:info];
-    }
-    return self;
-}
-
-
-- (void)updateWithFlightInfo:(NSDictionary *)info {
-    // Process and set all the flight information
-    self.actualArrivalTime = [[info valueForKeyOrNil:@"actualArrivalTime"] integerValue] > 0 ?
-        [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"actualArrivalTime"]] : nil;
-    
-    self.actualDepartureTime = [[info valueForKeyOrNil:@"actualDepartureTime"] integerValue] > 0 ?
-        [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"actualDepartureTime"]] : nil;
-    
-    // Setup destination & origin
-    self.destination = [[Airport alloc] initWithAirportInfo:[info valueForKeyOrNil:@"destination"]];
-    self.destination.isDestination = YES;
-    self.origin = [[Airport alloc] initWithAirportInfo:[info valueForKeyOrNil:@"origin"]];
-    
-    self.detailedStatus = [info valueForKeyOrNil:@"detailedStatus"];
-    
-    self.estimatedArrivalTime = [[info valueForKeyOrNil:@"estimatedArrivalTime"] integerValue] > 0 ?
-        [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"estimatedArrivalTime"]] : nil;
-    
-    self.flightID = [info valueForKeyOrNil:@"flightID"];
-    self.flightNumber = [info valueForKeyOrNil:@"flightNumber"];
-    
-    self.lastUpdated = [[info valueForKeyOrNil:@"lastUpdated"] integerValue] > 0 ?
-        [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"lastUpdated"]] : nil;
-    
-    self.leaveForAirporTime = [[info valueForKeyOrNil:@"leaveForAirportTime"] integerValue] > 0 ?
-        [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"leaveForAirportTime"]] : nil;
-    
-    self.leaveForAirportRecommendation = [info valueForKeyOrNil:@"leaveForAirportRecommendation"];
-    
-    self.scheduledDepartureTime = [[info valueForKeyOrNil:@"scheduledDepartureTime"] integerValue] > 0 ?
-        [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"scheduledDepartureTime"]] : nil;
-    
-    self.scheduledFlightTime = [[info valueForKeyOrNil:@"scheduledFlightTime"] doubleValue];
-    
-    NSUInteger parsed_status = [_statuses indexOfObject:[info valueForKeyOrNil:@"status"]];
-    if (parsed_status == NSNotFound) {
-        self.status = UNKNOWN;
-    }
-    else {
-        self.status = parsed_status;
-    }
-}
-
 
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag {
     [[NSNotificationCenter defaultCenter] postNotificationName:WillTrackFlightNotification object:self];
     
-    NSString *trackingPath = [self trackPath];
+    NSString *trackingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
     NSDictionary *trackingParams = nil;
     
     if (loc) {
         trackingParams = [[NSDictionary alloc] initWithObjectsAndKeys:
                           [NSNumber numberWithFloat:loc.coordinate.latitude], @"latitude",
                           [NSNumber numberWithFloat:loc.coordinate.longitude], @"longitude", 
-                          [NSNumber numberWithBool:self._didBeginTracking], @"begin_tracking",
-                          [NSNumber numberWithBool:pushFlag], @"push", nil]; 
+                          [[JustLandedSession sharedSession] pushToken], @"push_token", nil]; 
     }
     else {
         trackingParams = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          [NSNumber numberWithBool:!self._didBeginTracking], @"begin_tracking",
-                          [NSNumber numberWithBool:pushFlag], @"push", nil]; 
+                          [[JustLandedSession sharedSession] pushToken], @"push_token", nil]; 
     }
     
-    [[JustLandedAPIClient sharedClient] getPath:trackingPath 
+    [[JustLandedAPIClient sharedClient] 
+            getPath:trackingPath 
          parameters:trackingParams 
             success:^(AFHTTPRequestOperation *operation, id JSON){
-                // TODO: Implement me
                 if (JSON && [JSON isKindOfClass:[NSDictionary class]]) {
                     NSDictionary *flightInfo = (NSDictionary *)JSON;
                     [self updateWithFlightInfo:flightInfo];
-                    
-                    // beginTracking flag is set only once for this instance
-                    if (!self._didBeginTracking) {
-                        self._didBeginTracking = YES;
-                    }
-                    
-                    self._lastTracked = [NSDate date];
+                    _lastTracked = [NSDate date];
                     
                     [[NSNotificationCenter defaultCenter] postNotificationName:DidTrackFlightNotification object:self];
                 }
             }
             failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 NSHTTPURLResponse *response = [operation response];
-                NSMutableDictionary *reasonDict = [[NSMutableDictionary alloc] init];
                 
                 if (response) {
                     switch ([response statusCode]) {
                         case 400:
                             // Invalid flight number
-                            [reasonDict setValue:[NSNumber numberWithInt:TrackFailureInvalidFlightNumber] 
-                                                                  forKey:FlightLookupFailedReasonKey];
+                            [self failToTrackWithReason:TrackFailureInvalidFlightNumber];
                             break;
                         case 404:
                             // Flight not found
-                            [reasonDict setValue:[NSNumber numberWithInt:TrackFailureFlightNotFound] 
-                                          forKey:FlightLookupFailedReasonKey];
+                            [self failToTrackWithReason:TrackFailureFlightNotFound];
                             break;
                         case 410:
                             // Old flight
-                            [reasonDict setValue:[NSNumber numberWithInt:TrackFailureOldFlight] 
-                                          forKey:FlightLookupFailedReasonKey];
+                            [self failToTrackWithReason:TrackFailureOldFlight];
                             break;
                         default:
                             break;
                     }
-                    
-                    [[NSNotificationCenter defaultCenter] postNotificationName:FlightTrackFailedNotification 
-                                                                        object:self
-                                                                      userInfo:reasonDict];
                 }
                 else {
-                    // TODO: Deal with no connection
+                    // Deal with no connection
+                    [self failToTrackWithReason:TrackFailureNoConnection];
                 }
             }];
 }
 
 
+- (void)failToTrackWithReason:(FlightTrackFailedReason)reason {
+    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:reason] 
+                                                           forKey:FlightTrackFailedReasonKey];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:FlightTrackFailedNotification 
+                                                        object:self 
+                                                      userInfo:reasonDict];
+}
+
+
 - (void)stopTracking {
-    // TODO: Implement me
+    [[NSNotificationCenter defaultCenter] postNotificationName:WillStopTrackingFlightNotification object:self];
+    
+    NSString *stopTrackingPath = [JustLandedAPIClient stopTrackingPathWithFlightID:flightID];
+    
+    [[JustLandedAPIClient sharedClient] 
+     getPath:stopTrackingPath 
+     parameters:nil 
+     success:^(AFHTTPRequestOperation *operation, id JSON) {
+         // TODO: Implement me  
+     }
+     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         // TODO: Implement me   
+     }];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Leave Alerts
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)createOrUpdateLeaveAlerts {
+    // Only create or update if we have an estimate of when to leave. In the case that we couldn't get their location,
+    // we want any existing alerts for this flight to remain as a fallback if we were able to get their location earlier.
+    if (leaveForAirporTime) {
+        
+        // Cancel any existing leave alerts for this flight
+        [self cancelLeaveAlerts];
+        
+        // Try to give the airport name, if we can't fallback to IATA code and then ICAO code
+        NSString *airportNameOrCode = (self.destination.name) ? self.destination.name :
+        ((self.destination.iataCode) ? self.destination.iataCode :
+         self.destination.icaoCode);
+        
+        // Set a 15 minute reminder if appropriate
+        if (![self hasDeliveredAlertType:LeaveInFifteenMinutesReminder] && // Haven't fire a 15 min reminder yet
+            ![self hasDeliveredAlertType:LeaveNowReminder] && // Haven't fired a leave now reminder yet (would be confusing!)
+            [self.leaveForAirporTime timeIntervalSinceNow] >= 900.0) { // Leave time is at least 15 min in the future
+            UILocalNotification *fifteenMinAlert = [[UILocalNotification alloc] init];
+            
+            if (self.destination.terminal) {
+                fifteenMinAlert.alertBody = [NSString stringWithFormat:@"Leave for %@ in 15 min. Flight %@ arrives at terminal %@.",
+                                      airportNameOrCode,
+                                      self.flightNumber,
+                                      self.destination.terminal];
+                
+            }
+            else {
+                fifteenMinAlert.alertBody = [NSString stringWithFormat:@"Leave for %@ in 15 min. Flight %@ arrives soon.",
+                                      airportNameOrCode,
+                                      self.flightNumber];
+            }
+            
+            fifteenMinAlert.fireDate = [NSDate dateWithTimeInterval:-900.0 sinceDate:leaveForAirporTime];
+            
+            // TODO: Custom leave sound
+            fifteenMinAlert.soundName = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"caf"];
+            
+            // Add some information to the alert so we can find it later
+            fifteenMinAlert.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:flightID, @"flightID",
+                                        [NSNumber numberWithInt:LeaveInFifteenMinutesReminder], @"reminderType", nil];
+            [[UIApplication sharedApplication] scheduleLocalNotification:fifteenMinAlert];
+        }
+        
+        // Set a leave now reminder if appropriate (if we haven't fired it yet)
+        if (![self hasDeliveredAlertType:LeaveNowReminder]) {
+            UILocalNotification *leaveNowAlert = [[UILocalNotification alloc] init];
+            
+            if (self.destination.terminal) {
+                leaveNowAlert.alertBody = [NSString stringWithFormat:@"Leave now for %@. Flight %@ arrives at terminal %@.",
+                                             airportNameOrCode,
+                                             self.flightNumber,
+                                             self.destination.terminal];
+                
+            }
+            else {
+                leaveNowAlert.alertBody = [NSString stringWithFormat:@"Leave now for %@. Flight %@ arrives soon.",
+                                             airportNameOrCode,
+                                             self.flightNumber];
+            }
+            
+            leaveNowAlert.fireDate = leaveForAirporTime;
+            
+            // TODO: Custom leave sound
+            leaveNowAlert.soundName = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"caf"];
+            
+            // Add some information to the alert so we can find it later
+            leaveNowAlert.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:flightID, @"flightID",
+                                        [NSNumber numberWithInt:LeaveNowReminder], @"reminderType", nil];
+            [[UIApplication sharedApplication] scheduleLocalNotification:leaveNowAlert];
+        }
+    }
 }
 
 
-- (NSDate *)lastTracked {
-    return self._lastTracked;
+- (void)cancelLeaveAlerts {
+    NSArray *alerts = [[UIApplication sharedApplication] scheduledLocalNotifications];
+    
+    for (UILocalNotification *alert in alerts) {
+        if ([self matchesAlert:alert]) {
+            [[UIApplication sharedApplication] cancelLocalNotification:alert];
+        }
+    }
 }
 
 
-- (NSDate *)scheduledArrivalTime {
-    return [NSDate dateWithTimeInterval:self.scheduledFlightTime sinceDate:self.scheduledDepartureTime];
+- (BOOL)matchesAlert:(UILocalNotification *)alert {
+    return [self.flightID isEqualToString:[[alert userInfo] valueForKeyOrNil:@"flightID"]];
 }
 
 
-- (NSString *)trackPath {
-    return [[NSString stringWithFormat:TRACK_URL_FORMAT, self.flightNumber, self.flightID] stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+- (BOOL)hasDeliveredAlertType:(LeaveForAirportReminderType)type {
+    for (UILocalNotification *alert in deliveredAlerts) {
+        if ([[[alert userInfo] valueForKey:@"reminderType"] integerValue] == type) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Conforming to NSCoding
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    
+    if (self) {
+        // For each instance variable that is archived, we decode it
+        self.flightID = [aDecoder decodeObjectForKey:@"flightID"];
+        self.flightNumber = [aDecoder decodeObjectForKey:@"flightNumber"];
+        
+        self.actualArrivalTime = [aDecoder decodeObjectForKey:@"actualArrivalTime"];
+        self.actualDepartureTime = [aDecoder decodeObjectForKey:@"actualDepartureTime"];
+        self.estimatedArrivalTime = [aDecoder decodeObjectForKey:@"estimatedArrivalTime"];
+        self.scheduledDepartureTime = [aDecoder decodeObjectForKey:@"scheduledDepartureTime"];
+        _scheduledArrivalTime = [aDecoder decodeObjectForKey:@"scheduledArrivalTime"];
+        self.lastUpdated = [aDecoder decodeObjectForKey:@"lastUpdated"];
+        self.leaveForAirporTime = [aDecoder decodeObjectForKey:@"leaveForAirportTime"];
+        self.scheduledFlightDuration = [aDecoder decodeDoubleForKey:@"scheduledFlightDuration"];
+        
+        self.origin = [aDecoder decodeObjectForKey:@"origin"];
+        self.destination = [aDecoder decodeObjectForKey:@"destination"];
+        
+        self.status = [aDecoder decodeIntegerForKey:@"status"];
+        self.detailedStatus = [aDecoder decodeObjectForKey:@"detailedStatus"];
+        
+        _lastTracked = [aDecoder decodeObjectForKey:@"_lastTracked"];
+        self.deliveredAlerts = [aDecoder decodeObjectForKey:@"deliveredAlerts"];
+    }
+    
+    return self;
 }
 
 
-- (NSString *)stopTrackingPath {
-    return [[NSString stringWithFormat:UNTRACK_URL_FORMAT, self.flightID]
-            stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    // Archive each instance variable under its variable name
+    [aCoder encodeObject:flightID forKey:@"flightID"];
+    [aCoder encodeObject:flightNumber forKey:@"flightNumber"];
+    
+    [aCoder encodeObject:actualArrivalTime forKey:@"actualArrivalTime"];
+    [aCoder encodeObject:actualDepartureTime forKey:@"actualDepartureTime"];
+    [aCoder encodeObject:estimatedArrivalTime forKey:@"estimatedArrivalTime"];
+    [aCoder encodeObject:scheduledDepartureTime forKey:@"scheduledDepartureTime"];
+    [aCoder encodeObject:_scheduledArrivalTime forKey:@"scheduledArrivalTime"];
+    [aCoder encodeObject:lastUpdated forKey:@"lastUpdated"];
+    [aCoder encodeObject:leaveForAirporTime forKey:@"leaveForAirportTime"];
+    [aCoder encodeDouble:scheduledFlightDuration forKey:@"scheduledFlightDuration"];
+    
+    [aCoder encodeObject:origin forKey:@"origin"];
+    [aCoder encodeObject:destination forKey:@"destination"];
+    
+    [aCoder encodeInteger:status forKey:@"status"];
+    [aCoder encodeObject:detailedStatus forKey:@"detailedStatus"];
+    
+    [aCoder encodeObject:_lastTracked forKey:@"_lastTracked"];
+    [aCoder encodeObject:deliveredAlerts forKey:@"deliveredAlerts"];
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Superclass overrides
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL)isEqual:(id)object {
+    // Want to be able to test equality of Flights by their data - they must match on all properties
+    
+    if ([object isKindOfClass:[self class]]) {
+        Flight *aFlight = (Flight *)object;
+        return ([flightID isEqualToString:aFlight.flightID] &&
+                [flightNumber isEqualToString:aFlight.flightNumber] &&
+                
+                [actualArrivalTime isEqualToDate:aFlight.actualArrivalTime] &&
+                [actualDepartureTime isEqualToDate:aFlight.actualDepartureTime] &&
+                [estimatedArrivalTime isEqualToDate:aFlight.estimatedArrivalTime] &&
+                [scheduledDepartureTime isEqualToDate:aFlight.scheduledDepartureTime] &&
+                [_scheduledArrivalTime isEqualToDate:aFlight.scheduledArrivalTime] &&
+                [lastUpdated isEqualToDate:aFlight.lastUpdated] &&
+                [leaveForAirporTime isEqualToDate:aFlight.leaveForAirporTime] &&
+                scheduledFlightDuration == aFlight.scheduledFlightDuration &&
+                
+                [origin isEqual:aFlight.origin] &&
+                [destination isEqual:aFlight.destination] &&
+                
+                status == aFlight.status &&
+                [detailedStatus isEqualToString:aFlight.detailedStatus] &&
+                
+                [_lastTracked isEqualToDate:aFlight.lastTracked] &&
+                [deliveredAlerts isEqualToArray:aFlight.deliveredAlerts]);
+    }
+    else {
+        return NO;
+    }
+}
 
 - (NSString *)description {
-    // Primarily for debugging purposes so we can log/print Flights
+    // Be able to nicely print a flight with only the information sent by the server
     NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          self.actualArrivalTime ? self.actualArrivalTime : [NSNull null], 
-                          @"actualArrivalTime",
-                          self.actualDepartureTime ? self.actualDepartureTime : [NSNull null], 
-                          @"actualDepartureTime",
-                          self.destination ? [self.destination toDict] : [NSNull null], 
-                          @"destination",
-                          self.detailedStatus ? self.detailedStatus : [NSNull null],
-                          @"detailedStatus",
-                          self.estimatedArrivalTime ? self.estimatedArrivalTime : [NSNull null], 
-                          @"estimatedArrivalTime",
-                          self.flightID ? self.flightID : [NSNull null], 
-                          @"flightID",
-                          self.flightNumber ? self.flightNumber : [NSNull null],
-                          @"flightNumber",
-                          self.lastUpdated ? self.lastUpdated : [NSNull null],
-                          @"lastUpdated",
-                          self.leaveForAirporTime ? self.leaveForAirporTime : [NSNull null], 
-                          @"leaveForAirportTime",
-                          self.leaveForAirportRecommendation ? self.leaveForAirportRecommendation : [NSNull null], 
-                          @"leaveForAirportRecommendation",
-                          self.origin ? [self.origin toDict] : [NSNull null],
-                          @"origin",
-                          self.scheduledDepartureTime ? self.scheduledDepartureTime : [NSNull null],
-                          @"scheduledDepartureTime",
-                          [NSNumber numberWithDouble:self.scheduledFlightTime],
-                          @"scheduledFlightTime",
-                          [_statuses objectAtIndex:self.status],
-                          @"status", nil];
+                          flightID ? flightID : [NSNull null], @"flightID",
+                          flightNumber ? flightNumber : [NSNull null], @"flightNumber",
+                          
+                          actualArrivalTime ? actualArrivalTime : [NSNull null], @"actualArrivalTime",
+                          actualDepartureTime ? actualDepartureTime : [NSNull null], @"actualDepartureTime",
+                          estimatedArrivalTime ? estimatedArrivalTime : [NSNull null], @"estimatedArrivalTime",
+                          scheduledDepartureTime ? scheduledDepartureTime : [NSNull null], @"scheduledDepartureTime",
+                          lastUpdated ? lastUpdated : [NSNull null], @"lastUpdated",
+                          leaveForAirporTime ? leaveForAirporTime : [NSNull null], @"leaveForAirportTime",
+                          [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
+                          
+                          origin ? [origin toDict] : [NSNull null], @"origin",
+                          destination ? [destination toDict] : [NSNull null], @"destination",
+                          
+                          [_statuses objectAtIndex:status], @"status",
+                          detailedStatus ? detailedStatus : [NSNull null], @"detailedStatus", nil];
     return [info description];
 }
-
 
 @end
