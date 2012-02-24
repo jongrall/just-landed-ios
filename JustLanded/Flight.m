@@ -310,7 +310,7 @@ static NSArray *_statuses;
             fifteenMinAlert.fireDate = [NSDate dateWithTimeInterval:-900.0 sinceDate:leaveForAirporTime];
             
             // TODO: Custom leave sound
-            fifteenMinAlert.soundName = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"caf"];
+            fifteenMinAlert.soundName = @"announcement.caf";
             
             // Add some information to the alert so we can find it later
             fifteenMinAlert.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:flightID, @"flightID",
@@ -338,7 +338,7 @@ static NSArray *_statuses;
             leaveNowAlert.fireDate = leaveForAirporTime;
             
             // TODO: Custom leave sound
-            leaveNowAlert.soundName = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"caf"];
+            leaveNowAlert.soundName = @"announcement.caf";
             
             // Add some information to the alert so we can find it later
             leaveNowAlert.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:flightID, @"flightID",
