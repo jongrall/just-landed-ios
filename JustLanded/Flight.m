@@ -264,10 +264,12 @@ static NSArray *_statuses;
      getPath:stopTrackingPath 
      parameters:nil 
      success:^(AFHTTPRequestOperation *operation, id JSON) {
-         // TODO: Implement me  
+         // TODO: Implement me
+         [[NSNotificationCenter defaultCenter] postNotificationName:DidStopTrackingFlightNotification object:self];
      }
      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         // TODO: Implement me   
+         // TODO: Implement me
+         [[NSNotificationCenter defaultCenter] postNotificationName:StopTrackingFlightFailedNotification object:self];
      }];
 }
 
@@ -294,12 +296,19 @@ static NSArray *_statuses;
             [self.leaveForAirporTime timeIntervalSinceNow] >= 900.0) { // Leave time is at least 15 min in the future
             UILocalNotification *fifteenMinAlert = [[UILocalNotification alloc] init];
             
-            if (self.destination.terminal) {
-                fifteenMinAlert.alertBody = [NSString stringWithFormat:@"Leave for %@ in 15 min. Flight %@ arrives at terminal %@.",
-                                      airportNameOrCode,
-                                      self.flightNumber,
-                                      self.destination.terminal];
-                
+            if ([self.destination.terminal length] > 0) {
+                // Special treatment for international terminals
+                if ([[self.destination.terminal uppercaseString] isEqualToString:@"I"]) {
+                    fifteenMinAlert.alertBody = [NSString stringWithFormat:@"Leave for %@ in 15 min. Flight %@ arrives at the international terminal.",
+                                                 airportNameOrCode,
+                                                 self.flightNumber];
+                }
+                else {
+                    fifteenMinAlert.alertBody = [NSString stringWithFormat:@"Leave for %@ in 15 min. Flight %@ arrives at terminal %@.",
+                                                 airportNameOrCode,
+                                                 self.flightNumber,
+                                                 self.destination.terminal];
+                }
             }
             else {
                 fifteenMinAlert.alertBody = [NSString stringWithFormat:@"Leave for %@ in 15 min. Flight %@ arrives soon.",
@@ -322,12 +331,18 @@ static NSArray *_statuses;
         if (![self hasDeliveredAlertType:LeaveNowReminder]) {
             UILocalNotification *leaveNowAlert = [[UILocalNotification alloc] init];
             
-            if (self.destination.terminal) {
-                leaveNowAlert.alertBody = [NSString stringWithFormat:@"Leave now for %@. Flight %@ arrives at terminal %@.",
-                                             airportNameOrCode,
-                                             self.flightNumber,
-                                             self.destination.terminal];
-                
+            if ([self.destination.terminal length] > 0) {
+                if ([self.destination.terminal isEqualToString:@"I"]) {
+                    leaveNowAlert.alertBody = [NSString stringWithFormat:@"Leave now for %@. Flight %@ arrives at the international terminal.",
+                                               airportNameOrCode,
+                                               self.flightNumber];
+                }
+                else {
+                    leaveNowAlert.alertBody = [NSString stringWithFormat:@"Leave now for %@. Flight %@ arrives at terminal %@.",
+                                               airportNameOrCode,
+                                               self.flightNumber,
+                                               self.destination.terminal];
+                }
             }
             else {
                 leaveNowAlert.alertBody = [NSString stringWithFormat:@"Leave now for %@. Flight %@ arrives soon.",

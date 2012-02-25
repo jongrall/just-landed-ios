@@ -17,7 +17,7 @@ NSString * const UUIDKey = @"UUIDKeyLocal";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightLocal.data";
 #else
 NSString * const UUIDKey = @"UUIDKey";
-NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data"
+NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data"
 #if defined(LOCAL)
 NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1/";
 #else
-NSString * const BASE_URL = @"http://just-landed.appspot. com/api/v1/";
+NSString * const BASE_URL = @"http://just-landed.appspot.com/api/v1/";
 #endif
 
 NSString * const LOOKUP_URL_FORMAT = @"search/%@";
