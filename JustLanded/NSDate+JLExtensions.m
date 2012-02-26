@@ -57,15 +57,15 @@ static NSDateFormatter *_naturalDateFormatter;
 		BOOL tomorrow = [date timeIntervalSinceDate:todayAtMidnight] >= 86400.0 && [date timeIntervalSinceDate:todayAtMidnight] < 172800.0;
 		
 		if (yesterday) {
-			return [NSString stringWithFormat:NSLocalizedString(@"Yesterday at %@", @"Yesterday at 3:24pm"), 
+			return [NSString stringWithFormat:NSLocalizedString(@"yesterday at %@", @"yesterday at 3:24pm"), 
 					[NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle]];
 		}
 		else if (today) {
-			return [NSString stringWithFormat:NSLocalizedString(@"Today at %@", @"Today at 3:24pm"), 
+			return [NSString stringWithFormat:NSLocalizedString(@"today at %@", @"today at 3:24pm"), 
 					[NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle]];
 		}
 		else if (tomorrow) {
-			return [NSString stringWithFormat:NSLocalizedString(@"Tomorrow at %@", @"Tomorrow at 3:24pm"), 
+			return [NSString stringWithFormat:NSLocalizedString(@"tomorrow at %@", @"tomorrow at 3:24pm"), 
 					[NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle]];
 		}
 		else {

@@ -21,6 +21,7 @@
 @property (strong, nonatomic) UITextView *_textView;
 @property (strong, nonatomic) UILabel *_lastTrackedLabel;
 @property (strong, nonatomic) UIButton *_refreshButton;
+@property (strong, nonatomic) UIButton *_mapButton;
 @property (strong, nonatomic) UIButton *_lookupButton;
 @property (strong, nonatomic) UIActivityIndicatorView *_updatingSpinner;
 
@@ -45,6 +46,7 @@
 @synthesize _textView;
 @synthesize _lastTrackedLabel;
 @synthesize _refreshButton;
+@synthesize _mapButton;
 @synthesize _lookupButton;
 @synthesize _updatingSpinner;
 
@@ -183,16 +185,25 @@
     
     // Add a button to refresh
     UIButton *refreshButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    refreshButton.frame = CGRectMake(20.0f, 380.0f, 100.0f, 40.0f);
+    refreshButton.frame = CGRectMake(20.0f, 380.0f, 80.0f, 40.0f);
     refreshButton.titleLabel.textAlignment = UITextAlignmentCenter;
     [refreshButton setTitle:@"Refresh" forState:UIControlStateNormal];
     [refreshButton addTarget:self action:@selector(refresh) forControlEvents:UIControlEventTouchUpInside];
     self._refreshButton = refreshButton;
     [self.view addSubview:refreshButton];
     
+    // Add a button to get directions / show map
+    UIButton *mapButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    mapButton.frame = CGRectMake(120.0f, 380.0f, 80.0f, 40.0f);
+    mapButton.titleLabel.textAlignment = UITextAlignmentCenter;
+    [mapButton setTitle:@"Map" forState:UIControlStateNormal];
+    [mapButton addTarget:self action:@selector(showMap) forControlEvents:UIControlEventTouchUpInside];
+    self._mapButton = mapButton;
+    [self.view addSubview:mapButton];
+    
     // Add a button to lookup flights
     UIButton *lookupButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    lookupButton.frame = CGRectMake(200.0f, 380.0f, 100.0f, 40.0f);
+    lookupButton.frame = CGRectMake(220.0f, 380.0f, 80.0f, 40.0f);
     lookupButton.titleLabel.textAlignment = UITextAlignmentCenter;
     [lookupButton setTitle:@"Lookup" forState:UIControlStateNormal];
     [lookupButton addTarget:self action:@selector(stopTracking) forControlEvents:UIControlEventTouchUpInside];
@@ -245,6 +256,31 @@
 -(void)stopTracking {
     [_trackedFlight stopTracking];
     [self.delegate didFinishTracking:self];
+}
+
+
+- (void)showMap {
+    NSString *mapURL = nil;
+    NSString *destName = [_trackedFlight.destination.name length] ? _trackedFlight.destination.name :
+        [_trackedFlight.destination.iataCode length] ? _trackedFlight.destination.iataCode : 
+        _trackedFlight.destination.icaoCode;
+    destName = [destName stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+    
+    NSString *destLoc = [NSString stringWithFormat:@"%f,%f", 
+                         _trackedFlight.destination.location.coordinate.latitude,
+                         _trackedFlight.destination.location.coordinate.longitude];
+    
+    if ([[JustLandedSession sharedSession] lastKnownLocation]) {
+        mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%@&daddr=%@&layer=t&t=m",
+                  @"Current%20Location",
+                  [NSString stringWithFormat:@"%@@%@", destName, destLoc]];
+    }
+    else {
+        mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@&layer=t&t=m&z=13",
+                  [NSString stringWithFormat:@"%@@%@", destName, destLoc]]; 
+    }
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];
 }
 
 
