@@ -86,7 +86,7 @@ extern NSString * const StopTrackingFailedReasonKey;
 @property (strong, nonatomic) NSString *detailedStatus;
 
 @property (nonatomic, readonly) NSDate *lastTracked;
-@property (strong, nonatomic) NSMutableArray *deliveredAlerts;
+@property (strong, nonatomic) NSMutableArray *scheduledAlerts;
 
 + (void)lookupFlights:(NSString *)aFlightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;

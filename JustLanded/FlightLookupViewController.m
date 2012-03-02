@@ -422,6 +422,12 @@ static NSRegularExpression *_flightNumberRegex;
     self._flightNumberField.text = @"";
     [self dismissModalViewControllerAnimated:YES];
     [[JustLandedSession sharedSession] removeTrackedFlight:controller.trackedFlight];
+    
+    // If they're no longer tracking any flights, stop location services
+    if ([[[JustLandedSession sharedSession] currentlyTrackedFlights] count] == 0) {
+        [[JustLandedSession sharedSession] stopLocationServices];
+    }
+    
     [self._flightNumberField becomeFirstResponder];
 }
 

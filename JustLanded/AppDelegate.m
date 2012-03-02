@@ -59,12 +59,6 @@
     self.window.rootViewController = self.mainViewController;
     [self.window makeKeyAndVisible];
     
-    // Handle local notification on launch
-    UILocalNotification *localNotif = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
-    if (localNotif) {
-        [self handleLocalNotification:localNotif];
-    }
-    
     // Show previous flights being tracked, if any
     NSArray *prevFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
     
@@ -178,8 +172,6 @@
     
     for (Flight *f in trackedFlights) {
         if ([f matchesAlert:notification]) {
-            [f.deliveredAlerts addObject:notification];
-            
             // Update the flight information
             [f trackWithLocation:[[JustLandedSession sharedSession] lastKnownLocation] 
                      pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];

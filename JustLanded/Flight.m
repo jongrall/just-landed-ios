@@ -36,6 +36,7 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 - (void)updateWithFlightInfo:(NSDictionary *)info;
 - (void)failToTrackWithReason:(FlightTrackFailedReason)reason;
 - (BOOL)hasDeliveredAlertType:(LeaveForAirportReminderType)type;
+- (void)scheduleAlert:(UILocalNotification *)newAlert;
 
 @end
 
@@ -64,7 +65,7 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 @synthesize detailedStatus;
 
 @synthesize lastTracked=_lastTracked;
-@synthesize deliveredAlerts;
+@synthesize scheduledAlerts;
 
 static NSArray *_statuses;
 
@@ -86,7 +87,7 @@ static NSArray *_statuses;
     self = [super init];
     
     if (self) {
-        self.deliveredAlerts = [[NSMutableArray alloc] init];
+        self.scheduledAlerts = [[NSMutableArray alloc] init];
         [self updateWithFlightInfo:info];
     }
     return self;
@@ -191,17 +192,15 @@ static NSArray *_statuses;
     [[NSNotificationCenter defaultCenter] postNotificationName:WillTrackFlightNotification object:self];
     
     NSString *trackingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
-    NSDictionary *trackingParams = nil;
+    NSMutableDictionary *trackingParams = [[NSMutableDictionary alloc] init];
     
     if (loc) {
-        trackingParams = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          [NSNumber numberWithFloat:loc.coordinate.latitude], @"latitude",
-                          [NSNumber numberWithFloat:loc.coordinate.longitude], @"longitude", 
-                          [[JustLandedSession sharedSession] pushToken], @"push_token", nil]; 
+        [trackingParams setValue:[NSNumber numberWithFloat:loc.coordinate.latitude] forKey:@"latitude"];
+        [trackingParams setValue:[NSNumber numberWithFloat:loc.coordinate.longitude] forKey:@"longitude"];
     }
-    else {
-        trackingParams = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          [[JustLandedSession sharedSession] pushToken], @"push_token", nil]; 
+    
+    if (pushFlag) {
+        [trackingParams setValue:[[JustLandedSession sharedSession] pushToken] forKey:@"push_token"];
     }
     
     [[JustLandedAPIClient sharedClient] 
@@ -324,7 +323,8 @@ static NSArray *_statuses;
             // Add some information to the alert so we can find it later
             fifteenMinAlert.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:flightID, @"flightID",
                                         [NSNumber numberWithInt:LeaveInFifteenMinutesReminder], @"reminderType", nil];
-            [[UIApplication sharedApplication] scheduleLocalNotification:fifteenMinAlert];
+            
+            [self scheduleAlert:fifteenMinAlert];
         }
         
         // Set a leave now reminder if appropriate (if we haven't fired it yet)
@@ -358,7 +358,7 @@ static NSArray *_statuses;
             // Add some information to the alert so we can find it later
             leaveNowAlert.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:flightID, @"flightID",
                                         [NSNumber numberWithInt:LeaveNowReminder], @"reminderType", nil];
-            [[UIApplication sharedApplication] scheduleLocalNotification:leaveNowAlert];
+            [self scheduleAlert:leaveNowAlert];
         }
     }
 }
@@ -381,13 +381,32 @@ static NSArray *_statuses;
 
 
 - (BOOL)hasDeliveredAlertType:(LeaveForAirportReminderType)type {
-    for (UILocalNotification *alert in deliveredAlerts) {
-        if ([[[alert userInfo] valueForKey:@"reminderType"] integerValue] == type) {
+    for (UILocalNotification *alert in scheduledAlerts) {
+        if ([[[alert userInfo] valueForKey:@"reminderType"] integerValue] == type &&
+            [alert.fireDate compare:[NSDate date]] == NSOrderedAscending) {
             return YES;
         }
     }
     
     return NO;
+}
+
+
+- (void)scheduleAlert:(UILocalNotification *)newAlert {
+    // Remove all conflicting alerts of the same type
+    NSMutableArray *alertsToRemove = [[NSMutableArray alloc] init];
+    
+    for (UILocalNotification *alert in scheduledAlerts) {
+        if ([[[alert userInfo] valueForKey:@"reminderType"] integerValue] == 
+            [[[newAlert userInfo] valueForKey:@"reminderType"] integerValue]) {
+            [alertsToRemove addObject:alert];
+            [[UIApplication sharedApplication] cancelLocalNotification:alert];
+        }
+    }
+    
+    [scheduledAlerts removeObjectsInArray:alertsToRemove];
+    [scheduledAlerts addObject:newAlert];
+    [[UIApplication sharedApplication] scheduleLocalNotification:newAlert];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -418,7 +437,7 @@ static NSArray *_statuses;
         self.detailedStatus = [aDecoder decodeObjectForKey:@"detailedStatus"];
         
         _lastTracked = [aDecoder decodeObjectForKey:@"_lastTracked"];
-        self.deliveredAlerts = [aDecoder decodeObjectForKey:@"deliveredAlerts"];
+        self.scheduledAlerts = [aDecoder decodeObjectForKey:@"scheduledAlerts"];
     }
     
     return self;
@@ -446,7 +465,7 @@ static NSArray *_statuses;
     [aCoder encodeObject:detailedStatus forKey:@"detailedStatus"];
     
     [aCoder encodeObject:_lastTracked forKey:@"_lastTracked"];
-    [aCoder encodeObject:deliveredAlerts forKey:@"deliveredAlerts"];
+    [aCoder encodeObject:scheduledAlerts forKey:@"scheduledAlerts"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -477,7 +496,7 @@ static NSArray *_statuses;
                 [detailedStatus isEqualToString:aFlight.detailedStatus] &&
                 
                 [_lastTracked isEqualToDate:aFlight.lastTracked] &&
-                [deliveredAlerts isEqualToArray:aFlight.deliveredAlerts]);
+                [scheduledAlerts isEqualToArray:aFlight.scheduledAlerts]);
     }
     else {
         return NO;
