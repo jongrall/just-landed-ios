@@ -24,6 +24,8 @@
 - (void)willLookupFlight:(NSNotification *)notification;
 - (void)didLookupFlight:(NSNotification *)notification;
 - (void)uppercaseFlightNumField;
+- (void)startLookingUp;
+- (void)stopLookingUp;
 
 @end
 
@@ -91,14 +93,26 @@ static NSRegularExpression *_flightNumberRegex;
 }
 
 
+- (void)startLookingUp {
+    self._flightResultsTable.hidden = YES;
+    self._flightNumberField.enabled = NO;
+    [self._lookupSpinner startAnimating];
+}
+
+
+- (void)stopLookingUp {
+    [self._lookupSpinner stopAnimating];
+    self._flightNumberField.enabled = YES;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Responding to Notifications
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 - (void)flightLookupFailed:(NSNotification *)notification {
-    [self._lookupSpinner stopAnimating];
-    self._flightNumberField.enabled = YES;
+    [self stopLookingUp];
     
     // TODO: Show the failure reason, allow them to try again
     FlightLookupFailedReason reason = [[[notification userInfo] valueForKey:FlightLookupFailedReasonKey] integerValue];
@@ -122,23 +136,23 @@ static NSRegularExpression *_flightNumberRegex;
             [alert show];
             break;
         }
-        default:
-            break;
+        default: {
+            // TODO: Allow them to try again, tell them lookup failed
+            [_flightNumberField becomeFirstResponder];
+            break; 
+        }
     }
 }
 
 
 - (void)willLookupFlight:(NSNotification *)notification {
-    self._flightResultsTable.hidden = YES;
-    self._flightNumberField.enabled = NO;
-    [self._lookupSpinner startAnimating];
+    [self startLookingUp];
 }
 
 
 - (void)didLookupFlight:(NSNotification *)notification {    
     NSArray *flights = [[notification userInfo] valueForKey:@"flights"];
-    [self._lookupSpinner stopAnimating];
-    self._flightNumberField.enabled = YES;
+    [self stopLookingUp];
     
     if (flights) {
         self._flightResults = flights;
@@ -248,10 +262,12 @@ static NSRegularExpression *_flightNumberRegex;
     self._lookupSpinner = nil;
 }
 
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Supports portrait only
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - UITextFieldDelegate Methods

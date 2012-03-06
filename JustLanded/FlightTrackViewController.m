@@ -8,6 +8,7 @@
 
 #import "FlightTrackViewController.h"
 #import "JustLandedSession.h"
+#import "Flight.h"
 #import <CoreLocation/CoreLocation.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,10 +29,13 @@
 - (void)trackFlightWithLocation:(CLLocation *)loc;
 - (void)locationUpdated:(NSNotification *)notification;
 - (void)locationUpdateFailed:(NSNotification *)notification;
+- (void)triedToRegisterForRemoteNotifications:(NSNotification *)notification;
 - (void)willTrackFlight:(NSNotification *)notification;
 - (void)didTrackFlight:(NSNotification *)notification;
 - (void)flightTrackFailed:(NSNotification *)notification;
 - (void)refreshOnResume;
+- (void)startUpdating;
+- (void)stopUpdating;
 
 @end
 
@@ -50,6 +54,7 @@
 @synthesize _lookupButton;
 @synthesize _updatingSpinner;
 
+
 - (id)initWithFlight:(Flight *)aFlight {
     self = [super init];
     
@@ -67,6 +72,16 @@
                                                  selector:@selector(locationUpdateFailed:) 
                                                      name:LastKnownLocationDidFailToUpdateNotification 
                                                    object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(triedToRegisterForRemoteNotifications:) 
+                                                     name:DidRegisterForRemoteNotifications 
+                                                   object:[JustLandedSession sharedSession]];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(triedToRegisterForRemoteNotifications:) 
+                                                     name:DidFailToRegisterForRemoteNotifications 
+                                                   object:[JustLandedSession sharedSession]];
     
         // Listen for notifications for the Flight
         [[NSNotificationCenter defaultCenter] addObserver:self 
@@ -92,8 +107,14 @@
     return self;
 }
 
+
 - (void)trackFlightWithLocation:(CLLocation *)loc {
-    [_trackedFlight trackWithLocation:loc pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
+    NSLog(@"CALLED TRACK");
+    if ([[JustLandedSession sharedSession] triedToRegisterForRemoteNotifications] &&
+        [[JustLandedSession sharedSession] triedToGetLocation]) {
+        NSLog(@"TRACKING...");
+        [_trackedFlight trackWithLocation:loc pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
+    }
 }
 
 
@@ -108,11 +129,28 @@
                                                object:[UIApplication sharedApplication]];
 }
 
+
+- (void)startUpdating {
+    self._lastTrackedLabel.hidden = YES;
+    self._refreshButton.enabled = NO;
+    [self._updatingSpinner startAnimating];
+}
+
+
+- (void)stopUpdating {
+    [self._updatingSpinner stopAnimating];
+    self._lastTrackedLabel.hidden = NO;
+    self._refreshButton.enabled = YES;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Respond To Notifications
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)locationUpdated:(NSNotification *)notification {
+    NSLog(@"GOT LOCATION");
+    
     // Update tracking information
     CLLocation *newLocation = [[notification userInfo] valueForKey:@"location"];
     [self trackFlightWithLocation:newLocation];    
@@ -120,6 +158,8 @@
 
 
 - (void)locationUpdateFailed:(NSNotification *)notification {
+    NSLog(@"FAILED TO GET LOCATION");
+    
     // Track anyway, without location
     [self trackFlightWithLocation:nil];
     
@@ -127,20 +167,26 @@
 }
 
 
+- (void)triedToRegisterForRemoteNotifications:(NSNotification *)notification {
+    if ([[JustLandedSession sharedSession] triedToGetLocation]) {
+        NSLog(@"REGISTERED REMOTE, HAVE LOCATION");
+        [self trackFlightWithLocation:[[JustLandedSession sharedSession] lastKnownLocation]];
+    }
+    else {
+        NSLog(@"REGISTERED REMOTE BUT NO LOCATION");
+    }
+}
+
+
 - (void)willTrackFlight:(NSNotification *)notification {
-    self._lastTrackedLabel.hidden = YES;
-    self._refreshButton.enabled = NO;
-    [self._updatingSpinner startAnimating];
-    
+    [self startUpdating];
 }
 
 
 - (void)didTrackFlight:(NSNotification *)notification {
     // Stop loading animation
     self._lastTrackedLabel.text = [NSString stringWithFormat:@"Last updated %@", [NSDate naturalDateStringFromDate:[_trackedFlight lastTracked]]];
-    [self._updatingSpinner stopAnimating];
-    self._lastTrackedLabel.hidden = NO;
-    self._refreshButton.enabled = YES;
+    [self stopUpdating];
     
     // Update displayed information
     self._textView.text = [_trackedFlight description];
@@ -148,9 +194,7 @@
 
 
 - (void)flightTrackFailed:(NSNotification *)notification {
-    [self._updatingSpinner stopAnimating];
-    self._lastTrackedLabel.hidden = NO;
-    self._refreshButton.enabled = YES;
+    [self stopUpdating];
     
     FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
     
@@ -235,6 +279,7 @@
 
 - (void)viewDidUnload {
     [super viewDidUnload];
+    
     // Release any retained subviews of the main view.
     self._textView = nil;
     self._lastTrackedLabel = nil;
@@ -254,6 +299,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -(void)stopTracking {
+    [self stopUpdating];
     [_trackedFlight stopTracking];
     [self.delegate didFinishTracking:self];
 }

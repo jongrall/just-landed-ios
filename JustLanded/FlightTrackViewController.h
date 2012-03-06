@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Flight.h"
 
 @class FlightTrackViewController;
+@class Flight;
 
 @protocol FlightTrackViewControllerDelegate
 - (void)didFinishTracking:(FlightTrackViewController *)controller;
 @end
+
 
 @interface FlightTrackViewController : UIViewController
 

@@ -11,12 +11,17 @@
 
 NSString * const LastKnownLocationDidUpdateNotification = @"LastKnownLocationUpdatedNotification";
 NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdateFailedNotification";
+NSString * const WillRegisterForRemoteNotifications = @"WillRegisterForRemoteNotifications";
+NSString * const DidRegisterForRemoteNotifications = @"DidRegisterForRemoteNotifications";
+NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterForRemoteNotifications";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface JustLandedSession () {
+    BOOL _triedToRegisterForRemoteNotifications;
+    BOOL _triedToGetLocation;
     __strong NSMutableArray *_currentlyTrackedFlights;
     __strong CLLocation *_lastLocation;
 }
@@ -171,8 +176,9 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 }
 
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {	
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
 	//Notify observers that the location has been updated
+    _triedToGetLocation = YES;
     _lastLocation = newLocation;
 	NSDictionary *dict = [NSDictionary dictionaryWithObject:newLocation forKey:@"location"];
 	[[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidUpdateNotification 
@@ -182,6 +188,7 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    _triedToGetLocation = YES;
 	[self._locationManager stopUpdatingLocation];
     [[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidFailToUpdateNotification 
                                                         object:self];
@@ -238,18 +245,46 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 
 
 - (void)registerForPushNotifications {
+    [[NSNotificationCenter defaultCenter] postNotificationName:WillRegisterForRemoteNotifications object:self];
+    
 	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
 }
 
 
+- (void)didFailToRegisterForRemoteNotifications:(NSError *)error {
+    _triedToRegisterForRemoteNotifications = YES;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:DidFailToRegisterForRemoteNotifications 
+                                                        object:self 
+                                                      userInfo:[NSDictionary dictionaryWithObject:error 
+                                                                                           forKey:@"error"]];
+}
+
+
 - (void)updatePushTokenAfterRegisteringWithApple:(NSString *)token {
-	self.pushToken = token;
+	_triedToRegisterForRemoteNotifications = YES;
+    self.pushToken = token;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:DidRegisterForRemoteNotifications
+                                                        object:self
+                                                      userInfo:[NSDictionary dictionaryWithObject:token
+                                                                                           forKey:@"pushToken"]];
 }
 
 
 - (BOOL)pushEnabled {
     // Returns true if alerts are allowed - minimum to consider push enabled for the app (badge & sound not required)
     return ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] & UIRemoteNotificationTypeAlert) && pushToken;
+}
+
+
+- (BOOL)triedToRegisterForRemoteNotifications {
+    return _triedToRegisterForRemoteNotifications;
+}
+
+
+- (BOOL)triedToGetLocation {
+    return _triedToGetLocation;
 }
 
 @end

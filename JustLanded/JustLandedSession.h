@@ -19,6 +19,9 @@ typedef enum {
 
 extern NSString * const LastKnownLocationDidUpdateNotification;
 extern NSString * const LastKnownLocationDidFailToUpdateNotification;
+extern NSString * const WillRegisterForRemoteNotifications;
+extern NSString * const DidRegisterForRemoteNotifications;
+extern NSString * const DidFailToRegisterForRemoteNotifications;
 
 
 @interface JustLandedSession : NSObject <CLLocationManagerDelegate>
@@ -26,6 +29,8 @@ extern NSString * const LastKnownLocationDidFailToUpdateNotification;
 @property (readonly, nonatomic) NSArray *currentlyTrackedFlights;
 @property (readonly, nonatomic) CLLocation *lastKnownLocation;
 @property (readonly, nonatomic) BOOL pushEnabled;
+@property (readonly, nonatomic) BOOL triedToRegisterForRemoteNotifications;
+@property (readonly, nonatomic) BOOL triedToGetLocation;
 @property (copy, nonatomic) NSString *pushToken;
 
 + (JustLandedSession *)sharedSession;
@@ -40,6 +45,7 @@ extern NSString * const LastKnownLocationDidFailToUpdateNotification;
 
 - (NSString *)UUID;
 - (void)registerForPushNotifications;
+- (void)didFailToRegisterForRemoteNotifications:(NSError *)error;
 - (void)updatePushTokenAfterRegisteringWithApple:(NSString *)token;
 
 @end

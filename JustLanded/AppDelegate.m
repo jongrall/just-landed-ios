@@ -138,12 +138,13 @@
 
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    [[JustLandedSession sharedSession] didFailToRegisterForRemoteNotifications:error];
     NSLog(@"Just Landed failed to register for remote notifications: %@", error);
 }
 
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    
+    // TODO: Implement me
 }
 
 

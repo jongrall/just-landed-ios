@@ -164,6 +164,8 @@ static NSArray *_statuses;
                             [self failToLookupWithReason:LookupFailureFlightNotFound];
                             break;
                         default:
+                            // 500 errors etc.
+                            [self failToLookupWithReason:LookupFailureError];
                             break;
                     }
                 }
@@ -233,6 +235,8 @@ static NSArray *_statuses;
                             [self failToTrackWithReason:TrackFailureOldFlight];
                             break;
                         default:
+                            // 500 errors etc.
+                            [self failToTrackWithReason:TrackFailureError];
                             break;
                     }
                 }

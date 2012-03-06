@@ -66,4 +66,19 @@
     return self;
 }
 
+
+- (void)getPath:(NSString *)path 
+     parameters:(NSDictionary *)parameters 
+        success:(void (^)(AFHTTPRequestOperation *, id))success 
+        failure:(void (^)(AFHTTPRequestOperation *, NSError *))failure {
+    // Override to set custom timeout
+    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:path parameters:parameters];
+    [request setTimeoutInterval:30];
+    
+    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request 
+                                                                      success:success 
+                                                                      failure:failure];
+    [self enqueueHTTPRequestOperation:operation];
+}
+
 @end
