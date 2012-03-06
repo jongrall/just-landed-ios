@@ -111,7 +111,8 @@
 - (void)trackFlightWithLocation:(CLLocation *)loc {
     NSLog(@"CALLED TRACK");
     if ([[JustLandedSession sharedSession] triedToRegisterForRemoteNotifications] &&
-        [[JustLandedSession sharedSession] triedToGetLocation]) {
+        ([[JustLandedSession sharedSession] triedToGetLocation] || 
+         ![[JustLandedSession sharedSession] locationServicesAvailable])) {
         NSLog(@"TRACKING...");
         [_trackedFlight trackWithLocation:loc pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
     }
@@ -168,13 +169,8 @@
 
 
 - (void)triedToRegisterForRemoteNotifications:(NSNotification *)notification {
-    if ([[JustLandedSession sharedSession] triedToGetLocation]) {
-        NSLog(@"REGISTERED REMOTE, HAVE LOCATION");
-        [self trackFlightWithLocation:[[JustLandedSession sharedSession] lastKnownLocation]];
-    }
-    else {
-        NSLog(@"REGISTERED REMOTE BUT NO LOCATION");
-    }
+    NSLog(@"REGISTERED REMOTE");
+    [self trackFlightWithLocation:[[JustLandedSession sharedSession] lastKnownLocation]];
 }
 
 
@@ -198,7 +194,8 @@
     
     FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
     
-    if (reason != TrackFailureNoConnection) {
+    if (reason == TrackFailureFlightNotFound || reason == TrackFailureInvalidFlightNumber || reason == TrackFailureOldFlight) {
+        // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
         [delegate didFinishTracking:self];
     }
     else {

@@ -167,12 +167,22 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 
 - (CLLocation *)lastKnownLocation {
-    if (!self._locationManager) {
-        [self startLocationServices];
+    BOOL authorizedToGetLocation = [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized;
+    
+    [self startLocationServices];
+    
+    // Only return a location if the app is authorized to do so
+    if (_lastLocation && authorizedToGetLocation) {
+        return _lastLocation;
+    }
+    else {
         return nil;
     }
-    
-    return _lastLocation;
+}
+
+
+- (BOOL)locationServicesAvailable {
+    return [CLLocationManager significantLocationChangeMonitoringAvailable];
 }
 
 
@@ -245,8 +255,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 
 - (void)registerForPushNotifications {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WillRegisterForRemoteNotifications object:self];
-    
+    [[NSNotificationCenter defaultCenter] postNotificationName:WillRegisterForRemoteNotifications object:self];    
 	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
 }
 

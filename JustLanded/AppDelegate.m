@@ -20,7 +20,6 @@
 
 - (void)didTrackFlight:(NSNotification *)notification;
 - (void)didUntrackFlight:(NSNotification *)notification;
-- (void)handleLocalNotification:(UILocalNotification *)notification;
 
 @end
 
@@ -161,21 +160,6 @@
             [[JustLandedSession sharedSession] playSound:AnnouncementSound];
             [[JustLandedSession sharedSession] vibrateDevice];
             break;
-        }
-    }
-    
-    [self handleLocalNotification:notification];
-}
-
-
-- (void)handleLocalNotification:(UILocalNotification *)notification {
-    NSArray *trackedFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
-    
-    for (Flight *f in trackedFlights) {
-        if ([f matchesAlert:notification]) {
-            // Update the flight information
-            [f trackWithLocation:[[JustLandedSession sharedSession] lastKnownLocation] 
-                     pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
         }
     }
 }

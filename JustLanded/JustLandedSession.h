@@ -31,6 +31,7 @@ extern NSString * const DidFailToRegisterForRemoteNotifications;
 @property (readonly, nonatomic) BOOL pushEnabled;
 @property (readonly, nonatomic) BOOL triedToRegisterForRemoteNotifications;
 @property (readonly, nonatomic) BOOL triedToGetLocation;
+@property (readonly, nonatomic) BOOL locationServicesAvailable;
 @property (copy, nonatomic) NSString *pushToken;
 
 + (JustLandedSession *)sharedSession;
