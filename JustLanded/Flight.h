@@ -27,6 +27,16 @@ typedef enum {
 } FlightStatus;
 
 typedef enum {
+    FlightFiled = 0,
+    FlightDiverted,
+    FlightCanceled,
+    FlightDeparted,
+    FlightArrived,
+    FlightChanged,
+    UnknownFlightAlert,
+} PushType;
+
+typedef enum {
     LookupFailureInvalidFlightNumber,
     LookupFailureFlightNotFound,
     LookupFailureNoConnection,
@@ -90,6 +100,7 @@ extern NSString * const StopTrackingFailedReasonKey;
 @property (nonatomic, readonly) NSDate *lastTracked;
 @property (strong, nonatomic) NSMutableArray *scheduledAlerts;
 
++ (PushType)stringToPushType:(NSString *)typeString;
 + (void)lookupFlights:(NSString *)aFlightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag;

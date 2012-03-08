@@ -143,7 +143,31 @@
 
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    // TODO: Implement me
+    NSString *notificationType = [userInfo valueForKeyOrNil:@"notification_type"];
+    NSString *message = [userInfo valueForKeyPathOrNil:@"aps.alert"];
+    PushType push_type = [Flight stringToPushType:notificationType];
+    JustLandedSoundType soundType;
+    
+    switch (push_type) {
+        case FlightDeparted:
+            soundType = TakeOffSound;
+            break;
+        case FlightArrived:
+            soundType = LandingSound;
+            break;
+        default:
+            soundType = AnnouncementSound;
+            break;
+    }
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil 
+                                                    message:message 
+                                                   delegate:nil
+                                          cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
+                                          otherButtonTitles:nil];
+    [alert show];
+    [[JustLandedSession sharedSession] playSound:soundType];
+    [[JustLandedSession sharedSession] vibrateDevice];
 }
 
 

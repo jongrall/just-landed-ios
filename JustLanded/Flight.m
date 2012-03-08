@@ -68,6 +68,7 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 @synthesize scheduledAlerts;
 
 static NSArray *_statuses;
+static NSArray *_pushTypes;
 
 + (void)initialize {
 	if (self == [Flight class]) {
@@ -79,7 +80,24 @@ static NSArray *_statuses;
                      @"LANDED",
                      @"EARLY",
                      @"UNKNOWN", nil];
+        _pushTypes = [[NSArray alloc] initWithObjects:@"FILED",
+                      @"DIVERTED",
+                      @"CANCELED",
+                      @"DEPARTED",
+                      @"ARRIVED",
+                      @"CHANGED", nil];
 	}
+}
+
+
++ (PushType)stringToPushType:(NSString *)typeString {
+    NSUInteger index = [_pushTypes indexOfObject:typeString];
+    if (index == NSNotFound) {
+        return UnknownFlightAlert;
+    }
+    else {
+        return index;
+    }
 }
 
 
@@ -284,9 +302,6 @@ static NSArray *_statuses;
     // Only create or update if we have an estimate of when to leave. In the case that we couldn't get their location,
     // we want any existing alerts for this flight to remain as a fallback if we were able to get their location earlier.
     if (leaveForAirporTime) {
-        
-        // Cancel any existing leave alerts for this flight
-        [self cancelLeaveAlerts];
         
         // Try to give the airport name, if we can't fallback to IATA code and then ICAO code
         NSString *airportNameOrCode = (self.destination.name) ? self.destination.name :
