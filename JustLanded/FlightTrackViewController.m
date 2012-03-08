@@ -109,11 +109,9 @@
 
 
 - (void)trackFlightWithLocation:(CLLocation *)loc {
-    NSLog(@"CALLED TRACK");
     if ([[JustLandedSession sharedSession] triedToRegisterForRemoteNotifications] &&
         ([[JustLandedSession sharedSession] triedToGetLocation] || 
          ![[JustLandedSession sharedSession] locationServicesAvailable])) {
-        NSLog(@"TRACKING...");
         [_trackedFlight trackWithLocation:loc pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
     }
 }
@@ -150,8 +148,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)locationUpdated:(NSNotification *)notification {
-    NSLog(@"GOT LOCATION");
-    
     // Update tracking information
     CLLocation *newLocation = [[notification userInfo] valueForKey:@"location"];
     [self trackFlightWithLocation:newLocation];    
@@ -159,8 +155,6 @@
 
 
 - (void)locationUpdateFailed:(NSNotification *)notification {
-    NSLog(@"FAILED TO GET LOCATION");
-    
     // Track anyway, without location
     [self trackFlightWithLocation:nil];
     
@@ -169,7 +163,6 @@
 
 
 - (void)triedToRegisterForRemoteNotifications:(NSNotification *)notification {
-    NSLog(@"REGISTERED REMOTE");
     [self trackFlightWithLocation:[[JustLandedSession sharedSession] lastKnownLocation]];
 }
 
@@ -181,7 +174,8 @@
 
 - (void)didTrackFlight:(NSNotification *)notification {
     // Stop loading animation
-    self._lastTrackedLabel.text = [NSString stringWithFormat:@"Last updated %@", [NSDate naturalDateStringFromDate:[_trackedFlight lastTracked]]];
+    self._lastTrackedLabel.text = [NSString stringWithFormat:@"Last updated %@", 
+                                   [NSDate naturalDateStringFromDate:[_trackedFlight lastTracked]]];
     [self stopUpdating];
     
     // Update displayed information

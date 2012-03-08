@@ -255,7 +255,8 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 
 - (void)registerForPushNotifications {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WillRegisterForRemoteNotifications object:self];    
+    [[NSNotificationCenter defaultCenter] postNotificationName:WillRegisterForRemoteNotifications object:self];
+    
 	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
 }
 
