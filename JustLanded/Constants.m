@@ -27,8 +27,14 @@ NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
 
 #if defined(LOCAL)
 NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1/";
+NSUInteger const API_VERSION = 1;
+NSString * const API_USERNAME = @"iOS-Development";
+NSString * const API_KEY = @"d90816f7e6ea93001a2aa62cd8dd8f0e830a93d1";
 #else
 NSString * const BASE_URL = @"http://just-landed.appspot.com/api/v1/";
+NSUInteger const API_VERSION = 1;
+NSString * const API_USERNAME = @"iOS-Production";
+NSString * const API_KEY = @"4399d9ce77acf522799543f13c926c0a41e2ea3f";
 #endif
 
 NSString * const LOOKUP_URL_FORMAT = @"search/%@";

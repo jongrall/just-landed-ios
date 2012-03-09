@@ -25,6 +25,9 @@ extern NSString * const BASE_URL;
 extern NSString * const LOOKUP_URL_FORMAT;
 extern NSString * const TRACK_URL_FORMAT;
 extern NSString * const UNTRACK_URL_FORMAT;
+extern NSUInteger const API_VERSION;
+extern NSString * const API_USERNAME;
+extern NSString * const API_KEY;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,14 @@
 
 #import "JustLandedAPIClient.h"
 #import "AFJSONRequestOperation.h"
+#import <CommonCrypto/CommonHMAC.h>
+
+@interface JustLandedAPIClient ()
+
++ (NSString *)apiRequestSignatureWithPath:(NSString *)path params:(NSDictionary *)params;
+
+@end
+
 
 @implementation JustLandedAPIClient
 
@@ -40,6 +48,36 @@
 }
 
 
++ (NSString *)apiRequestSignatureWithPath:(NSString *)path params:(NSDictionary *)params {
+    // Sort the parameter keys
+    NSArray *sortedKeys = [[params allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    NSArray *sortedValues = [params objectsForKeys:sortedKeys notFoundMarker:[NSNull null]];
+    NSMutableArray *parts = [[NSMutableArray alloc] init];
+    
+    for (int i = 0; i<[sortedKeys count]; i++) {
+        [parts addObject:[NSString stringWithFormat:@"%@=%@", [sortedKeys objectAtIndex:i],
+                          [sortedValues objectAtIndex:i]]];
+    }
+    
+    NSString *to_sign = [NSString stringWithFormat:@"/api/v%d/%@?%@", API_VERSION, path, [parts componentsJoinedByString:@"&"]];
+    
+    const char *cKey = [API_KEY cStringUsingEncoding:NSASCIIStringEncoding];
+	const char *cData = [to_sign cStringUsingEncoding:NSASCIIStringEncoding];
+	
+	unsigned char cHMAC[CC_SHA1_DIGEST_LENGTH];
+	
+	CCHmac(kCCHmacAlgSHA1,
+		   cKey,
+		   strlen(cKey),
+		   cData,
+		   strlen(cData),
+		   cHMAC);
+    
+    NSData *dataFromHMAC = [NSData dataWithBytes:cHMAC length:CC_SHA1_DIGEST_LENGTH];
+    return [[dataFromHMAC hexString] lowercaseString];
+}
+
+
 - (id)initWithBaseURL:(NSURL *)url {
     self = [super initWithBaseURL:url];
     if (!self) {
@@ -54,11 +92,11 @@
     // Override accepted languages
     [self setDefaultHeader:@"Accept-Language" value:@"en, en-us;q=0.8"];
     
-    // X-Just-Landed-API-Key HTTP Header
-	//[self setDefaultHeader:@"X-Just-Landed-API-Key" value:@"foo"];
+    // X-Just-Landed-API-Client HTTP Header
+	[self setDefaultHeader:@"X-Just-Landed-API-Client" value:API_USERNAME];
 	
 	// X-Just-Landed-API-Version HTTP Header
-	[self setDefaultHeader:@"X-Just-Landed-API-Version" value:@"1"];
+	[self setDefaultHeader:@"X-Just-Landed-API-Version" value:[NSString stringWithFormat:@"%d", API_VERSION]];
 	
 	// X-UUID HTTP Header
 	[self setDefaultHeader:@"X-Just-Landed-UUID" value:[[JustLandedSession sharedSession] UUID]];
@@ -75,10 +113,16 @@
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:path parameters:parameters];
     [request setTimeoutInterval:30];
     
+    // Sign the request
+    NSString *sig = [[self class] apiRequestSignatureWithPath:path params:parameters];
+    [request setValue:sig forHTTPHeaderField:@"X-Just-Landed-Signature"];
+    
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request 
                                                                       success:success 
                                                                       failure:failure];
     [self enqueueHTTPRequestOperation:operation];
 }
+
+
 
 @end
