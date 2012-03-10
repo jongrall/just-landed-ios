@@ -223,8 +223,6 @@ static NSArray *_pushTypes;
         [trackingParams setValue:[[JustLandedSession sharedSession] pushToken] forKey:@"push_token"];
     }
     
-    NSDate *startedTracking = [NSDate date];
-    
     [[JustLandedAPIClient sharedClient] 
             getPath:trackingPath 
          parameters:trackingParams 
@@ -233,7 +231,6 @@ static NSArray *_pushTypes;
                     NSDictionary *flightInfo = (NSDictionary *)JSON;
                     [self updateWithFlightInfo:flightInfo];
                     _lastTracked = [NSDate date];
-                    NSLog(@"TIME TO TRACK: %f", [_lastTracked timeIntervalSinceDate:startedTracking]);
                     
                     [[NSNotificationCenter defaultCenter] postNotificationName:DidTrackFlightNotification object:self];
                 }
