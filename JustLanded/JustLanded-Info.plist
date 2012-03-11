@@ -9,7 +9,12 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFiles</key>
-	<array/>
+	<array>
+		<string>just_landed_57.png</string>
+		<string>just_landed_114.png</string>
+	</array>
+	<key>UIPrerenderedIcon</key>
+	<true/>
 	<key>CFBundleIdentifier</key>
 	<string>com.getjustlanded.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

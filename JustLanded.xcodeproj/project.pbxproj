@@ -50,6 +50,8 @@
 		117C48D414EB65760049452F /* libABTableViewCell.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C48C214EB64F60049452F /* libABTableViewCell.a */; };
 		117C48D714EB66140049452F /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 117C48D614EB66140049452F /* Constants.m */; };
 		117C48DB14EB68D10049452F /* libFlurryAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C48DA14EB68D10049452F /* libFlurryAnalytics.a */; };
+		119AADBA150CAA0D00882760 /* just_landed_57.png in Resources */ = {isa = PBXBuildFile; fileRef = 119AADB9150CAA0D00882760 /* just_landed_57.png */; };
+		119AADBC150CAA1800882760 /* just_landed_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 119AADBB150CAA1800882760 /* just_landed_114.png */; };
 		11AE979E14EB5A4100F7ED46 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */; };
 		11AE97A814EB5AD600F7ED46 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A714EB5AD600F7ED46 /* MobileCoreServices.framework */; };
 		11AE97AA14EB5ADE00F7ED46 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A914EB5ADE00F7ED46 /* SystemConfiguration.framework */; };
@@ -150,6 +152,8 @@
 		117C48D614EB66140049452F /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		117C48D914EB68D10049452F /* FlurryAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryAnalytics.h; sourceTree = "<group>"; };
 		117C48DA14EB68D10049452F /* libFlurryAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurryAnalytics.a; sourceTree = "<group>"; };
+		119AADB9150CAA0D00882760 /* just_landed_57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = just_landed_57.png; sourceTree = "<group>"; };
+		119AADBB150CAA1800882760 /* just_landed_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = just_landed_114.png; sourceTree = "<group>"; };
 		11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		11AE97A714EB5AD600F7ED46 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		11AE97A914EB5ADE00F7ED46 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -279,6 +283,15 @@
 			path = FlurryAnalytics;
 			sourceTree = "<group>";
 		};
+		119AADB7150CA98200882760 /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				119AADB9150CAA0D00882760 /* just_landed_57.png */,
+				119AADBB150CAA1800882760 /* just_landed_114.png */,
+			);
+			name = Icons;
+			sourceTree = "<group>";
+		};
 		11AE97FF14EB602400F7ED46 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -336,6 +349,7 @@
 		11AE980414EB60DD00F7ED46 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				119AADB7150CA98200882760 /* Icons */,
 				11AE980714EB610200F7ED46 /* Fonts */,
 				11AE980614EB60EB00F7ED46 /* Images */,
 				11AE980514EB60E500F7ED46 /* Sounds */,
@@ -604,6 +618,8 @@
 				115E8F4314F7354600E9F06B /* announcement.caf in Resources */,
 				115E8F4414F7354600E9F06B /* landing.caf in Resources */,
 				115E8F4514F7354600E9F06B /* takeoff.caf in Resources */,
+				119AADBA150CAA0D00882760 /* just_landed_57.png in Resources */,
+				119AADBC150CAA1800882760 /* just_landed_114.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
