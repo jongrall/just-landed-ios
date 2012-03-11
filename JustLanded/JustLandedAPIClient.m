@@ -59,7 +59,14 @@
                           [sortedValues objectAtIndex:i]]];
     }
     
-    NSString *to_sign = [NSString stringWithFormat:@"/api/v%d/%@?%@", API_VERSION, path, [parts componentsJoinedByString:@"&"]];
+    NSString *to_sign;
+    
+    if ([parts count] > 0) {
+        to_sign = [NSString stringWithFormat:@"/api/v%d/%@?%@", API_VERSION, path, [parts componentsJoinedByString:@"&"]];
+    }
+    else {
+        to_sign = [NSString stringWithFormat:@"/api/v%d/%@", API_VERSION, path];
+    }
     
     const char *cKey = [API_KEY cStringUsingEncoding:NSASCIIStringEncoding];
 	const char *cData = [to_sign cStringUsingEncoding:NSASCIIStringEncoding];
