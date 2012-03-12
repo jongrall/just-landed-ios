@@ -37,6 +37,14 @@ typedef enum {
 } PushType;
 
 typedef enum {
+    JET2 = 0,
+    JET2REAR,
+    JET4,
+    PROP2,
+    PROP4
+} AircraftType;
+
+typedef enum {
     LookupFailureInvalidFlightNumber,
     LookupFailureFlightNotFound,
     LookupFailureNoConnection,
@@ -81,6 +89,7 @@ extern NSString * const StopTrackingFailedReasonKey;
 // Flight data properties
 @property (strong, nonatomic) NSString *flightID;
 @property (strong, nonatomic) NSString *flightNumber;
+@property (nonatomic) AircraftType aircraftType;
 
 @property (strong, nonatomic) NSDate *actualArrivalTime;
 @property (strong, nonatomic) NSDate *actualDepartureTime;

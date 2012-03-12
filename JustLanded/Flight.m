@@ -48,6 +48,7 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 
 @synthesize flightID;
 @synthesize flightNumber;
+@synthesize aircraftType;
 
 @synthesize actualArrivalTime;
 @synthesize actualDepartureTime;
@@ -69,6 +70,7 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 
 static NSArray *_statuses;
 static NSArray *_pushTypes;
+static NSArray *_aircraftTypes;
 
 + (void)initialize {
 	if (self == [Flight class]) {
@@ -86,6 +88,11 @@ static NSArray *_pushTypes;
                       @"DEPARTED",
                       @"ARRIVED",
                       @"CHANGED", nil];
+        _aircraftTypes = [[NSArray alloc] initWithObjects:@"JET2",
+                      @"JET2REAR",
+                      @"JET4",
+                      @"PROP2",
+                      @"PROP4", nil];
 	}
 }
 
@@ -116,6 +123,8 @@ static NSArray *_pushTypes;
     // Process flight ID and number
     self.flightID = [info valueForKeyOrNil:@"flightID"];
     self.flightNumber = [info valueForKeyOrNil:@"flightNumber"];
+    NSUInteger parsed_aircraft_type = [_aircraftTypes indexOfObject:[info valueForKeyOrNil:@"aircraftType"]];
+    self.aircraftType = (parsed_aircraft_type == NSNotFound) ? PROP2 : parsed_aircraft_type;
     
     // Process and set all the flight date and time information
     self.actualArrivalTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"actualArrivalTime"] returnNilForZero:YES];
@@ -439,6 +448,7 @@ static NSArray *_pushTypes;
         // For each instance variable that is archived, we decode it
         self.flightID = [aDecoder decodeObjectForKey:@"flightID"];
         self.flightNumber = [aDecoder decodeObjectForKey:@"flightNumber"];
+        self.aircraftType = [aDecoder decodeIntegerForKey:@"aircraftType"];
         
         self.actualArrivalTime = [aDecoder decodeObjectForKey:@"actualArrivalTime"];
         self.actualDepartureTime = [aDecoder decodeObjectForKey:@"actualDepartureTime"];
@@ -467,6 +477,7 @@ static NSArray *_pushTypes;
     // Archive each instance variable under its variable name
     [aCoder encodeObject:flightID forKey:@"flightID"];
     [aCoder encodeObject:flightNumber forKey:@"flightNumber"];
+    [aCoder encodeInteger:aircraftType forKey:@"aircraftType"];
     
     [aCoder encodeObject:actualArrivalTime forKey:@"actualArrivalTime"];
     [aCoder encodeObject:actualDepartureTime forKey:@"actualDepartureTime"];
@@ -498,6 +509,7 @@ static NSArray *_pushTypes;
         Flight *aFlight = (Flight *)object;
         return ([flightID isEqualToString:aFlight.flightID] &&
                 [flightNumber isEqualToString:aFlight.flightNumber] &&
+                aircraftType == aFlight.aircraftType &&
                 
                 [actualArrivalTime isEqualToDate:aFlight.actualArrivalTime] &&
                 [actualDepartureTime isEqualToDate:aFlight.actualDepartureTime] &&
@@ -527,6 +539,7 @@ static NSArray *_pushTypes;
     NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:
                           flightID ? flightID : [NSNull null], @"flightID",
                           flightNumber ? flightNumber : [NSNull null], @"flightNumber",
+                          [_aircraftTypes objectAtIndex:aircraftType], @"aircraftType",
                           
                           actualArrivalTime ? actualArrivalTime : [NSNull null], @"actualArrivalTime",
                           actualDepartureTime ? actualDepartureTime : [NSNull null], @"actualDepartureTime",
