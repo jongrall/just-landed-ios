@@ -249,7 +249,7 @@ static NSRegularExpression *_flightNumberRegex;
     [lookupButton setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
     [lookupButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
     lookupButton.titleLabel.font = [UIFont boldSystemFontOfSize:22.0f];
-    lookupButton.enabled = NO;
+    lookupButton.enabled = [self isFlightNumValid:_flightNumberField.text];
     [lookupButton addTarget:self action:@selector(doLookup) forControlEvents:UIControlEventTouchUpInside];
     self._lookupButton = lookupButton;
     [self.view addSubview:lookupButton];
@@ -300,6 +300,10 @@ static NSRegularExpression *_flightNumberRegex;
 
 
 - (BOOL)isFlightNumValid:(NSString *)flightNum {
+    if (flightNum == nil) {
+        return NO;
+    }
+    
     NSString *sanitizedNum = [[flightNum uppercaseString] stringByReplacingOccurrencesOfString:@" " 
                                                                                     withString:@""];
     NSUInteger numMatches = [_flightNumberRegex numberOfMatchesInString:sanitizedNum 
@@ -452,18 +456,33 @@ static NSRegularExpression *_flightNumberRegex;
 #pragma mark - FlightTrackViewControllerDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)didFinishTracking:(FlightTrackViewController *)controller {
+- (void)didFinishTracking:(FlightTrackViewController *)controller userInitiated:(BOOL)user_flag {
     self._flightResultsTable.hidden = YES;
-    self._flightNumberField.text = controller.trackedFlight.flightNumber;
     self._lookupButton.hidden = NO;
+    
+    // If the user stopped tracking, pre-fill the field with the flight they were tracking
+    if (user_flag) {
+       self._flightNumberField.text = controller.trackedFlight.flightNumber; 
+    }
+    else {
+        // Probably an old flight, clear the field
+        self._flightNumberField.text = @"";
+    }
+    
+    self._lookupButton.enabled = [self isFlightNumValid:_flightNumberField.text];
+    
     [self dismissModalViewControllerAnimated:YES];
     [[JustLandedSession sharedSession] removeTrackedFlight:controller.trackedFlight];
     
-    // If they're no longer tracking any flights, stop location services
+    // If they're no longer tracking any flights, stop location services and clear notifications
     if ([[[JustLandedSession sharedSession] currentlyTrackedFlights] count] == 0) {
         [[JustLandedSession sharedSession] stopLocationServices];
+        
+        // Clear past notifications
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+        [[UIApplication sharedApplication] cancelAllLocalNotifications];
     }
-    
+
     [self._flightNumberField becomeFirstResponder];
 }
 

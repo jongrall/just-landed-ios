@@ -12,9 +12,9 @@
 #pragma mark NSUserDefaults Keys
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(LOCAL)
-NSString * const UUIDKey = @"UUIDKeyLocal";
-NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightLocal.data";
+#if defined(CONFIGURATION_Debug)
+NSString * const UUIDKey = @"UUIDKeyDev";
+NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsDev.data";
 #else
 NSString * const UUIDKey = @"UUIDKey";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
@@ -25,7 +25,7 @@ NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
 #pragma mark Server Constants
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(LOCAL)
+#if defined(CONFIGURATION_Debug)
 NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1/";
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Development";
@@ -47,10 +47,18 @@ NSString * const UNTRACK_URL_FORMAT = @"untrack/%@";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#if defined(LOCAL)
+#if defined(CONFIGURATION_Debug)
 NSString * const FLURRY_APPLICATION_KEY = @"LH6F2XN2C6HAX4NIB3QS";
 #else
 NSString * const FLURRY_APPLICATION_KEY = @"2TZMR1NGCSTZ395GHUZS";
+#endif
+
+# if defined (CONFIGURATION_Debug)
+NSString * const HOCKEY_APP_ID = @"NOT_USED"; //Not used in dev
+#elif defined(CONFIGURATION_Adhoc)
+NSString * const HOCKEY_APP_ID = @"5a0221e1a7ebd7fe6e01c4742bea58c8";
+#elif defined (CONFIGURATION_Release)
+NSString * const HOCKEY_APP_ID = @"";
 #endif
 
 

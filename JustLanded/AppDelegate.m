@@ -10,18 +10,9 @@
 
 #import "FlightLookupViewController.h"
 #import "Flight.h"
+#import "BWHockeyManager.h"
 #import <CoreLocation/CoreLocation.h>
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Private Interface
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-@interface AppDelegate ()
-
-- (void)didTrackFlight:(NSNotification *)notification;
-- (void)didUntrackFlight:(NSNotification *)notification;
-
-@end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Begin Implementation
@@ -33,25 +24,27 @@
 @synthesize mainViewController = _mainViewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     // Show the status bar
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
     
+    [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
+    
+    // App distribution
+    #ifdef CONFIGURATION_Adhoc
+    [[BWHockeyManager sharedHockeyManager] setAppIdentifier:HOCKEY_APP_ID];
+    [[BWHockeyManager sharedHockeyManager] setAlwaysShowUpdateReminder:YES];
+    #endif
+    
+    // Crash reporting
+    #ifndef CONFIGURATION_Debug
+    [[BWQuincyManager sharedQuincyManager] setAppIdentifier:HOCKEY_APP_ID];
+    [[BWQuincyManager sharedQuincyManager] setAutoSubmitCrashReport:YES];
+    #endif
+    
     // Register for push notifications
     [[JustLandedSession sharedSession] registerForPushNotifications];
-    
-    // Listen for tracking and untracking of any flights so we can set and unset leave alerts
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(didTrackFlight:)
-                                                 name:DidTrackFlightNotification 
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(didUntrackFlight:)
-                                                 name:DidStopTrackingFlightNotification 
-                                               object:nil];
     
     // Show the flight lookup UI    
     self.mainViewController = [[FlightLookupViewController alloc] init];
@@ -112,26 +105,37 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Responding to NSNotificationCenter Notifications
+#pragma mark - Custom Crash Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)didTrackFlight:(NSNotification *)notification {
-    Flight *aFlight = [notification object];
-    [aFlight createOrUpdateLeaveAlerts];
+- (NSString *)crashReportUserID {
+    return [[JustLandedSession sharedSession] UUID];
 }
 
 
-- (void)didUntrackFlight:(NSNotification *)notification {
-    Flight *aFlight = [notification object];
-    [aFlight cancelLeaveAlerts];
+- (NSString *)crashReportDescription {
+    if ([[[JustLandedSession sharedSession] currentlyTrackedFlights] count] == 0) {
+        return @"User was not tracking any flights at the time of the crash.";
+    }
+    else {
+        NSString *message_start = @"The user was tracking flights when the app crashed.";
+        NSMutableArray *flightData = [[NSMutableArray alloc] init];
+        
+        for (Flight *f in [[JustLandedSession sharedSession] currentlyTrackedFlights]) {
+            [flightData addObject:[f flightDataAsJson]];
+        }
+        
+        return [NSString stringWithFormat:@"%@\n\n%@", message_start,
+                [flightData componentsJoinedByString:@"\n\n"]];
+    }
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Push & Local Notifications
+#pragma mark - Push Notifications
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    //Keep the server up to date with the latest push token
 	[[JustLandedSession sharedSession] updatePushTokenAfterRegisteringWithApple:[deviceToken hexString]];
 }
 
@@ -143,48 +147,34 @@
 
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    NSString *notificationType = [userInfo valueForKeyOrNil:@"notification_type"];
-    NSString *message = [userInfo valueForKeyPathOrNil:@"aps.alert"];
-    PushType push_type = [Flight stringToPushType:notificationType];
-    JustLandedSoundType soundType;
-    
-    switch (push_type) {
-        case FlightDeparted:
-            soundType = TakeOffSound;
-            break;
-        case FlightArrived:
-            soundType = LandingSound;
-            break;
-        default:
-            soundType = AnnouncementSound;
-            break;
-    }
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil 
-                                                    message:message 
-                                                   delegate:nil
-                                          cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
-                                          otherButtonTitles:nil];
-    [alert show];
-    [[JustLandedSession sharedSession] playSound:soundType];
-    [[JustLandedSession sharedSession] vibrateDevice];
-}
-
-
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {    
-    // App is currently running - display an alert and sound
-    for (Flight *f in [[JustLandedSession sharedSession] currentlyTrackedFlights]) {
-        if ([f matchesAlert:notification]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil 
-                                                            message:notification.alertBody 
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [[JustLandedSession sharedSession] playSound:AnnouncementSound];
-            [[JustLandedSession sharedSession] vibrateDevice];
-            break;
+    // Only alert them if they haven't been told yet (UIApplicationStateInactive indicates the app was launched in
+    // response to the user tapping the action button of the push notification).
+    if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateInactive) {
+        NSString *notificationType = [userInfo valueForKeyOrNil:@"notification_type"];
+        NSString *message = [userInfo valueForKeyPathOrNil:@"aps.alert"];
+        PushType push_type = [Flight stringToPushType:notificationType];
+        JustLandedSoundType soundType;
+        
+        switch (push_type) {
+            case FlightDeparted:
+                soundType = TakeOffSound;
+                break;
+            case FlightArrived:
+                soundType = LandingSound;
+                break;
+            default:
+                soundType = AnnouncementSound;
+                break;
         }
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil 
+                                                        message:message 
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
+                                              otherButtonTitles:nil];
+        [alert show];
+        [[JustLandedSession sharedSession] playSound:soundType];
+        [[JustLandedSession sharedSession] vibrateDevice];
     }
 }
 

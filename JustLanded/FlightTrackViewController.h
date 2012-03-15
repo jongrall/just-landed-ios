@@ -12,7 +12,7 @@
 @class Flight;
 
 @protocol FlightTrackViewControllerDelegate
-- (void)didFinishTracking:(FlightTrackViewController *)controller;
+- (void)didFinishTracking:(FlightTrackViewController *)controller userInitiated:(BOOL)flag;
 @end
 
 

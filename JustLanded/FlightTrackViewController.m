@@ -190,7 +190,7 @@
     
     if (reason == TrackFailureFlightNotFound || reason == TrackFailureInvalidFlightNumber || reason == TrackFailureOldFlight) {
         // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
-        [delegate didFinishTracking:self];
+        [delegate didFinishTracking:self userInitiated:NO];
     }
     else {
         // TODO: Handle no connection
@@ -292,7 +292,7 @@
 -(void)stopTracking {
     [self stopUpdating];
     [_trackedFlight stopTracking];
-    [self.delegate didFinishTracking:self];
+    [self.delegate didFinishTracking:self userInitiated:YES];
 }
 
 

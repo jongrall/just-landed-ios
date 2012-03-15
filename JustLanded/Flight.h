@@ -33,6 +33,8 @@ typedef enum {
     FlightDeparted,
     FlightArrived,
     FlightChanged,
+    LeaveSoonReminder,
+    LeaveNowReminder,
     UnknownFlightAlert,
 } PushType;
 
@@ -58,11 +60,6 @@ typedef enum {
     TrackFailureNoConnection,
     TrackFailureError,
 } FlightTrackFailedReason;
-
-typedef enum {
-    LeaveInFifteenMinutesReminder,
-    LeaveNowReminder,
-} LeaveForAirportReminderType;
 
 
 extern NSString * const WillLookupFlightNotification;
@@ -107,15 +104,12 @@ extern NSString * const StopTrackingFailedReasonKey;
 @property (strong, nonatomic) NSString *detailedStatus;
 
 @property (nonatomic, readonly) NSDate *lastTracked;
-@property (strong, nonatomic) NSMutableArray *scheduledAlerts;
 
 + (PushType)stringToPushType:(NSString *)typeString;
 + (void)lookupFlights:(NSString *)aFlightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag;
 - (void)stopTracking;
-- (void)createOrUpdateLeaveAlerts;
-- (void)cancelLeaveAlerts;
-- (BOOL)matchesAlert:(UILocalNotification *)alert;
+- (NSString *)flightDataAsJson;
 
 @end
