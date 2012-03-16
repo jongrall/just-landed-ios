@@ -35,7 +35,6 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 + (void)failToLookupWithReason:(FlightLookupFailedReason)reason;
 - (void)updateWithFlightInfo:(NSDictionary *)info;
 - (void)failToTrackWithReason:(FlightTrackFailedReason)reason;
-- (NSDictionary *)flightData;
 
 @end
 
@@ -397,33 +396,30 @@ static NSArray *_aircraftTypes;
     }
 }
 
-
-- (NSDictionary *)flightData {
-    return [[NSDictionary alloc] initWithObjectsAndKeys:
-            flightID ? flightID : [NSNull null], @"flightID",
-            flightNumber ? flightNumber : [NSNull null], @"flightNumber",
-            [_aircraftTypes objectAtIndex:aircraftType], @"aircraftType",
-                                     
-            actualArrivalTime ? actualArrivalTime : [NSNull null], @"actualArrivalTime",
-            actualDepartureTime ? actualDepartureTime : [NSNull null], @"actualDepartureTime",
-            estimatedArrivalTime ? estimatedArrivalTime : [NSNull null], @"estimatedArrivalTime",
-            scheduledDepartureTime ? scheduledDepartureTime : [NSNull null], @"scheduledDepartureTime",
-            lastUpdated ? lastUpdated : [NSNull null], @"lastUpdated",
-            leaveForAirporTime ? leaveForAirporTime : [NSNull null], @"leaveForAirportTime",
-            [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
-                                     
-            origin ? [origin toDict] : [NSNull null], @"origin",
-            destination ? [destination toDict] : [NSNull null], @"destination",
-                                     
-            [_statuses objectAtIndex:status], @"status",
-            detailedStatus ? detailedStatus : [NSNull null], @"detailedStatus", nil];
-}
-
-
 - (NSString *)flightDataAsJson {
+    NSDictionary *flightData = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                flightID ? flightID : [NSNull null], @"flightID",
+                                flightNumber ? flightNumber : [NSNull null], @"flightNumber",
+                                [_aircraftTypes objectAtIndex:aircraftType], @"aircraftType",
+                                
+                                actualArrivalTime ? [actualArrivalTime description] : [NSNull null], @"actualArrivalTime",
+                                actualDepartureTime ? [actualDepartureTime description] : [NSNull null], @"actualDepartureTime",
+                                estimatedArrivalTime ? [estimatedArrivalTime description] : [NSNull null], @"estimatedArrivalTime",
+                                scheduledDepartureTime ? [scheduledDepartureTime description] : [NSNull null], @"scheduledDepartureTime",
+                                lastUpdated ? [lastUpdated description] : [NSNull null], @"lastUpdated",
+                                leaveForAirporTime ? [leaveForAirporTime description] : [NSNull null], @"leaveForAirportTime",
+                                [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
+                                
+                                origin ? [origin toJSONFriendlyDict] : [NSNull null], @"origin",
+                                destination ? [destination toJSONFriendlyDict] : [NSNull null], @"destination",
+                                
+                                [_statuses objectAtIndex:status], @"status",
+                                detailedStatus ? detailedStatus : [NSNull null], @"detailedStatus", nil];
+    
+    
     NSError *error;
     
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[self flightData] 
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:flightData
                                                        options:NSJSONWritingPrettyPrinted 
                                                          error:&error];
     if (error) {
@@ -436,8 +432,27 @@ static NSArray *_aircraftTypes;
 
 
 - (NSString *)description {
+    NSDictionary *flightData = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                flightID ? flightID : [NSNull null], @"flightID",
+                                flightNumber ? flightNumber : [NSNull null], @"flightNumber",
+                                [_aircraftTypes objectAtIndex:aircraftType], @"aircraftType",
+                                
+                                actualArrivalTime ? actualArrivalTime : [NSNull null], @"actualArrivalTime",
+                                actualDepartureTime ? actualDepartureTime : [NSNull null], @"actualDepartureTime",
+                                estimatedArrivalTime ? estimatedArrivalTime : [NSNull null], @"estimatedArrivalTime",
+                                scheduledDepartureTime ? scheduledDepartureTime : [NSNull null], @"scheduledDepartureTime",
+                                lastUpdated ? lastUpdated : [NSNull null], @"lastUpdated",
+                                leaveForAirporTime ? leaveForAirporTime : [NSNull null], @"leaveForAirportTime",
+                                [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
+                                
+                                origin ? [origin toDict] : [NSNull null], @"origin",
+                                destination ? [destination toDict] : [NSNull null], @"destination",
+                                
+                                [_statuses objectAtIndex:status], @"status",
+                                detailedStatus ? detailedStatus : [NSNull null], @"detailedStatus", nil];
+    
     // Be able to nicely print a flight with only the information sent by the server
-    return [[self flightData] description];
+    return [flightData description];
 }
 
 @end

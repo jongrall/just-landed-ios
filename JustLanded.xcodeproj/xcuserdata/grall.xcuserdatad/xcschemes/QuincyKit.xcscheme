@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
+   LastUpgradeVersion = "0430"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "11F11361151185040008D301"
+               BlueprintIdentifier = "11F7DC70151185C000DFA5AF"
                BuildableName = "libQuincyKit.a"
                BlueprintName = "QuincyKit"
                ReferencedContainer = "container:JustLanded.xcodeproj">

@@ -51,6 +51,18 @@
             terminal ? terminal : [NSNull null], @"terminal", nil];
 }
 
+
+- (NSDictionary *)toJSONFriendlyDict {
+    return [[NSDictionary alloc] initWithObjectsAndKeys:
+            iataCode ? iataCode : [NSNull null], @"iataCode",
+            icaoCode ? icaoCode : [NSNull null], @"icaoCode",         
+            name ? name : [NSNull null], @"name",
+            city ? city : [NSNull null], @"city",
+            location ? [NSNumber numberWithDouble:location.coordinate.latitude] : [NSNull null], @"latitude",
+            location ? [NSNumber numberWithDouble:location.coordinate.longitude] : [NSNull null], @"longitude",
+            terminal ? terminal : [NSNull null], @"terminal", nil];
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Conforming to NSCoding
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

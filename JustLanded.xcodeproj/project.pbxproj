@@ -112,6 +112,8 @@
 		11F7DC8A1511873600DFA5AF /* libHockeyKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F1131B151182A00008D301 /* libHockeyKit.a */; };
 		11F7DC8B1511873A00DFA5AF /* libQuincyKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F7DC71151185C000DFA5AF /* libQuincyKit.a */; };
 		11F7DC8C1511917E00DFA5AF /* CrashReporter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F7DC7F151185E400DFA5AF /* CrashReporter.framework */; };
+		11F7DC92151198F700DFA5AF /* Hockey.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 11F7DC91151198F700DFA5AF /* Hockey.bundle */; };
+		11F7DC951511992700DFA5AF /* Quincy.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 11F7DC931511991D00DFA5AF /* Quincy.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -265,6 +267,8 @@
 		11F7DC7E151185E400DFA5AF /* BWQuincyManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWQuincyManager.m; sourceTree = "<group>"; };
 		11F7DC7F151185E400DFA5AF /* CrashReporter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CrashReporter.framework; sourceTree = "<group>"; };
 		11F7DC80151185E400DFA5AF /* Quincy.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Quincy.bundle; sourceTree = "<group>"; };
+		11F7DC91151198F700DFA5AF /* Hockey.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Hockey.bundle; path = ../HockeyKit/Hockey.bundle; sourceTree = "<group>"; };
+		11F7DC931511991D00DFA5AF /* Quincy.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Quincy.bundle; path = ../QuincyKit/Quincy.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -567,7 +571,9 @@
 		11C5DFB214DCCDDF006D1DB4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				11F7DC931511991D00DFA5AF /* Quincy.bundle */,
 				11C5DFB314DCCDDF006D1DB4 /* JustLanded-Info.plist */,
+				11F7DC91151198F700DFA5AF /* Hockey.bundle */,
 				11C5DFB414DCCDDF006D1DB4 /* InfoPlist.strings */,
 				11C5DFB714DCCDDF006D1DB4 /* main.m */,
 				11C5DFB914DCCDDF006D1DB4 /* JustLanded-Prefix.pch */,
@@ -852,6 +858,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11F7DC92151198F700DFA5AF /* Hockey.bundle in Resources */,
+				11F7DC951511992700DFA5AF /* Quincy.bundle in Resources */,
 				11C5DFB614DCCDDF006D1DB4 /* InfoPlist.strings in Resources */,
 				115E8F4314F7354600E9F06B /* announcement.caf in Resources */,
 				115E8F4414F7354600E9F06B /* landing.caf in Resources */,
@@ -1058,6 +1066,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
 				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "09C0C2CF-18C7-4CA3-AA54-D1CC14C16ABF";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "4BE4C50B-8DAA-49AF-856A-7E6BDE49D529";
@@ -1221,6 +1233,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
 				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -1244,6 +1260,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "6CBDEB35-83C2-47A2-9BCA-BBCDA62FE1FF";
@@ -1459,6 +1479,7 @@
 				11F7DC7C151185C000DFA5AF /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

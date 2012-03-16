@@ -20,5 +20,6 @@
 
 - (id)initWithAirportInfo:(NSDictionary *)info;
 - (NSDictionary *)toDict;
+- (NSDictionary *)toJSONFriendlyDict;
 
 @end

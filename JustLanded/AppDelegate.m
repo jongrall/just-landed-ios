@@ -41,6 +41,7 @@
     #ifndef CONFIGURATION_Debug
     [[BWQuincyManager sharedQuincyManager] setAppIdentifier:HOCKEY_APP_ID];
     [[BWQuincyManager sharedQuincyManager] setAutoSubmitCrashReport:YES];
+    [[BWQuincyManager sharedQuincyManager] setDelegate:self];
     #endif
     
     // Register for push notifications
