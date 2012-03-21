@@ -180,6 +180,11 @@
     
     // Update displayed information
     self._textView.text = [_trackedFlight description];
+    
+    // Ask them to rate after a few seconds, if eligible
+    [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible) 
+                                            withObject:nil 
+                                            afterDelay:4.0];
 }
 
 

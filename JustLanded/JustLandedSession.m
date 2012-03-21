@@ -7,6 +7,7 @@
 
 #import "JustLandedSession.h"
 #import "Flight.h"
+#import "BWQuincyManager.h"
 #import <AudioToolbox/AudioToolbox.h>
 
 NSString * const LastKnownLocationDidUpdateNotification = @"LastKnownLocationUpdatedNotification";
@@ -67,7 +68,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
         if (_currentlyTrackedFlights == nil) {
             _currentlyTrackedFlights = [[NSMutableArray alloc] init];
         }
-
+        
         // Re-archive tracked flights whenever resigning active or going to the background
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(archiveCurrentlyTrackedFlights) 
@@ -295,6 +296,67 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 - (BOOL)triedToGetLocation {
     return _triedToGetLocation;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - App Ratings
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+- (void)incrementTrackCount {    
+    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
+    
+    if (trackCount) {
+        NSUInteger newCount = [trackCount integerValue] + 1;
+        trackCount = [NSNumber numberWithInt:newCount];
+    }
+    else {
+        trackCount = [NSNumber numberWithInt:1];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:trackCount forKey:FlightsTrackedCountKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+- (BOOL)isEligibleToRate {
+    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
+    NSNumber *hasBeenAsked = [[NSUserDefaults standardUserDefaults] objectForKey:HasBeenAskedToRateKey];
+    
+    if (trackCount && !hasBeenAsked) {
+        NSUInteger currentCount = [trackCount integerValue];
+        
+        if (currentCount >= RATINGS_USAGE_THRESHOLD && ![[BWQuincyManager sharedQuincyManager] didCrashInLastSession]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+
+- (void)showRatingRequestIfEligible {
+    if ([self isEligibleToRate]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Enjoying Just Landed?", @"Ratings Alert Title")
+                                                        message:NSLocalizedString(@"We'd appreciate it if you'd give us a good rating on the App Store.", @"Ratings Alert Body") 
+                                                       delegate:self 
+                                              cancelButtonTitle:NSLocalizedString(@"No Thanks", @"No Thanks") 
+                                              otherButtonTitles:NSLocalizedString(@"Sure", @"Sure") , nil];
+        [alert show];
+    }
+}
+
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    // Mark them as having been asked
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:HasBeenAskedToRateKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    if ([alertView cancelButtonIndex] != buttonIndex) {
+        NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", APP_ID]];
+        [[UIApplication sharedApplication] openURL:ratingURL];
+    }
 }
 
 @end

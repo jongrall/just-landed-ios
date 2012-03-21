@@ -13,12 +13,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined(CONFIGURATION_Debug)
+NSString * const APP_ID = @"500379361";
 NSString * const UUIDKey = @"UUIDKeyDev";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsDev.data";
+NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKeyDev";
+NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKeyDev";
 #else
+NSString * const APP_ID = @"500379361";
 NSString * const UUIDKey = @"UUIDKey";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
+NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKey";
+NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKey";
 #endif
+
+NSUInteger const RATINGS_USAGE_THRESHOLD = 5;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -40,6 +48,7 @@ NSString * const API_KEY = @"4399d9ce77acf522799543f13c926c0a41e2ea3f";
 NSString * const LOOKUP_URL_FORMAT = @"search/%@";
 NSString * const TRACK_URL_FORMAT = @"track/%@/%@";
 NSString * const UNTRACK_URL_FORMAT = @"untrack/%@";
+NSString * const FAQ_URL = @"http://www.getjustlanded.com/iphonefaq";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

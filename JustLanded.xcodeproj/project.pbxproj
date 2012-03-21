@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11019B4215194F1B00F7F0F2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11019B3F15194F1400F7F0F2 /* MessageUI.framework */; };
+		11019B45151970E200F7F0F2 /* AboutTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 11019B44151970E200F7F0F2 /* AboutTableViewCell.m */; };
+		11019B8115198B8300F7F0F2 /* FAQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11019B8015198B8300F7F0F2 /* FAQViewController.m */; };
 		114ADBAD14EC354700463F0C /* Flight.m in Sources */ = {isa = PBXBuildFile; fileRef = 114ADBAC14EC354700463F0C /* Flight.m */; };
 		114ADBB114EC41C700463F0C /* Airport.m in Sources */ = {isa = PBXBuildFile; fileRef = 114ADBB014EC41C700463F0C /* Airport.m */; };
 		115E8F3B14F6C8CA00E9F06B /* OriginAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3A14F6C8CA00E9F06B /* OriginAirport.m */; };
@@ -50,6 +53,7 @@
 		117C48D414EB65760049452F /* libABTableViewCell.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C48C214EB64F60049452F /* libABTableViewCell.a */; };
 		117C48D714EB66140049452F /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 117C48D614EB66140049452F /* Constants.m */; };
 		117C48DB14EB68D10049452F /* libFlurryAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C48DA14EB68D10049452F /* libFlurryAnalytics.a */; };
+		1190BF7A151925F200B1163F /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1190BF79151925F200B1163F /* AboutViewController.m */; };
 		119AADBA150CAA0D00882760 /* just_landed_57.png in Resources */ = {isa = PBXBuildFile; fileRef = 119AADB9150CAA0D00882760 /* just_landed_57.png */; };
 		119AADBC150CAA1800882760 /* just_landed_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 119AADBB150CAA1800882760 /* just_landed_114.png */; };
 		11AE979E14EB5A4100F7ED46 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */; };
@@ -155,6 +159,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		11019B3F15194F1400F7F0F2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		11019B43151970E200F7F0F2 /* AboutTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutTableViewCell.h; sourceTree = "<group>"; };
+		11019B44151970E200F7F0F2 /* AboutTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutTableViewCell.m; sourceTree = "<group>"; };
+		11019B7F15198B8300F7F0F2 /* FAQViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAQViewController.h; sourceTree = "<group>"; };
+		11019B8015198B8300F7F0F2 /* FAQViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAQViewController.m; sourceTree = "<group>"; };
 		114ADBAB14EC354700463F0C /* Flight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flight.h; sourceTree = "<group>"; };
 		114ADBAC14EC354700463F0C /* Flight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Flight.m; sourceTree = "<group>"; };
 		114ADBAF14EC41C700463F0C /* Airport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Airport.h; sourceTree = "<group>"; };
@@ -207,6 +216,8 @@
 		117C48D614EB66140049452F /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		117C48D914EB68D10049452F /* FlurryAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryAnalytics.h; sourceTree = "<group>"; };
 		117C48DA14EB68D10049452F /* libFlurryAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurryAnalytics.a; sourceTree = "<group>"; };
+		1190BF78151925F200B1163F /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
+		1190BF79151925F200B1163F /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
 		119AADB9150CAA0D00882760 /* just_landed_57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = just_landed_57.png; sourceTree = "<group>"; };
 		119AADBB150CAA1800882760 /* just_landed_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = just_landed_114.png; sourceTree = "<group>"; };
 		11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -295,6 +306,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11F7DC8B1511873A00DFA5AF /* libQuincyKit.a in Frameworks */,
+				11019B4215194F1B00F7F0F2 /* MessageUI.framework in Frameworks */,
 				11F7DC8A1511873600DFA5AF /* libHockeyKit.a in Frameworks */,
 				11AE97AA14EB5ADE00F7ED46 /* SystemConfiguration.framework in Frameworks */,
 				11F7DC8C1511917E00DFA5AF /* CrashReporter.framework in Frameworks */,
@@ -426,10 +438,14 @@
 		11AE980014EB602E00F7ED46 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				11C5DFC014DCCDDF006D1DB4 /* FlightTrackViewController.h */,
-				11C5DFC114DCCDDF006D1DB4 /* FlightTrackViewController.m */,
+				1190BF78151925F200B1163F /* AboutViewController.h */,
+				1190BF79151925F200B1163F /* AboutViewController.m */,
+				11019B7F15198B8300F7F0F2 /* FAQViewController.h */,
+				11019B8015198B8300F7F0F2 /* FAQViewController.m */,
 				11C5DFBD14DCCDDF006D1DB4 /* FlightLookupViewController.h */,
 				11C5DFBE14DCCDDF006D1DB4 /* FlightLookupViewController.m */,
+				11C5DFC014DCCDDF006D1DB4 /* FlightTrackViewController.h */,
+				11C5DFC114DCCDDF006D1DB4 /* FlightTrackViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -437,6 +453,8 @@
 		11AE980114EB603700F7ED46 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				11019B43151970E200F7F0F2 /* AboutTableViewCell.h */,
+				11019B44151970E200F7F0F2 /* AboutTableViewCell.m */,
 				116CBA5414F343A8003AB446 /* FlightResultTableViewCell.h */,
 				116CBA5514F343A8003AB446 /* FlightResultTableViewCell.m */,
 			);
@@ -541,6 +559,7 @@
 		11C5DFAA14DCCDDF006D1DB4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				11019B3F15194F1400F7F0F2 /* MessageUI.framework */,
 				11F112E915117A0A0008D301 /* Twitter.framework */,
 				11AE97FB14EB5FF300F7ED46 /* Security.framework */,
 				11AE97F814EB5FDA00F7ED46 /* QuartzCore.framework */,
@@ -940,6 +959,9 @@
 				116CBA9214F45BF9003AB446 /* NSData+JLExtensions.m in Sources */,
 				115E8F3B14F6C8CA00E9F06B /* OriginAirport.m in Sources */,
 				115E8F3F14F6C8EE00E9F06B /* DestinationAirport.m in Sources */,
+				1190BF7A151925F200B1163F /* AboutViewController.m in Sources */,
+				11019B45151970E200F7F0F2 /* AboutTableViewCell.m in Sources */,
+				11019B8115198B8300F7F0F2 /* FAQViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

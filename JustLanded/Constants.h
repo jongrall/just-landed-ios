@@ -12,8 +12,12 @@
 #pragma mark NSUserDefaults & Other Keys
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+extern NSString * const APP_ID;
 extern NSString * const UUIDKey;
 extern NSString * const ARCHIVED_FLIGHTS_FILE;
+extern NSString * const HasBeenAskedToRateKey;
+extern NSString * const FlightsTrackedCountKey;
+extern NSUInteger const RATINGS_USAGE_THRESHOLD;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -28,6 +32,7 @@ extern NSString * const UNTRACK_URL_FORMAT;
 extern NSUInteger const API_VERSION;
 extern NSString * const API_USERNAME;
 extern NSString * const API_KEY;
+extern NSString * const FAQ_URL;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

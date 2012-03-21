@@ -8,6 +8,7 @@
 
 #import "FlightLookupViewController.h"
 #import "FlightResultTableViewCell.h"
+#import "AboutViewController.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
@@ -28,6 +29,7 @@
 - (void)indicateLookingUp;
 - (void)indicateStoppedLookingUp;
 - (BOOL)isFlightNumValid:(NSString *)flightNum;
+- (void)showAboutScreen;
 
 @end
 
@@ -91,18 +93,13 @@ static NSRegularExpression *_flightNumberRegex;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self presentModalViewController:controller animated:animateFlip];
     
+    // If animated, was user-initiated, record the track
+    if (animateFlip) {
+        [[JustLandedSession sharedSession] incrementTrackCount];
+    }
+    
     // Initiate a refresh to get the initial flight information
     [controller refresh];
-}
-
-
-- (void)doLookup {
-    NSString *flightNumber = [[[_flightNumberField text] uppercaseString] stringByReplacingOccurrencesOfString:@" " 
-                                                                                                    withString:@""];
-    if ([self isFlightNumValid:flightNumber]) {
-        [_flightNumberField resignFirstResponder];
-        [Flight lookupFlights:flightNumber];
-    }
 }
 
 
@@ -118,6 +115,29 @@ static NSRegularExpression *_flightNumberRegex;
     self._flightNumberField.enabled = YES;
     self._lookupButton.enabled = YES; //FIXME
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Action Methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)doLookup {
+    NSString *flightNumber = [[[_flightNumberField text] uppercaseString] stringByReplacingOccurrencesOfString:@" " 
+                                                                                                    withString:@""];
+    if ([self isFlightNumValid:flightNumber]) {
+        [_flightNumberField resignFirstResponder];
+        [Flight lookupFlights:flightNumber];
+    }
+}
+
+
+- (void)showAboutScreen {
+    AboutViewController *aboutController = [[AboutViewController alloc] init];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:aboutController];
+    navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentModalViewController:navController animated:YES];
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +234,12 @@ static NSRegularExpression *_flightNumberRegex;
     title.text = NSLocalizedString(@"Just Landed", @"Just Landed");
     title.backgroundColor = [UIColor clearColor];
     [self.view addSubview:title];
+    
+    // Add the help button
+    UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    [helpButton addTarget:self action:@selector(showAboutScreen) forControlEvents:UIControlEventTouchUpInside];
+    [helpButton setFrame:CGRectMake(260.0f, 20.0f, 50.0f, 50.0f)];
+    [self.view addSubview:helpButton];
     
     // Add the input field label
     UILabel *flightNumFieldLabel = [[UILabel alloc] initWithFrame:CGRectMake(20.0f, 102.0f, 100.0f, 40.0f)];

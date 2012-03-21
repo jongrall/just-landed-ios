@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
 typedef enum {
@@ -24,7 +25,7 @@ extern NSString * const DidRegisterForRemoteNotifications;
 extern NSString * const DidFailToRegisterForRemoteNotifications;
 
 
-@interface JustLandedSession : NSObject <CLLocationManagerDelegate>
+@interface JustLandedSession : NSObject <CLLocationManagerDelegate, UIAlertViewDelegate >
 
 @property (readonly, nonatomic) NSArray *currentlyTrackedFlights;
 @property (readonly, nonatomic) CLLocation *lastKnownLocation;
@@ -48,5 +49,9 @@ extern NSString * const DidFailToRegisterForRemoteNotifications;
 - (void)registerForPushNotifications;
 - (void)didFailToRegisterForRemoteNotifications:(NSError *)error;
 - (void)updatePushTokenAfterRegisteringWithApple:(NSString *)token;
+
+- (void)incrementTrackCount;
+- (BOOL)isEligibleToRate;
+- (void)showRatingRequestIfEligible;
 
 @end
