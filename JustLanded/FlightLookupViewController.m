@@ -96,6 +96,11 @@ static NSRegularExpression *_flightNumberRegex;
     // If animated, was user-initiated, record the track
     if (animateFlip) {
         [[JustLandedSession sharedSession] incrementTrackCount];
+        
+        [FlurryAnalytics logEvent:FY_BEGAN_TRACKING_FLIGHT 
+                   withParameters:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%d", [aFlight minutesBeforeLanding]]
+                                                              forKey:@"Minutes Before Landing"]];
+        
     }
     
     // Initiate a refresh to get the initial flight information
@@ -136,6 +141,7 @@ static NSRegularExpression *_flightNumberRegex;
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:aboutController];
     navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self presentModalViewController:navController animated:YES];
+    [FlurryAnalytics logEvent:FY_VISITED_ABOUT_SCREEN];
 }
 
 
@@ -184,7 +190,7 @@ static NSRegularExpression *_flightNumberRegex;
 }
 
 
-- (void)didLookupFlight:(NSNotification *)notification {    
+- (void)didLookupFlight:(NSNotification *)notification {
     NSArray *flights = [[notification userInfo] valueForKey:@"flights"];
     [self indicateStoppedLookingUp];
     
@@ -208,6 +214,10 @@ static NSRegularExpression *_flightNumberRegex;
             self._lookupButton.hidden = YES;
             self._flightResultsTable.hidden = NO;
         }
+    
+        [FlurryAnalytics logEvent:FY_LOOKED_UP_FLIGHT 
+                   withParameters:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%d", [flights count]] 
+                                                                                         forKey:@"Number Of Results"]];
     }
 }
 
@@ -488,7 +498,10 @@ static NSRegularExpression *_flightNumberRegex;
     
     // If the user stopped tracking, pre-fill the field with the flight they were tracking
     if (user_flag) {
-       self._flightNumberField.text = controller.trackedFlight.flightNumber; 
+        self._flightNumberField.text = controller.trackedFlight.flightNumber;
+        [FlurryAnalytics logEvent:FY_STOPPED_TRACKING_FLIGHT 
+                   withParameters:[NSDictionary dictionaryWithObject:(controller.trackedFlight.status == LANDED) ? @"YES" : @"NO"
+                                                              forKey:@"Flight Landed"]];
     }
     else {
         // Probably an old flight, clear the field

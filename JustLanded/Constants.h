@@ -53,3 +53,35 @@ extern NSString * const HOCKEY_APP_ID;
 
 extern CLLocationDistance const DesiredLocationAccuracy;
 extern NSTimeInterval const DesiredLocationFreshness;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Reporting / Analytics Constants
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+extern NSString * const FY_LOOKED_UP_FLIGHT;
+extern NSString * const FY_BEGAN_TRACKING_FLIGHT;
+extern NSString * const FY_GOT_DIRECTIONS;
+extern NSString * const FY_STOPPED_TRACKING_FLIGHT;
+extern NSString * const FY_VISITED_ABOUT_SCREEN;
+extern NSString * const FY_STARTED_SENDING_FEEDBACK;
+extern NSString * const FY_ABANDONED_SENDING_FEEDBACK;
+extern NSString * const FY_SENT_FEEDBACK;
+extern NSString * const FY_STARTED_TWEETING;
+extern NSString * const FY_ABANDONED_TWEETING;
+extern NSString * const FY_POSTED_TWEET;
+extern NSString * const FY_VISITED_WEBSITE;
+extern NSString * const FY_READ_FAQ;
+extern NSString * const FY_ASKED_TO_RATE;
+extern NSString * const FY_RATED;
+extern NSString * const FY_DECLINED_TO_RATE;
+
+// Errors
+extern NSString * const FY_INVALID_FLIGHT_NUM_ERROR;
+extern NSString * const FY_OLD_FLIGHT_ERROR;
+extern NSString * const FY_FLIGHT_NOT_FOUND_ERROR;
+extern NSString * const FY_NO_CONNECTION_ERROR;
+extern NSString * const FY_SERVER_500;
+extern NSString * const FY_UNABLE_TO_GET_LOCATION;
+extern NSString * const FY_UNABLE_TO_REGISTER_PUSH;

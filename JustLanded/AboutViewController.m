@@ -199,6 +199,7 @@ typedef enum {
             [mailComposer setMailComposeDelegate:self];
             mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             [self presentModalViewController:mailComposer animated:YES];
+            [FlurryAnalytics logEvent:FY_STARTED_SENDING_FEEDBACK];
             break;
         }
         case AboutCellTagTweet: {
@@ -211,19 +212,26 @@ typedef enum {
                                                                    delegate:nil
                                                           cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
                                                           otherButtonTitles:nil];
-                    [alert show]; 
-                }  
+                    [alert show];
+                    [FlurryAnalytics logEvent:FY_POSTED_TWEET];
+                }
+                else {
+                    [FlurryAnalytics logEvent:FY_ABANDONED_TWEETING];
+                }
             }];
             [self presentModalViewController:tweetComposer animated:YES];
+            [FlurryAnalytics logEvent:FY_STARTED_TWEETING];
             break;
         }
         case AboutCellTagWebsite: {
+            [FlurryAnalytics logEvent:FY_VISITED_WEBSITE];
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.getjustlanded.com"]];
             break;
         }
         default: {
             FAQViewController *faqVC = [[FAQViewController alloc] init];
             [self.navigationController pushViewController:faqVC animated:YES];
+            [FlurryAnalytics logEvent:FY_READ_FAQ];
             break;
         }
     }
@@ -267,6 +275,10 @@ typedef enum {
                                               cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
                                               otherButtonTitles:nil];
         [alert show];
+        [FlurryAnalytics logEvent:FY_SENT_FEEDBACK];
+    }
+    else if (result == MFMailComposeResultCancelled) {
+        [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_FEEDBACK];
     }
     
     [self dismissModalViewControllerAnimated:YES];

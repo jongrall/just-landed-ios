@@ -111,5 +111,6 @@ extern NSString * const StopTrackingFailedReasonKey;
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag;
 - (void)stopTracking;
 - (NSString *)flightDataAsJson;
+- (NSUInteger)minutesBeforeLanding;
 
 @end

@@ -79,3 +79,35 @@ NSString * const HOCKEY_APP_ID = @"";
 
 CLLocationDistance const DesiredLocationAccuracy = 150.0;
 NSTimeInterval const DesiredLocationFreshness = 120.0;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Reporting / Analytics Constants
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+NSString * const FY_LOOKED_UP_FLIGHT = @"Looked Up Flight";
+NSString * const FY_BEGAN_TRACKING_FLIGHT = @"Began Tracking Flight";
+NSString * const FY_GOT_DIRECTIONS = @"Got Directions";
+NSString * const FY_STOPPED_TRACKING_FLIGHT = @"Stopped Tracking Flight";
+NSString * const FY_VISITED_ABOUT_SCREEN = @"Visited About Screen";
+NSString * const FY_STARTED_SENDING_FEEDBACK = @"Started Sending Feedback";
+NSString * const FY_ABANDONED_SENDING_FEEDBACK = @"Abandoned Sending Feedback";
+NSString * const FY_SENT_FEEDBACK = @"Sent Feedback";
+NSString * const FY_STARTED_TWEETING = @"Started Tweeting"; 
+NSString * const FY_ABANDONED_TWEETING = @"Abandoned Tweeting";
+NSString * const FY_POSTED_TWEET = @"Posted Tweet";
+NSString * const FY_VISITED_WEBSITE = @"Visited Website";
+NSString * const FY_READ_FAQ = @"Read FAQ";
+NSString * const FY_ASKED_TO_RATE = @"Asked to Rate App";
+NSString * const FY_RATED = @"Rated App";
+NSString * const FY_DECLINED_TO_RATE = @"Declined to Rate App";
+
+// Errors
+NSString * const FY_INVALID_FLIGHT_NUM_ERROR = @"Invalid Flight Number";
+NSString * const FY_OLD_FLIGHT_ERROR = @"Old Flight";
+NSString * const FY_FLIGHT_NOT_FOUND_ERROR = @"Flight Not Found";
+NSString * const FY_NO_CONNECTION_ERROR = @"No Connection";
+NSString * const FY_SERVER_500 = @"500 Error";
+NSString * const FY_UNABLE_TO_GET_LOCATION = @"Unable to Get Location";
+NSString * const FY_UNABLE_TO_REGISTER_PUSH = @"Unable to Register for Notifications";

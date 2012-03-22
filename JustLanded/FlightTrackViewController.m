@@ -9,6 +9,7 @@
 #import "FlightTrackViewController.h"
 #import "JustLandedSession.h"
 #import "Flight.h"
+#import "FlurryAnalytics.h"
 #import <CoreLocation/CoreLocation.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,7 +322,8 @@
         mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@&layer=t&t=m&z=13",
                   [NSString stringWithFormat:@"%@@%@", destName, destLoc]]; 
     }
-    
+
+    [FlurryAnalytics logEvent:FY_GOT_DIRECTIONS];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];
 }
 

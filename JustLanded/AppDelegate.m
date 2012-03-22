@@ -29,7 +29,10 @@
     // Show the status bar
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
     
+    // Configure Flurry
     [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
+    [FlurryAnalytics setSessionReportsOnPauseEnabled:YES];
+    [FlurryAnalytics setSecureTransportEnabled:YES];
     
     // App distribution
     #ifdef CONFIGURATION_Adhoc

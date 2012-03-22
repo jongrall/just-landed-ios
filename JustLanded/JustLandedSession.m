@@ -191,7 +191,13 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 	//Notify observers that the location has been updated
     _triedToGetLocation = YES;
     _lastLocation = newLocation;
-	NSDictionary *dict = [NSDictionary dictionaryWithObject:newLocation forKey:@"location"];
+    
+    [FlurryAnalytics setLatitude:newLocation.coordinate.latitude 
+                       longitude:newLocation.coordinate.longitude 
+              horizontalAccuracy:newLocation.horizontalAccuracy 
+                verticalAccuracy:newLocation.verticalAccuracy];
+	
+    NSDictionary *dict = [NSDictionary dictionaryWithObject:newLocation forKey:@"location"];
 	[[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidUpdateNotification 
                                                         object:self 
                                                       userInfo:dict];
@@ -203,6 +209,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 	[self._locationManager stopUpdatingLocation];
     [[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidFailToUpdateNotification 
                                                         object:self];
+    [FlurryAnalytics logEvent:FY_UNABLE_TO_GET_LOCATION];
 }
 
 
@@ -269,6 +276,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
                                                         object:self 
                                                       userInfo:[NSDictionary dictionaryWithObject:error 
                                                                                            forKey:@"error"]];
+    [FlurryAnalytics logEvent:FY_UNABLE_TO_REGISTER_PUSH];
 }
 
 
@@ -344,6 +352,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
                                               cancelButtonTitle:NSLocalizedString(@"No Thanks", @"No Thanks") 
                                               otherButtonTitles:NSLocalizedString(@"Sure", @"Sure") , nil];
         [alert show];
+        [FlurryAnalytics logEvent:FY_ASKED_TO_RATE];
     }
 }
 
@@ -356,6 +365,10 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     if ([alertView cancelButtonIndex] != buttonIndex) {
         NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", APP_ID]];
         [[UIApplication sharedApplication] openURL:ratingURL];
+        [FlurryAnalytics logEvent:FY_RATED];
+    }
+    else {
+        [FlurryAnalytics logEvent:FY_DECLINED_TO_RATE];
     }
 }
 
