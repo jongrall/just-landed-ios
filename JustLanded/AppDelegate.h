@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "BWQuincyManager.h"
+#import "BWHockeyManager.h"
 
 @class FlightLookupViewController;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, BWQuincyManagerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, BWQuincyManagerDelegate, BWHockeyManagerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) FlightLookupViewController *mainViewController;

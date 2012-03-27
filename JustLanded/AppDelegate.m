@@ -10,7 +10,6 @@
 
 #import "FlightLookupViewController.h"
 #import "Flight.h"
-#import "BWHockeyManager.h"
 #import <CoreLocation/CoreLocation.h>
 
 
@@ -38,6 +37,7 @@
     #ifdef CONFIGURATION_Adhoc
     [[BWHockeyManager sharedHockeyManager] setAppIdentifier:HOCKEY_APP_ID];
     [[BWHockeyManager sharedHockeyManager] setAlwaysShowUpdateReminder:YES];
+    [[BWHockeyManager sharedHockeyManager] setDelegate:self];
     #endif
     
     // Crash reporting
@@ -46,7 +46,7 @@
     [[BWQuincyManager sharedQuincyManager] setAutoSubmitCrashReport:YES];
     [[BWQuincyManager sharedQuincyManager] setDelegate:self];
     #endif
-    
+        
     // Register for push notifications
     [[JustLandedSession sharedSession] registerForPushNotifications];
     
@@ -108,9 +108,23 @@
      */
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Custom Device Identifier Required by BWHockerManagerDelegate
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (NSString *)customDeviceIdentifier {
+    #ifdef CONFIGURATION_Adhoc
+    return [[JustLandedSession sharedSession] UUID];
+    #endif
+    
+    return nil;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Custom Crash Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 - (NSString *)crashReportUserID {
     return [[JustLandedSession sharedSession] UUID];
