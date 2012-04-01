@@ -12,14 +12,19 @@
 #pragma mark NSUserDefaults Keys
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined(CONFIGURATION_Debug)
 NSString * const APP_ID = @"500379361";
+
+#if defined(CONFIGURATION_Debug)
 NSString * const UUIDKey = @"UUIDKeyDev";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsDev.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKeyDev";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKeyDev";
+#elif defined(CONFIGURATION_Adhoc)
+NSString * const UUIDKey = @"UUIDKeyStaging";
+NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsStaging.data";
+NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKeyStaging";
+NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKeyStaging";
 #else
-NSString * const APP_ID = @"500379361";
 NSString * const UUIDKey = @"UUIDKey";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKey";
@@ -38,17 +43,24 @@ NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1/
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Development";
 NSString * const API_KEY = @"d90816f7e6ea93001a2aa62cd8dd8f0e830a93d1";
+NSString * const FAQ_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/iphonefaq";
+#elif defined(CONFIGURATION_Adhoc)
+NSString * const BASE_URL = @"https://just-landed-staging.appspot.com/api/v1/";
+NSUInteger const API_VERSION = 1;
+NSString * const API_USERNAME = @"iOS-Staging";
+NSString * const API_KEY = @"55ca8681039e129bb985991014f61774de31fe1e";
+NSString * const FAQ_URL = @"http://just-landed-staging.appspot.com/iphonefaq";
 #else
 NSString * const BASE_URL = @"https://just-landed.appspot.com/api/v1/";
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Production";
 NSString * const API_KEY = @"4399d9ce77acf522799543f13c926c0a41e2ea3f";
+NSString * const FAQ_URL = @"http://www.getjustlanded.com/iphonefaq";
 #endif
 
 NSString * const LOOKUP_URL_FORMAT = @"search/%@";
 NSString * const TRACK_URL_FORMAT = @"track/%@/%@";
 NSString * const UNTRACK_URL_FORMAT = @"untrack/%@";
-NSString * const FAQ_URL = @"http://www.getjustlanded.com/iphonefaq";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -58,16 +70,13 @@ NSString * const FAQ_URL = @"http://www.getjustlanded.com/iphonefaq";
 
 #if defined(CONFIGURATION_Debug)
 NSString * const FLURRY_APPLICATION_KEY = @"LH6F2XN2C6HAX4NIB3QS";
-#else
-NSString * const FLURRY_APPLICATION_KEY = @"2TZMR1NGCSTZ395GHUZS";
-#endif
-
-# if defined (CONFIGURATION_Debug)
 NSString * const HOCKEY_APP_ID = @"NOT_USED"; //Not used in dev
 #elif defined(CONFIGURATION_Adhoc)
+NSString * const FLURRY_APPLICATION_KEY = @"JICB45DI2N7ZE2B4FR5E";
 NSString * const HOCKEY_APP_ID = @"5a0221e1a7ebd7fe6e01c4742bea58c8";
-#elif defined (CONFIGURATION_Release)
-NSString * const HOCKEY_APP_ID = @"";
+#else
+NSString * const FLURRY_APPLICATION_KEY = @"2TZMR1NGCSTZ395GHUZS";
+NSString * const HOCKEY_APP_ID = @"d3afd0c1d0a5b5b73980f097c40b77a8";
 #endif
 
 
