@@ -82,7 +82,6 @@
 		119EA20B1539275E00BBFD5E /* LabelStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA20A1539275E00BBFD5E /* LabelStyle.m */; };
 		119EA20E15392A8E00BBFD5E /* ButtonStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA20D15392A8E00BBFD5E /* ButtonStyle.m */; };
 		119EA21215393EE900BBFD5E /* JLTrackStyles.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA21115393EE800BBFD5E /* JLTrackStyles.m */; };
-		119EA227153A300000BBFD5E /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 119EA226153A300000BBFD5E /* iTunesArtwork */; };
 		119EA22A153A3ECB00BBFD5E /* JLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA229153A3ECB00BBFD5E /* JLButton.m */; };
 		119EA22D153A3EE700BBFD5E /* JLLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA22C153A3EE700BBFD5E /* JLLabel.m */; };
 		11AE979E14EB5A4100F7ED46 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */; };
@@ -1109,7 +1108,6 @@
 				115E8F4314F7354600E9F06B /* announcement.caf in Resources */,
 				115E8F4414F7354600E9F06B /* landing.caf in Resources */,
 				115E8F4514F7354600E9F06B /* takeoff.caf in Resources */,
-				119EA227153A300000BBFD5E /* iTunesArtwork in Resources */,
 				1190CD2B153A5A09005FA8E6 /* Frutiger CE 45 Light.ttf in Resources */,
 				1190CD2C153A5A09005FA8E6 /* Frutiger CE 55 Roman.ttf in Resources */,
 				1190CD2D153A5A09005FA8E6 /* Frutiger LT 47 Light Condensed.ttf in Resources */,
@@ -1337,7 +1335,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Friendfer, Inc.";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jonathan Grall";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = "";
@@ -1346,7 +1344,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E1EB9D21-0D34-459F-B949-BF517C026CC5";
+				PROVISIONING_PROFILE = "D916C61A-02D3-413E-995D-305BB3725D87";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1355,8 +1354,6 @@
 		115E8F4C14F74EED00E9F06B /* Adhoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/QuincyKit\"",
@@ -1364,7 +1361,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JustLanded/JustLanded-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
-				GCC_VERSION = "";
 				INFOPLIST_FILE = "JustLanded/JustLanded-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -1376,9 +1372,6 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Adhoc;
@@ -1478,7 +1471,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jonathan Grall (F3W53ULL6X)";
+				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1493,7 +1487,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "1DDE02E6-BF5B-44D7-9A2F-58A73576229A";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1504,7 +1498,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Friendfer, Inc.";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jonathan Grall";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = "";
@@ -1513,7 +1507,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "054291C7-5A9A-4F70-BF16-9AB6C6952D31";
+				PROVISIONING_PROFILE = "0C939798-2F96-4899-BB82-32C66526A2AC";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1522,8 +1517,6 @@
 		11C5DFE114DCCDDF006D1DB4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jonathan Grall (SQC4HYP4TR)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jonathan Grall (SQC4HYP4TR)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/QuincyKit\"",
@@ -1531,7 +1524,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JustLanded/JustLanded-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
-				GCC_VERSION = "";
 				INFOPLIST_FILE = "JustLanded/JustLanded-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -1543,9 +1535,6 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7C3AD338-09D4-43D6-B92C-446C39639C5D";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7C3AD338-09D4-43D6-B92C-446C39639C5D";
-				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1553,8 +1542,6 @@
 		11C5DFE214DCCDDF006D1DB4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Friendfer, Inc.";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Friendfer, Inc.";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/QuincyKit\"",
@@ -1562,7 +1549,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JustLanded/JustLanded-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)";
-				GCC_VERSION = "";
 				INFOPLIST_FILE = "JustLanded/JustLanded-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -1574,9 +1560,6 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "054291C7-5A9A-4F70-BF16-9AB6C6952D31";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "054291C7-5A9A-4F70-BF16-9AB6C6952D31";
-				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
