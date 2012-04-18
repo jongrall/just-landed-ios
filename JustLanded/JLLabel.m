@@ -8,24 +8,64 @@
 
 #import "JLLabel.h"
 
+@interface JLLabel () {
+    __strong LabelStyle *_style;
+}
+
+@end
+
+
 @implementation JLLabel
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
+@synthesize text;
+@synthesize style=_style;
+
+- (id)initWithLabelStyle:(LabelStyle *)aStyle frame:(CGRect)aFrame {
+    self = [super initWithFrame:aFrame];
+    
     if (self) {
-        // Initialization code
+        _style = aStyle;
+        [self setOpaque:NO];
+        self.text = @"";
     }
+
     return self;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
+
+- (void)drawRect:(CGRect)rect {
+    // Custom drawing
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextClearRect(context, rect);
+    
+    // Background color
+    [[_style backgroundColor] set];    
+    CGContextFillRect(context, rect);
+    
+    TextStyle *textStyle = [_style textStyle];
+    
+    // Shadow
+    if ([textStyle shadowColor]) {
+        CGContextSetShadowWithColor(context, [textStyle shadowOffset], [textStyle shadowBlur], [[textStyle shadowColor] CGColor]);
+    }
+    
+    // Draw the text
+    [[textStyle color] set];
+    [text drawInRect:rect 
+            withFont:[textStyle font] 
+       lineBreakMode:[_style lineBreakMode] 
+           alignment:[_style alignment]];
+    
+    [super drawRect:rect];
 }
-*/
+
+
+- (void)setText:(NSString *)someText {
+    if (text != someText) {
+        text = someText;
+        [self setNeedsDisplay];
+    }
+}
 
 @end

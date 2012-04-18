@@ -10,4 +10,6 @@
 
 @interface JLLeaveMeter : UIView
 
+@property (nonatomic) NSTimeInterval timeRemaining;
+
 @end

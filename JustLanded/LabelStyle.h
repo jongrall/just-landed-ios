@@ -6,8 +6,19 @@
 //  Copyright (c) 2012 SimplyListed. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "TextStyle.h"
 
 @interface LabelStyle : NSObject
+
+@property (nonatomic, readonly) TextStyle *textStyle;
+@property (nonatomic, readonly) UIColor *backgroundColor;
+@property (nonatomic, readonly) UITextAlignment alignment;
+@property (nonatomic, readonly) UILineBreakMode lineBreakMode;
+
+- (id)initWithTextStyle:(TextStyle *)style
+        backgroundColor:(UIColor *)aColor
+              alignment:(UITextAlignment)anAlignment
+          lineBreakMode:(UILineBreakMode)aMode;
 
 @end

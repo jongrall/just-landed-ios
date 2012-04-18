@@ -96,6 +96,11 @@ static NSArray *_aircraftTypes;
 }
 
 
++ (NSString *)aircraftTypeToString:(AircraftType)aType {
+    return [_aircraftTypes objectAtIndex:aType];
+}
+
+
 + (PushType)stringToPushType:(NSString *)typeString {
     NSUInteger index = [_pushTypes indexOfObject:typeString];
     if (index == NSNotFound) {
@@ -326,6 +331,27 @@ static NSArray *_aircraftTypes;
         }
         else {
             return 0; // Shouldn't happen
+        }
+    }
+}
+
+
+- (CGFloat)currentProgress {
+    if (self.status == LANDED) {
+        return 1.0f;
+    }
+    else if (!actualDepartureTime) {
+        return 0.0f;
+    }
+    else {
+        NSTimeInterval totalFlightTime = [estimatedArrivalTime timeIntervalSinceDate:actualDepartureTime];
+        NSTimeInterval timeSinceTakeoff = [[NSDate date] timeIntervalSinceDate:actualDepartureTime];
+        
+        if (timeSinceTakeoff > totalFlightTime) {
+            return 0.9999f; // Delay before reporting landed
+        }
+        else {
+            return (float) timeSinceTakeoff / totalFlightTime; // Return the fraction of the flight completed
         }
     }
 }

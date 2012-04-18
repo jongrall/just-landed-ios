@@ -6,8 +6,20 @@
 //  Copyright (c) 2012 SimplyListed. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface TextStyle : NSObject
+
+@property (nonatomic, readonly) UIFont *font;
+@property (nonatomic, readonly) UIColor *color;
+@property (nonatomic, readonly) UIColor *shadowColor;
+@property (nonatomic, readonly) CGSize shadowOffset;
+@property (nonatomic, readonly) CGFloat shadowBlur;
+
+- (id)initWithFont:(UIFont *)font
+             color:(UIColor *)color
+       shadowColor:(UIColor *)color
+      shadowOffset:(CGSize)offset
+        shadowBlur:(CGFloat)blur;
 
 @end

@@ -41,6 +41,12 @@
 }
 
 
+- (NSString *)bestCode {
+    NSString *code = (iataCode) ? iataCode : icaoCode;
+    return [code uppercaseString];
+}
+
+
 - (NSDictionary *)toDict {
     return [[NSDictionary alloc] initWithObjectsAndKeys:
             iataCode ? iataCode : [NSNull null], @"iataCode",

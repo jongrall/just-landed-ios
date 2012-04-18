@@ -1,31 +1,47 @@
 //
-//  JLStatusButton.m
+//  JLLookupButton.m
 //  JustLanded
 //
 //  Created by Jon Grall on 4/15/12.
 //  Copyright (c) 2012 SimplyListed. All rights reserved.
 //
 
-#import "JLStatusButton.h"
+#import "JLLookupButton.h"
+#import "JLStyles.h"
 
-@implementation JLStatusButton
+@implementation JLLookupButton
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
+@synthesize status;
+
+- (id)initWithButtonStyle:(ButtonStyle *)aStyle frame:(CGRect)aFrame status:(FlightStatus)aStatus {
+    self = [super initWithButtonStyle:aStyle frame:aFrame];
+    
     if (self) {
-        // Initialization code
+        [self setStatus:aStatus];
     }
+    
     return self;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
+
+- (void)setStatus:(FlightStatus)newStatus {
+    status = newStatus;
+    NSString *upFileName = [NSString stringWithFormat:@"lookup_button_up_%@", [JLStyles colorNameForStatus:newStatus]];
+    NSString *downFileName = [NSString stringWithFormat:@"lookup_button_down_%@", [JLStyles colorNameForStatus:newStatus]];
+    UIColor *shadowColor = [JLStyles labelShadowColorForStatus:newStatus];
+    
+    [self setBackgroundImage:[[UIImage imageNamed:upFileName] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)] forState:UIControlStateNormal];
+    [self setBackgroundImage:[[UIImage imageNamed:downFileName] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)] forState:UIControlStateHighlighted];
+    [self setBackgroundImage:[[UIImage imageNamed:downFileName] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)] forState:UIControlStateSelected];
+    
+    [self setImage:[UIImage imageNamed:@"lookup"
+                             withColor:[UIColor whiteColor] 
+                           shadowColor:[JLStyles labelShadowColorForStatus:newStatus]
+                          shadowOffset:CGSizeMake(0.0f, -1.0f)
+                            shadowBlur:0.5f]
+          forState:UIControlStateNormal];
+    
+    [self setTitleShadowColor:shadowColor forState:UIControlStateNormal];
 }
-*/
 
 @end

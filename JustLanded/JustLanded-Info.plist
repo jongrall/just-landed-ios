@@ -10,8 +10,10 @@
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFiles</key>
 	<array>
-		<string>just_landed_57.png</string>
-		<string>just_landed_114.png</string>
+		<string>Icon.png</string>
+		<string>Icon@2x.png</string>
+		<string>Icon-Small.png</string>
+		<string>Icon-Small@2x.png</string>
 	</array>
 	<key>CFBundleIdentifier</key>
 	<string>com.getjustlanded.${PRODUCT_NAME:rfc1034identifier}</string>
@@ -27,6 +29,14 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>0.6.2</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Frutiger CE 45 Light.ttf</string>
+		<string>Frutiger CE 55 Roman.ttf</string>
+		<string>Frutiger LT 47 Light Condensed.ttf</string>
+		<string>Frutiger LT 67 Bold Condensed.ttf</string>
+		<string>Sign Painter.ttf</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIPrerenderedIcon</key>

@@ -102,9 +102,6 @@ static NSRegularExpression *_flightNumberRegex;
                                                               forKey:@"Minutes Before Landing"]];
         
     }
-    
-    // Initiate a refresh to get the initial flight information
-    [controller refresh];
 }
 
 
@@ -154,7 +151,6 @@ static NSRegularExpression *_flightNumberRegex;
 - (void)flightLookupFailed:(NSNotification *)notification {
     [self indicateStoppedLookingUp];
     
-    // TODO: Show the failure reason, allow them to try again
     FlightLookupFailedReason reason = [[[notification userInfo] valueForKey:FlightLookupFailedReasonKey] integerValue];
     
     switch (reason) {
@@ -177,7 +173,6 @@ static NSRegularExpression *_flightNumberRegex;
             break;
         }
         default: {
-            // TODO: Allow them to try again, tell them lookup failed
             [_flightNumberField becomeFirstResponder];
             break; 
         }

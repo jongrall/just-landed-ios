@@ -7,7 +7,12 @@
 //
 
 #import "JLLabel.h"
+#import "Flight.h"
 
 @interface JLStatusLabel : JLLabel
+
+@property (nonatomic) FlightStatus status;
+
+- (id)initWithLabelStyle:(LabelStyle *)aStyle frame:(CGRect)aFrame status:(FlightStatus)aStatus;
 
 @end

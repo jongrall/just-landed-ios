@@ -1,5 +1,5 @@
 //
-//  JLStatusButton.h
+//  JLLookupButton.h
 //  JustLanded
 //
 //  Created by Jon Grall on 4/15/12.
@@ -7,7 +7,12 @@
 //
 
 #import "JLButton.h"
+#import "Flight.h"
 
-@interface JLStatusButton : JLButton
+@interface JLLookupButton : JLButton
+
+@property (nonatomic) FlightStatus status;
+
+- (id)initWithButtonStyle:(ButtonStyle *)aStyle frame:(CGRect)aFrame status:(FlightStatus)aStatus;
 
 @end

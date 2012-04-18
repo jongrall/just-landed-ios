@@ -24,6 +24,5 @@
 - (id)initWithFlight:(Flight *)aFlight;
 - (void)stopTracking;
 - (void)refresh;
-- (void)showPickupDirections;
 
 @end

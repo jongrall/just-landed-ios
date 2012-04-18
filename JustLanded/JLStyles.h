@@ -7,7 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Flight.h"
 
 @interface JLStyles : NSObject
+
++ (UIFont *)regularScriptOfSize:(CGFloat)size;
++ (UIFont *)sansSerifLightOfSize:(CGFloat)size;
++ (UIFont *)sansSerifRomanOfSize:(CGFloat)size;
++ (UIFont *)sansSerifLightCondensedOfSize:(CGFloat)size;
++ (UIFont *)sansSerifBoldCondensedOfSize:(CGFloat)size;
++ (NSString *)colorNameForStatus:(FlightStatus)status;
++ (UIColor *)labelShadowColorForStatus:(FlightStatus)status;
 
 @end

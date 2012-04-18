@@ -168,6 +168,7 @@
     // Only alert them if they haven't been told yet (UIApplicationStateInactive indicates the app was launched in
     // response to the user tapping the action button of the push notification).
     if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateInactive) {
+        // TODO: Only do something if they are still tracking a flight
         NSString *notificationType = [userInfo valueForKeyOrNil:@"notification_type"];
         NSString *message = [userInfo valueForKeyPathOrNil:@"aps.alert"];
         PushType push_type = [Flight stringToPushType:notificationType];
@@ -193,6 +194,8 @@
         [alert show];
         [[JustLandedSession sharedSession] playSound:soundType];
         [[JustLandedSession sharedSession] vibrateDevice];
+        
+        // TODO: Update the tracking info for the flight
     }
 }
 

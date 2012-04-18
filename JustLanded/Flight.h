@@ -105,6 +105,7 @@ extern NSString * const StopTrackingFailedReasonKey;
 
 @property (nonatomic, readonly) NSDate *lastTracked;
 
++ (NSString *)aircraftTypeToString:(AircraftType)aType;
 + (PushType)stringToPushType:(NSString *)typeString;
 + (void)lookupFlights:(NSString *)aFlightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;
@@ -112,5 +113,6 @@ extern NSString * const StopTrackingFailedReasonKey;
 - (void)stopTracking;
 - (NSString *)flightDataAsJson;
 - (NSUInteger)minutesBeforeLanding;
+- (CGFloat)currentProgress;
 
 @end
