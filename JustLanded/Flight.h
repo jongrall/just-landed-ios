@@ -16,6 +16,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef enum {
+    DAY = 0,
+    NIGHT = 1
+} TimeOfDay;
+
+typedef enum {
     SCHEDULED = 0,
     ON_TIME,
     DELAYED,
@@ -87,6 +92,7 @@ extern NSString * const StopTrackingFailedReasonKey;
 @property (strong, nonatomic) NSString *flightID;
 @property (strong, nonatomic) NSString *flightNumber;
 @property (nonatomic) AircraftType aircraftType;
+@property (nonatomic) TimeOfDay timeOfDay;
 
 @property (strong, nonatomic) NSDate *actualArrivalTime;
 @property (strong, nonatomic) NSDate *actualDepartureTime;

@@ -11,12 +11,14 @@
 @implementation DestinationAirport
 
 @synthesize bagClaim;
+@synthesize gate;
 
 - (id)initWithAirportInfo:(NSDictionary *)info {
     self = [super initWithAirportInfo:info];
     
     if (self) {
         self.bagClaim = [info valueForKeyOrNil:@"bagClaim"];
+        self.gate = [info valueForKeyOrNil:@"gate"];
     }
     
     return self;
@@ -27,6 +29,8 @@
     NSMutableDictionary *info = [[NSMutableDictionary alloc] initWithDictionary:[super toDict]];
     [info setValue:bagClaim ? bagClaim : [NSNull null]
             forKey:@"bagClaim"];
+    [info setValue:gate ? gate : [NSNull null]
+            forKey:@"gate"];
     return info;
 }
 
@@ -40,6 +44,7 @@
     
     if (self) {
         self.bagClaim = [aDecoder decodeObjectForKey:@"bagClaim"];
+        self.gate = [aDecoder decodeObjectForKey:@"gate"];
     }
     
     return self;
@@ -50,6 +55,7 @@
     // Encode each property using its name
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:bagClaim forKey:@"bagClaim"];
+    [aCoder encodeObject:gate forKey:@"gate"];
 }
 
 
@@ -61,7 +67,8 @@
     if ([object isKindOfClass:[self class]]) {
         DestinationAirport *aDestinationAirport = (DestinationAirport *)object;
         return ([super isEqual:aDestinationAirport] && 
-                [bagClaim isEqualToString:aDestinationAirport.bagClaim]);
+                [bagClaim isEqualToString:aDestinationAirport.bagClaim] &&
+                [gate isEqualToString:aDestinationAirport.gate]);
     }
     else {
         return NO;

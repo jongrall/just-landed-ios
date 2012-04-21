@@ -47,6 +47,7 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 @synthesize flightID;
 @synthesize flightNumber;
 @synthesize aircraftType;
+@synthesize timeOfDay;
 
 @synthesize actualArrivalTime;
 @synthesize actualDepartureTime;
@@ -128,6 +129,7 @@ static NSArray *_aircraftTypes;
     self.flightNumber = [info valueForKeyOrNil:@"flightNumber"];
     NSUInteger parsed_aircraft_type = [_aircraftTypes indexOfObject:[info valueForKeyOrNil:@"aircraftType"]];
     self.aircraftType = (parsed_aircraft_type == NSNotFound) ? PROP2 : parsed_aircraft_type;
+    self.timeOfDay = ([[info valueForKey:@"isNight"] boolValue]) ? NIGHT : DAY;
     
     // Process and set all the flight date and time information
     self.actualArrivalTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"actualArrivalTime"] returnNilForZero:YES];
@@ -369,6 +371,7 @@ static NSArray *_aircraftTypes;
         self.flightID = [aDecoder decodeObjectForKey:@"flightID"];
         self.flightNumber = [aDecoder decodeObjectForKey:@"flightNumber"];
         self.aircraftType = [aDecoder decodeIntegerForKey:@"aircraftType"];
+        self.timeOfDay = [aDecoder decodeIntegerForKey:@"timeOfDay"];
         
         self.actualArrivalTime = [aDecoder decodeObjectForKey:@"actualArrivalTime"];
         self.actualDepartureTime = [aDecoder decodeObjectForKey:@"actualDepartureTime"];
@@ -397,6 +400,7 @@ static NSArray *_aircraftTypes;
     [aCoder encodeObject:flightID forKey:@"flightID"];
     [aCoder encodeObject:flightNumber forKey:@"flightNumber"];
     [aCoder encodeInteger:aircraftType forKey:@"aircraftType"];
+    [aCoder encodeInteger:timeOfDay forKey:@"timeOfDay"];
     
     [aCoder encodeObject:actualArrivalTime forKey:@"actualArrivalTime"];
     [aCoder encodeObject:actualDepartureTime forKey:@"actualDepartureTime"];
@@ -428,6 +432,7 @@ static NSArray *_aircraftTypes;
         return ([flightID isEqualToString:aFlight.flightID] &&
                 [flightNumber isEqualToString:aFlight.flightNumber] &&
                 aircraftType == aFlight.aircraftType &&
+                timeOfDay == aFlight.timeOfDay &&
                 
                 [actualArrivalTime isEqualToDate:aFlight.actualArrivalTime] &&
                 [actualDepartureTime isEqualToDate:aFlight.actualDepartureTime] &&

@@ -9,11 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "Flight.h"
 
-typedef enum {
-    DAY = 0,
-    NIGHT = 1
-} TimeOfDay;
-
 extern const CGSize FLIGHT_PROGRESS_VIEW_SIZE;
 
 @interface JLFlightProgressView : UIView

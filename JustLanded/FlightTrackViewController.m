@@ -270,7 +270,7 @@
     _originCityLabel.text = [_trackedFlight.origin.city uppercaseString];
     _destinationCodeLabel.text = _trackedFlight.destination.bestCode;
     _destinationCityLabel.text = [_trackedFlight.destination.city uppercaseString];
-    _flightProgressView.timeOfDay = DAY; //FIXME
+    _flightProgressView.timeOfDay = [_trackedFlight timeOfDay];
     _flightProgressView.aircraftType = [_trackedFlight aircraftType];
     _flightProgressView.progress = [_trackedFlight currentProgress];
     _landsAtLabel.text = [self landsAtLabelText];
@@ -362,7 +362,7 @@
     // Add the flight progress view
     _flightProgressView = [[JLFlightProgressView alloc] initWithFrame:FLIGHT_PROGRESS_FRAME 
                                                              progress:[_trackedFlight currentProgress]
-                                                            timeOfDay:DAY //FIXME
+                                                            timeOfDay:[_trackedFlight timeOfDay]
                                                          aircraftType:[_trackedFlight aircraftType]];
     
     // Add the lands at labels
@@ -533,9 +533,8 @@
 
 - (void)showMap {
     NSString *mapURL = nil;
-    NSString *destName = [_trackedFlight.destination.name length] ? _trackedFlight.destination.name :
-        [_trackedFlight.destination.iataCode length] ? _trackedFlight.destination.iataCode : 
-        _trackedFlight.destination.icaoCode;
+    NSString *destName = (_trackedFlight.destination.iataCode) ? _trackedFlight.destination.iataCode : 
+                                                                 _trackedFlight.destination.icaoCode;
     destName = [destName stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
     
     NSString *destLoc = [NSString stringWithFormat:@"%f,%f", 

@@ -17,7 +17,6 @@
 @synthesize iataCode;
 @synthesize icaoCode;
 
-@synthesize name;
 @synthesize city;
 @synthesize location;
 
@@ -30,7 +29,6 @@
     if (self) {
         self.iataCode = [info valueForKeyOrNil:@"iataCode"];
         self.icaoCode = [info valueForKeyOrNil:@"icaoCode"];
-        self.name = [info valueForKeyOrNil:@"name"];
         self.city = [info valueForKeyOrNil:@"city"];
         self.location = [[CLLocation alloc] initWithLatitude:[[info valueForKeyOrNil:@"latitude"] doubleValue]
                                                    longitude:[[info valueForKeyOrNil:@"longitude"] doubleValue]];
@@ -51,7 +49,6 @@
     return [[NSDictionary alloc] initWithObjectsAndKeys:
             iataCode ? iataCode : [NSNull null], @"iataCode",
             icaoCode ? icaoCode : [NSNull null], @"icaoCode",         
-            name ? name : [NSNull null], @"name",
             city ? city : [NSNull null], @"city",
             location ? location : [NSNull null], @"location",            
             terminal ? terminal : [NSNull null], @"terminal", nil];
@@ -62,7 +59,6 @@
     return [[NSDictionary alloc] initWithObjectsAndKeys:
             iataCode ? iataCode : [NSNull null], @"iataCode",
             icaoCode ? icaoCode : [NSNull null], @"icaoCode",         
-            name ? name : [NSNull null], @"name",
             city ? city : [NSNull null], @"city",
             location ? [NSNumber numberWithDouble:location.coordinate.latitude] : [NSNull null], @"latitude",
             location ? [NSNumber numberWithDouble:location.coordinate.longitude] : [NSNull null], @"longitude",
@@ -79,7 +75,6 @@
     if (self) {
         self.iataCode = [aDecoder decodeObjectForKey:@"iataCode"];
         self.icaoCode = [aDecoder decodeObjectForKey:@"icaoCode"];
-        self.name = [aDecoder decodeObjectForKey:@"name"];
         self.city = [aDecoder decodeObjectForKey:@"city"];
         self.location = [aDecoder decodeObjectForKey:@"location"];
         self.terminal = [aDecoder decodeObjectForKey:@"terminal"];
@@ -93,10 +88,8 @@
     // Encode each property using its name
     [aCoder encodeObject:iataCode forKey:@"iataCode"];
     [aCoder encodeObject:icaoCode forKey:@"icaoCode"];
-    [aCoder encodeObject:name forKey:@"name"];
     [aCoder encodeObject:city forKey:@"city"];
     [aCoder encodeObject:location forKey:@"location"];
-
     [aCoder encodeObject:terminal forKey:@"terminal"];
 }
 
@@ -111,7 +104,6 @@
         
         return ([iataCode isEqualToString:anAirport.iataCode] &&
                 [icaoCode isEqualToString:anAirport.icaoCode] &&
-                [name isEqualToString:anAirport.name] &&
                 [city isEqualToString:anAirport.city] &&
                 [location isEqual:anAirport.location] &&
                 [terminal isEqualToString:anAirport.terminal]);

@@ -13,7 +13,6 @@
 
 @property (strong, nonatomic) NSString *iataCode;
 @property (strong, nonatomic) NSString *icaoCode;
-@property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSString *city;
 @property (strong, nonatomic) CLLocation *location;
 @property (strong, nonatomic) NSString *terminal;
