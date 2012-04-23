@@ -16,5 +16,6 @@
 + (NSString *)naturalDayStringFromDate:(NSDate *)date;
 + (NSString *)naturalTimeStringFromDate:(NSDate *)date;
 + (NSString *)prettyPrintTimeDifference:(NSDate *)date;
++ (NSString *)timeIntervalToShortUnitString:(NSTimeInterval)interval leadingZeros:(BOOL)zeros;
 
 @end;

@@ -46,6 +46,9 @@
             [self setImage:[_style icon] forState:UIControlStateNormal];
         }
         
+        if ([_style disabledIcon]) {
+            [self setImage:[_style disabledIcon] forState:UIControlStateDisabled];
+        }
         
         LabelStyle *labelStyle = [_style labelStyle];
         
@@ -53,12 +56,19 @@
             TextStyle *textStyle = [labelStyle textStyle];
             self.titleLabel.font = [textStyle font];
             self.titleLabel.textAlignment = [[_style labelStyle] alignment];
-            
-            if ([textStyle shadowColor]) {
-                 [self setTitleShadowColor:[textStyle shadowColor] forState:UIControlStateNormal];
-            }
             self.titleLabel.shadowOffset = [textStyle shadowOffset];
             [self setTitleColor:[textStyle color] forState:UIControlStateNormal];
+            [self setTitleShadowColor:[textStyle shadowColor] forState:UIControlStateNormal];
+        }
+        
+        LabelStyle *disabledStyle = [_style disabledLabelStyle];
+        
+        if (disabledStyle) {
+            TextStyle *textStyle = [disabledStyle textStyle];
+            self.titleLabel.font = [textStyle font];
+            self.titleLabel.textAlignment = [[_style labelStyle] alignment];
+            [self setTitleColor:[textStyle color] forState:UIControlStateDisabled];
+            [self setTitleShadowColor:[textStyle shadowColor] forState:UIControlStateDisabled];
         }
         
         //Stop images from highlighting
@@ -77,17 +87,14 @@
     
     if (labelStyle) {
         TextStyle *textStyle = [labelStyle textStyle];
-        
         // Reverse the shadow direction when disabled
-        if ([textStyle shadowColor]) {
-            CGSize offset = [textStyle shadowOffset];
+        CGSize offset = [textStyle shadowOffset];
             
-            if (isEnabled) {
-                self.titleLabel.shadowOffset = CGSizeMake(offset.width, -offset.height);
-            }
-            else {
-                self.titleLabel.shadowOffset = offset;
-            }
+        if (isEnabled) {
+            self.titleLabel.shadowOffset = CGSizeMake(offset.width, -offset.height);
+        }
+        else {
+            self.titleLabel.shadowOffset = offset;
         }
     }
     
@@ -99,7 +106,7 @@
 	//Handle title vertical movement when selected/highlighted relative to the content rect
     UIEdgeInsets labelInsets = [_style labelInsets];
     CGSize shadowOffset = [[[_style labelStyle] textStyle] shadowOffset];
-    CGSize shadowSize = CGSizeMake(abs(shadowOffset.width), abs(shadowOffset.height));
+    CGSize shadowSize = CGSizeMake(fabs(shadowOffset.width), fabs(shadowOffset.height));
     
 	switch (self.state) {
         case UIControlStateSelected:

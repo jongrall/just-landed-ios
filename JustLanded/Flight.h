@@ -17,7 +17,7 @@
 
 typedef enum {
     DAY = 0,
-    NIGHT = 1
+    NIGHT,
 } TimeOfDay;
 
 typedef enum {
@@ -100,7 +100,8 @@ extern NSString * const StopTrackingFailedReasonKey;
 @property (strong, nonatomic) NSDate *scheduledDepartureTime;
 @property (nonatomic, readonly) NSDate *scheduledArrivalTime; // Derived from other information (readonly)
 @property (strong, nonatomic) NSDate *lastUpdated;
-@property (strong, nonatomic) NSDate *leaveForAirporTime;
+@property (strong, nonatomic) NSDate *leaveForAirportTime;
+@property (nonatomic) NSTimeInterval drivingTime;
 @property (nonatomic) NSTimeInterval scheduledFlightDuration;
 
 @property (strong, nonatomic) OriginAirport *origin;

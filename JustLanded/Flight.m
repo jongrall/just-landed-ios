@@ -55,7 +55,8 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 @synthesize scheduledDepartureTime;
 @synthesize scheduledArrivalTime=_scheduledArrivalTime;
 @synthesize lastUpdated;
-@synthesize leaveForAirporTime;
+@synthesize leaveForAirportTime;
+@synthesize drivingTime;
 @synthesize scheduledFlightDuration;
 
 @synthesize origin;
@@ -137,7 +138,8 @@ static NSArray *_aircraftTypes;
     self.estimatedArrivalTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"estimatedArrivalTime"] returnNilForZero:YES];
     self.scheduledDepartureTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"scheduledDepartureTime"] returnNilForZero:YES];
     self.lastUpdated = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"lastUpdated"] returnNilForZero:YES];
-    self.leaveForAirporTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"leaveForAirportTime"] returnNilForZero:YES];
+    self.leaveForAirportTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"leaveForAirportTime"] returnNilForZero:YES];
+    self.drivingTime = [info valueForKeyOrNil:@"drivingTime"] ? [[info valueForKeyOrNil:@"drivingTime"] doubleValue] : 0.0;
     self.scheduledFlightDuration = [[info valueForKeyOrNil:@"scheduledFlightDuration"] doubleValue];
     _scheduledArrivalTime = [NSDate dateWithTimeInterval:scheduledFlightDuration sinceDate:scheduledDepartureTime];
     
@@ -379,7 +381,8 @@ static NSArray *_aircraftTypes;
         self.scheduledDepartureTime = [aDecoder decodeObjectForKey:@"scheduledDepartureTime"];
         _scheduledArrivalTime = [aDecoder decodeObjectForKey:@"scheduledArrivalTime"];
         self.lastUpdated = [aDecoder decodeObjectForKey:@"lastUpdated"];
-        self.leaveForAirporTime = [aDecoder decodeObjectForKey:@"leaveForAirportTime"];
+        self.leaveForAirportTime = [aDecoder decodeObjectForKey:@"leaveForAirportTime"];
+        self.drivingTime = [aDecoder decodeDoubleForKey:@"drivingTime"];
         self.scheduledFlightDuration = [aDecoder decodeDoubleForKey:@"scheduledFlightDuration"];
         
         self.origin = [aDecoder decodeObjectForKey:@"origin"];
@@ -408,7 +411,8 @@ static NSArray *_aircraftTypes;
     [aCoder encodeObject:scheduledDepartureTime forKey:@"scheduledDepartureTime"];
     [aCoder encodeObject:_scheduledArrivalTime forKey:@"scheduledArrivalTime"];
     [aCoder encodeObject:lastUpdated forKey:@"lastUpdated"];
-    [aCoder encodeObject:leaveForAirporTime forKey:@"leaveForAirportTime"];
+    [aCoder encodeObject:leaveForAirportTime forKey:@"leaveForAirportTime"];
+    [aCoder encodeDouble:drivingTime forKey:@"drivingTime"];
     [aCoder encodeDouble:scheduledFlightDuration forKey:@"scheduledFlightDuration"];
     
     [aCoder encodeObject:origin forKey:@"origin"];
@@ -440,7 +444,8 @@ static NSArray *_aircraftTypes;
                 [scheduledDepartureTime isEqualToDate:aFlight.scheduledDepartureTime] &&
                 [_scheduledArrivalTime isEqualToDate:aFlight.scheduledArrivalTime] &&
                 [lastUpdated isEqualToDate:aFlight.lastUpdated] &&
-                [leaveForAirporTime isEqualToDate:aFlight.leaveForAirporTime] &&
+                [leaveForAirportTime isEqualToDate:aFlight.leaveForAirportTime] &&
+                drivingTime == aFlight.drivingTime &&
                 scheduledFlightDuration == aFlight.scheduledFlightDuration &&
                 
                 [origin isEqual:aFlight.origin] &&
@@ -467,7 +472,8 @@ static NSArray *_aircraftTypes;
                                 estimatedArrivalTime ? [estimatedArrivalTime description] : [NSNull null], @"estimatedArrivalTime",
                                 scheduledDepartureTime ? [scheduledDepartureTime description] : [NSNull null], @"scheduledDepartureTime",
                                 lastUpdated ? [lastUpdated description] : [NSNull null], @"lastUpdated",
-                                leaveForAirporTime ? [leaveForAirporTime description] : [NSNull null], @"leaveForAirportTime",
+                                leaveForAirportTime ? [leaveForAirportTime description] : [NSNull null], @"leaveForAirportTime",
+                                drivingTime > 0.0 ? [NSNumber numberWithDouble:drivingTime] : [NSNull null], @"drivingTime",
                                 [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
                                 
                                 origin ? [origin toJSONFriendlyDict] : [NSNull null], @"origin",
@@ -502,7 +508,8 @@ static NSArray *_aircraftTypes;
                                 estimatedArrivalTime ? estimatedArrivalTime : [NSNull null], @"estimatedArrivalTime",
                                 scheduledDepartureTime ? scheduledDepartureTime : [NSNull null], @"scheduledDepartureTime",
                                 lastUpdated ? lastUpdated : [NSNull null], @"lastUpdated",
-                                leaveForAirporTime ? leaveForAirporTime : [NSNull null], @"leaveForAirportTime",
+                                leaveForAirportTime ? leaveForAirportTime : [NSNull null], @"leaveForAirportTime",
+                                drivingTime > 0.0 ? [NSNumber numberWithDouble:drivingTime] : [NSNull null], @"drivingTime",
                                 [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
                                 
                                 origin ? [origin toDict] : [NSNull null], @"origin",

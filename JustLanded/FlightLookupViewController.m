@@ -16,11 +16,12 @@
 
 @interface FlightLookupViewController ()
 
-@property (strong, nonatomic) UIButton *_lookupButton;
-@property (strong, nonatomic) UITextField *_flightNumberField;
+@property (strong, nonatomic) JLButton *_lookupButton;
+@property (strong, nonatomic) JLFlightInputField *_flightNumberField;
 @property (strong, nonatomic) UITableView *_flightResultsTable;
 @property (strong, nonatomic) UIActivityIndicatorView *_lookupSpinner;
 @property (strong, nonatomic) NSArray *_flightResults;
+@property (strong, nonatomic) JLCloudLayer *_cloudLayer;
 
 - (void)flightLookupFailed:(NSNotification *)notification;
 - (void)willLookupFlight:(NSNotification *)notification;
@@ -46,6 +47,7 @@
 @synthesize _flightResultsTable;
 @synthesize _lookupSpinner;
 @synthesize _flightResults;
+@synthesize _cloudLayer;
 
 static NSRegularExpression *_flightNumberRegex;
 
@@ -91,6 +93,7 @@ static NSRegularExpression *_flightNumberRegex;
     FlightTrackViewController *controller = [[FlightTrackViewController alloc] initWithFlight:aFlight];
     controller.delegate = self;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [_cloudLayer stopAnimating]; // Stop animating the clouds
     [self presentModalViewController:controller animated:animateFlip];
     
     // If animated, was user-initiated, record the track
@@ -137,6 +140,7 @@ static NSRegularExpression *_flightNumberRegex;
     AboutViewController *aboutController = [[AboutViewController alloc] init];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:aboutController];
     navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    //[_cloudLayer stopAnimating]; // TODOStop animating the clouds
     [self presentModalViewController:navController animated:YES];
     [FlurryAnalytics logEvent:FY_VISITED_ABOUT_SCREEN];
 }
@@ -164,7 +168,8 @@ static NSRegularExpression *_flightNumberRegex;
             break;   
         }
         case LookupFailureFlightNotFound: {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Flight Not Found", @"Flight Not Found") 
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"),
+                                                                     _flightNumberField.text]
                                                             message:@"Please check that you entered your flight number correctly."
                                                            delegate:self 
                                                   cancelButtonTitle:@"OK"
@@ -193,7 +198,8 @@ static NSRegularExpression *_flightNumberRegex;
         self._flightResults = flights;
     
         if ([flights count] == 0) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Flight Not Found", @"Flight Not Found") 
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"),
+                                                                     _flightNumberField.text]
                                                             message:@"Just Landed can only track U.S. domestic flights that are arriving within the next 48 hours."
                                                            delegate:self 
                                                   cancelButtonTitle:@"OK"
@@ -227,59 +233,45 @@ static NSRegularExpression *_flightNumberRegex;
 
 - (void)loadView {
     // Configure the main view
-    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 460.0f)];
-    mainView.backgroundColor = [UIColor grayColor];
+    UIImageView *mainView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 460.0f)];
+    mainView.backgroundColor = [UIColor blackColor];
+    mainView.image = [UIImage imageNamed:@"lookup_bg"];
+    mainView.userInteractionEnabled = YES;
     self.view = mainView;
     
-    // Add the title label
-    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(20.0f, 20.0f, 280.0f, 50.0f)];
-    title.textAlignment = UITextAlignmentCenter;
-    title.font = [UIFont boldSystemFontOfSize:30.0f];
-    title.textColor = [UIColor blackColor];
-    title.text = NSLocalizedString(@"Just Landed", @"Just Landed");
-    title.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:title];
+    // Add the cloud layer
+    self._cloudLayer = [[JLCloudLayer alloc] initWithFrame:CLOUD_LAYER_FRAME];
+    [self.view addSubview:_cloudLayer];
     
-    // Add the help button
-    UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-    [helpButton addTarget:self action:@selector(showAboutScreen) forControlEvents:UIControlEventTouchUpInside];
-    [helpButton setFrame:CGRectMake(260.0f, 20.0f, 50.0f, 50.0f)];
-    [self.view addSubview:helpButton];
+    // Add the cloud foreground
+    UIImageView *cloudFg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"lookup_cloud_fg"]];
+    cloudFg.frame = CLOUD_FOOTER_FRAME;
+    [self.view addSubview:cloudFg];
     
-    // Add the input field label
-    UILabel *flightNumFieldLabel = [[UILabel alloc] initWithFrame:CGRectMake(20.0f, 102.0f, 100.0f, 40.0f)];
-    flightNumFieldLabel.textAlignment = UITextAlignmentRight;
-    flightNumFieldLabel.font = [UIFont systemFontOfSize:20.0f];
-    flightNumFieldLabel.textColor = [UIColor blackColor];
-    flightNumFieldLabel.text = NSLocalizedString(@"Flight #", @"Flight #");
-    flightNumFieldLabel.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:flightNumFieldLabel];
+    // Add the logo
+    UIImageView *logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
+    logo.frame = LOGO_FRAME;
+    [self.view addSubview:logo];
+    
+    // Add the about button
+    JLButton *aboutButton = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles aboutButtonStyle] frame:ABOUT_BUTTON_FRAME];
+    [aboutButton addTarget:self action:@selector(showAboutScreen) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:aboutButton];
     
     // Add the input field
-    UITextField *flightNumField = [[UITextField alloc] initWithFrame:CGRectMake(130.0f, 100.0f, 170.0f, 40.0f)];
+    JLFlightInputField *flightNumField = [[JLFlightInputField alloc] initWithFrame:LOOKUP_TEXTFIELD_FRAME];
     flightNumField.delegate = self;
-    flightNumField.placeholder = NSLocalizedString(@"ex. AA320", 
-                                                   @"Flight number input placeholder");
-    flightNumField.textAlignment = UITextAlignmentLeft;
-    flightNumField.borderStyle = UITextBorderStyleRoundedRect;
-    flightNumField.font = [UIFont systemFontOfSize:26.0f];
-    flightNumField.textColor = [UIColor blackColor];
-    flightNumField.clearsOnBeginEditing = NO;
-    flightNumField.clearButtonMode = UITextFieldViewModeWhileEditing;
-    flightNumField.autocapitalizationType = UITextAutocapitalizationTypeAllCharacters;
-    flightNumField.autocorrectionType = UITextAutocorrectionTypeNo;
-    flightNumField.spellCheckingType = UITextSpellCheckingTypeNo;
-    flightNumField.keyboardType = UIKeyboardTypeNamePhonePad;
     self._flightNumberField = flightNumField;
-    [self.view addSubview:flightNumField];
+    
+    UIImageView *lookupInputContainer = [[UIImageView alloc] initWithFrame:LOOKUP_INPUT_FRAME];
+    lookupInputContainer.image = [[UIImage imageNamed:@"lookup_input_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 8.0f, 0.0f, 8.0f)];
+    lookupInputContainer.userInteractionEnabled = YES;
+    [lookupInputContainer addSubview:flightNumField];
+    [self.view addSubview:lookupInputContainer];
     
     // Add the lookup button
-    UIButton *lookupButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    lookupButton.frame = CGRectMake(20.0f, 160.0f, 280.0f, 60.0f);
+    JLButton *lookupButton = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles lookupButtonStyle] frame:LOOKUP_BUTTON_FRAME];
     [lookupButton setTitle:NSLocalizedString(@"Lookup Flight", @"Lookup Flight") forState:UIControlStateNormal];
-    [lookupButton setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
-    [lookupButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
-    lookupButton.titleLabel.font = [UIFont boldSystemFontOfSize:22.0f];
     lookupButton.enabled = [self isFlightNumValid:_flightNumberField.text];
     [lookupButton addTarget:self action:@selector(doLookup) forControlEvents:UIControlEventTouchUpInside];
     self._lookupButton = lookupButton;
@@ -310,12 +302,21 @@ static NSRegularExpression *_flightNumberRegex;
     [self.view addSubview:_lookupSpinner];
 }
 
+
+- (void)viewDidLoad {
+    [_cloudLayer startAnimating];
+}
+
+
 - (void)viewDidUnload {
     [super viewDidUnload];
+    
     // Release any retained subviews of the main view.
+    self._lookupButton = nil;
     self._flightNumberField = nil;
     self._flightResultsTable = nil;
     self._lookupSpinner = nil;
+    self._cloudLayer = nil;
 }
 
 
@@ -383,12 +384,14 @@ static NSRegularExpression *_flightNumberRegex;
     return NO;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - UITextFieldDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     self._flightNumberField.text = @"";
+    self._lookupButton.enabled = NO;
     [self._flightNumberField becomeFirstResponder];
 }
 
@@ -490,6 +493,7 @@ static NSRegularExpression *_flightNumberRegex;
 - (void)didFinishTracking:(FlightTrackViewController *)controller userInitiated:(BOOL)user_flag {
     self._flightResultsTable.hidden = YES;
     self._lookupButton.hidden = NO;
+    [_cloudLayer startAnimating]; // Begin animating the cloud layer
     
     // If the user stopped tracking, pre-fill the field with the flight they were tracking
     if (user_flag) {
@@ -526,6 +530,7 @@ static NSRegularExpression *_flightNumberRegex;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)dealloc {
+    [_cloudLayer stopAnimating];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

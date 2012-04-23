@@ -152,6 +152,15 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     UIImage *groundBg = nil;
     UIImage *cloudBg = nil;
     
+    // Remove all subviews of the ground and cloud layers
+    for (UIView *aView in [_groundLayer subviews]) {
+        [aView removeFromSuperview];
+    }
+    
+    for (UIView *aView in [_cloudLayer subviews]) {
+        [aView removeFromSuperview];
+    }
+    
     if (timeOfDay == DAY) {
         NSString *airplaneIconName = [NSString stringWithFormat:@"%@_day", [Flight aircraftTypeToString:aircraftType]];
         airplaneIconName = @"JET4_day"; //TEMP
@@ -168,9 +177,23 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     }
     
     BOOL zeroContentSize = CGSizeEqualToSize(_groundLayer.contentSize, CGSizeZero);
-    _groundLayer.backgroundColor = [UIColor colorWithPatternImage:groundBg];
+    
+    UIImageView *groundImage1 = [[UIImageView alloc] initWithImage:groundBg];
+    UIImageView *groundImage2 = [[UIImageView alloc] initWithImage:groundBg];
+    groundImage2.contentMode = UIViewContentModeLeft;
+    groundImage2.frame = CGRectMake(groundBg.size.width, 0.0f, 320.0f, groundBg.size.height);
+    
+    UIImageView *cloudImage1 = [[UIImageView alloc] initWithImage:cloudBg];
+    UIImageView *cloudImage2 = [[UIImageView alloc] initWithImage:cloudBg];
+    cloudImage2.contentMode = UIViewContentModeLeft;
+    cloudImage2.frame = CGRectMake(cloudBg.size.width, 0.0f, 320.0f, cloudBg.size.height);
+    
+    [_groundLayer addSubview:groundImage1];
+    [_groundLayer addSubview:groundImage2];
+    [_cloudLayer addSubview:cloudImage1];
+    [_cloudLayer addSubview:cloudImage2];
+
     _groundLayer.contentSize = CGSizeMake(groundBg.size.width + 320.0f, groundBg.size.height); // 320.0f added for seamless looping
-    _cloudLayer.backgroundColor = [UIColor colorWithPatternImage:cloudBg];
     _cloudLayer.contentSize = CGSizeMake(cloudBg.size.width + 320.0f, cloudBg.size.height); // 320.0f added for seamless looping
         
     if (zeroContentSize) {
@@ -246,6 +269,16 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     
     [_groundLayer setContentOffset:CGPointMake(newGroundOffset, 0.0f) animated:NO];
     [_cloudLayer setContentOffset:CGPointMake(newCloudOffset, 0.0f) animated:NO];
+}
+
+
+- (void)stopAnimating {
+    [_animationTimer invalidate];
+}
+
+
+- (void)dealloc {
+    [self stopAnimating];
 }
 
 @end

@@ -9,15 +9,13 @@
 #import "JLLeaveMeter.h"
 
 @interface JLLeaveMeter  () {
-    __strong UIImage *_background;
-    __strong UIImage *_gaugeOffShadow;
-    __strong UIImage *_gaugeOnShadow;
-    __strong UIImage *_gaugeOff;
-    __strong UIImage *_gaugeOn;
-    __strong JLLabel *_leaveTimeValueLabel;
-    __strong JLLabel *_leaveTimeUnitLabel;
+    __strong UIImage *_foreground;
+    __strong UIImage *_backgroundShadow;
+    __strong UIImage *_meterGradient;
+    __strong JLMultipartOverUnderLabel *_largeTimeLabel;
+    __strong JLMultipartOverUnderLabel *_smallTimeLabel;
     __strong JLLabel *_leaveInstructionsLabel;
-    __strong JLLabel *_leaveNowLabel;
+    __strong JLMultipartOverUnderLabel *_leaveNowLabel;
 }
 
 @end
@@ -25,26 +23,40 @@
 @implementation JLLeaveMeter 
 
 @synthesize timeRemaining;
+@synthesize meterMaxTimeRemaining;
+@synthesize showEmptyMeter;
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _background = [UIImage imageNamed:@"gauge_bg"];
-        _gaugeOffShadow = [UIImage imageNamed:@"gauge_shadow_off"];
-        _gaugeOnShadow = [UIImage imageNamed:@"gauge_shadow_on"];
-        _gaugeOff = [UIImage imageNamed:@"gauge_off"];
-        _gaugeOn = [UIImage imageNamed:@"gauge_on"];
+        _foreground = [UIImage imageNamed:@"gauge_top"];
+        _backgroundShadow = [UIImage imageNamed:@"gauge_inset"];
+        _meterGradient = [UIImage imageNamed:@"gauge_gradient"];
         
-        _leaveTimeValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles leaveTimeLabelStyle] 
-                                                             frame:CGRectMake(LEAVE_IN_VALUE_ORIGIN.x,
-                                                                              LEAVE_IN_VALUE_ORIGIN.y,
-                                                                              frame.size.width,
-                                                                              100.0f)];
+        _largeTimeLabel = [[JLMultipartOverUnderLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles leaveTimeLargeLabelStyle],
+                                                                                  [JLTrackStyles leaveTimeLargeUnitStyle], nil]
+                                                                           frame:CGRectMake(LEAVE_IN_VALUE_ORIGIN.x,
+                                                                                            LEAVE_IN_VALUE_ORIGIN.y,
+                                                                                            frame.size.width,
+                                                                                            100.0f)];
+        _largeTimeLabel.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeMake(0.0f, -14.0f)],
+                                   [NSValue valueWithCGSize:CGSizeMake(0.0f, 58.0f)], nil];
+        _largeTimeLabel.hidden = YES;
         
-        _leaveTimeUnitLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles leaveTimeUnitStyle] 
-                                                            frame:CGRectMake(LEAVE_IN_UNIT_ORIGIN.x,
-                                                                             LEAVE_IN_UNIT_ORIGIN.y,
-                                                                             frame.size.width, 30.0f)];
+        _smallTimeLabel = [[JLMultipartOverUnderLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles leaveTimeSmallLabelStyle],
+                                                                                  [JLTrackStyles leaveTimeSmallUnitStyle],
+                                                                                  [JLTrackStyles leaveTimeSmallLabelStyle],
+                                                                                  [JLTrackStyles leaveTimeSmallUnitStyle], nil]
+                                                                           frame:CGRectMake(LEAVE_IN_VALUE_ORIGIN.x,
+                                                                                            LEAVE_IN_VALUE_ORIGIN.y,
+                                                                                            frame.size.width,
+                                                                                            120.0f)];
+        _smallTimeLabel.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeMake(0.0f, 8.0f)],
+                                   [NSValue valueWithCGSize:CGSizeMake(0.0f, 46.0f)],
+                                   [NSValue valueWithCGSize:CGSizeMake(0.0f, 8.0f)],
+                                   [NSValue valueWithCGSize:CGSizeMake(0.0f, 46.0f)], nil];
+        _smallTimeLabel.labelSeparation = 12.0f;
+        _smallTimeLabel.hidden = YES;
         
         _leaveInstructionsLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles leaveInstructionsLabelStyle] 
                                                                frame:CGRectMake(LEAVE_IN_INSTRUCTIONS_ORIGIN.x,
@@ -52,18 +64,23 @@
                                                                                 frame.size.width,
                                                                                 80.0f)];
         
-        _leaveInstructionsLabel.text = NSLocalizedString(@"You Should\nLeave In", @"Leave Instructions Label");
+        _leaveInstructionsLabel.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
         
-        _leaveNowLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles leaveNowStyle] 
-                                                       frame:CGRectMake(LEAVE_NOW_ORIGIN.x,
-                                                                        LEAVE_NOW_ORIGIN.y,
-                                                                        frame.size.width,
-                                                                        200.0f)];
-        _leaveNowLabel.text = NSLocalizedString(@"LEAVE\nNOW", @"LEAVE\nNOW");
+        
+        _leaveNowLabel = [[JLMultipartOverUnderLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles leaveNowStyle],
+                                                                                 [JLTrackStyles leaveNowStyle], nil] 
+                                                                          frame:CGRectMake(LEAVE_NOW_ORIGIN.x,
+                                                                                           LEAVE_NOW_ORIGIN.y,
+                                                                                           frame.size.width,
+                                                                                           200.0f)];
+        
+        _leaveNowLabel.parts = [NSArray arrayWithObjects:@"LEAVE", @"NOW", nil];
+        _leaveNowLabel.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeMake(0.5f, 0.0f)],
+                                  [NSValue valueWithCGSize:CGSizeMake(0.5f, 25.0f)], nil];
         _leaveNowLabel.hidden = YES;
-        
-        [self addSubview:_leaveTimeValueLabel];
-        [self addSubview:_leaveTimeUnitLabel];
+
+        [self addSubview:_largeTimeLabel];
+        [self addSubview:_smallTimeLabel];
         [self addSubview:_leaveInstructionsLabel];
         [self addSubview:_leaveNowLabel];
         self.opaque = NO;
@@ -74,45 +91,51 @@
 
 - (void)setTimeRemaining:(NSTimeInterval)newTime {
     timeRemaining = newTime;
+    NSString *timeRemainingString = [NSDate timeIntervalToShortUnitString:newTime leadingZeros:(newTime > 3659.0)];
+    NSArray *parts = [timeRemainingString componentsSeparatedByString:@" "];
     
-    if (newTime <= 0.0) {
-        _leaveTimeValueLabel.hidden = YES;
-        _leaveTimeUnitLabel.hidden = YES;
+    if ([parts count] > 4) { // No more than 4 parts
+        parts = [parts subarrayWithRange:NSMakeRange(0, 4)]; 
+    }
+    
+    if (newTime >= 1.0 && newTime <= 3659.0) {
+        _largeTimeLabel.parts = parts;
+        _largeTimeLabel.hidden = NO;
+        _smallTimeLabel.hidden = YES;
+        _leaveInstructionsLabel.hidden = NO;
+    }
+    else if (newTime > 3659.0) {
+        _smallTimeLabel.parts = parts;
+        _smallTimeLabel.hidden = NO;
+        _largeTimeLabel.hidden = YES;
+        _leaveInstructionsLabel.hidden = NO;
+    }
+    else {
+        _leaveNowLabel.hidden = NO;
+        _smallTimeLabel.hidden = YES;
+        _largeTimeLabel.hidden = YES;
+        _leaveInstructionsLabel.hidden = YES;
+    }
+
+    _leaveInstructionsLabel.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
+    [self setNeedsDisplay];
+}
+
+
+- (void)setMeterMaxTimeRemaining:(NSTimeInterval)maxTime {
+    meterMaxTimeRemaining = maxTime;
+    [self setNeedsDisplay];
+}
+
+
+- (void)setShowEmptyMeter:(BOOL)flag {
+    showEmptyMeter = flag;
+    
+    if (showEmptyMeter) {
         _leaveInstructionsLabel.hidden = YES;
     }
     else {
-        _leaveNowLabel.hidden = YES;
-        _leaveTimeValueLabel.hidden = NO;
-        _leaveTimeUnitLabel.hidden = NO;
         _leaveInstructionsLabel.hidden = NO;
-    }
-
-    // Update the labels
-    if (newTime <= 0.0) {
-        _leaveNowLabel.hidden = NO;
-    }
-    else if (newTime < 60.0) {
-        _leaveTimeValueLabel.text = [NSString stringWithFormat:@"%d", (int) newTime];
-        _leaveTimeUnitLabel.text = @"SEC";
-        _leaveInstructionsLabel.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
-    }
-    else if (newTime < 3600.0) {
-        NSUInteger minutes = (int) ceil(newTime/60.0);
-        _leaveTimeValueLabel.text = [NSString stringWithFormat:@"%d", minutes];
-        _leaveTimeUnitLabel.text = @"MIN";
-        _leaveInstructionsLabel.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
-    }
-    else if (newTime < 86400.0) {
-        NSUInteger hours = (int) newTime / 3600.0;
-        _leaveTimeValueLabel.text = [NSString stringWithFormat:@"~%d", hours];
-        _leaveTimeUnitLabel.text = (hours == 1) ? @"HR" : @"HRS";
-        _leaveInstructionsLabel.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
-    }
-    else if (newTime >= 86400.0) {
-        NSUInteger days = (int) newTime / 86400.0;
-        _leaveTimeValueLabel.text = [NSString stringWithFormat:@"~%d", days];
-        _leaveTimeUnitLabel.text = (days == 1) ? @"DAY" : @"DAYS";
-        _leaveInstructionsLabel.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
     }
     
     [self setNeedsDisplay];
@@ -122,16 +145,53 @@
 - (void)drawRect:(CGRect)rect {
     // Custom drawing
     CGContextRef context = UIGraphicsGetCurrentContext();
-    
     CGContextClearRect(context, rect);
     
-    [_background drawInRect:rect];
+    // Draw the background shadow
+    [_backgroundShadow drawInRect:rect];
     
-    // Only draw the meter if there's time remaining
-    if (timeRemaining > 0.0) {
-        [_gaugeOnShadow drawInRect:rect];
-        [_gaugeOn drawInRect:rect];
+    if (!showEmptyMeter) {
+        // Calculate the % of the meter to show
+        double meterFillFraction = fabs(timeRemaining) / meterMaxTimeRemaining;
+        
+        // Calculate the rotation amount for the meter image
+        double rotationDegrees = 270.0 * meterFillFraction;
+        
+        UIImage *meterImage = [UIImage imageNamed:@"gauge_color" 
+                          rotatedDegreesClockwise:(rotationDegrees - 270.0)
+                                      shadowColor:[UIColor colorWithRed:205.0f/255.0f green:63.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+                                     shadowOffset:CGSizeMake(0.0f, 2.0f) 
+                                       shadowBlur:0.0f];
+        
+        // Draw the meter (clipped to the section that should be visible)
+        CGContextSaveGState(context);
+        UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width / 2.0f, rect.size.height / 2.0f) 
+                                                            radius:rect.size.width / 2.0f
+                                                        startAngle:(130.0f * M_PI / 180.0f) // Slight buffer added
+                                                          endAngle:((130.0f * M_PI / 180.0f) + ((rotationDegrees + 25.0f) * M_PI / 180.0f))
+                                                         clockwise:YES];
+        [path addLineToPoint:CGPointMake(rect.size.width / 2.0f, rect.size.width / 2.0f)];
+        [path closePath];
+        [path addClip];
+        [meterImage drawInRect:rect];
+        CGContextRestoreGState(context);
+        
+        CGContextSaveGState(context);
+        // Change clip path slightly
+        path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width / 2.0f, rect.size.height / 2.0f) 
+                                                            radius:rect.size.width / 2.0f
+                                                        startAngle:(135.0f * M_PI / 180.0f)
+                                                          endAngle:((135.0f * M_PI / 180.0f) + (rotationDegrees * M_PI / 180.0f))
+                                                         clockwise:YES];
+        [path addLineToPoint:CGPointMake(rect.size.width / 2.0f, rect.size.width / 2.0f)];
+        [path closePath];
+        [path addClip];
+        [_meterGradient drawInRect:rect];
+        CGContextRestoreGState(context);
     }
+    
+    // Draw the foreground
+    [_foreground drawInRect:rect];
     
     [super drawRect:rect];
 }

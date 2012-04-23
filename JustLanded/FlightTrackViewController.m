@@ -21,6 +21,8 @@
     __strong Flight *_trackedFlight;
 }
 
+@property (strong, nonatomic) NSTimer *_updateTimer;
+@property (strong, nonatomic) NSTimer *_alternatingLabelTimer;
 @property (strong, nonatomic) JLStatusLabel *_statusLabel;
 @property (strong, nonatomic) JLStatusLabel *_originCodeLabel;
 @property (strong, nonatomic) JLStatusLabel *_originCityLabel;
@@ -29,15 +31,21 @@
 @property (strong, nonatomic) JLFlightProgressView *_flightProgressView;
 @property (strong, nonatomic) JLLabel *_landsAtLabel;
 @property (strong, nonatomic) JLMultipartLabel *_landsAtTimeLabel;
+@property (strong, nonatomic) JLLabel *_landsInLabel;
+@property (strong, nonatomic) JLMultipartLabel *_landsInTimeLabel;
 @property (strong, nonatomic) JLLabel *_terminalLabel;
 @property (strong, nonatomic) JLLabel *_terminalValueLabel;
+@property (strong, nonatomic) JLLabel *_gateLabel;
+@property (strong, nonatomic) JLLabel *_gateValueLabel;
+@property (strong, nonatomic) JLLabel *_drivingTimeLabel;
+@property (strong, nonatomic) JLMultipartLabel *_drivingTimeValueLabel;
 @property (strong, nonatomic) UIImageView *_arrowView;
 @property (strong, nonatomic) UIImageView *_headerBackground;
 @property (strong, nonatomic) UIImageView *_footerBackground;
 @property (strong, nonatomic) JLLookupButton *_lookupButton;
 @property (strong, nonatomic) JLButton *_directionsButton;
-@property (strong, nonatomic) JLButton *_infoButton;
 @property (strong, nonatomic) JLLeaveMeter *_leaveMeter;
+@property (nonatomic) BOOL _showAlternateData;
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status;
 + (UIImage *)headerBackgroundImageForStatus:(FlightStatus)status;
@@ -57,10 +65,16 @@
 - (void)setStatus:(FlightStatus)newStatus;
 - (NSString *)landsAtLabelText;
 - (NSString *)landsAtTime;
+- (NSString *)landsInLabelText;
+- (NSArray *)landsInTimeParts;
 - (NSString *)terminalLabelText;
 - (NSString *)terminalValue;
+- (NSString *)gateLabelText;
+- (NSString *)gateValue;
 - (NSString *)blankValue;
-- (void)showAboutScreen;
+- (void)updateDisplayedData;
+- (void)alternateData;
+- (void)fadeOut:(UIView *)aView fadeIn:(UIView *)anotherView;
 
 @end
 
@@ -72,6 +86,8 @@
 
 @synthesize delegate;
 @synthesize trackedFlight=_trackedFlight;
+@synthesize _updateTimer;
+@synthesize _alternatingLabelTimer;
 @synthesize _statusLabel;
 @synthesize _originCodeLabel;
 @synthesize _originCityLabel;
@@ -80,15 +96,21 @@
 @synthesize _flightProgressView;
 @synthesize _landsAtLabel;
 @synthesize _landsAtTimeLabel;
+@synthesize _landsInLabel;
+@synthesize _landsInTimeLabel;
 @synthesize _terminalLabel;
 @synthesize _terminalValueLabel;
+@synthesize _gateLabel;
+@synthesize _gateValueLabel;
+@synthesize _drivingTimeLabel;
+@synthesize _drivingTimeValueLabel;
 @synthesize _arrowView;
 @synthesize _headerBackground;
 @synthesize _footerBackground;
 @synthesize _lookupButton;
 @synthesize _directionsButton;
-@synthesize _infoButton;
 @synthesize _leaveMeter;
+@synthesize _showAlternateData;
 
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status {
@@ -231,91 +253,6 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Respond To Notifications
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (void)locationUpdated:(NSNotification *)notification {
-    // Update tracking information
-    CLLocation *newLocation = [[notification userInfo] valueForKey:@"location"];
-    [self trackFlightWithLocation:newLocation];    
-}
-
-
-- (void)locationUpdateFailed:(NSNotification *)notification {
-    // Track anyway, without location
-    [self trackFlightWithLocation:nil];
-    
-    // TODO: Indicate that we don't have location?
-}
-
-
-- (void)triedToRegisterForRemoteNotifications:(NSNotification *)notification {
-    [self trackFlightWithLocation:[[JustLandedSession sharedSession] lastKnownLocation]];
-}
-
-
-- (void)willTrackFlight:(NSNotification *)notification {
-    [self startUpdating];
-}
-
-
-- (void)didTrackFlight:(NSNotification *)notification {
-    // Stop loading animation
-    [self stopUpdating];
-    
-    // Update displayed information
-    [self setStatus:_trackedFlight.status];
-    [self setFlightNumber:_trackedFlight.flightNumber];
-    _originCodeLabel.text = _trackedFlight.origin.bestCode;
-    _originCityLabel.text = [_trackedFlight.origin.city uppercaseString];
-    _destinationCodeLabel.text = _trackedFlight.destination.bestCode;
-    _destinationCityLabel.text = [_trackedFlight.destination.city uppercaseString];
-    _flightProgressView.timeOfDay = [_trackedFlight timeOfDay];
-    _flightProgressView.aircraftType = [_trackedFlight aircraftType];
-    _flightProgressView.progress = [_trackedFlight currentProgress];
-    _landsAtLabel.text = [self landsAtLabelText];
-    _landsAtTimeLabel.parts = [[self landsAtTime] componentsSeparatedByString:@" "];
-    _terminalLabel.text = [self terminalLabelText];
-    _terminalValueLabel.text = [self terminalValue];
-    
-    if (_trackedFlight.leaveForAirporTime) {
-        self._leaveMeter.timeRemaining = [_trackedFlight.leaveForAirporTime timeIntervalSinceNow];
-        self._leaveMeter.hidden = NO;
-    }
-    else {
-        self._leaveMeter.hidden = YES;
-    }
-    
-    // Hide the directions button if appropriate
-    if (_trackedFlight.leaveForAirporTime) {
-        [_directionsButton setHidden:NO];
-    }
-    else {
-        [_directionsButton setHidden:YES];
-    }
-    
-    // Ask them to rate after a few seconds, if eligible
-    [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible) 
-                                            withObject:nil 
-                                            afterDelay:4.0];
-}
-
-
-- (void)flightTrackFailed:(NSNotification *)notification {
-    [self stopUpdating];
-    
-    FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
-    
-    if (reason == TrackFailureFlightNotFound || reason == TrackFailureInvalidFlightNumber || reason == TrackFailureOldFlight) {
-        // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
-        [delegate didFinishTracking:self userInitiated:NO];
-    }
-    else {
-        // TODO: Handle no connection
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - View Lifecycle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -373,24 +310,64 @@
     _landsAtTimeLabel.parts = [NSArray arrayWithObject:[self blankValue]];
     _landsAtTimeLabel.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero], [NSValue valueWithCGSize:TIME_UNIT_OFFSET], nil];
     
+    // Add the lands in labels
+    _landsInLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:LANDS_AT_LABEL_FRAME];
+    _landsInLabel.text = [self landsInLabelText];
+    _landsInTimeLabel = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle], 
+                                                                       [JLTrackStyles timeUnitLabelStyle],
+                                                                       [JLTrackStyles flightDataValueStyle], 
+                                                                       [JLTrackStyles timeUnitLabelStyle], nil] 
+                                                                frame:LANDS_AT_TIME_FRAME];
+    _landsInTimeLabel.parts = [self landsInTimeParts];
+    _landsInTimeLabel.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero], 
+                                 [NSValue valueWithCGSize:TIME_UNIT_OFFSET],
+                                 [NSValue valueWithCGSize:CGSizeMake(6.0f, 0.0f)], 
+                                 [NSValue valueWithCGSize:TIME_UNIT_OFFSET],nil];
+    _landsInLabel.alpha = 0.0f;
+    _landsInTimeLabel.alpha = 0.0f;
+    
     // Add the terminal info
     _terminalLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:TERMINAL_LABEL_FRAME];
     _terminalLabel.text = [self terminalLabelText];
     _terminalValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:TERMINAL_VALUE_FRAME];
     _terminalValueLabel.text = [self blankValue];
     
+    // Add the gate info
+    _gateLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:TERMINAL_LABEL_FRAME];
+    _gateLabel.text = [self gateLabelText];
+    _gateValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:TERMINAL_VALUE_FRAME];
+    _gateValueLabel.text = [self blankValue];
+    _gateLabel.alpha = 0.0f;
+    _gateValueLabel.alpha = 0.0f;
+    _gateLabel.hidden = YES;
+    _gateValueLabel.hidden = YES;
+    
+    // Add the driving time info
+    _drivingTimeLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:DRIVING_TIME_LABEL_FRAME];
+    _drivingTimeLabel.text = NSLocalizedString(@"DRIVING TIME", @"DRIVING TIME");
+    _drivingTimeValueLabel = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle],
+                                                                            [JLTrackStyles timeUnitLabelStyle],
+                                                                            [JLTrackStyles flightDataValueStyle],
+                                                                            [JLTrackStyles timeUnitLabelStyle], nil] 
+                                                                     frame:DRIVING_TIME_VALUE_FRAME];
+    _drivingTimeValueLabel.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero], 
+                                      [NSValue valueWithCGSize:TIME_UNIT_OFFSET], 
+                                      [NSValue valueWithCGSize:CGSizeMake(6.0f, 0.0f)],
+                                      [NSValue valueWithCGSize:TIME_UNIT_OFFSET], nil];
+    _drivingTimeLabel.hidden = YES;
+    _drivingTimeValueLabel.hidden = YES;
+    
     // Create the directions button
     _directionsButton = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles directionsButtonStyle] frame:DIRECTIONS_BUTTON_FRAME];
     [_directionsButton addTarget:self action:@selector(showMap) forControlEvents:UIControlEventTouchUpInside];
     _directionsButton.hidden = YES;
     
-    // Create the info button
-    _infoButton = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles infoButtonStyle] frame:INFO_BUTTON_FRAME];
-    [_infoButton addTarget:self action:@selector(showAboutScreen) forControlEvents:UIControlEventTouchUpInside];
-    
     // Create the gauge
     _leaveMeter = [[JLLeaveMeter alloc] initWithFrame:LEAVE_IN_GAUGE_FRAME];
     _leaveMeter.hidden = YES;
+    
+    // First timer tick should show the alternate data
+    _showAlternateData = YES;
     
     // Add them to the view
     [self.view addSubview:_footerBackground];
@@ -404,11 +381,16 @@
     [self.view addSubview:_flightProgressView];
     [self.view addSubview:_landsAtLabel];
     [self.view addSubview:_landsAtTimeLabel];
+    [self.view addSubview:_landsInLabel];
+    [self.view addSubview:_landsInTimeLabel];
     [self.view addSubview:_terminalLabel];
     [self.view addSubview:_terminalValueLabel];
+    [self.view addSubview:_gateLabel];
+    [self.view addSubview:_gateValueLabel];
+    [self.view addSubview:_drivingTimeLabel];
+    [self.view addSubview:_drivingTimeValueLabel];
     [self.view addSubview:_destinationCityLabel];
     [self.view addSubview:_directionsButton];
-    [self.view addSubview:_infoButton];
     [self.view addSubview:_leaveMeter];
     
     [self setStatus:_trackedFlight.status];
@@ -417,7 +399,7 @@
 
 - (void)viewDidUnload {
     [super viewDidUnload];
-    
+        
     // Release any retained subviews of the main view.
     self._statusLabel = nil;
     self._originCodeLabel = nil;
@@ -427,14 +409,19 @@
     self._flightProgressView = nil;
     self._landsAtLabel = nil;
     self._landsAtTimeLabel = nil;
+    self._landsInLabel = nil;
+    self._landsInTimeLabel = nil;
     self._terminalLabel = nil;
     self._terminalValueLabel = nil;
+    self._gateLabel = nil;
+    self._gateValueLabel = nil;
+    self._drivingTimeLabel = nil;
+    self._drivingTimeValueLabel = nil;
     self._arrowView = nil;
     self._headerBackground = nil;
     self._footerBackground = nil;
     self._lookupButton = nil;
     self._directionsButton = nil;
-    self._infoButton = nil;
     self._leaveMeter = nil;
 }
 
@@ -484,7 +471,7 @@
         return [[NSString stringWithFormat:@"LANDS %@ AT", [NSDate naturalDayStringFromDate:[_trackedFlight estimatedArrivalTime]]] uppercaseString];
     }
 }
-
+                          
 
 - (NSString *)landsAtTime {
     if ([_trackedFlight actualArrivalTime]) {
@@ -492,6 +479,35 @@
     }
     else {
         return [NSDate naturalTimeStringFromDate:[_trackedFlight estimatedArrivalTime]];
+    }
+}
+
+
+- (NSString *)landsInLabelText {
+    if ([[_trackedFlight estimatedArrivalTime] timeIntervalSinceNow] < 0.0) {
+        return NSLocalizedString(@"LANDING", @"LANDING");
+    }
+    else {
+        return NSLocalizedString(@"LANDS IN", @"LANDS IN");
+    }
+}
+
+
+- (NSArray *)landsInTimeParts {
+    NSTimeInterval landsIn = [[_trackedFlight estimatedArrivalTime] timeIntervalSinceNow];
+    
+    if (landsIn < 0.0) {
+        return [NSArray arrayWithObjects:NSLocalizedString(@"NOW", @"NOW"), @"", nil];
+    }
+    else {
+        NSString *landsInString = [NSDate timeIntervalToShortUnitString:landsIn leadingZeros:NO];
+        NSArray *parts = [landsInString componentsSeparatedByString:@" "];
+        
+        if ([parts count] > 4) {
+            parts = [parts subarrayWithRange:NSMakeRange(0, 4)];
+        }
+        
+        return parts;
     }
 }
 
@@ -516,8 +532,242 @@
 }
 
 
+- (NSString *)gateLabelText {
+    return NSLocalizedString(@"GATE", @"GATE");
+}
+
+
+- (NSString *)gateValue {
+    if (_trackedFlight.destination.gate && [_trackedFlight.destination.gate length] > 0) {
+        return [_trackedFlight.destination.gate uppercaseString];
+    }
+    else {
+        return [self blankValue];
+    }
+}
+
 - (NSString *)blankValue {
     return @"--";
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Respond To Notifications
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)locationUpdated:(NSNotification *)notification {
+    // Update tracking information
+    CLLocation *newLocation = [[notification userInfo] valueForKey:@"location"];
+    [self trackFlightWithLocation:newLocation];    
+}
+
+
+- (void)locationUpdateFailed:(NSNotification *)notification {
+    // Track anyway, without location
+    [self trackFlightWithLocation:nil];
+    
+    // TODO: Indicate that we don't have location
+}
+
+
+- (void)triedToRegisterForRemoteNotifications:(NSNotification *)notification {
+    [self trackFlightWithLocation:[[JustLandedSession sharedSession] lastKnownLocation]];
+}
+
+
+- (void)willTrackFlight:(NSNotification *)notification {
+    [self startUpdating];
+}
+
+
+- (void)didTrackFlight:(NSNotification *)notification {
+    // Stop loading animation
+    [self stopUpdating];
+    
+    if (!_updateTimer || ![_updateTimer isValid]) {
+        self._updateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 
+                                                             target:self 
+                                                           selector:@selector(updateDisplayedData)
+                                                           userInfo:nil 
+                                                            repeats:YES];
+    }
+    
+    if (!_alternatingLabelTimer || ![_alternatingLabelTimer isValid]) {
+        self._alternatingLabelTimer = [NSTimer scheduledTimerWithTimeInterval:4.0 
+                                                                       target:self 
+                                                                     selector:@selector(alternateData)
+                                                                     userInfo:nil 
+                                                                      repeats:YES];
+    }
+    
+    // Update displayed information
+    [self setStatus:_trackedFlight.status];
+    [self setFlightNumber:_trackedFlight.flightNumber];
+    _originCodeLabel.text = _trackedFlight.origin.bestCode;
+    _originCityLabel.text = [_trackedFlight.origin.city uppercaseString];
+    _destinationCodeLabel.text = _trackedFlight.destination.bestCode;
+    _destinationCityLabel.text = [_trackedFlight.destination.city uppercaseString];
+    _flightProgressView.timeOfDay = [_trackedFlight timeOfDay];
+    _flightProgressView.aircraftType = [_trackedFlight aircraftType];
+    _flightProgressView.progress = [_trackedFlight currentProgress];
+    _landsAtLabel.text = [self landsAtLabelText];
+    _landsAtTimeLabel.parts = [[self landsAtTime] componentsSeparatedByString:@" "];
+    _landsInLabel.text = [self landsInLabelText];
+    _landsInTimeLabel.parts = [self landsInTimeParts];
+    _terminalLabel.text = [self terminalLabelText];
+    _terminalValueLabel.text = [self terminalValue];
+    _gateLabel.text = [self gateLabelText];
+    _gateValueLabel.text = [self gateValue];
+    
+    BOOL showGate = _trackedFlight.destination.gate && [_trackedFlight.destination.gate length] > 0;
+    BOOL showTerminal = _trackedFlight.destination.terminal && [_trackedFlight.destination.terminal length] > 0;
+    
+    if (!showGate && !showTerminal) { // Always show at least terminal
+        _terminalLabel.hidden = NO;
+        _terminalValueLabel.hidden = NO;
+        _gateLabel.hidden = YES;
+        _gateValueLabel.hidden = YES;
+    }
+    else {
+        _terminalLabel.hidden = !showTerminal;
+        _terminalValueLabel.hidden = !showTerminal;
+        _gateLabel.hidden = !showGate;
+        _gateValueLabel.hidden = !showGate; 
+    }
+    
+    if (showGate && !showTerminal) {
+        _gateLabel.alpha = 1.0f;
+        _gateValueLabel.alpha = 1.0f;
+    }
+    
+    if (_trackedFlight.leaveForAirportTime) {
+        self._leaveMeter.showEmptyMeter = NO;
+        NSTimeInterval timeRemaining = [_trackedFlight.leaveForAirportTime timeIntervalSinceNow];
+        timeRemaining = timeRemaining > 0.0 ? timeRemaining : 0.0;
+        self._leaveMeter.timeRemaining = timeRemaining;
+        double maxTimeLeft = ceil(timeRemaining / 3600.0) * 3600.0;
+        
+        if (self._leaveMeter.meterMaxTimeRemaining == 0.0) { // Only set this the first time
+            self._leaveMeter.meterMaxTimeRemaining = maxTimeLeft; // Max is next largest whole number of hours
+        }
+        
+        self._leaveMeter.hidden = NO;
+    }
+    else {
+        self._leaveMeter.showEmptyMeter = YES;
+        self._leaveMeter.hidden = NO;
+    }
+    
+    // Hide the directions button and driving time if appropriate
+    if (_trackedFlight.leaveForAirportTime) {
+        self._directionsButton.hidden = NO;
+        self._drivingTimeLabel.hidden = NO;
+        
+        NSString *drivingTime = [NSDate timeIntervalToShortUnitString:_trackedFlight.drivingTime leadingZeros:NO];
+        NSArray *drivingTimeParts = [drivingTime componentsSeparatedByString:@" "];
+        
+        if ([drivingTimeParts count] > 4) {
+            drivingTimeParts = [drivingTimeParts subarrayWithRange:NSMakeRange(0, 4)];
+        }
+        
+        self._drivingTimeValueLabel.parts = drivingTimeParts;
+        self._drivingTimeValueLabel.hidden = NO;
+    }
+    else {
+        self._directionsButton.hidden = YES;
+        self._drivingTimeLabel.hidden = YES;
+        self._drivingTimeValueLabel.hidden = YES;
+    }
+    
+    // Ask them to rate after a few seconds, if eligible
+    [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible) 
+                                            withObject:nil 
+                                            afterDelay:4.0];
+}
+
+
+- (void)flightTrackFailed:(NSNotification *)notification {
+    [self stopUpdating];
+    
+    FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
+    
+    if (reason == TrackFailureFlightNotFound || reason == TrackFailureInvalidFlightNumber || reason == TrackFailureOldFlight) {
+        // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
+        [delegate didFinishTracking:self userInitiated:NO];
+    }
+    else {
+        // TODO: Handle no connection
+    }
+}
+
+
+- (void)updateDisplayedData {
+    // Update data that needs to be refreshed periodically
+    [_statusLabel setText:[self labelForStatus:_trackedFlight.status]];
+    _flightProgressView.progress = [_trackedFlight currentProgress];
+    _landsInLabel.text = [self landsInLabelText];
+    _landsInTimeLabel.parts = [self landsInTimeParts];
+    
+    if (_trackedFlight.leaveForAirportTime) {
+        NSTimeInterval timeRemaining = [_trackedFlight.leaveForAirportTime timeIntervalSinceNow];
+        timeRemaining = timeRemaining > 0.0 ? timeRemaining : 0.0;
+        
+        if (fabs(_leaveMeter.timeRemaining - timeRemaining) > 60.0) { // Update only once the meter is 60 seconds old
+            self._leaveMeter.timeRemaining = timeRemaining;
+        }
+    }
+    
+}
+
+
+- (void)alternateData {
+    // Show lands in only during the last hour of the flight
+    BOOL showLandsIn = [_trackedFlight status] != LANDED && [[_trackedFlight estimatedArrivalTime] timeIntervalSinceNow] < 3600.0;
+    BOOL showGate = !_gateLabel.hidden;
+    BOOL showTerminal = !_terminalLabel.hidden;
+    
+    if (_showAlternateData) {
+        if (showLandsIn && _landsInLabel.alpha == 0.0f) { // Only animate if needed
+            // Transition from lands at to lands in
+            [self fadeOut:_landsAtLabel fadeIn:_landsInLabel];
+            [self fadeOut:_landsAtTimeLabel fadeIn:_landsInTimeLabel];
+        }
+        if (showGate && _gateLabel.alpha == 0.0f) { // Only animate if needed
+            // Transition from terminal to gate
+            [self fadeOut:_terminalLabel fadeIn:_gateLabel];
+            [self fadeOut:_terminalValueLabel fadeIn:_gateValueLabel];
+        }
+    }
+    else {
+        // Transition from lands in to lands at
+        if (_landsAtLabel.alpha == 0.0f) { // Only do it if needed
+            [self fadeOut:_landsInLabel fadeIn:_landsAtLabel];
+            [self fadeOut:_landsInTimeLabel fadeIn:_landsAtTimeLabel];
+        }
+
+        if (showTerminal && _terminalLabel.alpha == 0.0f) { // Only do it if needed
+            // Transition from gate to terminal
+            [self fadeOut:_gateLabel fadeIn:_terminalLabel];
+            [self fadeOut:_gateValueLabel fadeIn:_terminalValueLabel];
+        }
+    }
+    
+    self._showAlternateData = !_showAlternateData;
+}
+
+
+- (void)fadeOut:(UIView *)aView fadeIn:(UIView *)anotherView {
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         aView.alpha = 0.0f;
+                     }
+                     completion:^(BOOL finished) {
+                         anotherView.alpha = 0.0f;
+                         
+                         [UIView animateWithDuration:0.5 
+                                          animations:^{
+                                              anotherView.alpha = 1.0f;
+                                          }];
+                     }];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -525,6 +775,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 -(void)stopTracking {
+    [_updateTimer invalidate];
+    [_alternatingLabelTimer invalidate];
     [self stopUpdating];
     [_trackedFlight stopTracking];
     [self.delegate didFinishTracking:self userInitiated:YES];
@@ -559,20 +811,14 @@
     }
 }
 
-
-- (void)showAboutScreen {
-    AboutViewController *aboutController = [[AboutViewController alloc] init];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:aboutController];
-    navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self presentModalViewController:navController animated:YES];
-    [FlurryAnalytics logEvent:FY_VISITED_ABOUT_SCREEN];
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Memory Management
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)dealloc {
+    [_updateTimer invalidate];
+    [_alternatingLabelTimer invalidate];
+    [_flightProgressView stopAnimating];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

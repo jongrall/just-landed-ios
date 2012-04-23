@@ -150,7 +150,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)startLocationServices {
     //Create the location manager if needed
 	if (!self._locationManager) {
-		CLLocationManager *locMgr = [[CLLocationManager alloc] init]; 
+        CLLocationManager *locMgr = [[CLLocationManager alloc] init]; 
 		locMgr.delegate = self;
 		locMgr.desiredAccuracy = kCLLocationAccuracyBest;
 		locMgr.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
@@ -158,7 +158,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 		self._locationManager = locMgr;
 	}
     
-	[self._locationManager startMonitoringSignificantLocationChanges];   
+    [self._locationManager startMonitoringSignificantLocationChanges];   
 }
 
 
@@ -169,7 +169,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 - (CLLocation *)lastKnownLocation {
     BOOL authorizedToGetLocation = [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized;
-    
     [self startLocationServices];
     
     // Only return a location if the app is authorized to do so
@@ -188,7 +187,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-	//Notify observers that the location has been updated
+    //Notify observers that the location has been updated
     _triedToGetLocation = YES;
     _lastLocation = newLocation;
     
@@ -212,6 +211,10 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     [FlurryAnalytics logEvent:FY_UNABLE_TO_GET_LOCATION];
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Sounds
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)playSound:(JustLandedSoundType)type {
     NSString *soundPath = nil;
@@ -238,7 +241,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)vibrateDevice {
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Push Notifications

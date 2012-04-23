@@ -11,5 +11,7 @@
 @interface JLLeaveMeter : UIView
 
 @property (nonatomic) NSTimeInterval timeRemaining;
+@property (nonatomic) NSTimeInterval meterMaxTimeRemaining;
+@property (nonatomic) BOOL showEmptyMeter;
 
 @end

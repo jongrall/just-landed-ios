@@ -142,7 +142,7 @@ static NSDateFormatter *_naturalTimeFormatter;
 
 
 + (NSString *)prettyPrintTimeDifference:(NSDate *)date {
-    NSTimeInterval interval = abs((int) [date timeIntervalSinceNow]);
+    NSTimeInterval interval = fabs(roundf([date timeIntervalSinceNow]));
     
     NSTimeInterval secondsInMinute = 60.0;
     NSTimeInterval secondsInHour = 3600.0;
@@ -157,22 +157,61 @@ static NSDateFormatter *_naturalTimeFormatter;
     
     NSString *difference = @"";
     if (years > 0) {
-        difference = [difference stringByAppendingString:(years > 1 ? [NSString stringWithFormat:@"%d years", years] : @"1 year")];
+        difference = [difference stringByAppendingString:(years > 1 ? [NSString stringWithFormat:@"%d years ", years] : @"1 year ")];
     };
     if (days > 0) {
-        difference = [difference stringByAppendingString:(days > 1 ? [NSString stringWithFormat:@"%d days", years] : @"1 day")];
+        difference = [difference stringByAppendingString:(days > 1 ? [NSString stringWithFormat:@"%d days ", days] : @"1 day ")];
     };
     if (hours > 0) {
-        difference = [difference stringByAppendingString:(hours > 1 ? [NSString stringWithFormat:@"%d hours", years] : @"1 hour")];
+        difference = [difference stringByAppendingString:(hours > 1 ? [NSString stringWithFormat:@"%d hours ", hours] : @"1 hour ")];
     };
     if (minutes > 0) {
-        difference = [difference stringByAppendingString:(minutes > 1 ? [NSString stringWithFormat:@"%d minutes", years] : @"1 minute")];
+        difference = [difference stringByAppendingString:(minutes > 1 ? [NSString stringWithFormat:@"%d minutes ", minutes] : @"1 minute ")];
     };
-    if (seconds > 0 && [difference isEqualToString:@""]) {
-        difference = [difference stringByAppendingString:(seconds > 1 ? [NSString stringWithFormat:@"%d seconds", years] : @"1 second")];
+    if (seconds >= 0 && [difference isEqualToString:@""]) {
+        difference = [difference stringByAppendingString:(seconds > 1 ? [NSString stringWithFormat:@"%d seconds ", seconds] : @"1 second ")];
     };
     
-    return [difference isEqualToString:@""] ? @"now" : difference;
+    return [difference isEqualToString:@""] ? @"now" : [difference stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+}
+
+
++ (NSString *)timeIntervalToShortUnitString:(NSTimeInterval)interval leadingZeros:(BOOL)zeros {
+    interval = fabs(roundf(interval));
+    NSTimeInterval secondsInMinute = 60.0;
+    NSTimeInterval secondsInHour = 3600.0;
+    NSTimeInterval secondsInDay = 86400.0;
+    NSTimeInterval secondsInYear = 365.0 * secondsInDay;
+    
+    NSInteger years = floor(interval / secondsInYear) > 0 ? (int) floor(interval / secondsInYear) : 0;
+    NSInteger days = floor(interval / secondsInDay) > 0 ? (int) floor(fmod(interval, secondsInYear) / secondsInDay) : 0;
+    NSInteger hours = floor(interval / secondsInHour) > 0 ? (int) floor(fmod(interval, secondsInDay) / secondsInHour) : 0;
+    NSInteger minutes = floor(interval / secondsInMinute) > 0 ? (int) floor(fmod(interval, secondsInHour) / secondsInMinute) : 0;
+    NSInteger seconds = interval > 0 ? (int) floor(fmod(interval, secondsInMinute)) : 0;
+    
+    NSString *difference = @"";
+    if (years > 0) {
+        difference = [difference stringByAppendingString:(years < 10 && zeros ? [NSString stringWithFormat:@"0%d YRS ", years] : 
+                                                          years == 1 ? @"1 YR " : [NSString stringWithFormat:@"%d YRS ", years])];
+    };
+    if (days > 0) {
+        difference = [difference stringByAppendingString:(days < 10 && zeros ? [NSString stringWithFormat:@"%d DAYS ", days] : 
+                                                          days == 1 ? @"1 DAY " : [NSString stringWithFormat:@"%d DAYS ", days])];
+    };
+    if (hours > 0) {
+        difference = [difference stringByAppendingString:(hours < 10 && zeros ? [NSString stringWithFormat:@"0%d HRS ", hours] : 
+                                                          hours == 1 ? @"1 HR " : [NSString stringWithFormat:@"%d HRS ", hours])];
+    };
+    if (minutes > 0) {
+        difference = [difference stringByAppendingString:(minutes < 10 && zeros ? [NSString stringWithFormat:@"0%d MIN ", minutes] : 
+                                                          minutes == 1 ? @"1 MIN " : [NSString stringWithFormat:@"%d MIN ", minutes])];
+    };
+    if (seconds >= 0 && [difference isEqualToString:@""]) {
+        difference = [difference stringByAppendingString:(seconds < 10 && zeros ? [NSString stringWithFormat:@"0%d SECS ", seconds] : 
+                                                          seconds == 1 ? @"1 SEC " : [NSString stringWithFormat:@"%d SECS ", seconds])];
+    };
+    
+    return [difference stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
 

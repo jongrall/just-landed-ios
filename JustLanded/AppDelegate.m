@@ -195,7 +195,11 @@
         [[JustLandedSession sharedSession] playSound:soundType];
         [[JustLandedSession sharedSession] vibrateDevice];
         
-        // TODO: Update the tracking info for the flight
+        // Update the tracking info for the flight
+        for (Flight *f in [[JustLandedSession sharedSession] currentlyTrackedFlights]) {
+            [f trackWithLocation:[[JustLandedSession sharedSession] lastKnownLocation] 
+                     pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
+        }
     }
 }
 

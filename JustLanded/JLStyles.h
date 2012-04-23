@@ -16,6 +16,7 @@
 + (UIFont *)sansSerifRomanOfSize:(CGFloat)size;
 + (UIFont *)sansSerifLightCondensedOfSize:(CGFloat)size;
 + (UIFont *)sansSerifBoldCondensedOfSize:(CGFloat)size;
++ (UIFont *)sansSerifLightBoldOfSize:(CGFloat)size;
 + (NSString *)colorNameForStatus:(FlightStatus)status;
 + (UIColor *)labelShadowColorForStatus:(FlightStatus)status;
 

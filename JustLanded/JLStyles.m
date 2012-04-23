@@ -35,6 +35,11 @@
 }
 
 
++ (UIFont *)sansSerifLightBoldOfSize:(CGFloat)size {
+    return [UIFont fontWithName:@"FrutigerCE-Bold" size:size];
+}
+
+
 + (NSString *)colorNameForStatus:(FlightStatus)status {
     switch (status) {
         case SCHEDULED:

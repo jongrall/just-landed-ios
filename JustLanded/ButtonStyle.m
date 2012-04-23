@@ -10,11 +10,13 @@
 
 @interface ButtonStyle () {
     __strong LabelStyle *_labelStyle;
+    __strong LabelStyle *_disabledLabelStyle;
     __strong UIColor *_backgroundColor;
     __strong UIImage *_upImage;
     __strong UIImage *_downImage;
     __strong UIImage *_disabledImage;
     __strong UIImage *_iconImage;
+    __strong UIImage *_disabledIconImage;
     CGPoint _iconOrigin;
     UIEdgeInsets _labelInsets;
     CGSize _downLabelOffset;
@@ -26,11 +28,13 @@
 @implementation ButtonStyle
 
 @synthesize labelStyle=_labelStyle;
+@synthesize disabledLabelStyle=_disabledLabelStyle;
 @synthesize backgroundColor=_backgroundColor;
 @synthesize upImage=_upImage;
 @synthesize downImage=_downImage;
 @synthesize disabledImage=_disabledImage;
 @synthesize icon=_iconImage;
+@synthesize disabledIcon=_disabledIconImage;
 @synthesize iconOrigin=_iconOrigin;
 @synthesize labelInsets=_labelInsets;
 @synthesize downLabelOffset=_downLabelOffset;
@@ -38,12 +42,14 @@
 
 
 - (id)initWithLabelStyle:(LabelStyle *)aStyle
+        disabledLabelStyle:(LabelStyle *)aDisabledStyle
          backgroundColor:(UIColor *)aColor
                  upImage:(UIImage *)anUpImage
                downImage:(UIImage *)aDownImage
            disabledImage:(UIImage *)aDisabledImage
                iconImage:(UIImage *)anIcon
-              iconOrigin:(CGPoint)somePoint
+       iconDisabledImage:(UIImage *)aDisabledIcon
+              iconOrigin:(CGPoint)aPoint
              labelInsets:(UIEdgeInsets)someLabelInsets
          downLabelOffset:(CGSize)aDownOffset
      disabledLabelOffset:(CGSize)aDisabledOffset {    
@@ -59,11 +65,14 @@
             _backgroundColor = [UIColor clearColor];
         }
         
+        
+        _disabledLabelStyle = aDisabledStyle;
         _upImage = anUpImage;
         _downImage = aDownImage;
         _disabledImage = aDisabledImage;
         _iconImage = anIcon;
-        _iconOrigin = somePoint;
+        _disabledIconImage = aDisabledIcon;
+        _iconOrigin = aPoint;
         _labelInsets = someLabelInsets;
         _downLabelOffset = aDownOffset;
         _disabledLabelOffset = aDisabledOffset;

@@ -124,9 +124,14 @@
     NSString *sig = [[self class] apiRequestSignatureWithPath:path params:parameters];
     [request setValue:sig forHTTPHeaderField:@"X-Just-Landed-Signature"];
     
-    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request 
-                                                                      success:success 
+    // Force gzip encoding from GAE
+    [request setValue:@"gzip, deflate" forHTTPHeaderField:@"Accept-Encoding"];
+    [request setValue:@"gzip" forHTTPHeaderField:@"User-Agent"];
+    
+    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
+                                                                      success:success
                                                                       failure:failure];
+    
     [self enqueueHTTPRequestOperation:operation];
 }
 
