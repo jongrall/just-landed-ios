@@ -103,7 +103,7 @@ const CGFloat LAYER4_SPEED = 5.0f;
 
 
 - (void)startAnimating {
-    if (!_animationTimer || [_animationTimer isValid]) {
+    if (!_animationTimer || ![_animationTimer isValid]) {
         _animationTimer = [NSTimer scheduledTimerWithTimeInterval:0.025 
                                                            target:self 
                                                          selector:@selector(animationTick) 

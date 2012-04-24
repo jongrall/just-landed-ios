@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 
 #import "FlightLookupViewController.h"
+#import "FlightTrackViewController.h"
 #import "Flight.h"
 #import <CoreLocation/CoreLocation.h>
 
@@ -165,40 +166,26 @@
 
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    // Only alert them if they haven't been told yet (UIApplicationStateInactive indicates the app was launched in
+    // Only alert them if they haven't been told yet and they are still tracking flights.
+    // (UIApplicationStateInactive indicates the app was launched in
     // response to the user tapping the action button of the push notification).
-    if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateInactive) {
-        // TODO: Only do something if they are still tracking a flight
-        NSString *notificationType = [userInfo valueForKeyOrNil:@"notification_type"];
-        NSString *message = [userInfo valueForKeyPathOrNil:@"aps.alert"];
-        PushType push_type = [Flight stringToPushType:notificationType];
-        JustLandedSoundType soundType;
-        
-        switch (push_type) {
-            case FlightDeparted:
-                soundType = TakeOffSound;
-                break;
-            case FlightArrived:
-                soundType = LandingSound;
-                break;
-            default:
-                soundType = AnnouncementSound;
-                break;
-        }
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil 
-                                                        message:message 
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
-                                              otherButtonTitles:nil];
-        [alert show];
-        [[JustLandedSession sharedSession] playSound:soundType];
-        [[JustLandedSession sharedSession] vibrateDevice];
-        
-        // Update the tracking info for the flight
-        for (Flight *f in [[JustLandedSession sharedSession] currentlyTrackedFlights]) {
-            [f trackWithLocation:[[JustLandedSession sharedSession] lastKnownLocation] 
-                     pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
+    NSArray *currentlyTrackedFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
+    BOOL isTrackingFlights = [currentlyTrackedFlights count] > 0;
+    BOOL notAlreadyNotified = [[UIApplication sharedApplication] applicationState] != UIApplicationStateInactive;
+    
+    if (isTrackingFlights && notAlreadyNotified) {
+        // Only do something if they are still tracking a flight
+        UILocalNotification *notification = [[UILocalNotification alloc] init];
+        notification.fireDate = [NSDate date];
+        notification.alertBody = [userInfo valueForKeyPathOrNil:@"aps.alert"];;
+        notification.soundName = [userInfo valueForKeyPathOrNil:@"aps.sound"];
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+             
+        // Refresh the flight information
+        if (_mainViewController && _mainViewController.modalViewController && 
+            [_mainViewController.modalViewController isKindOfClass:[FlightTrackViewController class]]) {
+            FlightTrackViewController *flightTrackVC = (FlightTrackViewController *)_mainViewController.modalViewController;
+            [flightTrackVC refresh];
         }
     }
 }

@@ -65,7 +65,7 @@
                                                                                 80.0f)];
         
         _leaveInstructionsLabel.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
-        
+        _leaveInstructionsLabel.hidden = YES;
         
         _leaveNowLabel = [[JLMultipartOverUnderLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles leaveNowStyle],
                                                                                  [JLTrackStyles leaveNowStyle], nil] 
@@ -90,21 +90,33 @@
 
 
 - (void)setTimeRemaining:(NSTimeInterval)newTime {
+    newTime = (newTime > 0.0) ? newTime : 0.0; // Time remaining is 0.0 or greater
+    
+    BOOL needsRedraw = fabs(timeRemaining - newTime) > 60.0; // Only redraw meter every 60s
+    
+    if (meterMaxTimeRemaining == 0.0) { // Only set this the first time
+        double maxTimeLeft = ceil(newTime / 3600.0) * 3600.0; // Max is next largest whole number of hours
+        self.meterMaxTimeRemaining = maxTimeLeft;
+        needsRedraw = YES;
+    }
+    
     timeRemaining = newTime;
-    NSString *timeRemainingString = [NSDate timeIntervalToShortUnitString:newTime leadingZeros:(newTime > 3659.0)];
+    NSString *timeRemainingString = [NSDate timeIntervalToShortUnitString:newTime leadingZeros:YES];
     NSArray *parts = [timeRemainingString componentsSeparatedByString:@" "];
     
     if ([parts count] > 4) { // No more than 4 parts
         parts = [parts subarrayWithRange:NSMakeRange(0, 4)]; 
     }
     
-    if (newTime >= 1.0 && newTime <= 3659.0) {
+    if (newTime >= 1.0 && [parts count] == 2) {
+        // When showing 2 parts, no leading zeros
+        parts = [[NSDate timeIntervalToShortUnitString:newTime leadingZeros:NO] componentsSeparatedByString:@" "];
         _largeTimeLabel.parts = parts;
         _largeTimeLabel.hidden = NO;
         _smallTimeLabel.hidden = YES;
         _leaveInstructionsLabel.hidden = NO;
     }
-    else if (newTime > 3659.0) {
+    else if (newTime >= 1.0 && [parts count] == 4) {
         _smallTimeLabel.parts = parts;
         _smallTimeLabel.hidden = NO;
         _largeTimeLabel.hidden = YES;
@@ -118,7 +130,10 @@
     }
 
     _leaveInstructionsLabel.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
-    [self setNeedsDisplay];
+    
+    if (needsRedraw) {
+        [self setNeedsDisplay];
+    }
 }
 
 

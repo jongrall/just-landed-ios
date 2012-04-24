@@ -512,11 +512,11 @@ static NSRegularExpression *_flightNumberRegex;
     [self dismissModalViewControllerAnimated:YES];
     [[JustLandedSession sharedSession] removeTrackedFlight:controller.trackedFlight];
     
-    // If they're no longer tracking any flights, stop location services and clear notifications
+    // If they're no longer tracking any flights, stop location services
     if ([[[JustLandedSession sharedSession] currentlyTrackedFlights] count] == 0) {
         [[JustLandedSession sharedSession] stopLocationServices];
         
-        // Clear past notifications
+        // Clear past notifications from the notification center
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
         [[UIApplication sharedApplication] cancelAllLocalNotifications];

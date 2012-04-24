@@ -141,19 +141,22 @@ static NSDateFormatter *_naturalTimeFormatter;
 }
 
 
-+ (NSString *)prettyPrintTimeDifference:(NSDate *)date {
-    NSTimeInterval interval = fabs(roundf([date timeIntervalSinceNow]));
-    
++ (NSString *)prettyPrintTimeDifference:(NSDate *)date {    
     NSTimeInterval secondsInMinute = 60.0;
     NSTimeInterval secondsInHour = 3600.0;
     NSTimeInterval secondsInDay = 86400.0;
     NSTimeInterval secondsInYear = 365.0 * secondsInDay;
     
+    // Ensure the interval is positive and rounded to whole seconds
+    NSTimeInterval interval = fabs(roundf([date timeIntervalSinceNow]));
+    
+    // Round up to nearest minute so 10 sec left returns 1 min left not 0 min left
+    interval = ceil(interval / secondsInMinute) * secondsInMinute;
+    
     NSInteger years = floor(interval / secondsInYear) > 0 ? (int) floor(interval / secondsInYear) : 0;
     NSInteger days = floor(interval / secondsInDay) > 0 ? (int) floor(fmod(interval, secondsInYear) / secondsInDay) : 0;
     NSInteger hours = floor(interval / secondsInHour) > 0 ? (int) floor(fmod(interval, secondsInDay) / secondsInHour) : 0;
     NSInteger minutes = floor(interval / secondsInMinute) > 0 ? (int) floor(fmod(interval, secondsInHour) / secondsInMinute) : 0;
-    NSInteger seconds = interval > 0 ? (int) floor(fmod(interval, secondsInMinute)) : 0;
     
     NSString *difference = @"";
     if (years > 0) {
@@ -168,26 +171,29 @@ static NSDateFormatter *_naturalTimeFormatter;
     if (minutes > 0) {
         difference = [difference stringByAppendingString:(minutes > 1 ? [NSString stringWithFormat:@"%d minutes ", minutes] : @"1 minute ")];
     };
-    if (seconds >= 0 && [difference isEqualToString:@""]) {
-        difference = [difference stringByAppendingString:(seconds > 1 ? [NSString stringWithFormat:@"%d seconds ", seconds] : @"1 second ")];
-    };
+    if ([difference length] == 0) {
+        difference = @"0 minutes ";
+    }
     
-    return [difference isEqualToString:@""] ? @"now" : [difference stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    return [difference stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
 
-+ (NSString *)timeIntervalToShortUnitString:(NSTimeInterval)interval leadingZeros:(BOOL)zeros {
-    interval = fabs(roundf(interval));
++ (NSString *)timeIntervalToShortUnitString:(NSTimeInterval)anInterval leadingZeros:(BOOL)zeros {    
     NSTimeInterval secondsInMinute = 60.0;
     NSTimeInterval secondsInHour = 3600.0;
     NSTimeInterval secondsInDay = 86400.0;
     NSTimeInterval secondsInYear = 365.0 * secondsInDay;
     
+    // Ensure the interval is positive and rounded to whole seconds
+    NSTimeInterval interval = fabs(roundf(anInterval));
+    // Round up to nearest minute so 10 sec left returns 1 min left not 0 min left
+    interval = ceil(interval / secondsInMinute) * secondsInMinute;
+    
     NSInteger years = floor(interval / secondsInYear) > 0 ? (int) floor(interval / secondsInYear) : 0;
     NSInteger days = floor(interval / secondsInDay) > 0 ? (int) floor(fmod(interval, secondsInYear) / secondsInDay) : 0;
     NSInteger hours = floor(interval / secondsInHour) > 0 ? (int) floor(fmod(interval, secondsInDay) / secondsInHour) : 0;
     NSInteger minutes = floor(interval / secondsInMinute) > 0 ? (int) floor(fmod(interval, secondsInHour) / secondsInMinute) : 0;
-    NSInteger seconds = interval > 0 ? (int) floor(fmod(interval, secondsInMinute)) : 0;
     
     NSString *difference = @"";
     if (years > 0) {
@@ -205,11 +211,10 @@ static NSDateFormatter *_naturalTimeFormatter;
     if (minutes > 0) {
         difference = [difference stringByAppendingString:(minutes < 10 && zeros ? [NSString stringWithFormat:@"0%d MIN ", minutes] : 
                                                           minutes == 1 ? @"1 MIN " : [NSString stringWithFormat:@"%d MIN ", minutes])];
-    };
-    if (seconds >= 0 && [difference isEqualToString:@""]) {
-        difference = [difference stringByAppendingString:(seconds < 10 && zeros ? [NSString stringWithFormat:@"0%d SECS ", seconds] : 
-                                                          seconds == 1 ? @"1 SEC " : [NSString stringWithFormat:@"%d SECS ", seconds])];
-    };
+    }
+    if ([difference length] == 0) {
+        difference = (zeros) ? @"00 MIN " : @"0 MIN ";
+    }
     
     return [difference stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }

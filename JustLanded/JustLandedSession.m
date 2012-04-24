@@ -43,6 +43,8 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 @implementation JustLandedSession
 
 @synthesize pushToken;
+@synthesize triedToGetLocation=_triedToGetLocation;
+@synthesize triedToRegisterForRemoteNotifications=_triedToRegisterForRemoteNotifications;
 @synthesize _locationManager;
 
 
@@ -69,15 +71,11 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
             _currentlyTrackedFlights = [[NSMutableArray alloc] init];
         }
         
-        // Re-archive tracked flights whenever resigning active or going to the background
+        // Archive tracked flights whenever a flight is updated
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(archiveCurrentlyTrackedFlights) 
-                                                     name:UIApplicationWillResignActiveNotification 
-                                                   object:[UIApplication sharedApplication]];
-        [[NSNotificationCenter defaultCenter] addObserver:self 
-                                                 selector:@selector(archiveCurrentlyTrackedFlights) 
-                                                     name:UIApplicationDidEnterBackgroundNotification 
-                                                   object:[UIApplication sharedApplication]];
+                                                     name:DidTrackFlightNotification 
+                                                   object:nil];
     }
     return self;
 }
@@ -168,21 +166,21 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 
 - (CLLocation *)lastKnownLocation {
-    BOOL authorizedToGetLocation = [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized;
     [self startLocationServices];
-    
-    // Only return a location if the app is authorized to do so
-    if (_lastLocation && authorizedToGetLocation) {
-        return _lastLocation;
-    }
-    else {
-        return nil;
-    }
+    return _lastLocation;
 }
 
 
 - (BOOL)locationServicesAvailable {
     return [CLLocationManager significantLocationChangeMonitoringAvailable];
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    // If they later allow location services, get their location
+    if (status == kCLAuthorizationStatusAuthorized) {
+        [self startLocationServices];
+    }
 }
 
 
@@ -205,9 +203,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     _triedToGetLocation = YES;
-	[self._locationManager stopUpdatingLocation];
-    [[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidFailToUpdateNotification 
-                                                        object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidFailToUpdateNotification object:self];
     [FlurryAnalytics logEvent:FY_UNABLE_TO_GET_LOCATION];
 }
 
@@ -266,7 +262,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 - (void)registerForPushNotifications {
     [[NSNotificationCenter defaultCenter] postNotificationName:WillRegisterForRemoteNotifications object:self];
-    
 	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
 }
 
@@ -297,17 +292,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     // Returns true if alerts are allowed - minimum to consider push enabled for the app (badge & sound not required)
     return ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] & UIRemoteNotificationTypeAlert) && pushToken;
 }
-
-
-- (BOOL)triedToRegisterForRemoteNotifications {
-    return _triedToRegisterForRemoteNotifications;
-}
-
-
-- (BOOL)triedToGetLocation {
-    return _triedToGetLocation;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - App Ratings
