@@ -47,7 +47,6 @@
 @property (strong, nonatomic) JLLookupButton *_lookupButton;
 @property (strong, nonatomic) JLButton *_directionsButton;
 @property (strong, nonatomic) JLLeaveMeter *_leaveMeter;
-@property (nonatomic) BOOL _showingPrimaryData;
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status;
 + (UIImage *)headerBackgroundImageForStatus:(FlightStatus)status;
@@ -116,7 +115,6 @@
 @synthesize _lookupButton;
 @synthesize _directionsButton;
 @synthesize _leaveMeter;
-@synthesize _showingPrimaryData;
 
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status {
@@ -213,9 +211,6 @@
     if (self) {
         NSAssert((aFlight != nil), @"Flight to track is nil!");
         _trackedFlight = aFlight;
-        
-        // First timer tick should show primary data
-        _showingPrimaryData = YES;
         
         // Listen for location update notifications
         [[NSNotificationCenter defaultCenter] addObserver:self 
@@ -386,7 +381,7 @@
                                       [NSValue valueWithCGSize:TIME_UNIT_OFFSET], nil];
     
     // Add the bag claim label
-    _bagClaimValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:DRIVING_TIME_LABEL_FRAME];
+    _bagClaimLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:DRIVING_TIME_LABEL_FRAME];
     _bagClaimLabel.text = NSLocalizedString(@"BAG CLAIM", @"BAG CLAIM");
     _bagClaimValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:DRIVING_TIME_VALUE_FRAME];
     _bagClaimValueLabel.text = [self bagClaimValue];    
@@ -426,6 +421,8 @@
     [self.view addSubview:_gateValueLabel];
     [self.view addSubview:_drivingTimeLabel];
     [self.view addSubview:_drivingTimeValueLabel];
+    [self.view addSubview:_bagClaimLabel];
+    [self.view addSubview:_bagClaimValueLabel];
     [self.view addSubview:_destinationCityLabel];
     [self.view addSubview:_directionsButton];
     [self.view addSubview:_leaveMeter];
@@ -452,6 +449,8 @@
     self._gateValueLabel = nil;
     self._drivingTimeLabel = nil;
     self._drivingTimeValueLabel = nil;
+    self._bagClaimLabel = nil;
+    self._bagClaimValueLabel = nil;
     self._arrowView = nil;
     self._headerBackground = nil;
     self._footerBackground = nil;
@@ -733,6 +732,8 @@
         _drivingTimeValueLabel.parts = [self drivingTimeParts];
         _drivingTimeLabel.hidden = NO;
         _drivingTimeValueLabel.hidden = NO;
+        _bagClaimLabel.hidden = YES;
+        _bagClaimValueLabel.hidden = YES;
         
         if (_trackedFlight.destination.location) {
             _directionsButton.hidden = NO; 
@@ -764,34 +765,29 @@
     BOOL showGate = _trackedFlight.destination.gate && [_trackedFlight.destination.gate length] > 0;
     BOOL showTerminal = _trackedFlight.destination.terminal && [_trackedFlight.destination.terminal length] > 0;
     
-    if (_showingPrimaryData) {
+        // Transition from lands at to lands in
         if (showLandsIn && _landsInLabel.alpha == 0.0f) { // Only animate if needed
-            // Transition from lands at to lands in
             [self fadeOut:_landsAtLabel fadeIn:_landsInLabel];
             [self fadeOut:_landsAtTimeLabel fadeIn:_landsInTimeLabel];
         }
+        
+        // Transition from lands in to lands at
+        else if (_landsAtLabel.alpha == 0.0f) { // Only do it if needed
+                [self fadeOut:_landsInLabel fadeIn:_landsAtLabel];
+                [self fadeOut:_landsInTimeLabel fadeIn:_landsAtTimeLabel];
+        }
+        
+        // Transition from terminal to gate
         if (showGate && _gateLabel.alpha == 0.0f) { // Only animate if needed
-            // Transition from terminal to gate
             [self fadeOut:_terminalLabel fadeIn:_gateLabel];
             [self fadeOut:_terminalValueLabel fadeIn:_gateValueLabel];
         }
-        
-        _showingPrimaryData = NO;
-    }
-    else {
-        // Transition from lands in to lands at
-        if (_landsAtLabel.alpha == 0.0f) { // Only do it if needed
-            [self fadeOut:_landsInLabel fadeIn:_landsAtLabel];
-            [self fadeOut:_landsInTimeLabel fadeIn:_landsAtTimeLabel];
-        }
+                
         // Transition from gate to terminal
-        if (showTerminal && _terminalLabel.alpha == 0.0f) { // Only do it if needed
+        else if (showTerminal && _terminalLabel.alpha == 0.0f) { // Only do it if needed
             [self fadeOut:_gateLabel fadeIn:_terminalLabel];
             [self fadeOut:_gateValueLabel fadeIn:_terminalValueLabel];
         }
-        
-        _showingPrimaryData = YES;
-    }
 }
 
 

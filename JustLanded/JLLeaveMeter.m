@@ -115,12 +115,14 @@
         _largeTimeLabel.hidden = NO;
         _smallTimeLabel.hidden = YES;
         _leaveInstructionsLabel.hidden = NO;
+        _leaveNowLabel.hidden = YES;
     }
     else if (newTime >= 1.0 && [parts count] == 4) {
         _smallTimeLabel.parts = parts;
         _smallTimeLabel.hidden = NO;
         _largeTimeLabel.hidden = YES;
         _leaveInstructionsLabel.hidden = NO;
+        _leaveNowLabel.hidden = YES;
     }
     else {
         _leaveNowLabel.hidden = NO;
