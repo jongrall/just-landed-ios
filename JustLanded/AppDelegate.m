@@ -182,11 +182,9 @@
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
              
         // Refresh the flight information
-        if (_mainViewController && _mainViewController.modalViewController && 
-            [_mainViewController.modalViewController isKindOfClass:[FlightTrackViewController class]]) {
-            FlightTrackViewController *flightTrackVC = (FlightTrackViewController *)_mainViewController.modalViewController;
-            [flightTrackVC refresh];
-        }
+        Flight *currentFlight = [currentlyTrackedFlights lastObject];
+        [currentFlight trackWithLocation:[[JustLandedSession sharedSession] lastKnownLocation] 
+                             pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
     }
 }
 

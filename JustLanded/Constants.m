@@ -39,11 +39,13 @@ NSUInteger const RATINGS_USAGE_THRESHOLD = 5;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined(CONFIGURATION_Debug)
-NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1/";
+NSString * const BASE_URL = @"http://pool-173-63-21-213.nwrknj.fios.verizon.net:8082/api/v1/";
+//NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1/";
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Development";
 NSString * const API_KEY = @"d90816f7e6ea93001a2aa62cd8dd8f0e830a93d1";
-NSString * const FAQ_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/iphonefaq";
+NSString * const FAQ_URL = @"http://pool-173-63-21-213.nwrknj.fios.verizon.net:8082/iphonefaq";
+//NSString * const FAQ_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/iphonefaq";
 #elif defined(CONFIGURATION_Adhoc)
 NSString * const BASE_URL = @"https://just-landed-staging.appspot.com/api/v1/";
 NSUInteger const API_VERSION = 1;

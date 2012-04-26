@@ -139,7 +139,8 @@ static NSArray *_aircraftTypes;
     self.scheduledDepartureTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"scheduledDepartureTime"] returnNilForZero:YES];
     self.lastUpdated = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"lastUpdated"] returnNilForZero:YES];
     self.leaveForAirportTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"leaveForAirportTime"] returnNilForZero:YES];
-    self.drivingTime = [info valueForKeyOrNil:@"drivingTime"] ? [[info valueForKeyOrNil:@"drivingTime"] doubleValue] : 0.0;
+    // -1.0 means we have no driving time
+    self.drivingTime = [info valueForKeyOrNil:@"drivingTime"] ? [[info valueForKeyOrNil:@"drivingTime"] doubleValue] : -1.0;
     self.scheduledFlightDuration = [[info valueForKeyOrNil:@"scheduledFlightDuration"] doubleValue];
     _scheduledArrivalTime = [NSDate dateWithTimeInterval:scheduledFlightDuration sinceDate:scheduledDepartureTime];
     
@@ -473,7 +474,7 @@ static NSArray *_aircraftTypes;
                                 scheduledDepartureTime ? [scheduledDepartureTime description] : [NSNull null], @"scheduledDepartureTime",
                                 lastUpdated ? [lastUpdated description] : [NSNull null], @"lastUpdated",
                                 leaveForAirportTime ? [leaveForAirportTime description] : [NSNull null], @"leaveForAirportTime",
-                                drivingTime > 0.0 ? [NSNumber numberWithDouble:drivingTime] : [NSNull null], @"drivingTime",
+                                drivingTime >= 0.0 ? [NSNumber numberWithDouble:drivingTime] : [NSNull null], @"drivingTime",
                                 [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
                                 
                                 origin ? [origin toJSONFriendlyDict] : [NSNull null], @"origin",
@@ -509,7 +510,7 @@ static NSArray *_aircraftTypes;
                                 scheduledDepartureTime ? scheduledDepartureTime : [NSNull null], @"scheduledDepartureTime",
                                 lastUpdated ? lastUpdated : [NSNull null], @"lastUpdated",
                                 leaveForAirportTime ? leaveForAirportTime : [NSNull null], @"leaveForAirportTime",
-                                drivingTime > 0.0 ? [NSNumber numberWithDouble:drivingTime] : [NSNull null], @"drivingTime",
+                                drivingTime >= 0.0 ? [NSNumber numberWithDouble:drivingTime] : [NSNull null], @"drivingTime",
                                 [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
                                 
                                 origin ? [origin toDict] : [NSNull null], @"origin",

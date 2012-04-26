@@ -39,6 +39,8 @@
 @property (strong, nonatomic) JLLabel *_gateValueLabel;
 @property (strong, nonatomic) JLLabel *_drivingTimeLabel;
 @property (strong, nonatomic) JLMultipartLabel *_drivingTimeValueLabel;
+@property (strong, nonatomic) JLLabel *_bagClaimLabel;
+@property (strong, nonatomic) JLLabel *_bagClaimValueLabel;
 @property (strong, nonatomic) UIImageView *_arrowView;
 @property (strong, nonatomic) UIImageView *_headerBackground;
 @property (strong, nonatomic) UIImageView *_footerBackground;
@@ -71,7 +73,9 @@
 - (NSString *)gateLabelText;
 - (NSString *)gateValue;
 - (NSArray *)drivingTimeParts;
+- (NSString *)bagClaimValue;
 - (NSString *)blankValue;
+- (void)showDrivingTimeOrBagClaim;
 - (void)updateDisplayedData;
 - (void)alternateData;
 - (void)fadeOut:(UIView *)aView fadeIn:(UIView *)anotherView;
@@ -104,6 +108,8 @@
 @synthesize _gateValueLabel;
 @synthesize _drivingTimeLabel;
 @synthesize _drivingTimeValueLabel;
+@synthesize _bagClaimLabel;
+@synthesize _bagClaimValueLabel;
 @synthesize _arrowView;
 @synthesize _headerBackground;
 @synthesize _footerBackground;
@@ -249,7 +255,7 @@
         // Setup refresh on resume
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(refresh) 
-                                                     name:UIApplicationWillEnterForegroundNotification 
+                                                     name:UIApplicationDidBecomeActiveNotification 
                                                    object:[UIApplication sharedApplication]];
         
         // Initiate a refresh to get the initial flight information
@@ -262,7 +268,7 @@
 
 - (void)trackFlightWithLocation:(CLLocation *)loc {
     if ([[JustLandedSession sharedSession] triedToRegisterForRemoteNotifications] &&
-        ([[JustLandedSession sharedSession] triedToGetLocation] || 
+        (loc || [[JustLandedSession sharedSession] triedToGetLocation] || 
          ![[JustLandedSession sharedSession] locationServicesAvailable])) {
         [_trackedFlight trackWithLocation:loc pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
     }
@@ -379,6 +385,12 @@
                                       [NSValue valueWithCGSize:CGSizeMake(6.0f, 0.0f)],
                                       [NSValue valueWithCGSize:TIME_UNIT_OFFSET], nil];
     
+    // Add the bag claim label
+    _bagClaimValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:DRIVING_TIME_LABEL_FRAME];
+    _bagClaimLabel.text = NSLocalizedString(@"BAG CLAIM", @"BAG CLAIM");
+    _bagClaimValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:DRIVING_TIME_VALUE_FRAME];
+    _bagClaimValueLabel.text = [self bagClaimValue];    
+    
     // Create the directions button
     _directionsButton = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles directionsButtonStyle] frame:DIRECTIONS_BUTTON_FRAME];
     [_directionsButton addTarget:self action:@selector(showMap) forControlEvents:UIControlEventTouchUpInside];
@@ -391,20 +403,7 @@
         _leaveMeter.timeRemaining = [_trackedFlight.leaveForAirportTime timeIntervalSinceNow];
     }
     
-    if (_trackedFlight.drivingTime) {
-        _drivingTimeValueLabel.parts = [self drivingTimeParts];
-        _drivingTimeLabel.hidden = NO;
-        _drivingTimeValueLabel.hidden = NO;
-    
-        if (_trackedFlight.destination.location) {
-            _directionsButton.hidden = NO; 
-        }
-    }
-    else {
-        _drivingTimeLabel.hidden = YES;
-        _drivingTimeValueLabel.hidden = YES;
-    }
-    
+    [self showDrivingTimeOrBagClaim];
     [self setStatus:_trackedFlight.status];
     
     // Add them to the view
@@ -496,11 +495,6 @@
     
     // Set the status label text
     [_statusLabel setText:[self labelForStatus:newStatus]];
-    
-    // Optimization: if the flight is landed or canceled, stop location services
-    if (newStatus == LANDED || newStatus == CANCELED) {
-        [[JustLandedSession sharedSession] stopLocationServices];
-    }
 }
 
 
@@ -604,6 +598,16 @@
 }
 
 
+- (NSString *)bagClaimValue {
+    if (_trackedFlight.destination.bagClaim && [_trackedFlight.destination.bagClaim length] > 0) {
+        return _trackedFlight.destination.bagClaim;
+    }
+    else {
+        return [self blankValue];
+    }
+}
+
+
 - (NSString *)blankValue {
     return @"--";
 }
@@ -638,9 +642,6 @@
 
 
 - (void)didTrackFlight:(NSNotification *)notification {
-    [_updateTimer invalidate];
-    [_alternatingLabelTimer invalidate];
-    
     // Stop loading animation
     [self stopUpdating];
     
@@ -662,26 +663,9 @@
     _terminalValueLabel.text = [self terminalValue];
     _gateLabel.text = [self gateLabelText];
     _gateValueLabel.text = [self gateValue];
+    _bagClaimValueLabel.text = [self bagClaimValue];
     
-    BOOL showGate = _trackedFlight.destination.gate && [_trackedFlight.destination.gate length] > 0;
-    BOOL showTerminal = _trackedFlight.destination.terminal && [_trackedFlight.destination.terminal length] > 0;
-    
-    if (!showGate && !showTerminal) { // Always show at least terminal
-        _terminalLabel.alpha = 1.0f;
-        _terminalValueLabel.alpha = 1.0f;
-        _gateLabel.alpha = 0.0f;
-        _gateValueLabel.alpha = 0.0f;
-        _showingPrimaryData = YES;
-    }
-    else {
-        _terminalLabel.alpha = (showTerminal) ? 1.0f : 0.0f;
-        _terminalValueLabel.alpha = (showTerminal) ? 1.0f : 0.0f;
-        _gateLabel.alpha = (!showTerminal && showGate) ? 1.0f : 0.0f;
-        _gateValueLabel.alpha = (!showTerminal && showGate) ? 1.0f : 0.0f;
-        _showingPrimaryData = showTerminal;
-    }
-    
-    if (_trackedFlight.leaveForAirportTime) {
+    if (_trackedFlight.leaveForAirportTime && _trackedFlight.drivingTime > 0.0) {
         self._leaveMeter.showEmptyMeter = NO;
         self._leaveMeter.timeRemaining = [_trackedFlight.leaveForAirportTime timeIntervalSinceNow];
     }
@@ -690,17 +674,7 @@
     }
     
     // Hide the directions button and driving time if appropriate
-    if (_trackedFlight.leaveForAirportTime) {
-        self._directionsButton.hidden = NO;
-        self._drivingTimeLabel.hidden = NO;
-        self._drivingTimeValueLabel.parts = [self drivingTimeParts];
-        self._drivingTimeValueLabel.hidden = NO;
-    }
-    else {
-        self._directionsButton.hidden = YES;
-        self._drivingTimeLabel.hidden = YES;
-        self._drivingTimeValueLabel.hidden = YES;
-    }
+    [self showDrivingTimeOrBagClaim];
     
     // Ask them to rate after a few seconds, if eligible
     [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible) 
@@ -751,6 +725,36 @@
          self._leaveMeter.timeRemaining = [_trackedFlight.leaveForAirportTime timeIntervalSinceNow];
     }
     
+}
+
+
+- (void)showDrivingTimeOrBagClaim {
+    if (_trackedFlight.drivingTime > 0.0 && _trackedFlight.leaveForAirportTime) {
+        _drivingTimeValueLabel.parts = [self drivingTimeParts];
+        _drivingTimeLabel.hidden = NO;
+        _drivingTimeValueLabel.hidden = NO;
+        
+        if (_trackedFlight.destination.location) {
+            _directionsButton.hidden = NO; 
+        }
+        else {
+            _directionsButton.hidden = YES; 
+        }
+    }
+    else {
+        _drivingTimeLabel.hidden = YES;
+        _drivingTimeValueLabel.hidden = YES;
+        _directionsButton.hidden = YES; 
+        
+        if (_trackedFlight.drivingTime == 0.0 && _trackedFlight.destination.bagClaim && [_trackedFlight.destination.bagClaim length] > 0) {
+            _bagClaimLabel.hidden = NO;
+            _bagClaimValueLabel.hidden = NO;
+        }
+        else {
+            _bagClaimLabel.hidden = YES;
+            _bagClaimValueLabel.hidden = YES;
+        }
+    }
 }
 
 
@@ -832,8 +836,8 @@
                          _trackedFlight.destination.location.coordinate.latitude,
                          _trackedFlight.destination.location.coordinate.longitude];
     
-    mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%@&daddr=%@&layer=t&t=m",
-              @"Current%20Location", [NSString stringWithFormat:@"%@@%@", destName, destLoc]];
+    mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=Current+Location&daddr=%@&layer=t&t=m",
+              [NSString stringWithFormat:@"%@@%@", destName, destLoc]];
 
     [FlurryAnalytics logEvent:FY_GOT_DIRECTIONS];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];

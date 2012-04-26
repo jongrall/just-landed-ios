@@ -148,9 +148,13 @@
     
     if (showEmptyMeter) {
         _leaveInstructionsLabel.hidden = YES;
+        _leaveNowLabel.hidden = YES;
+        _largeTimeLabel.hidden = YES;
+        _smallTimeLabel.hidden = YES;
     }
     else {
-        _leaveInstructionsLabel.hidden = NO;
+        // Redraw
+        [self setTimeRemaining:timeRemaining];
     }
     
     [self setNeedsDisplay];

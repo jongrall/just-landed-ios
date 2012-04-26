@@ -156,6 +156,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 		self._locationManager = locMgr;
 	}
     
+    [self._locationManager stopMonitoringSignificantLocationChanges]; // Triggers a location event on next enabled
     [self._locationManager startMonitoringSignificantLocationChanges];   
 }
 
