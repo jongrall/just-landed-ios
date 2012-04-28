@@ -74,6 +74,7 @@
 - (NSArray *)drivingTimeParts;
 - (NSString *)bagClaimValue;
 - (NSString *)blankValue;
+- (void)backToLookup;
 - (void)showDrivingTimeOrBagClaim;
 - (void)updateDisplayedData;
 - (void)alternateData;
@@ -300,7 +301,7 @@
                          
     // Create the lookup button
     _lookupButton = [[JLLookupButton alloc] initWithButtonStyle:[JLTrackStyles lookupButtonStyle] frame:CGRectZero status:_trackedFlight.status];
-    [_lookupButton addTarget:self action:@selector(stopTracking) forControlEvents:UIControlEventTouchUpInside];
+    [_lookupButton addTarget:self action:@selector(backToLookup) forControlEvents:UIControlEventTouchUpInside];
     [self setFlightNumber:_trackedFlight.flightNumber];
     
     // Create the status label
@@ -705,7 +706,7 @@
     
     if (reason == TrackFailureFlightNotFound || reason == TrackFailureInvalidFlightNumber || reason == TrackFailureOldFlight) {
         // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
-        [delegate didFinishTracking:self userInitiated:NO];
+        [self stopTracking:NO];
     }
     else {
         // TODO: Handle no connection
@@ -765,29 +766,29 @@
     BOOL showGate = _trackedFlight.destination.gate && [_trackedFlight.destination.gate length] > 0;
     BOOL showTerminal = _trackedFlight.destination.terminal && [_trackedFlight.destination.terminal length] > 0;
     
-        // Transition from lands at to lands in
-        if (showLandsIn && _landsInLabel.alpha == 0.0f) { // Only animate if needed
-            [self fadeOut:_landsAtLabel fadeIn:_landsInLabel];
-            [self fadeOut:_landsAtTimeLabel fadeIn:_landsInTimeLabel];
-        }
-        
-        // Transition from lands in to lands at
-        else if (_landsAtLabel.alpha == 0.0f) { // Only do it if needed
-                [self fadeOut:_landsInLabel fadeIn:_landsAtLabel];
-                [self fadeOut:_landsInTimeLabel fadeIn:_landsAtTimeLabel];
-        }
-        
-        // Transition from terminal to gate
-        if (showGate && _gateLabel.alpha == 0.0f) { // Only animate if needed
-            [self fadeOut:_terminalLabel fadeIn:_gateLabel];
-            [self fadeOut:_terminalValueLabel fadeIn:_gateValueLabel];
-        }
-                
-        // Transition from gate to terminal
-        else if (showTerminal && _terminalLabel.alpha == 0.0f) { // Only do it if needed
-            [self fadeOut:_gateLabel fadeIn:_terminalLabel];
-            [self fadeOut:_gateValueLabel fadeIn:_terminalValueLabel];
-        }
+    // Transition from lands at to lands in
+    if (showLandsIn && (_landsInLabel.alpha < 1.0f || _landsAtLabel.alpha > 0.0f)) { // Only animate if needed
+        [self fadeOut:_landsAtLabel fadeIn:_landsInLabel];
+        [self fadeOut:_landsAtTimeLabel fadeIn:_landsInTimeLabel];
+    }
+    
+    // Transition from lands in to lands at
+    else if (_landsAtLabel.alpha < 1.0f || _landsInLabel.alpha > 0.0f) { // Only do it if needed
+            [self fadeOut:_landsInLabel fadeIn:_landsAtLabel];
+            [self fadeOut:_landsInTimeLabel fadeIn:_landsAtTimeLabel];
+    }
+    
+    // Transition from terminal to gate
+    if (showGate && (_gateLabel.alpha < 1.0f || _terminalLabel.alpha > 0.0f)) { // Only animate if needed
+        [self fadeOut:_terminalLabel fadeIn:_gateLabel];
+        [self fadeOut:_terminalValueLabel fadeIn:_gateValueLabel];
+    }
+            
+    // Transition from gate to terminal
+    else if (showTerminal && (_terminalLabel.alpha < 1.0f || _gateLabel.alpha > 0.0f)) { // Only do it if needed
+        [self fadeOut:_gateLabel fadeIn:_terminalLabel];
+        [self fadeOut:_gateValueLabel fadeIn:_terminalValueLabel];
+    }
 }
 
 
@@ -810,30 +811,39 @@
 #pragma mark - Actions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
--(void)stopTracking {
+- (void)backToLookup {
+    [self stopTracking:YES];
+}
+
+
+- (void)stopTracking:(BOOL)userInitiated {
     [_updateTimer invalidate];
     [_alternatingLabelTimer invalidate];
     [self stopUpdating];
     [_trackedFlight stopTracking];
-    [self.delegate didFinishTracking:self userInitiated:YES];
+    [self.delegate didFinishTracking:self userInitiated:userInitiated];
 }
 
 
 - (void)showMap {
     // Trigger getting the location
-    [[JustLandedSession sharedSession] lastKnownLocation];
+    CLLocation *lastLoc = [[JustLandedSession sharedSession] lastKnownLocation];
     
     NSString *mapURL = nil;
     NSString *destName = (_trackedFlight.destination.iataCode) ? _trackedFlight.destination.iataCode : 
                                                                  _trackedFlight.destination.icaoCode;
     destName = [destName stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
     
+    NSString *origLoc = lastLoc ? [NSString stringWithFormat:@"%f,%f", 
+                        lastLoc.coordinate.latitude,
+                        lastLoc.coordinate.longitude] : @"Current+Location";
+    
     NSString *destLoc = [NSString stringWithFormat:@"%f,%f", 
                          _trackedFlight.destination.location.coordinate.latitude,
                          _trackedFlight.destination.location.coordinate.longitude];
     
-    mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=Current+Location&daddr=%@&layer=t&t=m",
-              [NSString stringWithFormat:@"%@@%@", destName, destLoc]];
+    mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%@&daddr=%@&layer=t&t=m",
+              origLoc, [NSString stringWithFormat:@"%@@%@", destName, destLoc]];
 
     [FlurryAnalytics logEvent:FY_GOT_DIRECTIONS];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];

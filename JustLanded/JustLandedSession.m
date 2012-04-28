@@ -15,6 +15,7 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 NSString * const WillRegisterForRemoteNotifications = @"WillRegisterForRemoteNotifications";
 NSString * const DidRegisterForRemoteNotifications = @"DidRegisterForRemoteNotifications";
 NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterForRemoteNotifications";
+CLLocationDistance const LOCATION_DISTANCE_FILTER = 150.0;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
@@ -33,6 +34,8 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)archiveCurrentlyTrackedFlights;
 - (NSMutableArray *)unarchiveTrackedFlights;
 - (void)deleteArchivedTrackedFlights;
+- (void)startBackgroundMonitoring;
+- (void)stopBackgroundMonitoring;
 
 @end
 
@@ -76,6 +79,17 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
                                                  selector:@selector(archiveCurrentlyTrackedFlights) 
                                                      name:DidTrackFlightNotification 
                                                    object:nil];
+        
+        // Track background / return from background events
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(startBackgroundMonitoring) 
+                                                     name:UIApplicationDidEnterBackgroundNotification 
+                                                   object:[UIApplication sharedApplication]];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(stopBackgroundMonitoring) 
+                                                     name:UIApplicationDidBecomeActiveNotification 
+                                                   object:[UIApplication sharedApplication]];
     }
     return self;
 }
@@ -102,8 +116,13 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)removeTrackedFlight:(Flight *)aFlight {
     [_currentlyTrackedFlights removeObject:aFlight];
     
-    // Re-archive whenever a flight is removed
-    [self archiveCurrentlyTrackedFlights];
+    // Save the changes
+    if ([_currentlyTrackedFlights count] > 0) {
+        [self archiveCurrentlyTrackedFlights];
+    }
+    else {
+        [self deleteArchivedTrackedFlights];
+    }
 }
 
 
@@ -145,19 +164,24 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 #pragma mark - Location Services & CLLocationManagerDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)startLocationServices {
-    //Create the location manager if needed
-	if (!self._locationManager) {
+
+- (CLLocationManager *)_locationManager {
+    if (!_locationManager) {
         CLLocationManager *locMgr = [[CLLocationManager alloc] init]; 
 		locMgr.delegate = self;
 		locMgr.desiredAccuracy = kCLLocationAccuracyBest;
+        locMgr.distanceFilter = LOCATION_DISTANCE_FILTER;
 		locMgr.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
 										   @"Reason we need your location");
 		self._locationManager = locMgr;
 	}
     
-    [self._locationManager stopMonitoringSignificantLocationChanges]; // Triggers a location event on next enabled
-    [self._locationManager startMonitoringSignificantLocationChanges];   
+    return _locationManager;
+}
+
+- (void)startLocationServices {
+    //Create the location manager if needed
+	[self._locationManager startUpdatingLocation];
 }
 
 
@@ -173,7 +197,8 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 
 - (BOOL)locationServicesAvailable {
-    return [CLLocationManager significantLocationChangeMonitoringAvailable];
+    // Application needs both S.L.C.M. and standard location services to be reliable.
+    return [CLLocationManager significantLocationChangeMonitoringAvailable] && [CLLocationManager locationServicesEnabled];
 }
 
 
@@ -188,7 +213,10 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     //Notify observers that the location has been updated
     _triedToGetLocation = YES;
-    _lastLocation = newLocation;
+    
+    // Only report location changes
+    if (!_lastLocation || [newLocation distanceFromLocation:_lastLocation] >= LOCATION_DISTANCE_FILTER) {
+        _lastLocation = newLocation;
     
     [FlurryAnalytics setLatitude:newLocation.coordinate.latitude 
                        longitude:newLocation.coordinate.longitude 
@@ -199,6 +227,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 	[[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidUpdateNotification 
                                                         object:self 
                                                       userInfo:dict];
+    }
 }
 
 
@@ -206,6 +235,20 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     _triedToGetLocation = YES;
     [[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidFailToUpdateNotification object:self];
     [FlurryAnalytics logEvent:FY_UNABLE_TO_GET_LOCATION];
+}
+
+
+- (void)startBackgroundMonitoring {
+    if ([_currentlyTrackedFlights count] > 0) {
+        // Switch to significant location change monitoring
+        [self stopLocationServices];
+        [self._locationManager startMonitoringSignificantLocationChanges];
+    }
+}
+
+
+- (void)stopBackgroundMonitoring {
+    [self._locationManager stopMonitoringSignificantLocationChanges];
 }
 
 
@@ -338,17 +381,18 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
                                                        delegate:self 
                                               cancelButtonTitle:NSLocalizedString(@"No Thanks", @"No Thanks") 
                                               otherButtonTitles:NSLocalizedString(@"Sure", @"Sure") , nil];
+        
+        // Mark them as having been asked, prevents multiple alerts
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:HasBeenAskedToRateKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
         [alert show];
         [FlurryAnalytics logEvent:FY_ASKED_TO_RATE];
     }
 }
 
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    // Mark them as having been asked
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:HasBeenAskedToRateKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {    
     if ([alertView cancelButtonIndex] != buttonIndex) {
         NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", APP_ID]];
         [[UIApplication sharedApplication] openURL:ratingURL];

@@ -22,7 +22,7 @@
 @property (readonly, nonatomic) Flight *trackedFlight;
 
 - (id)initWithFlight:(Flight *)aFlight;
-- (void)stopTracking;
+- (void)stopTracking:(BOOL)userInitiated;
 - (void)refresh;
 
 @end
