@@ -9,6 +9,7 @@
 #import "FlightLookupViewController.h"
 #import "FlightResultTableViewCell.h"
 #import "AboutViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
@@ -19,6 +20,7 @@
 @property (strong, nonatomic) JLButton *_lookupButton;
 @property (strong, nonatomic) JLFlightInputField *_flightNumberField;
 @property (strong, nonatomic) UITableView *_flightResultsTable;
+@property (strong, nonatomic) UIImageView *_flightResultsTableFrame;
 @property (strong, nonatomic) UIActivityIndicatorView *_lookupSpinner;
 @property (strong, nonatomic) NSArray *_flightResults;
 @property (strong, nonatomic) JLCloudLayer *_cloudLayer;
@@ -45,6 +47,7 @@
 @synthesize _lookupButton;
 @synthesize _flightNumberField;
 @synthesize _flightResultsTable;
+@synthesize _flightResultsTableFrame;
 @synthesize _lookupSpinner;
 @synthesize _flightResults;
 @synthesize _cloudLayer;
@@ -214,6 +217,7 @@ static NSRegularExpression *_flightNumberRegex;
             [self._flightResultsTable setContentOffset:CGPointZero];
             self._lookupButton.hidden = YES;
             self._flightResultsTable.hidden = NO;
+            self._flightResultsTableFrame.hidden = NO;
         }
     
         [FlurryAnalytics logEvent:FY_LOOKED_UP_FLIGHT 
@@ -278,17 +282,25 @@ static NSRegularExpression *_flightNumberRegex;
     [self.view addSubview:lookupButton];
     
     // Add the results table
-    UITableView *resultsTable = [[UITableView alloc] initWithFrame:CGRectMake(20.0f, 
-                                                                              180.0f, 
-                                                                              FlightResultTableViewCellWidth, 
-                                                                              250.0f) 
-                                                             style:UITableViewStylePlain];
+    UITableView *resultsTable = [[UITableView alloc] initWithFrame:RESULTS_TABLE_FRAME style:UITableViewStylePlain];
+    resultsTable.backgroundColor = [UIColor clearColor];
+    resultsTable.layer.cornerRadius = 6.0f;
+    resultsTable.layer.masksToBounds = YES;
     resultsTable.dataSource = self;
     resultsTable.delegate = self;
     resultsTable.rowHeight = FlightResultTableViewCellHeight;
     resultsTable.hidden = YES;
+    resultsTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    resultsTable.indicatorStyle = UIScrollViewIndicatorStyleWhite;
+    resultsTable.scrollIndicatorInsets = UIEdgeInsetsMake(2.0f, 0.0f, 2.0f, 2.0f);
     self._flightResultsTable = resultsTable;
     [self.view addSubview:resultsTable];
+    
+    // Add the table frame
+    UIImage *tableFrame = [[UIImage imageNamed:@"table_frame"] resizableImageWithCapInsets:UIEdgeInsetsMake(11.0f, 11.0f, 11.0f, 11.0f)];
+    self._flightResultsTableFrame = [[UIImageView alloc] initWithImage:tableFrame];
+    self._flightResultsTableFrame.frame = RESULTS_TABLE_CONTAINER_FRAME;
+    [self.view addSubview:_flightResultsTableFrame];
     
     // Add the lookup spinner
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:
@@ -315,6 +327,7 @@ static NSRegularExpression *_flightNumberRegex;
     self._lookupButton = nil;
     self._flightNumberField = nil;
     self._flightResultsTable = nil;
+    self._flightResultsTableFrame = nil;
     self._lookupSpinner = nil;
     self._cloudLayer = nil;
 }
@@ -347,6 +360,7 @@ static NSRegularExpression *_flightNumberRegex;
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     self._flightResultsTable.hidden = YES;
+    self._flightResultsTableFrame.hidden = YES;
     self._lookupButton.hidden = NO;
 }
 
@@ -413,9 +427,22 @@ static NSRegularExpression *_flightNumberRegex;
     if (!cell) {
         cell = [[FlightResultTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
                                                 reuseIdentifier:@"FlightResultTableViewCell"];
+        cell.backgroundView.opaque = NO;
+        cell.selectedBackgroundView.opaque = NO;
     }
     
     Flight *aFlight = [self._flightResults objectAtIndex:[indexPath row]];
+    
+    // Figure out the cell type
+    if (indexPath.row == 0) {
+        cell.cellType = TOP;
+    }
+    else if (indexPath.row + 1 == [tableView numberOfRowsInSection:indexPath.section]) {
+        cell.cellType = BOTTOM;
+    }
+    else {
+        cell.cellType = MIDDLE;
+    }
     
     // Display the airports
     cell.fromAirport = aFlight.origin.city ? aFlight.origin.city : (aFlight.origin.iataCode ?
@@ -429,55 +456,17 @@ static NSRegularExpression *_flightNumberRegex;
     // Display time information about the flight
     switch (aFlight.status) {
         case LANDED:
-            cell.landingTime = aFlight.detailedStatus;
+            cell.landingTime = [[NSDate naturalDateStringFromDate:[aFlight actualArrivalTime]] uppercaseString];
             break;
-        case DIVERTED:
-        case CANCELED:
-        case UNKNOWN:
-            cell.landingTime = [NSString stringWithFormat:@"Not Arriving %@",
-                           [NSDate naturalDateStringFromDate:[aFlight scheduledArrivalTime]]];
         default:
-            cell.landingTime = [NSString stringWithFormat:@"Arrives %@",
-                           [NSDate naturalDateStringFromDate:[aFlight scheduledArrivalTime]]];
+            cell.landingTime = [[NSDate naturalDateStringFromDate:[aFlight scheduledArrivalTime]] uppercaseString];
             break;
     }
     
     // Display the status of the flight
-    switch (aFlight.status) {
-        case SCHEDULED:
-            cell.statusColor = [UIColor grayColor];
-            cell.status = NSLocalizedString(@"SCHEDULED", @"Scheduled");
-            break;
-        case ON_TIME:
-        case EARLY:
-        case DELAYED:
-            if (aFlight.actualDepartureTime) {
-                cell.statusColor = [UIColor yellowColor];
-                cell.status = NSLocalizedString(@"EN ROUTE", @"En Route");
-            }
-            else {
-                cell.statusColor = [UIColor grayColor];
-                cell.status = NSLocalizedString(@"SCHEDULED", @"Scheduled");
-            }
-            break;
-        case DIVERTED:
-            cell.statusColor = [UIColor redColor];
-            cell.status = NSLocalizedString(@"DIVERTED", @"Diverted");
-            break;
-        case CANCELED:
-            cell.statusColor = [UIColor redColor];
-            cell.status = NSLocalizedString(@"CANCELED", @"Canceled");
-            break;
-        case LANDED:
-            cell.statusColor = [UIColor greenColor];
-            cell.status = NSLocalizedString(@"LANDED", @"Landed");
-            break;
-        default:
-            cell.statusColor = [UIColor grayColor];
-            cell.status = @"";
-            break;
-    }
-    
+    cell.statusColor = [JLStyles colorForStatus:aFlight.status];
+    cell.statusShadowColor = [JLStyles labelShadowColorForStatus:aFlight.status];
+    cell.status = [JLStyles statusTextForStatus:aFlight.status];
     return cell;
 }
 
@@ -492,6 +481,7 @@ static NSRegularExpression *_flightNumberRegex;
 
 - (void)didFinishTracking:(FlightTrackViewController *)controller userInitiated:(BOOL)user_flag {
     self._flightResultsTable.hidden = YES;
+    self._flightResultsTableFrame.hidden = YES;
     self._lookupButton.hidden = NO;
     [_cloudLayer startAnimating]; // Begin animating the cloud layer
     

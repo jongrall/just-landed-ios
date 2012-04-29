@@ -18,6 +18,8 @@
 + (UIFont *)sansSerifBoldCondensedOfSize:(CGFloat)size;
 + (UIFont *)sansSerifLightBoldOfSize:(CGFloat)size;
 + (NSString *)colorNameForStatus:(FlightStatus)status;
++ (UIColor *)colorForStatus:(FlightStatus)status;
++ (NSString *)statusTextForStatus:(FlightStatus)status;
 + (UIColor *)labelShadowColorForStatus:(FlightStatus)status;
 
 @end

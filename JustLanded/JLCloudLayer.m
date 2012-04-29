@@ -104,11 +104,13 @@ const CGFloat LAYER4_SPEED = 5.0f;
 
 - (void)startAnimating {
     if (!_animationTimer || ![_animationTimer isValid]) {
-        _animationTimer = [NSTimer scheduledTimerWithTimeInterval:0.025 
-                                                           target:self 
-                                                         selector:@selector(animationTick) 
-                                                         userInfo:nil 
-                                                          repeats:YES];
+        _animationTimer = [NSTimer timerWithTimeInterval:0.025 
+                                                  target:self 
+                                                selector:@selector(animationTick) 
+                                                userInfo:nil 
+                                                 repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:_animationTimer forMode:NSRunLoopCommonModes];
+
     }
 }
 

@@ -70,6 +70,66 @@
 }
 
 
++ (UIColor *)colorForStatus:(FlightStatus)status {
+    switch (status) {
+        case SCHEDULED:
+            return [UIColor colorWithRed:98.0f/255.0f green:98.0f/255.0f blue:98.0f/255.0f alpha:1.0f];
+            break;
+        case ON_TIME:
+            return [UIColor colorWithRed:12.0f/255.0f green:114.0f/255.0f blue:162.0f/255.0f alpha:1.0f];
+            break;
+        case DELAYED:
+            return [UIColor colorWithRed:163.0f/255.0f green:44.0f/255.0f blue:32.0f/255.0f alpha:1.0f];
+            break;
+        case CANCELED:
+            return [UIColor colorWithRed:46.0f/255.0f green:46.0f/255.0f blue:46.0f/255.0f alpha:1.0f];
+            break;
+        case DIVERTED:
+            return [UIColor colorWithRed:163.0f/255.0f green:44.0f/255.0f blue:32.0f/255.0f alpha:1.0f];
+            break;
+        case LANDED:
+            return [UIColor colorWithRed:41.0f/255.0f green:144.0f/255.0f blue:54.0f/255.0f alpha:1.0f];
+            break;
+        case EARLY:
+            return [UIColor colorWithRed:12.0f/255.0f green:114.0f/255.0f blue:162.0f/255.0f alpha:1.0f];
+            break;
+        default:
+            return [UIColor colorWithRed:98.0f/255.0f green:98.0f/255.0f blue:98.0f/255.0f alpha:1.0f];
+            break;
+    }
+}
+
+
++ (NSString *)statusTextForStatus:(FlightStatus)status {
+    switch (status) {
+        case SCHEDULED:
+            return NSLocalizedString(@"SCHEDULED", @"SCHEDULED");
+            break;
+        case ON_TIME:
+            return NSLocalizedString(@"ON TIME", @"ON TIME");
+            break;
+        case DELAYED:
+            return NSLocalizedString(@"DELAYED", @"DELAYED");
+            break;
+        case CANCELED:
+            return NSLocalizedString(@"CANCELED", @"CANCELED");
+            break;
+        case DIVERTED:
+            return NSLocalizedString(@"DIVERTED", @"DIVERTED");
+            break;
+        case LANDED:
+            return NSLocalizedString(@"LANDED", @"LANDED");
+            break;
+        case EARLY:
+            return NSLocalizedString(@"EARLY", @"EARLY");
+            break;
+        default:
+            return @"";
+            break;
+    }
+}
+
+
 + (UIColor *)labelShadowColorForStatus:(FlightStatus)status {
     switch (status) {
         case SCHEDULED:

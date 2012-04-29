@@ -242,7 +242,13 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 150.0;
     if ([_currentlyTrackedFlights count] > 0) {
         // Switch to significant location change monitoring
         [self stopLocationServices];
-        [self._locationManager startMonitoringSignificantLocationChanges];
+        
+        Flight *currentFlight = [_currentlyTrackedFlights lastObject];
+        
+        // Monitor their location in the background as long as the flight hasn't already landed or been canceled.
+        if (currentFlight.status != LANDED && currentFlight.status != CANCELED) {
+            [self._locationManager startMonitoringSignificantLocationChanges];
+        }
     }
 }
 

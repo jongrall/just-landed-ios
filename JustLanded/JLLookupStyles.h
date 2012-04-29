@@ -22,6 +22,8 @@ extern CGRect const LOOKUP_LABEL_TEXT_FRAME;
 extern CGRect const LOOKUP_FIELD_FRAME;
 extern CGRect const CLOUD_LAYER_FRAME;
 extern CGRect const CLOUD_FOOTER_FRAME;
+extern CGRect const RESULTS_TABLE_FRAME;
+extern CGRect const RESULTS_TABLE_CONTAINER_FRAME;
 
 @interface JLLookupStyles : NSObject
 

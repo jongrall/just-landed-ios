@@ -9,6 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "ABTableViewCell.h"
 
+typedef enum {
+    TOP = 0,
+    MIDDLE,
+    BOTTOM,
+} FlightResultCellType;
+
 extern CGFloat const FlightResultTableViewCellWidth;
 extern CGFloat const FlightResultTableViewCellHeight;
 
@@ -18,6 +24,9 @@ extern CGFloat const FlightResultTableViewCellHeight;
 @property (copy, nonatomic) NSString *toAirport;
 @property (copy, nonatomic) NSString *status;
 @property (strong, nonatomic) UIColor *statusColor;
+@property (strong, nonatomic) UIColor *statusShadowColor;
 @property (copy, nonatomic) NSString *landingTime;
+@property (nonatomic) FlightResultCellType cellType;
+@property (nonatomic) BOOL inFlight;
 
 @end

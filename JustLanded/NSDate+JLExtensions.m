@@ -26,7 +26,7 @@ static NSDateFormatter *_naturalTimeFormatter;
 		[_naturalDateFormatter setCalendar:calendar];
 		[_naturalDateFormatter setTimeZone:timezone];
 		[_naturalDateFormatter setLocale:locale];
-		[_naturalDateFormatter setDateFormat:@"E, MMM d 'at' h:mm a"];
+		[_naturalDateFormatter setDateFormat:@"EEEE, MMMM d"];
         
         _naturalDayFormatter = [[NSDateFormatter alloc] init];
         [_naturalDayFormatter setCalendar:calendar];

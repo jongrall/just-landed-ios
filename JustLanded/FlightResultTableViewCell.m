@@ -8,12 +8,13 @@
 
 #import "FlightResultTableViewCell.h"
 
-CGFloat const FlightResultTableViewCellWidth = 280.0f;
-CGFloat const FlightResultTableViewCellHeight = 55.0f;
+CGFloat const FlightResultTableViewCellWidth = 288.0f;
+CGFloat const FlightResultTableViewCellHeight = 60.0f;
 
 @interface FlightResultTableViewCell () 
 
-@property (strong, nonatomic) NSString *_toFromAirport;
+@property (strong, nonatomic) UIImage *_flightIcon;
+@property (strong, nonatomic) UIImage *_arrowIcon;
 
 @end
 
@@ -25,45 +26,53 @@ CGFloat const FlightResultTableViewCellHeight = 55.0f;
 @synthesize fromAirport;
 @synthesize status;
 @synthesize statusColor;
+@synthesize statusShadowColor;
 @synthesize landingTime;
-@synthesize _toFromAirport;
+@synthesize cellType;
+@synthesize inFlight;
+@synthesize _flightIcon;
+@synthesize _arrowIcon;
 
 static UIFont *_toFromAirportFont;
 static UIFont *_statusFont;
 static UIFont *_landingTimeFont;
-static UIColor *_toFromAirportColor;
-static UIColor *_landingTimeColor;
-static UIColor *_bgColor;
-static UIColor *_selectedBgColor;
-static UIColor *_selectedTextColor;
-static CGRect _bgFillRect;
+static UIColor *_textColor;
+static UIImage *_topBg;
+static UIImage *_topBgSelected;
+static UIImage *_middleBg;
+static UIImage *_middleBgSelected;
+static UIImage *_bottomBg;
+static UIImage *_bottomBgSelected;
 static CGRect _toFromAirportRect;
 static CGRect _landingTimeRect;
 static CGRect _statusRect;
 static CGSize _shadowOffset;
+static CGPoint _flightIconOrigin;
 
 + (void)initialize {
     if (self == [FlightResultTableViewCell class]) {
-        _toFromAirportFont = [UIFont systemFontOfSize:16.0f];
-        _statusFont = [UIFont systemFontOfSize:11.0f];
-        _landingTimeFont = [UIFont systemFontOfSize:11.0f];
-        _toFromAirportColor = [UIColor blackColor];
-        _landingTimeColor = [UIColor grayColor];
-        _bgColor = [UIColor whiteColor];
-        _selectedBgColor = [UIColor blueColor];
-        _selectedTextColor = [UIColor whiteColor];
-        _bgFillRect = CGRectMake(0.0f, 0.0f, FlightResultTableViewCellWidth, FlightResultTableViewCellHeight);
-        _toFromAirportRect = CGRectMake(5.0f, 5.0f, 270.0f, 20.0f);
-        _landingTimeRect = CGRectMake(5.0f, 30.0f, 195.0f, 20.0f);
-        _statusRect = CGRectMake(205.0f, 30.0f, 70.0f, 20.0f);
+        _toFromAirportFont = [JLStyles sansSerifLightBoldOfSize:13.5f];
+        _statusFont = [JLStyles regularScriptOfSize:18.0f];
+        _landingTimeFont = [JLStyles sansSerifLightOfSize:13.5f];
+        _textColor = [UIColor whiteColor];
+        _topBg = [[UIImage imageNamed:@"table_cell_top"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+        _topBgSelected = [[UIImage imageNamed:@"table_cell_top_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+        _middleBg = [[UIImage imageNamed:@"table_cell_middle"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+        _middleBgSelected = [[UIImage imageNamed:@"table_cell_middle_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+        _bottomBg = [[UIImage imageNamed:@"table_cell_bottom"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+        _bottomBgSelected = [[UIImage imageNamed:@"table_cell_bottom_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+        _toFromAirportRect = CGRectMake(13.5f, 14.0f, FlightResultTableViewCellWidth - 27.0f, 30.0f);
+        _landingTimeRect = CGRectMake(38.0f, 35.0f, FlightResultTableViewCellWidth - 51.5f - 60.0f, 30.0f);
+        _statusRect = CGRectMake(_landingTimeRect.origin.x + _landingTimeRect.size.width, 31.5f, 60.0f, 30.0f);
         _shadowOffset = CGSizeMake(0.0f, 1.0f);
+        _flightIconOrigin = CGPointMake(13.5f, 34.0f);
     }
 }
 
+
 - (void)setToAirport:(NSString *)anAirport {
     if (toAirport != anAirport) {
-        toAirport = [anAirport copy];
-        self._toFromAirport = [NSString stringWithFormat:@"%@ to %@", fromAirport, toAirport];
+        toAirport = [anAirport uppercaseString];
         [self setNeedsDisplay];
     }
 }
@@ -71,8 +80,7 @@ static CGSize _shadowOffset;
 
 - (void)setFromAirport:(NSString *)anAirport {
     if (fromAirport != anAirport) {
-        fromAirport = [anAirport copy];
-        self._toFromAirport = [NSString stringWithFormat:@"%@ to %@", fromAirport, toAirport];
+        fromAirport = [anAirport uppercaseString];
         [self setNeedsDisplay];
     }
 }
@@ -80,7 +88,7 @@ static CGSize _shadowOffset;
 
 - (void)setStatus:(NSString *)aStatus {
     if (status != aStatus) {
-        status = [aStatus copy];
+        status = [aStatus lowercaseString];
         [self setNeedsDisplay];
     }
 }
@@ -88,11 +96,29 @@ static CGSize _shadowOffset;
 
 - (void)setStatusColor:(UIColor *)aStatusColor {
     if (statusColor != aStatusColor) {
-        statusColor = [aStatusColor copy];
+        statusColor = aStatusColor;
         [self setNeedsDisplay];
     }
 }
 
+
+- (void)setStatusShadowColor:(UIColor *)aColor {
+    if (statusShadowColor != aColor) {
+        statusShadowColor = aColor;
+        self._flightIcon = [UIImage imageNamed:@"plane_landing" 
+                                     withColor:_textColor 
+                                   shadowColor:statusShadowColor 
+                                  shadowOffset:CGSizeMake(0.0f, -1.0f) 
+                                    shadowBlur:0.0f];
+        self._arrowIcon = [UIImage imageNamed:@"table_arrow" 
+                                    withColor:_textColor 
+                                  shadowColor:statusShadowColor 
+                                 shadowOffset:CGSizeMake(0.0f, -1.0f)
+                                   shadowBlur:0.0f];
+        
+        [self setNeedsDisplay];
+    }
+}
 
 - (void)setLandingTime:(NSString *)aLandingTime {
     if (landingTime != aLandingTime) {
@@ -102,54 +128,125 @@ static CGSize _shadowOffset;
 }
 
 
+- (void)setCellType:(FlightResultCellType)aType {
+    if (cellType != aType) {
+        cellType = aType;
+        [self setNeedsDisplay];
+    }
+}
+
+
+- (void)setInFlight:(BOOL)flag {
+    if (inFlight != flag) {
+        inFlight = flag;
+        [self setNeedsDisplay];
+    }
+}
+
+
 - (void)drawContentView:(CGRect)rect highlighted:(BOOL)isHighlighted {
     CGContextRef context = UIGraphicsGetCurrentContext();
-	
-	//Draw the background
-	if (isHighlighted) {
-		[_selectedBgColor set];
-	}
-	else {
-		[_bgColor set];
-	}
     
-    CGContextFillRect(context, _bgFillRect);
+    if (cellType == TOP) {
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                                byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight
+                                                           cornerRadii:CGSizeMake(6.0f, 6.0f)];
+        [path addClip];
+    }
+    else if (cellType == BOTTOM) {
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                                   byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight
+                                                         cornerRadii:CGSizeMake(6.0f, 6.0f)];
+        [path addClip];
+    }
     
+    //Draw the background status color
+	[statusColor set]; 
+    
+    CGContextFillRect(context, rect);
+    
+    // Draw the text
+    [_textColor set];
+    
+    CGContextSaveGState(context);
     if (isHighlighted) {
-        [_selectedTextColor set];
-    }
-    else {
-        [_toFromAirportColor set];
+        CGContextTranslateCTM(context, 0.0f, 1.0f);
     }
     
-    [_toFromAirport drawInRect:_toFromAirportRect 
-                      withFont:_toFromAirportFont 
-                 lineBreakMode:UILineBreakModeMiddleTruncation 
-                     alignment:UITextAlignmentLeft];
+    // Save the graphics state before we draw shadowed elements
+    CGContextSaveGState(context);
+    CGContextSetShadowWithColor(context, CGSizeMake(0.0f, -1.0f), 0.0f, [statusShadowColor CGColor]);
     
-    if (isHighlighted) {
-        [_selectedTextColor set];
-    }
-    else {
-        [_landingTimeColor set];
-    }
+    // Draw the to - from airport text
+    CGSize fromAirportSize = [fromAirport drawInRect:_toFromAirportRect 
+                                        withFont:_toFromAirportFont
+                                   lineBreakMode:UILineBreakModeClip 
+                                       alignment:UITextAlignmentLeft];
+        
+    [toAirport drawInRect:CGRectMake(_toFromAirportRect.origin.x + fromAirportSize.width + _arrowIcon.size.width + 8.0f, 
+                                       _toFromAirportRect.origin.y, 
+                                       _toFromAirportRect.size.width - fromAirportSize.width - (_arrowIcon.size.width + 8.0f), 
+                                       _toFromAirportRect.size.height)
+                   withFont:_toFromAirportFont 
+              lineBreakMode:UILineBreakModeTailTruncation 
+                  alignment:UITextAlignmentLeft];
     
+    // Stop drawing shadows
+    CGContextRestoreGState(context);
+    
+    // Draw the plane icon
+    [_flightIcon drawInRect:CGRectMake(_flightIconOrigin.x, 
+                                       _flightIconOrigin.y,
+                                       _flightIcon.size.width, 
+                                       _flightIcon.size.height)];
+    
+    // Draw the arrow between the locations
+    [_arrowIcon drawInRect:CGRectMake(_toFromAirportRect.origin.x + fromAirportSize.width + 3.0f,
+                                      _toFromAirportRect.origin.y - 1.0f,
+                                      _arrowIcon.size.width,
+                                      _arrowIcon.size.height)];
+    
+    // Draw the landing time text
     [landingTime drawInRect:_landingTimeRect 
                    withFont:_landingTimeFont 
               lineBreakMode:UILineBreakModeTailTruncation 
                   alignment:UITextAlignmentLeft];
     
-    if (isHighlighted) {
-        [_selectedTextColor set];
-    }
-    else {
-        [statusColor set];
-    }
-    
+    // Draw the status text
     [status drawInRect:_statusRect
               withFont:_statusFont
          lineBreakMode:UILineBreakModeTailTruncation 
-             alignment:UITextAlignmentRight];   
+             alignment:UITextAlignmentRight];
+    
+    CGContextRestoreGState(context);
+    
+    // Draw the border on top
+    if (isHighlighted) {
+        switch (cellType) {
+            case TOP:
+                [_topBgSelected drawInRect:rect];
+                break;
+            case MIDDLE:
+                [_middleBgSelected drawInRect:rect];
+                break;
+            default:
+                [_bottomBgSelected drawInRect:rect];
+                break;
+        }
+    }
+    else {
+        switch (cellType) {
+            case TOP:
+                [_topBg drawInRect:rect];
+                break;
+            case MIDDLE:
+                [_middleBg drawInRect:rect];
+                break;
+            default:
+                [_bottomBg drawInRect:rect];
+                break;
+        }
+    }
 }
 
 @end
