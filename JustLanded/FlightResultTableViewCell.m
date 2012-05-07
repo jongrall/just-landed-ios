@@ -52,7 +52,7 @@ static CGPoint _flightIconOrigin;
 + (void)initialize {
     if (self == [FlightResultTableViewCell class]) {
         _toFromAirportFont = [JLStyles sansSerifLightBoldOfSize:13.5f];
-        _statusFont = [JLStyles regularScriptOfSize:18.0f];
+        _statusFont = [JLStyles regularScriptOfSize:19.0f];
         _landingTimeFont = [JLStyles sansSerifLightOfSize:13.5f];
         _textColor = [UIColor whiteColor];
         _topBg = [[UIImage imageNamed:@"table_cell_top"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
@@ -63,7 +63,7 @@ static CGPoint _flightIconOrigin;
         _bottomBgSelected = [[UIImage imageNamed:@"table_cell_bottom_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
         _toFromAirportRect = CGRectMake(13.5f, 14.0f, FlightResultTableViewCellWidth - 27.0f, 30.0f);
         _landingTimeRect = CGRectMake(38.0f, 35.0f, FlightResultTableViewCellWidth - 51.5f - 60.0f, 30.0f);
-        _statusRect = CGRectMake(_landingTimeRect.origin.x + _landingTimeRect.size.width, 31.5f, 60.0f, 30.0f);
+        _statusRect = CGRectMake(_landingTimeRect.origin.x + _landingTimeRect.size.width, 31.0f, 60.0f, 30.0f);
         _shadowOffset = CGSizeMake(0.0f, 1.0f);
         _flightIconOrigin = CGPointMake(13.5f, 34.0f);
     }
@@ -178,18 +178,17 @@ static CGPoint _flightIconOrigin;
     CGContextSetShadowWithColor(context, CGSizeMake(0.0f, -1.0f), 0.0f, [statusShadowColor CGColor]);
     
     // Draw the to - from airport text
-    CGSize fromAirportSize = [fromAirport drawInRect:_toFromAirportRect 
-                                        withFont:_toFromAirportFont
-                                   lineBreakMode:UILineBreakModeClip 
-                                       alignment:UITextAlignmentLeft];
-        
-    [toAirport drawInRect:CGRectMake(_toFromAirportRect.origin.x + fromAirportSize.width + _arrowIcon.size.width + 8.0f, 
-                                       _toFromAirportRect.origin.y, 
-                                       _toFromAirportRect.size.width - fromAirportSize.width - (_arrowIcon.size.width + 8.0f), 
-                                       _toFromAirportRect.size.height)
-                   withFont:_toFromAirportFont 
-              lineBreakMode:UILineBreakModeTailTruncation 
-                  alignment:UITextAlignmentLeft];
+    CGSize fromAirportSize = [fromAirport drawAtPoint:_toFromAirportRect.origin
+                                             forWidth:_toFromAirportRect.size.width / 2.0f 
+                                             withFont:_toFromAirportFont 
+                                        lineBreakMode:UILineBreakModeTailTruncation];
+    
+    [toAirport drawAtPoint:CGPointMake(_toFromAirportRect.origin.x + fromAirportSize.width + _arrowIcon.size.width + 8.0f,
+                                       _toFromAirportRect.origin.y) 
+                  forWidth:_toFromAirportRect.size.width / 2.0f
+                  withFont:_toFromAirportFont
+             lineBreakMode:UILineBreakModeTailTruncation];
+    
     
     // Stop drawing shadows
     CGContextRestoreGState(context);

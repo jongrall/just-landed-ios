@@ -24,15 +24,14 @@ CGPoint const ARROW_ORIGIN = {144.0f, 76.5f};
 CGRect const DESTINATION_CODE_LABEL_FRAME = {175.0f, 58.0f, 137.0f, 70.0f};
 CGRect const DESTINATION_CITY_LABEL_FRAME = {175.0f, 117.0f, 137.0f, 20.0f};
 CGRect const FLIGHT_PROGRESS_FRAME = {0.0f, 150.0f, 320.0f, 70.0f};
-CGRect const LANDS_AT_LABEL_FRAME = {19.0f, 244.0f, 120.0f, 20.0f};
-CGRect const LANDS_AT_TIME_FRAME = {19.0f, 254.5f, 160.0f, 40.0f};
+CGRect const LANDS_AT_LABEL_FRAME = {19.0f, 244.5f, 120.0f, 20.0f};
+CGRect const LANDS_AT_TIME_FRAME = {19.0f, 253.5f, 160.0f, 40.0f};
 CGSize const TIME_UNIT_OFFSET = {1.0f, 23.0f};
-CGRect const TERMINAL_LABEL_FRAME = {19.0f, 313.5f, 120.0f, 20.0f};
-CGRect const TERMINAL_VALUE_FRAME = {19.0f, 323.0f, 160.0f, 40.0f};
-CGRect const DRIVING_TIME_LABEL_FRAME = {19.0f, 382.5f, 120.0f, 20.0f};
-CGRect const DRIVING_TIME_VALUE_FRAME = {19.0f, 392.0f, 200.0f, 40.0f};
+CGRect const TERMINAL_LABEL_FRAME = {19.0f, 317.5f, 120.0f, 20.0f};
+CGRect const TERMINAL_VALUE_FRAME = {19.0f, 326.5f, 160.0f, 40.0f};
+CGRect const DRIVING_TIME_LABEL_FRAME = {19.0f, 392.0f, 120.0f, 20.0f};
+CGRect const DRIVING_TIME_VALUE_FRAME = {19.0f, 400.5f, 200.0f, 40.0f};
 CGRect const DIRECTIONS_BUTTON_FRAME = {267.0f, 412.0f, 38.0f, 34.0f};
-CGRect const INFO_BUTTON_FRAME = {15.0f, 412.0f, 38.0f, 34.0f};
 CGRect const LEAVE_IN_GAUGE_FRAME = {115.0f, 236.0f, 190.0f, 190.0f};
 CGPoint const LEAVE_IN_VALUE_ORIGIN = {0.0f, 62.0f};
 CGPoint const LEAVE_IN_UNIT_ORIGIN = {0.0f, 120.0f};
@@ -44,7 +43,6 @@ CGPoint const LEAVE_NOW_ORIGIN = {0.0f, 65.0f};
 
 static ButtonStyle *_lookupButtonStyle;
 static ButtonStyle *_directionsButtonStyle;
-static ButtonStyle *_infoButtonStyle;
 static LabelStyle *_statusLabelStyle;
 static LabelStyle *_airportCodeStyle;
 static LabelStyle *_cityNameStyle;
@@ -80,7 +78,7 @@ static LabelStyle *_leaveNowStyle;
                                                            iconImage:nil
                                                    iconDisabledImage:nil
                                                           iconOrigin:CGPointMake(10.5f, 7.0f)
-                                                         labelInsets:UIEdgeInsetsMake(11.5f, 31.5f, 8.0f, 11.0f)
+                                                         labelInsets:UIEdgeInsetsMake(8.0f, 31.5f, 4.0f, 11.0f)
                                                      downLabelOffset:CGSizeMake(0.0f, 1.0f)
                                                  disabledLabelOffset:CGSizeZero];
     }
@@ -109,29 +107,6 @@ static LabelStyle *_leaveNowStyle;
     }
     
     return _directionsButtonStyle;
-}
-
-
-+ (ButtonStyle *)infoButtonStyle {
-    if(!_infoButtonStyle) {
-        _infoButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil
-                                                disabledLabelStyle:nil
-                                                   backgroundColor:nil
-                                                           upImage:[[UIImage imageNamed:@"small_button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)]
-                                                         downImage:[[UIImage imageNamed:@"small_button_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)]
-                                                     disabledImage:nil 
-                                                         iconImage:[UIImage imageNamed:@"about" withColor:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:0.8f]
-                                                                                                  shadowColor:[UIColor whiteColor] 
-                                                                                                 shadowOffset:CGSizeMake(0.0f, 1.0f)
-                                                                                                   shadowBlur:0.5f]
-                                                 iconDisabledImage:nil
-                                                        iconOrigin:CGPointMake(14.0f, 6.0f)
-                                                       labelInsets:UIEdgeInsetsZero
-                                                   downLabelOffset:CGSizeMake(0.0f, 1.0f)
-                                               disabledLabelOffset:CGSizeZero];
-    }
-    
-    return _infoButtonStyle;
 }
 
 

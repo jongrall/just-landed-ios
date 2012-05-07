@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "Flight.h"
+#import "TextStyle.h"
+#import "ButtonStyle.h"
 
 @interface JLStyles : NSObject
 
@@ -21,5 +23,8 @@
 + (UIColor *)colorForStatus:(FlightStatus)status;
 + (NSString *)statusTextForStatus:(FlightStatus)status;
 + (UIColor *)labelShadowColorForStatus:(FlightStatus)status;
++ (TextStyle *)navbarTitleStyle;
++ (ButtonStyle *)navbarButtonStyle;
++ (ButtonStyle *)navbarBackButtonStyle;
 
 @end

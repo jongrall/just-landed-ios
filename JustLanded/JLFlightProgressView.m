@@ -9,7 +9,8 @@
 #import "JLFlightProgressView.h"
 
 const CGSize FLIGHT_PROGRESS_VIEW_SIZE = {320.0f, 70.0f};
-const CGPoint FLIGHT_ICON_CENTER = {33.0f, 27.0f};
+const CGPoint FLIGHT_ICON_CENTER = {31.0f, 30.0f};
+const CGSize FLIGHT_ICON_SIZE = {62.0f, 60.0f};
 const UIEdgeInsets FLIGHT_ICON_INSETS = {0.0f, 38.0f, 0.0f, 34.0f};
 const CGFloat GROUND_LAYER_POINTS_PER_SEC = 25.0f;
 const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
@@ -25,6 +26,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 }
 
 - (void)animateProgressBackgrounds;
+- (void)updatePlaneIcon;
 
 @end
 
@@ -117,14 +119,12 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
         _airplaneIcon.hidden = YES;
     }
     else {
-        CGSize imageSize = _airplaneIcon.frame.size;
-        
         // Update the flight icon position
         CGFloat horizontalOffset = (FLIGHT_ICON_INSETS.left - FLIGHT_ICON_CENTER.x +
                                     ((FLIGHT_PROGRESS_VIEW_SIZE.width - FLIGHT_ICON_INSETS.left - FLIGHT_ICON_INSETS.right) * progress));
         CGFloat verticalOffset = (FLIGHT_PROGRESS_VIEW_SIZE.height / 2.0f) - FLIGHT_ICON_CENTER.y;
         
-        _airplaneIcon.frame = CGRectMake(horizontalOffset, verticalOffset, imageSize.width, imageSize.height);
+        _airplaneIcon.frame = CGRectMake(horizontalOffset, verticalOffset, FLIGHT_ICON_SIZE.width, FLIGHT_ICON_SIZE.height);
         
         _onGroundBg.hidden = YES;
         _groundLayer.hidden = NO;
@@ -148,7 +148,6 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     timeOfDay = newTimeOfDay;
     
     // Update the backgrounds and flight icon
-    UIImage *planeIcon = nil;
     UIImage *groundBg = nil;
     UIImage *cloudBg = nil;
     
@@ -162,16 +161,10 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     }
     
     if (timeOfDay == DAY) {
-        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_day", [Flight aircraftTypeToString:aircraftType]];
-        airplaneIconName = @"JET4_day"; //TEMP
-        planeIcon = [UIImage imageNamed:airplaneIconName];
         groundBg = [UIImage imageNamed:@"tracking_animation_ground_day"];
         cloudBg = [UIImage imageNamed:@"tracking_animation_clouds_day"];
     }
     else {
-        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_night", [Flight aircraftTypeToString:aircraftType]];
-        airplaneIconName = @"JET4_night"; //TEMP
-        planeIcon = [UIImage imageNamed:airplaneIconName];
         groundBg = [UIImage imageNamed:@"tracking_animation_ground_night"];
         cloudBg = [UIImage imageNamed:@"tracking_animation_clouds_night"];
     }
@@ -206,11 +199,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
         [_cloudLayer setContentOffset:CGPointMake(randomOffset, 0.0f) animated:NO];
     }
     
-    _airplaneIcon.image = planeIcon;
-    _airplaneIcon.frame = CGRectMake(_airplaneIcon.frame.origin.x, 
-                                     _airplaneIcon.frame.origin.y,
-                                     planeIcon.size.width, 
-                                     planeIcon.size.height);
+    [self updatePlaneIcon];
     
     // Because the icons may have changed size, set progress again
     [self setProgress:progress];
@@ -220,27 +209,8 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 - (void)setAircraftType:(AircraftType)newAircraftType {
     aircraftType = newAircraftType;
     
-    // Update the icon based on the time of day and aircraft type
-    // Update the backgrounds and flight icon
-    UIImage *planeIcon = nil;
-    
-    if (timeOfDay == DAY) {
-        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_day", [Flight aircraftTypeToString:aircraftType]];
-        airplaneIconName = @"JET4_day"; //TEMP
-        planeIcon = [UIImage imageNamed:airplaneIconName];
-    }
-    else {
-        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_night", [Flight aircraftTypeToString:aircraftType]];
-        airplaneIconName = @"JET4_night"; //TEMP
-        planeIcon = [UIImage imageNamed:airplaneIconName];
-    }
+    [self updatePlaneIcon];
         
-    _airplaneIcon.image = planeIcon;
-    _airplaneIcon.frame = CGRectMake(_airplaneIcon.frame.origin.x, 
-                                     _airplaneIcon.frame.origin.y,
-                                     planeIcon.size.width, 
-                                     planeIcon.size.height);
-    
     // Because the icons may have changed size, set progress again
     [self setProgress:progress];
 }
@@ -269,6 +239,43 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     
     [_groundLayer setContentOffset:CGPointMake(newGroundOffset, 0.0f) animated:NO];
     [_cloudLayer setContentOffset:CGPointMake(newCloudOffset, 0.0f) animated:NO];
+}
+
+
+- (void)updatePlaneIcon {
+    // Update the icon based on the time of day and aircraft type
+    // Update the backgrounds and flight icon
+    if (timeOfDay == DAY) {
+        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_day", [Flight aircraftTypeToString:aircraftType]];
+        UIImage *planeIcon = [UIImage imageNamed:airplaneIconName];
+        _airplaneIcon.image = planeIcon;
+        [_airplaneIcon stopAnimating];
+        _airplaneIcon.animationImages = nil;
+    }
+    else {
+        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_night", [Flight aircraftTypeToString:aircraftType]];
+        NSString *airplaneLightsIconName = [NSString stringWithFormat:@"%@_night_lights", [Flight aircraftTypeToString:aircraftType]];
+        UIImage *planeIcon = [UIImage imageNamed:airplaneIconName];
+        UIImage *planeLightsIcon = [UIImage imageNamed:airplaneLightsIconName];
+        _airplaneIcon.animationImages = [NSArray arrayWithObjects:planeIcon, 
+                                                                  planeIcon, 
+                                                                  planeIcon, 
+                                                                  planeIcon, 
+                                                                  planeIcon, 
+                                                                  planeIcon, 
+                                                                  planeIcon, 
+                                                                  planeIcon, 
+                                                                  planeIcon, 
+                                                                  planeLightsIcon, nil];
+        _airplaneIcon.image = nil;
+        _airplaneIcon.animationDuration = 2.5;
+        [_airplaneIcon startAnimating];
+    }
+    
+    _airplaneIcon.frame = CGRectMake(_airplaneIcon.frame.origin.x, 
+                                     _airplaneIcon.frame.origin.y,
+                                     FLIGHT_ICON_SIZE.width, 
+                                     FLIGHT_ICON_SIZE.height);
 }
 
 

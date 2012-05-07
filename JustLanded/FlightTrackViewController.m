@@ -182,7 +182,6 @@
             // Calculate how early it is
             NSTimeInterval earlyAmt = fabs([_trackedFlight.scheduledArrivalTime timeIntervalSinceDate:_trackedFlight.estimatedArrivalTime]);
             if (earlyAmt > 0.0) {
-                NSLog(@"%f", earlyAmt);
                 NSString *earlyAmtText = [NSDate timeIntervalToShortUnitString:earlyAmt leadingZeros:NO];
                 earlyAmtText = [earlyAmtText lowercaseString];
                 NSArray *parts = [earlyAmtText componentsSeparatedByString:@" "];

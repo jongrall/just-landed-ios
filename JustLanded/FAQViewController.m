@@ -47,7 +47,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
-	self.navigationItem.title = NSLocalizedString(@"Just Landed FAQ", @"Just Landed FAQ");
+	self.navigationItem.title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
 	
 	//Load the TOS from the web
 	[self displayLoadingScreen];

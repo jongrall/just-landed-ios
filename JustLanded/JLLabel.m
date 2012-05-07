@@ -40,8 +40,10 @@
     CGContextClearRect(context, rect);
     
     // Background color
-    [[_style backgroundColor] set];    
-    CGContextFillRect(context, rect);
+    if ([_style backgroundColor]) {
+        [[_style backgroundColor] set];    
+        CGContextFillRect(context, rect);
+    }
     
     TextStyle *textStyle = [_style textStyle];
     

@@ -267,13 +267,13 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 150.0;
     
     switch (type) {
         case TakeOffSound:
-            soundPath = [[NSBundle mainBundle] pathForResource:@"takeoff" ofType:@"caf"];
+            soundPath = [[NSBundle mainBundle] pathForResource:@"takeoff" ofType:@"wav"];
             break;
         case LandingSound:
-            soundPath = [[NSBundle mainBundle] pathForResource:@"landing" ofType:@"caf"];
+            soundPath = [[NSBundle mainBundle] pathForResource:@"landing" ofType:@"wav"];
             break;
         default:
-            soundPath = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"caf"];              
+            soundPath = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"wav"];              
             break;
     }
     

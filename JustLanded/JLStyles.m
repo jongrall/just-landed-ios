@@ -10,6 +10,10 @@
 
 @implementation JLStyles
 
+static TextStyle *_navbarTitleStyle;
+static ButtonStyle *_navbarButtonStyle;
+static ButtonStyle *_navbarBackButtonStyle;
+
 + (UIFont *)regularScriptOfSize:(CGFloat)size {
     return [UIFont fontWithName:@"SignPainter-HouseScript" size:size];
 }
@@ -157,6 +161,111 @@
             return [UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:0.8f];
             break;
     }
+}
+
+
++ (TextStyle *)navbarTitleStyle {
+    if (!_navbarTitleStyle) {
+        _navbarTitleStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:22.0f] 
+                                                      color:[UIColor whiteColor]
+                                                shadowColor:[UIColor colorWithRed:183.0f/255.0f green:56.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+                                               shadowOffset:CGSizeMake(0.0f, -1.0f) 
+                                                 shadowBlur:0.0f];
+    }
+    
+    return _navbarTitleStyle;
+}
+
+
++ (ButtonStyle *)navbarButtonStyle {
+    if (!_navbarButtonStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:12.0f]
+                                                         color:[UIColor whiteColor]
+                                                   shadowColor:[UIColor colorWithRed:183.0f/255.0f green:56.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+                                                  shadowOffset:CGSizeMake(0.0, -0.5f) 
+                                                    shadowBlur:0.0f];
+        
+        TextStyle *disabledTextStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:12.0f]
+                                                                 color:[UIColor colorWithRed:204.0f/255.0f green:64.0f/255.0f blue:2.0f/255.0f alpha:1.0f]
+                                                           shadowColor:[UIColor colorWithRed:255.0f/255.0f green:156.0f/255.0f blue:71.0f/255.0f alpha:0.5f]
+                                                          shadowOffset:CGSizeMake(0.0, 0.5f)
+                                                            shadowBlur:0.0f];
+        
+        LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+                                                       backgroundColor:nil 
+                                                             alignment:UITextAlignmentCenter 
+                                                         lineBreakMode:UILineBreakModeTailTruncation];
+        
+        LabelStyle *disabledLabelStyle = [[LabelStyle alloc] initWithTextStyle:disabledTextStyle 
+                                                               backgroundColor:nil 
+                                                                     alignment:UITextAlignmentCenter 
+                                                                 lineBreakMode:UILineBreakModeTailTruncation];
+        
+        
+        UIImage *upImage = [[UIImage imageNamed:@"nav_button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 7.0f, 0.0f, 7.0f)];
+        UIImage *downImage = [[UIImage imageNamed:@"nav_button_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 7.0f, 0.0f, 7.0f)];
+        
+        _navbarButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
+                                                  disabledLabelStyle:disabledLabelStyle 
+                                                     backgroundColor:nil 
+                                                             upImage:upImage
+                                                           downImage:downImage
+                                                       disabledImage:downImage
+                                                           iconImage:nil 
+                                                   iconDisabledImage:nil 
+                                                          iconOrigin:CGPointZero 
+                                                         labelInsets:UIEdgeInsetsZero
+                                                     downLabelOffset:CGSizeMake(0.0f, 1.0f) 
+                                                 disabledLabelOffset:CGSizeMake(0.0f, 0.0f)];
+    }
+    
+    return _navbarButtonStyle;
+}
+
+
++ (ButtonStyle *)navbarBackButtonStyle {
+    if (!_navbarBackButtonStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:12.0f]
+                                                         color:[UIColor whiteColor]
+                                                   shadowColor:[UIColor colorWithRed:183.0f/255.0f green:56.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+                                                  shadowOffset:CGSizeMake(0.0, -0.5f)
+                                                    shadowBlur:0.0f];
+        
+        TextStyle *disabledTextStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:12.0f]
+                                                                 color:[UIColor colorWithRed:204.0f/255.0f green:64.0f/255.0f blue:2.0f/255.0f alpha:1.0f]
+                                                           shadowColor:[UIColor colorWithRed:255.0f/255.0f green:156.0f/255.0f blue:71.0f/255.0f alpha:0.5f]
+                                                          shadowOffset:CGSizeMake(0.0, 0.5f) 
+                                                            shadowBlur:0.0f];
+        
+        LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+                                                       backgroundColor:nil 
+                                                             alignment:UITextAlignmentCenter 
+                                                         lineBreakMode:UILineBreakModeTailTruncation];
+        
+        LabelStyle *disabledLabelStyle = [[LabelStyle alloc] initWithTextStyle:disabledTextStyle 
+                                                               backgroundColor:nil 
+                                                                     alignment:UITextAlignmentCenter 
+                                                                 lineBreakMode:UILineBreakModeTailTruncation];
+        
+        
+        UIImage *upImage = [[UIImage imageNamed:@"nav_button_back_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 21.0f, 0.0f, 7.0f)];
+        UIImage *downImage = [[UIImage imageNamed:@"nav_button_back_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 21.0f, 0.0f, 7.0f)];
+        
+        _navbarBackButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
+                                                  disabledLabelStyle:disabledLabelStyle 
+                                                     backgroundColor:nil 
+                                                             upImage:upImage
+                                                           downImage:downImage
+                                                       disabledImage:downImage
+                                                           iconImage:nil 
+                                                   iconDisabledImage:nil 
+                                                          iconOrigin:CGPointZero 
+                                                         labelInsets:UIEdgeInsetsZero 
+                                                     downLabelOffset:CGSizeMake(0.0f, 1.0f) 
+                                                 disabledLabelOffset:CGSizeMake(0.0f, 0.0f)];
+    }
+    
+    return _navbarBackButtonStyle;
 }
 
 @end

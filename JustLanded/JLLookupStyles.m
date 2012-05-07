@@ -10,7 +10,7 @@
 
 CGRect const LOGO_FRAME = {35.5f, 33.5f, 248.0f, 40.0f};
 CGRect const LOOKUP_BUTTON_FRAME = {12.0f, 179.5f, 296.0f, 56.0f};
-CGRect const ABOUT_BUTTON_FRAME = {267.0f, 0.0f, 53.0f, 53.0f};
+CGRect const ABOUT_BUTTON_FRAME = {271.0f, 0.0f, 49.0f, 49.0f};
 CGRect const LOOKUP_INPUT_FRAME = {14.0f, 117.5f, 292.0f, 49.0f};
 CGRect const LOOKUP_TEXTFIELD_FRAME = {0.0f, 0.0f, 288.0f, 49.0f};
 CGRect const LOOKUP_LABEL_FRAME = {0.0f, 0.0f, 150.0f, 49.0f};
