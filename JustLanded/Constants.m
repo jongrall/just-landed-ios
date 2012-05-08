@@ -110,3 +110,4 @@ NSString * const FY_NO_CONNECTION_ERROR = @"No Connection";
 NSString * const FY_SERVER_500 = @"500 Error";
 NSString * const FY_UNABLE_TO_GET_LOCATION = @"Unable to Get Location";
 NSString * const FY_UNABLE_TO_REGISTER_PUSH = @"Unable to Register for Notifications";
+NSString * const FY_BAD_DATA = @"Bad Data";

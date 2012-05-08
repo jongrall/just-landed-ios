@@ -69,3 +69,4 @@ extern NSString * const FY_NO_CONNECTION_ERROR;
 extern NSString * const FY_SERVER_500;
 extern NSString * const FY_UNABLE_TO_GET_LOCATION;
 extern NSString * const FY_UNABLE_TO_REGISTER_PUSH;
+extern NSString * const FY_BAD_DATA;

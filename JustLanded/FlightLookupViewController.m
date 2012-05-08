@@ -97,9 +97,7 @@ static NSRegularExpression *_flightNumberRegex;
     controller.delegate = self;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [_cloudLayer stopAnimating]; // Stop animating the clouds
-    [self presentViewController:controller animated:animateFlip completion:^{
-        [controller refresh]; 
-    }];
+    [self presentModalViewController:controller animated:animateFlip];
     
     // If animated, was user-initiated, record the track
     if (animateFlip) {

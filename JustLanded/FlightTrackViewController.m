@@ -61,6 +61,7 @@
 - (void)flightTrackFailed:(NSNotification *)notification;
 - (void)startUpdating;
 - (void)stopUpdating;
+- (void)stopTrackingAfterError;
 - (void)stopTrackingUserInitiated:(BOOL)userInitiated;
 - (void)setFlightNumber:(NSString *)fnum;
 - (void)setStatus:(FlightStatus)newStatus;
@@ -281,6 +282,11 @@
 }
 
 
+- (void)stopTrackingAfterError {
+    [self stopTrackingUserInitiated:NO];
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - View Lifecycle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -427,6 +433,12 @@
     [self.view addSubview:_destinationCityLabel];
     [self.view addSubview:_leaveMeter];
     [self.view addSubview:_directionsButton];
+}
+
+
+- (void)viewDidLoad {
+    // Track the flight as soon as the view loads
+    [self refresh];
 }
 
 
@@ -707,7 +719,10 @@
     
     if (reason == TrackFailureFlightNotFound || reason == TrackFailureInvalidFlightNumber || reason == TrackFailureOldFlight) {
         // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
-        [self stopTrackingUserInitiated:NO];
+        // DICUSSION: Delay needed in case the screen is still flipping over when the error occurred and a call to dismiss the modal
+        // view controller would have no effect. Ugly, but works. Alternative was to delay tracking until the flip had completed
+        // which slowed the whole experience down for everyon. This seemed like the better choice.
+        [self performSelector:@selector(stopTrackingAfterError) withObject:nil afterDelay:1.0];
     }
     else {
         // TODO: Handle no connection
