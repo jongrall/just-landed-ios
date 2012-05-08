@@ -97,7 +97,9 @@ static NSRegularExpression *_flightNumberRegex;
     controller.delegate = self;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [_cloudLayer stopAnimating]; // Stop animating the clouds
-    [self presentModalViewController:controller animated:animateFlip];
+    [self presentViewController:controller animated:animateFlip completion:^{
+        [controller refresh]; 
+    }];
     
     // If animated, was user-initiated, record the track
     if (animateFlip) {
@@ -121,7 +123,7 @@ static NSRegularExpression *_flightNumberRegex;
 - (void)indicateStoppedLookingUp {
     [_lookupSpinner stopAnimating];
     self._flightNumberField.enabled = YES;
-    self._lookupButton.enabled = YES; //FIXME
+    self._lookupButton.enabled = [self isFlightNumValid:_flightNumberField.text];
 }
 
 
@@ -143,7 +145,6 @@ static NSRegularExpression *_flightNumberRegex;
     AboutViewController *aboutController = [[AboutViewController alloc] init];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:aboutController];
     navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    //[_cloudLayer stopAnimating]; // TODOStop animating the clouds
     [self presentModalViewController:navController animated:YES];
     [FlurryAnalytics logEvent:FY_VISITED_ABOUT_SCREEN];
 }
@@ -416,7 +417,6 @@ static NSRegularExpression *_flightNumberRegex;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     Flight *chosenFlight = [self._flightResults objectAtIndex:[indexPath row]];
     [self beginTrackingFlight:chosenFlight animated:YES];
-    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -479,17 +479,19 @@ static NSRegularExpression *_flightNumberRegex;
 #pragma mark - FlightTrackViewControllerDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)didFinishTracking:(FlightTrackViewController *)controller userInitiated:(BOOL)user_flag {
+- (void)didFinishTrackingUserInitiated:(BOOL)user_flag {
     self._flightResultsTable.hidden = YES;
     self._flightResultsTableFrame.hidden = YES;
     self._lookupButton.hidden = NO;
     [_cloudLayer startAnimating]; // Begin animating the cloud layer
     
+    Flight *flight = [[[JustLandedSession sharedSession] currentlyTrackedFlights] lastObject];
+    
     // If the user stopped tracking, pre-fill the field with the flight they were tracking
-    if (user_flag) {
-        self._flightNumberField.text = controller.trackedFlight.flightNumber;
+    if (user_flag && flight) {
+        self._flightNumberField.text = flight.flightNumber;
         [FlurryAnalytics logEvent:FY_STOPPED_TRACKING_FLIGHT 
-                   withParameters:[NSDictionary dictionaryWithObject:(controller.trackedFlight.status == LANDED) ? @"YES" : @"NO"
+                   withParameters:[NSDictionary dictionaryWithObject:(flight.status == LANDED) ? @"YES" : @"NO"
                                                               forKey:@"Flight Landed"]];
     }
     else {
@@ -498,9 +500,11 @@ static NSRegularExpression *_flightNumberRegex;
     }
     
     self._lookupButton.enabled = [self isFlightNumValid:_flightNumberField.text];
-    
-    [self dismissModalViewControllerAnimated:YES];
-    [[JustLandedSession sharedSession] removeTrackedFlight:controller.trackedFlight];
+        
+    if (flight) {
+        [flight stopTracking];
+        [[JustLandedSession sharedSession] removeTrackedFlight:flight];
+    }
     
     // If they're no longer tracking any flights, stop location services
     if ([[[JustLandedSession sharedSession] currentlyTrackedFlights] count] == 0) {

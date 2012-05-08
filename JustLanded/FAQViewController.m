@@ -79,7 +79,7 @@
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	[self removeLoadingScreen];
     
-    // TODO: show failure screen
+    // TODO: show no connection screen
 }
 
 

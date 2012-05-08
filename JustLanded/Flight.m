@@ -311,11 +311,9 @@ static NSArray *_aircraftTypes;
      getPath:stopTrackingPath 
      parameters:nil 
      success:^(AFHTTPRequestOperation *operation, id JSON) {
-         // TODO: Implement me
          [[NSNotificationCenter defaultCenter] postNotificationName:DidStopTrackingFlightNotification object:self];
      }
      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         // TODO: Implement me
          [[NSNotificationCenter defaultCenter] postNotificationName:StopTrackingFlightFailedNotification object:self];
      }];
 }

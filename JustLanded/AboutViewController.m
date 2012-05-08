@@ -256,7 +256,7 @@ typedef enum {
             
             [self presentModalViewController:mailComposer animated:YES];
             
-            // FIXME: Make the body first responder - this could get us rejected
+            // WARN: Make the body first responder - this could get us rejected
             [self setMFMailFieldAsFirstResponder:mailComposer.view mfMailField:@"MFComposeTextContentView"];
             
             [FlurryAnalytics logEvent:FY_STARTED_SENDING_FEEDBACK];

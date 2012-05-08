@@ -9,7 +9,6 @@
 #import "AppDelegate.h"
 
 #import "FlightLookupViewController.h"
-#import "FlightTrackViewController.h"
 #import "Flight.h"
 #import <CoreLocation/CoreLocation.h>
 
@@ -177,10 +176,33 @@
         // Only do something if they are still tracking a flight
         UILocalNotification *notification = [[UILocalNotification alloc] init];
         notification.fireDate = [NSDate date];
-        notification.alertBody = [userInfo valueForKeyPathOrNil:@"aps.alert"];;
-        notification.soundName = [userInfo valueForKeyPathOrNil:@"aps.sound"];
+        notification.alertBody = [userInfo valueForKeyPathOrNil:@"aps.alert"];
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-             
+        
+        NSString *notificationType = [userInfo valueForKeyPathOrNil:@"notification_type"];
+        
+        // Play the right sound - UILocalNotification won't always play the sound
+        if (notificationType) {
+            PushType type = [Flight stringToPushType:notificationType];
+            
+            switch (type) {
+                case FlightDeparted:
+                    [[JustLandedSession sharedSession] playSound:TakeOffSound];
+                    break;
+                case FlightArrived:
+                    [[JustLandedSession sharedSession] playSound:LandingSound];
+                    break;
+                default:
+                    [[JustLandedSession sharedSession] playSound:AnnouncementSound];
+                    break;
+            }
+        }
+        else {
+            [[JustLandedSession sharedSession] playSound:AnnouncementSound];
+        }
+        
+        [[JustLandedSession sharedSession] vibrateDevice];
+        
         // Refresh the flight information
         Flight *currentFlight = [currentlyTrackedFlights lastObject];
         [currentFlight trackWithLocation:[[JustLandedSession sharedSession] lastKnownLocation] 

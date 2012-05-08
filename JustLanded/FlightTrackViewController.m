@@ -61,6 +61,7 @@
 - (void)flightTrackFailed:(NSNotification *)notification;
 - (void)startUpdating;
 - (void)stopUpdating;
+- (void)stopTrackingUserInitiated:(BOOL)userInitiated;
 - (void)setFlightNumber:(NSString *)fnum;
 - (void)setStatus:(FlightStatus)newStatus;
 - (NSString *)landsAtLabelText;
@@ -246,15 +247,6 @@
                                                  selector:@selector(flightTrackFailed:)
                                                      name:FlightTrackFailedNotification 
                                                    object:aFlight];
-        
-        // Setup refresh on resume
-        [[NSNotificationCenter defaultCenter] addObserver:self 
-                                                 selector:@selector(refresh) 
-                                                     name:UIApplicationDidBecomeActiveNotification 
-                                                   object:[UIApplication sharedApplication]];
-        
-        // Initiate a refresh to get the initial flight information
-        [self refresh];
     }
     
     return self;
@@ -265,18 +257,27 @@
     if ([[JustLandedSession sharedSession] triedToRegisterForRemoteNotifications] &&
         (loc || [[JustLandedSession sharedSession] triedToGetLocation] || 
          ![[JustLandedSession sharedSession] locationServicesAvailable])) {
-        [_trackedFlight trackWithLocation:loc pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
+            [_trackedFlight trackWithLocation:loc pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
     }
 }
 
 
 - (void)startUpdating {
-    
+    return;
 }
 
 
 - (void)stopUpdating {
-    
+    return;
+}
+
+
+- (void)stopTrackingUserInitiated:(BOOL)userInitiated {
+    [_updateTimer invalidate];
+    [_alternatingLabelTimer invalidate];
+    [_flightProgressView stopAnimating];
+    [delegate didFinishTrackingUserInitiated:userInitiated];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 
@@ -424,8 +425,8 @@
     [self.view addSubview:_bagClaimLabel];
     [self.view addSubview:_bagClaimValueLabel];
     [self.view addSubview:_destinationCityLabel];
-    [self.view addSubview:_directionsButton];
     [self.view addSubview:_leaveMeter];
+    [self.view addSubview:_directionsButton];
 }
 
 
@@ -626,7 +627,7 @@
     // Track anyway, without location
     [self trackFlightWithLocation:nil];
     
-    // TODO: Indicate that we don't have location
+    // TODO: Indicate that we don't have location?
 }
 
 
@@ -699,13 +700,14 @@
 
 
 - (void)flightTrackFailed:(NSNotification *)notification {
+    // Stop loading animation
     [self stopUpdating];
     
     FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
     
     if (reason == TrackFailureFlightNotFound || reason == TrackFailureInvalidFlightNumber || reason == TrackFailureOldFlight) {
         // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
-        [self stopTracking:NO];
+        [self stopTrackingUserInitiated:NO];
     }
     else {
         // TODO: Handle no connection
@@ -811,16 +813,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)backToLookup {
-    [self stopTracking:YES];
-}
-
-
-- (void)stopTracking:(BOOL)userInitiated {
-    [_updateTimer invalidate];
-    [_alternatingLabelTimer invalidate];
-    [self stopUpdating];
-    [_trackedFlight stopTracking];
-    [self.delegate didFinishTracking:self userInitiated:userInitiated];
+    [self stopTrackingUserInitiated:YES];
 }
 
 
@@ -863,7 +856,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)dealloc {
-    [_flightProgressView stopAnimating];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

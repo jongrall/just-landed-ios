@@ -12,17 +12,16 @@
 @class Flight;
 
 @protocol FlightTrackViewControllerDelegate
-- (void)didFinishTracking:(FlightTrackViewController *)controller userInitiated:(BOOL)flag;
+- (void)didFinishTrackingUserInitiated:(BOOL)user_flag;
 @end
 
 
 @interface FlightTrackViewController : UIViewController
 
-@property (weak, nonatomic) IBOutlet id <FlightTrackViewControllerDelegate> delegate;
+@property (weak, nonatomic) id <FlightTrackViewControllerDelegate> delegate;
 @property (readonly, nonatomic) Flight *trackedFlight;
 
 - (id)initWithFlight:(Flight *)aFlight;
-- (void)stopTracking:(BOOL)userInitiated;
 - (void)refresh;
 
 @end

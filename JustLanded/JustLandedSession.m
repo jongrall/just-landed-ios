@@ -15,7 +15,7 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 NSString * const WillRegisterForRemoteNotifications = @"WillRegisterForRemoteNotifications";
 NSString * const DidRegisterForRemoteNotifications = @"DidRegisterForRemoteNotifications";
 NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterForRemoteNotifications";
-CLLocationDistance const LOCATION_DISTANCE_FILTER = 150.0;
+CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
@@ -36,6 +36,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 150.0;
 - (void)deleteArchivedTrackedFlights;
 - (void)startBackgroundMonitoring;
 - (void)stopBackgroundMonitoring;
+- (void)refreshTrackedFlights;
 
 @end
 
@@ -88,6 +89,11 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 150.0;
         
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(stopBackgroundMonitoring) 
+                                                     name:UIApplicationDidBecomeActiveNotification 
+                                                   object:[UIApplication sharedApplication]];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(refreshTrackedFlights) 
                                                      name:UIApplicationDidBecomeActiveNotification 
                                                    object:[UIApplication sharedApplication]];
     }
@@ -255,6 +261,13 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 150.0;
 
 - (void)stopBackgroundMonitoring {
     [self._locationManager stopMonitoringSignificantLocationChanges];
+}
+
+
+- (void)refreshTrackedFlights {
+    for (Flight *f in [self currentlyTrackedFlights]) {
+        [f trackWithLocation:[self lastKnownLocation] pushEnabled:[self pushEnabled]];
+    }
 }
 
 

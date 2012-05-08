@@ -12,7 +12,7 @@
 #pragma mark NSUserDefaults Keys
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-NSString * const APP_ID = @"500379361";
+NSString * const APP_ID = @"520338005";
 
 #if defined(CONFIGURATION_Debug)
 NSString * const UUIDKey = @"UUIDKeyDev";

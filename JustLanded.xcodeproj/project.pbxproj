@@ -1598,6 +1598,7 @@
 		115E8F4C14F74EED00E9F06B /* Adhoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jonathan Grall";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/QuincyKit\"",
@@ -1616,6 +1617,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "56FEE1F9-D540-49CA-A8DB-1E29B563C068";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Adhoc;
@@ -1761,6 +1763,7 @@
 		11C5DFE114DCCDDF006D1DB4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jonathan Grall (F3W53ULL6X)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/QuincyKit\"",
@@ -1779,6 +1782,7 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "2DBCC988-5D20-422F-9EE2-BE72CEB70E06";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
