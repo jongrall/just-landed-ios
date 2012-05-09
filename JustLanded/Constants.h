@@ -29,7 +29,8 @@ extern NSString * const UNTRACK_URL_FORMAT;
 extern NSUInteger const API_VERSION;
 extern NSString * const API_USERNAME;
 extern NSString * const API_KEY;
-extern NSString * const FAQ_URL;
+extern NSString * const WEB_HOST;
+extern NSString * const FAQ_PATH;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -67,6 +68,7 @@ extern NSString * const FY_OLD_FLIGHT_ERROR;
 extern NSString * const FY_FLIGHT_NOT_FOUND_ERROR;
 extern NSString * const FY_NO_CONNECTION_ERROR;
 extern NSString * const FY_SERVER_500;
+extern NSString * const FY_OUTAGE;
 extern NSString * const FY_UNABLE_TO_GET_LOCATION;
 extern NSString * const FY_UNABLE_TO_REGISTER_PUSH;
 extern NSString * const FY_BAD_DATA;

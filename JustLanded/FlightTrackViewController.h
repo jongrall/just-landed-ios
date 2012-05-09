@@ -16,7 +16,7 @@
 @end
 
 
-@interface FlightTrackViewController : UIViewController
+@interface FlightTrackViewController : UIViewController <NoConnectionDelegate>
 
 @property (weak, nonatomic) id <FlightTrackViewControllerDelegate> delegate;
 @property (readonly, nonatomic) Flight *trackedFlight;

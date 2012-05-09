@@ -10,6 +10,7 @@
 #import "Flight.h"
 #import "TextStyle.h"
 #import "ButtonStyle.h"
+#import "LabelStyle.h"
 
 @interface JLStyles : NSObject
 
@@ -26,5 +27,9 @@
 + (TextStyle *)navbarTitleStyle;
 + (ButtonStyle *)navbarButtonStyle;
 + (ButtonStyle *)navbarBackButtonStyle;
++ (LabelStyle *)loadingLabelStyle;
++ (LabelStyle *)noConnectionLabelStyle;
++ (LabelStyle *)errorDescriptionLabelStyle;
++ (ButtonStyle *)defaultButtonStyle;
 
 @end

@@ -56,6 +56,7 @@ typedef enum {
     LookupFailureFlightNotFound,
     LookupFailureNoConnection,
     LookupFailureError,
+    LookupFailureOutage,
 } FlightLookupFailedReason;
 
 typedef enum {
@@ -64,6 +65,7 @@ typedef enum {
     TrackFailureOldFlight,
     TrackFailureNoConnection,
     TrackFailureError,
+    TrackFailureOutage,
 } FlightTrackFailedReason;
 
 

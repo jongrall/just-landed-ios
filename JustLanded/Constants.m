@@ -44,22 +44,23 @@ NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/api/v1/
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Development";
 NSString * const API_KEY = @"d90816f7e6ea93001a2aa62cd8dd8f0e830a93d1";
-//NSString * const FAQ_URL = @"http://pool-173-63-21-213.nwrknj.fios.verizon.net:8082/iphonefaq";
-NSString * const FAQ_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net/iphonefaq";
+//NSString * const WEB_HOST = @"http://pool-173-63-21-213.nwrknj.fios.verizon.net:8082";
+NSString * const WEB_HOST = @"http://c-98-207-175-25.hsd1.ca.comcast.net";
 #elif defined(CONFIGURATION_Adhoc)
 NSString * const BASE_URL = @"https://just-landed-staging.appspot.com/api/v1/";
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Staging";
 NSString * const API_KEY = @"55ca8681039e129bb985991014f61774de31fe1e";
-NSString * const FAQ_URL = @"http://just-landed-staging.appspot.com/iphonefaq";
+NSString * const WEB_HOST = @"http://just-landed-staging.appspot.com";
 #else
 NSString * const BASE_URL = @"https://just-landed.appspot.com/api/v1/";
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Production";
 NSString * const API_KEY = @"4399d9ce77acf522799543f13c926c0a41e2ea3f";
-NSString * const FAQ_URL = @"http://www.getjustlanded.com/iphonefaq";
+NSString * const WEB_HOST = @"http://www.getjustlanded.com";
 #endif
 
+NSString * const FAQ_PATH = @"/iphonefaq";
 NSString * const LOOKUP_URL_FORMAT = @"search/%@";
 NSString * const TRACK_URL_FORMAT = @"track/%@/%@";
 NSString * const UNTRACK_URL_FORMAT = @"untrack/%@";
@@ -108,6 +109,7 @@ NSString * const FY_OLD_FLIGHT_ERROR = @"Old Flight";
 NSString * const FY_FLIGHT_NOT_FOUND_ERROR = @"Flight Not Found";
 NSString * const FY_NO_CONNECTION_ERROR = @"No Connection";
 NSString * const FY_SERVER_500 = @"500 Error";
+NSString * const FY_OUTAGE = @"Service Outage";
 NSString * const FY_UNABLE_TO_GET_LOCATION = @"Unable to Get Location";
 NSString * const FY_UNABLE_TO_REGISTER_PUSH = @"Unable to Register for Notifications";
 NSString * const FY_BAD_DATA = @"Bad Data";

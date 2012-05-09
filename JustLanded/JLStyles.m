@@ -13,6 +13,11 @@
 static TextStyle *_navbarTitleStyle;
 static ButtonStyle *_navbarButtonStyle;
 static ButtonStyle *_navbarBackButtonStyle;
+static LabelStyle *_loadingLabelStyle;
+static LabelStyle *_noConnectionLabelStyle;
+static LabelStyle *_errorDescriptionLabelStyle;
+static ButtonStyle *_defaultButtonStyle;
+
 
 + (UIFont *)regularScriptOfSize:(CGFloat)size {
     return [UIFont fontWithName:@"SignPainter-HouseScript" size:size];
@@ -266,6 +271,102 @@ static ButtonStyle *_navbarBackButtonStyle;
     }
     
     return _navbarBackButtonStyle;
+}
+
+
++ (LabelStyle *)loadingLabelStyle  {
+    if (!_loadingLabelStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:24.0f] 
+                                                         color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+                                                   shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
+                                                  shadowOffset:CGSizeMake(0.0f, 1.0f) 
+                                                    shadowBlur:0.0f];
+        
+        _loadingLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                      backgroundColor:nil
+                                                            alignment:UITextAlignmentCenter
+                                                        lineBreakMode:UILineBreakModeTailTruncation];
+    }
+    
+    return _loadingLabelStyle;
+}
+
+
++ (LabelStyle *)noConnectionLabelStyle {
+    if (!_noConnectionLabelStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:24.0f] 
+                                                         color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+                                                   shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
+                                                  shadowOffset:CGSizeMake(0.0f, 1.0f) 
+                                                    shadowBlur:0.0f];
+        
+        _noConnectionLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                      backgroundColor:nil
+                                                            alignment:UITextAlignmentCenter
+                                                        lineBreakMode:UILineBreakModeTailTruncation];
+    }
+    
+    return _noConnectionLabelStyle;
+}
+
+
++ (LabelStyle *)errorDescriptionLabelStyle {
+    if (!_errorDescriptionLabelStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:18.0f] 
+                                                         color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+                                                   shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
+                                                  shadowOffset:CGSizeMake(0.0f, 1.0f) 
+                                                    shadowBlur:0.0f];
+        
+        _errorDescriptionLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                      backgroundColor:nil
+                                                            alignment:UITextAlignmentCenter
+                                                        lineBreakMode:UILineBreakModeWordWrap];
+    }
+    
+    return _errorDescriptionLabelStyle;
+}
+
+
++ (ButtonStyle *)defaultButtonStyle {
+    if (!_defaultButtonStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:24.0f] 
+                                                         color:[UIColor whiteColor]
+                                                   shadowColor:[UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.25f]
+                                                  shadowOffset:CGSizeMake(0.0f, 1.0f)
+                                                    shadowBlur:0.0f];
+        
+        LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                       backgroundColor:nil 
+                                                             alignment:UITextAlignmentCenter 
+                                                         lineBreakMode:UILineBreakModeClip];
+        
+        TextStyle *disabledTextStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:24.0f] 
+                                                                 color:[UIColor colorWithRed:204.0f/255.0f green:64.0f/255.0f blue:2.0f/255.0f alpha:1.0f]
+                                                           shadowColor:[UIColor colorWithRed:255.0f/255.0f green:156.0f/255.0f blue:71.0f/255.0f alpha:0.5f]
+                                                          shadowOffset:CGSizeMake(0.0f, 1.0f)
+                                                            shadowBlur:0.0f];
+        
+        LabelStyle *disabledLabelStyle = [[LabelStyle alloc] initWithTextStyle:disabledTextStyle
+                                                               backgroundColor:nil 
+                                                                     alignment:UITextAlignmentCenter 
+                                                                 lineBreakMode:UILineBreakModeClip];
+        
+        _defaultButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
+                                                  disabledLabelStyle:disabledLabelStyle
+                                                     backgroundColor:nil
+                                                             upImage:[[UIImage imageNamed:@"button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)]
+                                                           downImage:[[UIImage imageNamed:@"button_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)] 
+                                                       disabledImage:[[UIImage imageNamed:@"button_disabled"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)]
+                                                           iconImage:nil
+                                                   iconDisabledImage:nil
+                                                          iconOrigin:CGPointZero 
+                                                         labelInsets:UIEdgeInsetsMake(-3.5f, 0.0f, 0.0f, 0.0f) 
+                                                     downLabelOffset:CGSizeMake(0.0f, 5.0f) 
+                                                 disabledLabelOffset:CGSizeMake(0.0f, 2.5f)];
+    }
+    
+    return _defaultButtonStyle;
 }
 
 @end

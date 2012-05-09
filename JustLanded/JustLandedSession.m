@@ -204,7 +204,8 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 - (BOOL)locationServicesAvailable {
     // Application needs both S.L.C.M. and standard location services to be reliable.
-    return [CLLocationManager significantLocationChangeMonitoringAvailable] && [CLLocationManager locationServicesEnabled];
+    return [CLLocationManager significantLocationChangeMonitoringAvailable] && [CLLocationManager locationServicesEnabled] && 
+            [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized;
 }
 
 

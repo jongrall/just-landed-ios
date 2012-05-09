@@ -18,7 +18,6 @@
 
 @implementation JLButton
 
-@synthesize labelText;
 @synthesize style=_style;
 
 - (id)initWithButtonStyle:(ButtonStyle *)aStyle frame:(CGRect)aFrame {

@@ -15,10 +15,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-@interface FAQViewController : UIViewController <UIWebViewDelegate> {
+@interface FAQViewController : UIViewController <NoConnectionDelegate> {
 
 }
 
-@property (nonatomic, retain) UIWebView *faqWebView;
+@property (nonatomic, retain) JLWebView *faqWebView;
 
 @end

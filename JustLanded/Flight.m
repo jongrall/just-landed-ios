@@ -198,21 +198,30 @@ static NSArray *_aircraftTypes;
                 NSHTTPURLResponse *response = [operation response];
                 if (response) {
                     switch ([response statusCode]) {
-                        case 400:
+                        case 400: {
                             // Invalid flight number
                             [self failToLookupWithReason:LookupFailureInvalidFlightNumber];
                             [FlurryAnalytics logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
                             break;
-                        case 404:
+                        }
+                        case 404: {
                             // Flight not found
                             [self failToLookupWithReason:LookupFailureFlightNotFound];
                             [FlurryAnalytics logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
                             break;
-                        default:
+                        }
+                        case 503: {
+                            //Outage
+                            [self failToLookupWithReason:LookupFailureOutage];
+                            [FlurryAnalytics logEvent:FY_OUTAGE];
+                            break;
+                        }
+                        default: {
                             // 500 errors etc.
                             [self failToLookupWithReason:LookupFailureError];
                             [FlurryAnalytics logEvent:FY_SERVER_500];
                             break;
+                        }
                     }
                 }
                 else {
@@ -281,26 +290,36 @@ static NSArray *_aircraftTypes;
                 
                 if (response) {
                     switch ([response statusCode]) {
-                        case 400:
+                        case 400: {
                             // Invalid flight number
                             [self failToTrackWithReason:TrackFailureInvalidFlightNumber];
                             [FlurryAnalytics logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
                             break;
-                        case 404:
+                        }
+                        case 404: {
                             // Flight not found
                             [self failToTrackWithReason:TrackFailureFlightNotFound];
                             [FlurryAnalytics logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
                             break;
-                        case 410:
+                        }
+                        case 410: {
                             // Old flight
                             [self failToTrackWithReason:TrackFailureOldFlight];
                             [FlurryAnalytics logEvent:FY_OLD_FLIGHT_ERROR];
                             break;
-                        default:
+                        }
+                        case 503: {
+                            // Outage
+                            [self failToTrackWithReason:TrackFailureOutage];
+                            [FlurryAnalytics logEvent:FY_OUTAGE];
+                            break;
+                        }
+                        default: {
                             // 500 errors etc.
                             [self failToTrackWithReason:TrackFailureError];
                             [FlurryAnalytics logEvent:FY_SERVER_500];
                             break;
+                        }
                     }
                 }
                 else {

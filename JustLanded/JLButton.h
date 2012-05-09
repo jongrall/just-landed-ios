@@ -13,7 +13,6 @@
 
 // Note JLButton ignores shadow blur!
 
-@property (strong, nonatomic) NSString *labelText;
 @property (nonatomic, readonly) ButtonStyle *style;
 
 - (id)initWithButtonStyle:(ButtonStyle *)aStyle frame:(CGRect)aFrame;

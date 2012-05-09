@@ -47,6 +47,10 @@
 @property (strong, nonatomic) JLLookupButton *_lookupButton;
 @property (strong, nonatomic) JLButton *_directionsButton;
 @property (strong, nonatomic) JLLeaveMeter *_leaveMeter;
+@property (strong, nonatomic) JLNoConnectionView *_noConnectionOverlay;
+@property (strong, nonatomic) JLServerErrorView *_serverErrorOverlay;
+@property (strong, nonatomic) JLLoadingView *_loadingOverlay;
+@property (nonatomic) BOOL _showingData;
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status;
 + (UIImage *)headerBackgroundImageForStatus:(FlightStatus)status;
@@ -118,6 +122,10 @@
 @synthesize _lookupButton;
 @synthesize _directionsButton;
 @synthesize _leaveMeter;
+@synthesize _noConnectionOverlay;
+@synthesize _serverErrorOverlay;
+@synthesize _loadingOverlay;
+@synthesize _showingData;
 
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status {
@@ -264,12 +272,23 @@
 
 
 - (void)startUpdating {
-    return;
+    [_noConnectionOverlay removeFromSuperview];
+    [_serverErrorOverlay removeFromSuperview];
+    
+    if (!_showingData) { // Only show loading overlay if we're not already showing data
+        if (!_loadingOverlay) {
+            _loadingOverlay = [[JLLoadingView alloc] initWithFrame:self.view.bounds];
+        }
+        
+        [self.view addSubview:_loadingOverlay];
+        [_loadingOverlay startLoading];
+    }
 }
 
 
 - (void)stopUpdating {
-    return;
+    [_loadingOverlay stopLoading];
+    [_loadingOverlay removeFromSuperview];
 }
 
 
@@ -639,7 +658,15 @@
     // Track anyway, without location
     [self trackFlightWithLocation:nil];
     
-    // TODO: Indicate that we don't have location?
+    // Indicate that we don't have location if we were supposed to be able to use it
+    if ([[JustLandedSession sharedSession] locationServicesAvailable]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Your Location Unknown", @"Your Location Unknown")
+                                                        message:NSLocalizedString(@"Without your location Just Landed cannot give estimates of when you should leave for the airport. Please check your device's reception and try again.", @"Location unavailable warning.")
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 
@@ -688,6 +715,8 @@
     // Hide the directions button and driving time if appropriate
     [self showDrivingTimeOrBagClaim];
     
+    _showingData = YES; // We have data
+    
     // Ask them to rate after a few seconds, if eligible
     [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible) 
                                             withObject:nil 
@@ -717,15 +746,51 @@
     
     FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
     
-    if (reason == TrackFailureFlightNotFound || reason == TrackFailureInvalidFlightNumber || reason == TrackFailureOldFlight) {
-        // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
-        // DICUSSION: Delay needed in case the screen is still flipping over when the error occurred and a call to dismiss the modal
-        // view controller would have no effect. Ugly, but works. Alternative was to delay tracking until the flip had completed
-        // which slowed the whole experience down for everyon. This seemed like the better choice.
-        [self performSelector:@selector(stopTrackingAfterError) withObject:nil afterDelay:1.0];
-    }
-    else {
-        // TODO: Handle no connection
+    switch (reason) {
+        case TrackFailureFlightNotFound:
+        case TrackFailureInvalidFlightNumber:
+        case TrackFailureOldFlight: {
+            // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
+            // DICUSSION: Delay needed in case the screen is still flipping over when the error occurred and a call to dismiss the modal
+            // view controller would have no effect. Ugly, but works. Alternative was to delay tracking until the flip had completed
+            // which slowed the whole experience down for everyon. This seemed like the better choice.
+            [self performSelector:@selector(stopTrackingAfterError) withObject:nil afterDelay:1.0];
+            break;
+        }
+        case TrackFailureNoConnection: {
+            // No connection
+            if (!_showingData) {
+                if (!_noConnectionOverlay) {
+                    _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:self.view.bounds];
+                    _noConnectionOverlay.delegate = self;
+                }
+                _noConnectionOverlay.tryAgainbutton.enabled = YES;
+                
+                [self.view addSubview:_noConnectionOverlay];
+            }
+            break;
+        }
+        default: {
+            // Error or outage
+            if (!_showingData) {
+                if (!_serverErrorOverlay) {
+                    _serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:self.view.bounds 
+                                                                         errorType:ERROR_500];
+                    _serverErrorOverlay.delegate = self;
+                }
+                _serverErrorOverlay.tryAgainbutton.enabled = YES;
+                
+                if (reason == TrackFailureOutage) {
+                    _serverErrorOverlay.errorType = ERROR_503;
+                }
+                else {
+                    _serverErrorOverlay.errorType = ERROR_500;
+                }
+                
+                [self.view addSubview:_serverErrorOverlay];
+            }
+            break;
+        }
     }
 }
 
@@ -821,6 +886,15 @@
                                               anotherView.alpha = 1.0f;
                                           }];
                      }];
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - NoConnectionDelegate Methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)tryConnectionAgain {
+    [self refresh];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

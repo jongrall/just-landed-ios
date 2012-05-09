@@ -21,7 +21,7 @@
 @property (strong, nonatomic) JLFlightInputField *_flightNumberField;
 @property (strong, nonatomic) UITableView *_flightResultsTable;
 @property (strong, nonatomic) UIImageView *_flightResultsTableFrame;
-@property (strong, nonatomic) UIActivityIndicatorView *_lookupSpinner;
+@property (strong, nonatomic) JLSpinner *_lookupSpinner;
 @property (strong, nonatomic) NSArray *_flightResults;
 @property (strong, nonatomic) JLCloudLayer *_cloudLayer;
 
@@ -162,25 +162,63 @@ static NSRegularExpression *_flightNumberRegex;
     switch (reason) {
         case LookupFailureInvalidFlightNumber: {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Flight Number", @"Invalid Flight Number") 
-                                                            message:@"Please check that you entered your flight number correctly."
+                                                            message:NSLocalizedString(@"Please check that you entered your flight number correctly.",
+                                                                                      @"Please check flight #")
                                                            delegate:self 
-                                                  cancelButtonTitle:@"Try Again"
+                                                  cancelButtonTitle:NSLocalizedString(@"Try Again", @"Try Again")
                                                   otherButtonTitles:nil];
+            alert.tag = LookupFailureInvalidFlightNumber;
             [alert show];
             break;   
         }
         case LookupFailureFlightNotFound: {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"),
                                                                      _flightNumberField.text]
-                                                            message:@"Please check that you entered your flight number correctly."
+                                                            message:NSLocalizedString(@"Please check that you entered your flight number correctly.",
+                                                                                      @"Please check flight #")
                                                            delegate:self 
-                                                  cancelButtonTitle:@"OK"
+                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
                                                   otherButtonTitles:nil];
+            alert.tag = LookupFailureFlightNotFound;
             [alert show];
             break;
         }
+        case LookupFailureNoConnection: {
+             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No Internet Connection", 
+                                                                                       @"No Internet Connection")
+                                                          message:NSLocalizedString(@"Please check your wireless signal and try again.",
+                                                                                    @"Please check your connection.")
+                                                         delegate:self 
+                                                cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                otherButtonTitles:nil];
+            alert.tag = LookupFailureNoConnection;
+            [alert show];
+            break;
+        }
+        case LookupFailureOutage: {
+            // Outage
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Service Outage", 
+                                                                                      @"Service Outage")
+                                                            message:NSLocalizedString(@"Just Landed is currently unavailable. Our engineers are working to restore service. Please try again later.",
+                                                                                      @"Service outage msg.")
+                                                           delegate:self 
+                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                  otherButtonTitles:nil];
+            alert.tag = LookupFailureOutage;
+            [alert show];
+            break; 
+        }
         default: {
-            [_flightNumberField becomeFirstResponder];
+            // Some error
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Server Error", 
+                                                                                      @"Server Error")
+                                                            message:NSLocalizedString(@"An error has occurred. Our engineers have been notified. Please try again later.",
+                                                                                      @"Server error msg.")
+                                                           delegate:self 
+                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                  otherButtonTitles:nil];
+            alert.tag = LookupFailureError;
+            [alert show];
             break; 
         }
     }
@@ -202,9 +240,10 @@ static NSRegularExpression *_flightNumberRegex;
         if ([flights count] == 0) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"),
                                                                      _flightNumberField.text]
-                                                            message:@"Just Landed can only track U.S. domestic flights that are arriving within the next 48 hours."
+                                                            message:NSLocalizedString(@"Just Landed can only track U.S. domestic flights that are arriving within the next 48 hours.",
+                                                                                      @"Just Landed Flight Not Found")
                                                            delegate:self 
-                                                  cancelButtonTitle:@"OK"
+                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
                                                   otherButtonTitles:nil];
             [alert show];
         }
@@ -302,14 +341,7 @@ static NSRegularExpression *_flightNumberRegex;
     [self.view addSubview:_flightResultsTableFrame];
     
     // Add the lookup spinner
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:
-                                        UIActivityIndicatorViewStyleWhiteLarge];
-    spinner.hidesWhenStopped = YES;
-    spinner.frame = CGRectMake(160.0f - (spinner.frame.size.width / 2.0f),
-                               260.0f,
-                               spinner.frame.size.width,
-                               spinner.frame.size.height);
-    self._lookupSpinner = spinner;
+    _lookupSpinner = [[JLSpinner alloc] initWithFrame:CGRectMake(60.0f, 240.0f, 200.0f, 200.0f)];
     [self.view addSubview:_lookupSpinner];
 }
 
@@ -403,8 +435,12 @@ static NSRegularExpression *_flightNumberRegex;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    self._flightNumberField.text = @"";
-    self._lookupButton.enabled = NO;
+    if (alertView.tag == LookupFailureFlightNotFound || alertView.tag == LookupFailureInvalidFlightNumber) {
+        // Clear the field only on bad flight # or flight number not found
+        self._flightNumberField.text = @"";
+        self._lookupButton.enabled = NO;
+    }
+    
     [self._flightNumberField becomeFirstResponder];
 }
 

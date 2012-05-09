@@ -33,48 +33,39 @@ static LabelStyle *_flightFieldTextStyle;
 
 + (ButtonStyle *)lookupButtonStyle {
     if (!_lookupButtonStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:24.0f] 
-                                                         color:[UIColor whiteColor]
-                                                   shadowColor:[UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.25f]
-                                                  shadowOffset:CGSizeMake(0.0f, 1.0f)
-                                                    shadowBlur:0.0f];
+        ButtonStyle *defaultStyle = [JLStyles defaultButtonStyle];
         
-        LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                       backgroundColor:nil 
-                                                             alignment:UITextAlignmentLeft 
-                                                         lineBreakMode:UILineBreakModeClip];
+        // Override text alignment
+        LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:defaultStyle.labelStyle.textStyle 
+                                                       backgroundColor:defaultStyle.labelStyle.backgroundColor
+                                                             alignment:UITextAlignmentLeft
+                                                         lineBreakMode:defaultStyle.labelStyle.lineBreakMode];
+        LabelStyle *disabledStyle = [[LabelStyle alloc] initWithTextStyle:defaultStyle.disabledLabelStyle.textStyle
+                                                          backgroundColor:defaultStyle.disabledLabelStyle.backgroundColor
+                                                                alignment:UITextAlignmentLeft 
+                                                            lineBreakMode:defaultStyle.disabledLabelStyle.lineBreakMode];
         
-        TextStyle *disabledTextStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:24.0f] 
-                                                         color:[UIColor colorWithRed:204.0f/255.0f green:64.0f/255.0f blue:2.0f/255.0f alpha:1.0f]
-                                                   shadowColor:[UIColor colorWithRed:255.0f/255.0f green:156.0f/255.0f blue:71.0f/255.0f alpha:0.5f]
-                                                  shadowOffset:CGSizeMake(0.0f, 1.0f)
-                                                    shadowBlur:0.0f];
-        
-        LabelStyle *disabledLabelStyle = [[LabelStyle alloc] initWithTextStyle:disabledTextStyle
-                                                       backgroundColor:nil 
-                                                             alignment:UITextAlignmentLeft 
-                                                         lineBreakMode:UILineBreakModeClip];
-        
+        // Create from the default style and ovverride the icon and insets
         _lookupButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
-                                                  disabledLabelStyle:disabledLabelStyle
+                                                  disabledLabelStyle:disabledStyle
                                                      backgroundColor:nil
-                                                             upImage:[[UIImage imageNamed:@"button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)]
-                                                           downImage:[[UIImage imageNamed:@"button_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)] 
-                                                       disabledImage:[[UIImage imageNamed:@"button_disabled"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)]
+                                                             upImage:defaultStyle.upImage
+                                                           downImage:defaultStyle.downImage 
+                                                       disabledImage:defaultStyle.disabledImage
                                                            iconImage:[UIImage imageNamed:@"lookup_glass" 
-                                                                               withColor:[UIColor whiteColor]
-                                                                             shadowColor:[UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.25f]
-                                                                            shadowOffset:CGSizeMake(0.0f, -1.0f)
-                                                                              shadowBlur:0.0f]
-                                                           iconDisabledImage:[UIImage imageNamed:@"lookup_glass" 
-                                                                                       withColor:[UIColor colorWithRed:204.0f/255.0f green:64.0f/255.0f blue:2.0f/255.0f alpha:1.0]
-                                                                                     shadowColor:[UIColor colorWithRed:255.0f/255.0f green:156.0f/255.0f blue:71.0f/255.0f alpha:0.5f] 
-                                                                                    shadowOffset:CGSizeMake(0.0f, 1.0f) 
-                                                                                      shadowBlur:0.0f]
-                                                          iconOrigin:CGPointMake(55.5f, 11.5f) 
+                                                                               withColor:defaultStyle.labelStyle.textStyle.color
+                                                                             shadowColor:defaultStyle.labelStyle.textStyle.shadowColor
+                                                                            shadowOffset:defaultStyle.labelStyle.textStyle.shadowOffset
+                                                                              shadowBlur:defaultStyle.labelStyle.textStyle.shadowBlur]
+                                                   iconDisabledImage:[UIImage imageNamed:@"lookup_glass" 
+                                                                               withColor:defaultStyle.disabledLabelStyle.textStyle.color
+                                                                             shadowColor:defaultStyle.disabledLabelStyle.textStyle.shadowColor 
+                                                                            shadowOffset:defaultStyle.disabledLabelStyle.textStyle.shadowOffset
+                                                                              shadowBlur:defaultStyle.disabledLabelStyle.textStyle.shadowBlur]
+                                                          iconOrigin:CGPointMake(55.5f, 11.5f)
                                                          labelInsets:UIEdgeInsetsMake(-3.5f, 86.5f, 0.0f, 20.0f) 
-                                                     downLabelOffset:CGSizeMake(0.0f, 5.0f) 
-                                                 disabledLabelOffset:CGSizeMake(0.0f, 2.5f)];
+                                                     downLabelOffset:defaultStyle.downLabelOffset 
+                                                 disabledLabelOffset:defaultStyle.disabledLabelOffset];
     }
     
     return _lookupButtonStyle;
