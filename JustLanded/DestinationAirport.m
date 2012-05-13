@@ -58,23 +58,4 @@
     [aCoder encodeObject:gate forKey:@"gate"];
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Superclass overrides
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (BOOL)isEqual:(id)object {
-    if ([object isKindOfClass:[self class]]) {
-        DestinationAirport *aDestinationAirport = (DestinationAirport *)object;
-        return ([super isEqual:aDestinationAirport] && 
-                [bagClaim isEqualToString:aDestinationAirport.bagClaim] &&
-                [gate isEqualToString:aDestinationAirport.gate]);
-    }
-    else {
-        return NO;
-    }
-}
-
-
-
 @end

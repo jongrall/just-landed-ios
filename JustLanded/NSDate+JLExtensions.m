@@ -26,7 +26,7 @@ static NSDateFormatter *_naturalTimeFormatter;
 		[_naturalDateFormatter setCalendar:calendar];
 		[_naturalDateFormatter setTimeZone:timezone];
 		[_naturalDateFormatter setLocale:locale];
-		[_naturalDateFormatter setDateFormat:@"EEEE, MMMM d"];
+		[_naturalDateFormatter setDateFormat:@"EEE, MMMM d"];
         
         _naturalDayFormatter = [[NSDateFormatter alloc] init];
         [_naturalDayFormatter setCalendar:calendar];
@@ -61,7 +61,7 @@ static NSDateFormatter *_naturalTimeFormatter;
 }
 
 
-+ (NSString *)naturalDateStringFromDate:(NSDate *)date {
++ (NSString *)naturalDateStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz {
 	
 	if (date) {
 		NSDate *now = [NSDate date];
@@ -75,18 +75,30 @@ static NSDateFormatter *_naturalTimeFormatter;
 		BOOL yesterday = [todayAtMidnight timeIntervalSinceDate:date] > 0.0 && [todayAtMidnight timeIntervalSinceDate:date] <= 86400.0;
 		BOOL today = [date timeIntervalSinceDate:todayAtMidnight] >= 0.0 && [date timeIntervalSinceDate:todayAtMidnight] < 86400.0;
 		BOOL tomorrow = [date timeIntervalSinceDate:todayAtMidnight] >= 86400.0 && [date timeIntervalSinceDate:todayAtMidnight] < 172800.0;
-		
+        
+        NSString *timeString = nil;
+        
+        if (tz == nil || [[tz abbreviation] isEqualToString:[[NSTimeZone localTimeZone] abbreviation]]) {
+            timeString = [NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle];
+        }
+        else {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setCalendar:[NSCalendar autoupdatingCurrentCalendar]];
+            [formatter setTimeZone:tz];
+            [formatter setLocale:[NSLocale currentLocale]];
+            [formatter setDateFormat:@"h:mm a"];
+            timeString = [formatter stringFromDate:date];
+            timeString = [timeString stringByAppendingFormat:@" %@", [tz abbreviation]];
+        }
+        
 		if (yesterday) {
-			return [NSString stringWithFormat:NSLocalizedString(@"yesterday at %@", @"yesterday at 3:24pm"), 
-					[NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle]];
+			return [NSString stringWithFormat:NSLocalizedString(@"yesterday %@", @"yesterday at 3:24pm"), timeString];
 		}
 		else if (today) {
-			return [NSString stringWithFormat:NSLocalizedString(@"today at %@", @"today at 3:24pm"), 
-					[NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle]];
+			return [NSString stringWithFormat:NSLocalizedString(@"today %@", @"today at 3:24pm"), timeString];
 		}
 		else if (tomorrow) {
-			return [NSString stringWithFormat:NSLocalizedString(@"tomorrow at %@", @"tomorrow at 3:24pm"), 
-					[NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle]];
+			return [NSString stringWithFormat:NSLocalizedString(@"tomorrow %@", @"tomorrow at 3:24pm"), timeString];
 		}
 		else {
 			return [_naturalDateFormatter stringFromDate:date];

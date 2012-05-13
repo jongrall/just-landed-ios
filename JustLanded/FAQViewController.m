@@ -148,9 +148,17 @@
 
 
 - (void)viewDidUnload {
-	self.faqWebView.delegate = nil;
+    [super viewDidUnload];
 	self.faqWebView = nil;
-	[super viewDidUnload];
+    _noConnectionOverlay = nil;
+    _serverErrorOverlay = nil;
+}
+
+
+- (void)dealloc {
+    faqWebView.delegate = nil;
+    _noConnectionOverlay.delegate = nil;
+    _serverErrorOverlay.delegate = nil;
 }
 
 @end

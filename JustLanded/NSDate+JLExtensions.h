@@ -12,7 +12,7 @@
 
 + (NSDate *)dateWithTimestamp:(NSNumber *)timestamp;
 + (NSDate *)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag;
-+ (NSString *)naturalDateStringFromDate:(NSDate *)date;
++ (NSString *)naturalDateStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
 + (NSString *)naturalDayStringFromDate:(NSDate *)date;
 + (NSString *)naturalTimeStringFromDate:(NSDate *)date;
 + (NSString *)prettyPrintTimeDifference:(NSDate *)date;

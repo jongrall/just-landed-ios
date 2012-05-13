@@ -16,6 +16,7 @@
 @property (strong, nonatomic) NSString *city;
 @property (strong, nonatomic) CLLocation *location;
 @property (strong, nonatomic) NSString *terminal;
+@property (strong, nonatomic) NSTimeZone *timezone;
 @property (nonatomic, readonly) NSString *bestCode;
 
 - (id)initWithAirportInfo:(NSDictionary *)info;

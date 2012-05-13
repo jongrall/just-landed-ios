@@ -65,12 +65,12 @@
 - (void)flightTrackFailed:(NSNotification *)notification;
 - (void)startUpdating;
 - (void)stopUpdating;
-- (void)stopTrackingAfterError;
 - (void)stopTrackingUserInitiated:(BOOL)userInitiated;
 - (void)setFlightNumber:(NSString *)fnum;
 - (void)setStatus:(FlightStatus)newStatus;
 - (NSString *)landsAtLabelText;
 - (NSArray *)landsAtTimeParts;
+- (NSArray *)landsAtTimeOffsets;
 - (NSString *)landsInLabelText;
 - (NSArray *)landsInTimeParts;
 - (NSString *)terminalLabelText;
@@ -219,7 +219,7 @@
     self = [super init];
     
     if (self) {
-        NSAssert((aFlight != nil), @"Flight to track is nil!");
+        NSAssert(aFlight != nil, @"Flight to track is nil!");
         _trackedFlight = aFlight;
         
         // Listen for location update notifications
@@ -256,6 +256,9 @@
                                                  selector:@selector(flightTrackFailed:)
                                                      name:FlightTrackFailedNotification 
                                                    object:aFlight];
+        
+        // Track the flight
+        [self refresh];
     }
     
     return self;
@@ -296,13 +299,8 @@
     [_updateTimer invalidate];
     [_alternatingLabelTimer invalidate];
     [_flightProgressView stopAnimating];
-    [delegate didFinishTrackingUserInitiated:userInitiated];
+    [delegate didFinishTracking:self userInitiated:userInitiated];
     [self dismissModalViewControllerAnimated:YES];
-}
-
-
-- (void)stopTrackingAfterError {
-    [self stopTrackingUserInitiated:NO];
 }
 
 
@@ -358,10 +356,10 @@
     // Add the lands at labels
     _landsAtLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:LANDS_AT_LABEL_FRAME];
     _landsAtLabel.text = [self landsAtLabelText];
-    _landsAtTimeLabel = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle], [JLTrackStyles timeUnitLabelStyle], nil]
+    _landsAtTimeLabel = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle], [JLTrackStyles timeUnitLabelStyle], [JLTrackStyles timezoneLabelStyle], nil]
                                                                 frame:LANDS_AT_TIME_FRAME];
     _landsAtTimeLabel.parts = [self landsAtTimeParts];
-    _landsAtTimeLabel.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero], [NSValue valueWithCGSize:TIME_UNIT_OFFSET], nil];
+    _landsAtTimeLabel.offsets = [self landsAtTimeOffsets];
     
     // Add the lands in labels
     _landsInLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:LANDS_AT_LABEL_FRAME];
@@ -433,9 +431,10 @@
     [self.view addSubview:_lookupButton];
     [self.view addSubview:_statusLabel];
     [self.view addSubview:_arrowView];
-    [self.view addSubview:_originCodeLabel];
-    [self.view addSubview:_destinationCodeLabel];
     [self.view addSubview:_originCityLabel];
+    [self.view addSubview:_originCodeLabel];
+    [self.view addSubview:_destinationCityLabel];
+    [self.view addSubview:_destinationCodeLabel];
     [self.view addSubview:_flightProgressView];
     [self.view addSubview:_landsAtLabel];
     [self.view addSubview:_landsAtTimeLabel];
@@ -449,15 +448,8 @@
     [self.view addSubview:_drivingTimeValueLabel];
     [self.view addSubview:_bagClaimLabel];
     [self.view addSubview:_bagClaimValueLabel];
-    [self.view addSubview:_destinationCityLabel];
     [self.view addSubview:_leaveMeter];
     [self.view addSubview:_directionsButton];
-}
-
-
-- (void)viewDidLoad {
-    // Track the flight as soon as the view loads
-    [self refresh];
 }
 
 
@@ -548,8 +540,17 @@
     else {
         timeString = [NSDate naturalTimeStringFromDate:[_trackedFlight estimatedArrivalTime]];
     }
-                 
+    
+    timeString = [timeString stringByAppendingFormat:@" %@", [[NSTimeZone localTimeZone] abbreviation]];
     return [timeString componentsSeparatedByString:@" "];
+}
+
+
+- (NSArray *)landsAtTimeOffsets {
+    NSArray *parts = [self landsAtTimeParts];
+    NSString *amOrPm = [parts objectAtIndex:1]; // Reliable harcoded index for PM/AM
+    CGSize amPmSize = [amOrPm sizeWithFont:[[[JLTrackStyles timeUnitLabelStyle] textStyle] font]];
+    return [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero], [NSValue valueWithCGSize:TIME_UNIT_OFFSET_ALT], [NSValue valueWithCGSize:CGSizeMake(TIMEZONE_OFFSET.width - amPmSize.width, TIMEZONE_OFFSET.height)], nil];
 }
 
 
@@ -751,10 +752,7 @@
         case TrackFailureInvalidFlightNumber:
         case TrackFailureOldFlight: {
             // Old flight, not found flight, invalid flight is not recoverable, go back to lookup interface
-            // DICUSSION: Delay needed in case the screen is still flipping over when the error occurred and a call to dismiss the modal
-            // view controller would have no effect. Ugly, but works. Alternative was to delay tracking until the flip had completed
-            // which slowed the whole experience down for everyon. This seemed like the better choice.
-            [self performSelector:@selector(stopTrackingAfterError) withObject:nil afterDelay:1.0];
+            [self stopTrackingUserInitiated:NO];
             break;
         }
         case TrackFailureNoConnection: {
@@ -945,7 +943,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)dealloc {
+    [[JustLandedSession sharedSession] stopLocationServices];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_updateTimer invalidate];
+    [_alternatingLabelTimer invalidate];
+    _noConnectionOverlay.delegate = nil;
+    _serverErrorOverlay.delegate = nil;
 }
 
 @end

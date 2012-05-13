@@ -467,32 +467,11 @@ static NSArray *_aircraftTypes;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL)isEqual:(id)object {
-    // Want to be able to test equality of Flights by their data - they must match on all properties
+    // Want to be able to test equality of Flights by their flightID (data may be different depending on when it was fetched)
     
     if ([object isKindOfClass:[self class]]) {
         Flight *aFlight = (Flight *)object;
-        return ([flightID isEqualToString:aFlight.flightID] &&
-                [flightNumber isEqualToString:aFlight.flightNumber] &&
-                aircraftType == aFlight.aircraftType &&
-                timeOfDay == aFlight.timeOfDay &&
-                
-                [actualArrivalTime isEqualToDate:aFlight.actualArrivalTime] &&
-                [actualDepartureTime isEqualToDate:aFlight.actualDepartureTime] &&
-                [estimatedArrivalTime isEqualToDate:aFlight.estimatedArrivalTime] &&
-                [scheduledDepartureTime isEqualToDate:aFlight.scheduledDepartureTime] &&
-                [_scheduledArrivalTime isEqualToDate:aFlight.scheduledArrivalTime] &&
-                [lastUpdated isEqualToDate:aFlight.lastUpdated] &&
-                [leaveForAirportTime isEqualToDate:aFlight.leaveForAirportTime] &&
-                drivingTime == aFlight.drivingTime &&
-                scheduledFlightDuration == aFlight.scheduledFlightDuration &&
-                
-                [origin isEqual:aFlight.origin] &&
-                [destination isEqual:aFlight.destination] &&
-                
-                status == aFlight.status &&
-                [detailedStatus isEqualToString:aFlight.detailedStatus] &&
-                
-                [_lastTracked isEqualToDate:aFlight.lastTracked]);
+        return [flightID isEqualToString:aFlight.flightID];
     }
     else {
         return NO;

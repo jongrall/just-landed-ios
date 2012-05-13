@@ -490,10 +490,10 @@ static NSRegularExpression *_flightNumberRegex;
     // Display time information about the flight
     switch (aFlight.status) {
         case LANDED:
-            cell.landingTime = [[NSDate naturalDateStringFromDate:[aFlight actualArrivalTime]] uppercaseString];
+            cell.landingTime = [[NSDate naturalDateStringFromDate:[aFlight actualArrivalTime] withTimezone:aFlight.destination.timezone] uppercaseString];
             break;
         default:
-            cell.landingTime = [[NSDate naturalDateStringFromDate:[aFlight scheduledArrivalTime]] uppercaseString];
+            cell.landingTime = [[NSDate naturalDateStringFromDate:[aFlight scheduledArrivalTime] withTimezone:aFlight.destination.timezone] uppercaseString];
             break;
     }
     
@@ -513,16 +513,17 @@ static NSRegularExpression *_flightNumberRegex;
 #pragma mark - FlightTrackViewControllerDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)didFinishTrackingUserInitiated:(BOOL)user_flag {
+- (void)didFinishTracking:(FlightTrackViewController *)controller userInitiated:(BOOL)user_flag {
+    controller.delegate = nil;
     self._flightResultsTable.hidden = YES;
     self._flightResultsTableFrame.hidden = YES;
     self._lookupButton.hidden = NO;
     [_cloudLayer startAnimating]; // Begin animating the cloud layer
     
-    Flight *flight = [[[JustLandedSession sharedSession] currentlyTrackedFlights] lastObject];
+    Flight *flight = controller.trackedFlight;
     
     // If the user stopped tracking, pre-fill the field with the flight they were tracking
-    if (user_flag && flight) {
+    if (user_flag) {
         self._flightNumberField.text = flight.flightNumber;
         [FlurryAnalytics logEvent:FY_STOPPED_TRACKING_FLIGHT 
                    withParameters:[NSDictionary dictionaryWithObject:(flight.status == LANDED) ? @"YES" : @"NO"
@@ -535,10 +536,8 @@ static NSRegularExpression *_flightNumberRegex;
     
     self._lookupButton.enabled = [self isFlightNumValid:_flightNumberField.text];
         
-    if (flight) {
-        [flight stopTracking];
-        [[JustLandedSession sharedSession] removeTrackedFlight:flight];
-    }
+    [[JustLandedSession sharedSession] removeTrackedFlight:flight];
+    [flight stopTracking];
     
     // If they're no longer tracking any flights, stop location services
     if ([[[JustLandedSession sharedSession] currentlyTrackedFlights] count] == 0) {
@@ -558,8 +557,10 @@ static NSRegularExpression *_flightNumberRegex;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)dealloc {
-    [_cloudLayer stopAnimating];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    _flightNumberField.delegate = nil;
+    _flightResultsTable.delegate = nil;
+    [_cloudLayer stopAnimating];
 }
 
 @end

@@ -16,16 +16,19 @@ NSString * const APP_ID = @"520338005";
 
 #if defined(CONFIGURATION_Debug)
 NSString * const UUIDKey = @"UUIDKeyDev";
+NSString * const BeganUsingDate = @"BeganUsingKeyDev";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsDev.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKeyDev";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKeyDev";
 #elif defined(CONFIGURATION_Adhoc)
 NSString * const UUIDKey = @"UUIDKeyStaging";
+NSString * const BeganUsingDate = @"BeganUsingKeyStaging";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsStaging.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKeyStaging";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKeyStaging";
 #else
 NSString * const UUIDKey = @"UUIDKey";
+NSString * const BeganUsingDate = @"BeganUsingKey";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKey";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKey";

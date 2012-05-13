@@ -21,6 +21,7 @@
 @synthesize location;
 
 @synthesize terminal;
+@synthesize timezone;
 
 
 - (id)initWithAirportInfo:(NSDictionary *)info {
@@ -33,6 +34,11 @@
         self.location = [[CLLocation alloc] initWithLatitude:[[info valueForKeyOrNil:@"latitude"] doubleValue]
                                                    longitude:[[info valueForKeyOrNil:@"longitude"] doubleValue]];
         self.terminal = [info valueForKeyOrNil:@"terminal"];
+        
+        NSString *tzName = [info valueForKeyOrNil:@"timezone"];
+        if (tzName && [tzName length] > 0) {
+            self.timezone = [NSTimeZone timeZoneWithName:tzName];
+        }
     }
     
     return self;
@@ -96,22 +102,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Superclass overrides
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (BOOL)isEqual:(id)object {
-    // We need to be able to test whether two airports are equal - all their properties must match
-    if ([object isKindOfClass:[self class]]) {
-        Airport *anAirport = (Airport *)object;
-        
-        return ([iataCode isEqualToString:anAirport.iataCode] &&
-                [icaoCode isEqualToString:anAirport.icaoCode] &&
-                [city isEqualToString:anAirport.city] &&
-                [location isEqual:anAirport.location] &&
-                [terminal isEqualToString:anAirport.terminal]);
-    }
-    else {
-        return NO;
-    }
-}
 
 
 - (NSString *)description {

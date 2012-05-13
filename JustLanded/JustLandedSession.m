@@ -75,7 +75,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
             _currentlyTrackedFlights = [[NSMutableArray alloc] init];
         }
         
-        // Archive tracked flights whenever a flight is updated
+        // Archive tracked flights whenever any flight is updated
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(archiveCurrentlyTrackedFlights) 
                                                      name:DidTrackFlightNotification 
@@ -98,6 +98,14 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
                                                    object:[UIApplication sharedApplication]];
     }
     return self;
+}
+
+
+- (void)dealloc {
+    // Note: Should never be called since singleton, but implemented anyway
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    _locationManager.delegate = nil;
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +135,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
         [self archiveCurrentlyTrackedFlights];
     }
     else {
+        _currentlyTrackedFlights = [[NSMutableArray alloc] init];
         [self deleteArchivedTrackedFlights];
     }
 }
@@ -192,7 +201,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 
 - (void)stopLocationServices {
-	[self._locationManager stopMonitoringSignificantLocationChanges];
+    [self._locationManager stopUpdatingLocation];
 }
 
 
@@ -316,6 +325,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
         NSString *uuid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
         currentUUID = [NSString stringWithString:uuid];
         [[NSUserDefaults standardUserDefaults] setObject:uuid forKey:UUIDKey];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:BeganUsingDate];
         [[NSUserDefaults standardUserDefaults] synchronize];
         CFRelease(uuidRef);
     }
@@ -381,8 +391,11 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 - (BOOL)isEligibleToRate {
     NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
     NSNumber *hasBeenAsked = [[NSUserDefaults standardUserDefaults] objectForKey:HasBeenAskedToRateKey];
+    NSDate *beganUsing = [[NSUserDefaults standardUserDefaults] objectForKey:BeganUsingDate];
+    BOOL oldEnoughUser = beganUsing && [[NSDate date] timeIntervalSinceDate:beganUsing] > (7.0 * 86400.0);
+    BOOL appInForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
     
-    if (trackCount && !hasBeenAsked) {
+    if (trackCount && !hasBeenAsked && oldEnoughUser && appInForeground) {
         NSUInteger currentCount = [trackCount integerValue];
         
         if (currentCount >= RATINGS_USAGE_THRESHOLD && ![[BWQuincyManager sharedQuincyManager] didCrashInLastSession]) {

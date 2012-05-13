@@ -27,6 +27,8 @@ CGRect const FLIGHT_PROGRESS_FRAME = {0.0f, 150.0f, 320.0f, 70.0f};
 CGRect const LANDS_AT_LABEL_FRAME = {19.0f, 244.5f, 120.0f, 20.0f};
 CGRect const LANDS_AT_TIME_FRAME = {19.0f, 253.5f, 160.0f, 40.0f};
 CGSize const TIME_UNIT_OFFSET = {1.0f, 23.0f};
+CGSize const TIME_UNIT_OFFSET_ALT = {1.0f, 11.0f};
+CGSize const TIMEZONE_OFFSET = {0.0f, 23.0f};
 CGRect const TERMINAL_LABEL_FRAME = {19.0f, 317.5f, 120.0f, 20.0f};
 CGRect const TERMINAL_VALUE_FRAME = {19.0f, 326.5f, 160.0f, 40.0f};
 CGRect const DRIVING_TIME_LABEL_FRAME = {19.0f, 392.0f, 120.0f, 20.0f};
@@ -49,6 +51,7 @@ static LabelStyle *_cityNameStyle;
 static LabelStyle *_flightDataLabelStyle;
 static LabelStyle *_flightDataValueStyle;
 static LabelStyle *_timeUnitLabelStyle;
+static LabelStyle *_timezoneLabelStyle;
 static LabelStyle *_leaveTimeLargeLabelStyle;
 static LabelStyle *_leaveTimeLargeUnitStyle;
 static LabelStyle *_leaveTimeSmallLabelStyle;
@@ -203,7 +206,7 @@ static LabelStyle *_leaveNowStyle;
 + (LabelStyle *)timeUnitLabelStyle {
     if (!_timeUnitLabelStyle) {
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:11.0f] 
-                                                         color:[UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
+                                                         color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
@@ -216,6 +219,25 @@ static LabelStyle *_leaveNowStyle;
     
     return _timeUnitLabelStyle;
 }
+
+
++ (LabelStyle *)timezoneLabelStyle {
+    if (!_timezoneLabelStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:11.0f] 
+                                                         color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:0.5f]
+                                                   shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
+                                                  shadowOffset:CGSizeMake(0.0f, 1.0f) 
+                                                    shadowBlur:0.0f];
+        
+        _timezoneLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                    backgroundColor:nil
+                                                          alignment:UITextAlignmentLeft
+                                                      lineBreakMode:UILineBreakModeClip];
+    }
+    
+    return _timezoneLabelStyle;
+}
+
 
 + (LabelStyle *)leaveTimeLargeLabelStyle {
     if (!_leaveTimeLargeLabelStyle) {

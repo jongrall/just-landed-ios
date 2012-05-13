@@ -12,6 +12,7 @@
 
 extern NSString * const APP_ID;
 extern NSString * const UUIDKey;
+extern NSString * const BeganUsingDate;
 extern NSString * const ARCHIVED_FLIGHTS_FILE;
 extern NSString * const HasBeenAskedToRateKey;
 extern NSString * const FlightsTrackedCountKey;
