@@ -68,7 +68,7 @@ typedef enum {
     JLLabel *companyLabel = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles companyLabelStyle] frame:COMPANY_NAME_FRAME];
     companyLabel.text = NSLocalizedString(@"Little Details LLC", @"Little Details LLC");
     
-    UIImageView *divider = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"about_divider"]];
+    UIImageView *divider = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"divider"]];
     divider.frame = DIVIDER_FRAME;
     
     JLLabel *versionLabel = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles versionLabelStyle] frame:VERSION_FRAME];

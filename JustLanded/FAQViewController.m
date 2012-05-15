@@ -58,8 +58,15 @@
                                          NSHTTPURLResponse *response = [operation response];
                                          
                                          if (!_serverErrorOverlay) {
-                                             _serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:self.view.bounds 
+                                             _serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                                                                       0.0f,
+                                                                                                                       320.0f,
+                                                                                                                       460.0f) 
                                                                                                   errorType:ERROR_500];
+                                             _serverErrorOverlay.frame = CGRectMake(0.0f,
+                                                                                    -44.0f,
+                                                                                    320.0f,
+                                                                                    460.0f);
                                              _serverErrorOverlay.delegate = self;
                                          }
                                          
@@ -81,7 +88,18 @@
                                          else {
                                              // Handle no connection
                                              if (!_noConnectionOverlay) {
-                                                 _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:self.view.bounds];
+                                                 _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                                                                             0.0f,
+                                                                                                                             320.0f,
+                                                                                                                             460.0f)];
+                                                 _noConnectionOverlay.frame = CGRectMake(0.0f,
+                                                                                        -44.0f,
+                                                                                        320.0f,
+                                                                                        460.0f);
+                                                 _noConnectionOverlay.noConnectionImageView.frame = CGRectMake(_noConnectionOverlay.noConnectionImageView.frame.origin.x,
+                                                                                                               70.0f,
+                                                                                                               _noConnectionOverlay.noConnectionImageView.frame.size.width,
+                                                                                                               _noConnectionOverlay.noConnectionImageView.frame.size.height);
                                                  _noConnectionOverlay.delegate = self;
                                              }
                                              
@@ -101,7 +119,14 @@
     [faqWebView setHidden:YES];
     
     if (!_loadingOverlay) {
-        _loadingOverlay = [[JLLoadingView alloc] initWithFrame:self.view.bounds];
+        _loadingOverlay = [[JLLoadingView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                          0.0f,
+                                                                          320.0f,
+                                                                          460.0f)];
+        _loadingOverlay.frame = CGRectMake(0.0f,
+                                           -44.0f,
+                                           320.0f,
+                                           460.0f);
     }
     
     [self.view addSubview:_loadingOverlay];
@@ -126,13 +151,23 @@
 
 - (void)loadView {
     UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f)];
-    mainView.backgroundColor = [UIColor clearColor];
+    mainView.backgroundColor = [UIColor colorWithRed:231/255.0f green:228/255.0f blue:223.0f/255.0f alpha:1.0f];
     self.view = mainView;
     
-	self.faqWebView = [[JLWebView alloc] initWithFrame:self.view.bounds];
-	self.faqWebView.dataDetectorTypes = UIDataDetectorTypeLink | UIDataDetectorTypePhoneNumber;
+    // Add a black BG
+    UIView *blackBG = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];
+    blackBG.backgroundColor = [UIColor blackColor];
+    
+	self.faqWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f)];
+    self.faqWebView.scrollView.alwaysBounceVertical = NO;
+    self.faqWebView.scrollView.alwaysBounceHorizontal = NO;
+    self.faqWebView.scrollView.bounces = NO;
+	self.faqWebView.dataDetectorTypes = UIDataDetectorTypeLink;
     self.faqWebView.backgroundColor = [UIColor clearColor];
+    self.faqWebView.layer.cornerRadius = 6.0f;
+    self.faqWebView.clipsToBounds = YES;
     faqWebView.hidden = YES;
+    [self.view addSubview:blackBG];
 	[self.view addSubview:faqWebView];
 }
 

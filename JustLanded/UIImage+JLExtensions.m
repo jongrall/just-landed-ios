@@ -25,9 +25,13 @@
 
 
 + (UIImage *)imageNamed:(NSString *)name withColor:(UIColor *)color {
-	if (name == nil || color == nil) {
+	if (name == nil) {
 		return nil;
 	}
+    
+    if (color == nil) {
+        return [UIImage imageNamed:name];
+    }
 	
 	// load the image
 	UIImage *img = [UIImage imageNamed:name];

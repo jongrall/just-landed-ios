@@ -34,7 +34,6 @@
     #import "JLNoConnectionView.h"
     #import "JLServerErrorView.h"
     #import "JLLoadingView.h"
-    #import "JLWebView.h"
 
     // 3rd Party
     #import "FlurryAnalytics.h"

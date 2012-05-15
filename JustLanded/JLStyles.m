@@ -276,8 +276,8 @@ static ButtonStyle *_defaultButtonStyle;
 
 + (LabelStyle *)loadingLabelStyle  {
     if (!_loadingLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:24.0f] 
-                                                         color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f] 
+                                                         color:[UIColor colorWithRed:46.0f/255.0f green:46.0f/255.0f blue:46.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
@@ -294,8 +294,8 @@ static ButtonStyle *_defaultButtonStyle;
 
 + (LabelStyle *)noConnectionLabelStyle {
     if (!_noConnectionLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:24.0f] 
-                                                         color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f] 
+                                                         color:[UIColor colorWithRed:46.0f/255.0f green:46.0f/255.0f blue:46.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
@@ -312,8 +312,8 @@ static ButtonStyle *_defaultButtonStyle;
 
 + (LabelStyle *)errorDescriptionLabelStyle {
     if (!_errorDescriptionLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:18.0f] 
-                                                         color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:13.0f] 
+                                                         color:[UIColor colorWithRed:46.0f/255.0f green:46.0f/255.0f blue:46.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];

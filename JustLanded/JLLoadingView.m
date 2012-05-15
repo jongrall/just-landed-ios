@@ -27,23 +27,22 @@
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         
-        // TODO: Add the background
-        UIImageView *bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tracking_footer_bg"]];
+        UIImageView *bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"overlay_screens_bg"]];
         bgView.frame = frame;
         
         // Add the label
         _loadingLabel = [[JLLabel alloc] initWithLabelStyle:[JLStyles loadingLabelStyle] 
                                                       frame:CGRectMake(10.0f,
-                                                                       (frame.size.height - 30.0f)/2.0f - 50.0f,
+                                                                       294.0f,
                                                                        frame.size.width - 20.0f,
                                                                        30.0f)];
         _loadingLabel.text = NSLocalizedString(@"Loading...", @"Loading...");
         
         
-        // TODO: Configure the loading spinner;
+        // Configure the loading spinner;
         _loadingSpinner = [[JLSpinner alloc] initWithFrame:CGRectZero];
         _loadingSpinner.frame = CGRectMake((frame.size.width - _loadingSpinner.frame.size.width) / 2.0f,
-                                           (frame.size.height - _loadingSpinner.frame.size.height) / 2.0f,
+                                           130.0f,
                                            _loadingSpinner.frame.size.width,
                                            _loadingSpinner.frame.size.height);
         

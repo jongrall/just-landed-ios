@@ -26,7 +26,7 @@
     if (self) {
         _errorDescriptionLabel = [[JLLabel alloc] initWithLabelStyle:[JLStyles errorDescriptionLabelStyle] 
                                                                frame:CGRectMake(10.0f,
-                                                                                (frame.size.height - 50.0f)/2.0f - 80.0f,
+                                                                                321.0f,
                                                                                 frame.size.width - 20.0f,
                                                                                 50.0f)];
         
@@ -46,14 +46,38 @@
     switch (type) {
         case ERROR_503: {
             self.noConnectionText = NSLocalizedString(@"Service Outage", @"Service Outage");
-            _errorDescriptionLabel.text = NSLocalizedString(@"Just Landed is currently unavailable. Please try again later.", @"503 description");
-            self.noConnectionImage = [UIImage imageNamed:@"Icon.png"];             
+            _errorDescriptionLabel.text = NSLocalizedString(@"Just Landed is currently unavailable.", @"503 description");
+            self.noConnectionImageView.image = [UIImage imageNamed:@"server_down" 
+                                                         withColor:nil
+                                                       shadowColor:[UIColor whiteColor] 
+                                                      shadowOffset:CGSizeMake(0.0f, 1.0f)
+                                                        shadowBlur:0.0f];
+            self.noConnectionImageView.frame = CGRectMake((320.0f - self.noConnectionImageView.image.size.width) / 2.0f,
+                                                          100.0f,
+                                                          self.noConnectionImageView.image.size.width,
+                                                          self.noConnectionImageView.image.size.height);
+            self.divider.frame = CGRectMake(self.divider.frame.origin.x,
+                                            353.0f,
+                                            self.divider.frame.size.width,
+                                            self.divider.frame.size.height);
             break;
         }
         default: {
             self.noConnectionText = NSLocalizedString(@"Server Error", @"Server Error");
             _errorDescriptionLabel.text = NSLocalizedString(@"Our engineers have been notified.", @"500 description");
-            self.noConnectionImage = [UIImage imageNamed:@"Icon.png"];
+            self.noConnectionImageView.image = [UIImage imageNamed:@"server_down" 
+                                                         withColor:nil
+                                                       shadowColor:[UIColor whiteColor] 
+                                                      shadowOffset:CGSizeMake(0.0f, 1.0f)
+                                                        shadowBlur:0.0f];
+            self.noConnectionImageView.frame = CGRectMake((320.0f - self.noConnectionImageView.image.size.width) / 2.0f,
+                                                          100.0f,
+                                                          self.noConnectionImageView.image.size.width,
+                                                          self.noConnectionImageView.image.size.height);
+            self.divider.frame = CGRectMake(self.divider.frame.origin.x,
+                                            353.0f,
+                                            self.divider.frame.size.width,
+                                            self.divider.frame.size.height);
             break;
         }
     }

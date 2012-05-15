@@ -20,8 +20,10 @@
 @property (strong, nonatomic) JLButton *_lookupButton;
 @property (strong, nonatomic) JLFlightInputField *_flightNumberField;
 @property (strong, nonatomic) UITableView *_flightResultsTable;
+@property (strong, nonatomic) UIImageView *_airplane;
 @property (strong, nonatomic) UIImageView *_flightResultsTableFrame;
 @property (strong, nonatomic) JLSpinner *_lookupSpinner;
+@property (strong, nonatomic) NSTimer *_airplaneTimer;
 @property (strong, nonatomic) NSArray *_flightResults;
 @property (strong, nonatomic) JLCloudLayer *_cloudLayer;
 
@@ -33,6 +35,7 @@
 - (void)indicateStoppedLookingUp;
 - (BOOL)isFlightNumValid:(NSString *)flightNum;
 - (void)showAboutScreen;
+- (void)animatePlane;
 
 @end
 
@@ -47,8 +50,10 @@
 @synthesize _lookupButton;
 @synthesize _flightNumberField;
 @synthesize _flightResultsTable;
+@synthesize _airplane;
 @synthesize _flightResultsTableFrame;
 @synthesize _lookupSpinner;
+@synthesize _airplaneTimer;
 @synthesize _flightResults;
 @synthesize _cloudLayer;
 
@@ -97,6 +102,7 @@ static NSRegularExpression *_flightNumberRegex;
     controller.delegate = self;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [_cloudLayer stopAnimating]; // Stop animating the clouds
+    [self stopAnimatingPlane];
     [self presentModalViewController:controller animated:animateFlip];
     
     // If animated, was user-initiated, record the track
@@ -334,6 +340,14 @@ static NSRegularExpression *_flightNumberRegex;
     self._flightResultsTable = resultsTable;
     [self.view addSubview:resultsTable];
     
+    // Add the airplane
+    _airplane = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plane_contrail"]];
+    _airplane.frame = CGRectMake(-_airplane.frame.size.width, // Place offscreen
+                                 85.0f,
+                                 _airplane.frame.size.width,
+                                 _airplane.frame.size.height);
+    [self.view addSubview:_airplane];
+    
     // Add the table frame
     UIImage *tableFrame = [[UIImage imageNamed:@"table_frame"] resizableImageWithCapInsets:UIEdgeInsetsMake(11.0f, 11.0f, 11.0f, 11.0f)];
     self._flightResultsTableFrame = [[UIImageView alloc] initWithImage:tableFrame];
@@ -341,13 +355,14 @@ static NSRegularExpression *_flightNumberRegex;
     [self.view addSubview:_flightResultsTableFrame];
     
     // Add the lookup spinner
-    _lookupSpinner = [[JLSpinner alloc] initWithFrame:CGRectMake(60.0f, 240.0f, 200.0f, 200.0f)];
+    _lookupSpinner = [[JLSpinner alloc] initWithFrame:CGRectMake(103.0f, 278.0f, 114.0f, 115.0f)];
     [self.view addSubview:_lookupSpinner];
 }
 
 
 - (void)viewDidLoad {
     [_cloudLayer startAnimating];
+    [self startAnimatingPlane];
 }
 
 
@@ -360,6 +375,7 @@ static NSRegularExpression *_flightNumberRegex;
     self._flightResultsTable = nil;
     self._flightResultsTableFrame = nil;
     self._lookupSpinner = nil;
+    self._airplane = nil;
     self._cloudLayer = nil;
 }
 
@@ -367,6 +383,54 @@ static NSRegularExpression *_flightNumberRegex;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Supports portrait only
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+- (void)startAnimatingPlane {
+    if (!_airplaneTimer || ![_airplaneTimer isValid]) {
+        // Reset
+        [_airplane setFrame:CGRectMake(-_airplane.frame.size.width,
+                                       _airplane.frame.origin.y,
+                                       _airplane.frame.size.width,
+                                       _airplane.frame.size.height)];
+        
+        _airplaneTimer = [NSTimer timerWithTimeInterval:(arc4random() % 30) 
+                                                 target:self
+                                               selector:@selector(animatePlane) 
+                                               userInfo:nil 
+                                                repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:_airplaneTimer forMode:NSRunLoopCommonModes];
+    }
+}
+
+
+- (void)stopAnimatingPlane {
+    [_airplaneTimer invalidate];
+}
+
+
+- (void)animatePlane {
+    // Start the animation over only if the plane is in the reset position
+    if (_airplane.frame.origin.x <= -_airplane.frame.size.width) {
+        //Reset
+        [UIView animateWithDuration:120.0 
+                              delay:0.0
+                            options:UIViewAnimationCurveLinear
+                         animations:^{
+                             [_airplane setFrame:CGRectMake(_airplane.frame.size.width,
+                                                            _airplane.frame.origin.y,
+                                                            _airplane.frame.size.width,
+                                                            _airplane.frame.size.height)];
+                         }
+                         completion:^(BOOL finished) {
+                             if (finished) {
+                                 [_airplane setFrame:CGRectMake(-_airplane.frame.size.width,
+                                                                _airplane.frame.origin.y,
+                                                                _airplane.frame.size.width,
+                                                                _airplane.frame.size.height)];
+                             }
+                         }];
+    }
 }
 
 
@@ -519,6 +583,7 @@ static NSRegularExpression *_flightNumberRegex;
     self._flightResultsTableFrame.hidden = YES;
     self._lookupButton.hidden = NO;
     [_cloudLayer startAnimating]; // Begin animating the cloud layer
+    [self startAnimatingPlane];
     
     Flight *flight = controller.trackedFlight;
     
@@ -561,6 +626,7 @@ static NSRegularExpression *_flightNumberRegex;
     _flightNumberField.delegate = nil;
     _flightResultsTable.delegate = nil;
     [_cloudLayer stopAnimating];
+    [self stopAnimatingPlane];
 }
 
 @end

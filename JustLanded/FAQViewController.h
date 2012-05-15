@@ -19,6 +19,6 @@
 
 }
 
-@property (nonatomic, retain) JLWebView *faqWebView;
+@property (nonatomic, retain) UIWebView *faqWebView;
 
 @end

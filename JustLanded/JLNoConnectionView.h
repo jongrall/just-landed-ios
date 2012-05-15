@@ -16,7 +16,8 @@
 @interface JLNoConnectionView : UIView
 
 @property (weak, nonatomic) id <NoConnectionDelegate> delegate;
-@property (strong, nonatomic) UIImage *noConnectionImage;
+@property (strong, nonatomic) UIImageView *noConnectionImageView;
+@property (strong, nonatomic) UIImageView *divider;
 @property (copy, nonatomic) NSString *noConnectionText;
 @property (readonly, nonatomic) JLButton *tryAgainbutton;
 

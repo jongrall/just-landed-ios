@@ -11,12 +11,14 @@
 @implementation JLSpinner
 
 - (id)initWithFrame:(CGRect)frame {
-    CGRect fixedSizeFrame = CGRectMake(frame.origin.x, frame.origin.y, 200.0f, 200.0f);
+    CGRect fixedSizeFrame = CGRectMake(frame.origin.x, frame.origin.y, 114.0f, 115.0f);
     
     self = [super initWithFrame:fixedSizeFrame];
     if (self) {
-        self.animationDuration = 1.0;
-        self.animationImages = [NSArray arrayWithObjects:[UIImage imageNamed:@"lookup"], nil];
+        self.animationDuration = 0.15;
+        self.animationImages = [NSArray arrayWithObjects:[UIImage imageNamed:@"spinner_1"],
+                                [UIImage imageNamed:@"spinner_2"],
+                                [UIImage imageNamed:@"spinner_3"], nil];
     }
     return self;
 }
