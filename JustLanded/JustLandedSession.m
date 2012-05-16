@@ -120,6 +120,17 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 - (void)addTrackedFlight:(Flight *)aFlight {
     if (![_currentlyTrackedFlights containsObject:aFlight]) { // Don't allow duplicates
         [_currentlyTrackedFlights addObject:aFlight];
+        
+        // Untrack any flights that are not the current one
+        NSMutableArray *toRemove = [[NSMutableArray alloc] init];
+        for (Flight *f in _currentlyTrackedFlights) {
+            if (f != aFlight) {
+                [f stopTracking];
+                [toRemove addObject:f];
+            }
+        }
+        
+        [_currentlyTrackedFlights removeObjectsInArray:toRemove];
     
         // Re-archive whenever a new flight is added
         [self archiveCurrentlyTrackedFlights];
@@ -390,9 +401,9 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 - (BOOL)isEligibleToRate {
     NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
-    NSNumber *hasBeenAsked = [[NSUserDefaults standardUserDefaults] objectForKey:HasBeenAskedToRateKey];
+    BOOL hasBeenAsked = [[[NSUserDefaults standardUserDefaults] objectForKey:HasBeenAskedToRateKey] boolValue];
     NSDate *beganUsing = [[NSUserDefaults standardUserDefaults] objectForKey:BeganUsingDate];
-    BOOL oldEnoughUser = beganUsing && [[NSDate date] timeIntervalSinceDate:beganUsing] > (7.0 * 86400.0);
+    BOOL oldEnoughUser = beganUsing && [[NSDate date] timeIntervalSinceDate:beganUsing] > (3.0 * 86400.0);
     BOOL appInForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
     
     if (trackCount && !hasBeenAsked && oldEnoughUser && appInForeground) {

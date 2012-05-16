@@ -724,19 +724,22 @@
                                             afterDelay:4.0];
     
     if (!_updateTimer || ![_updateTimer isValid]) {
-        self._updateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 
+        self._updateTimer = [NSTimer timerWithTimeInterval:1.0 
                                                              target:self 
                                                            selector:@selector(updateDisplayedData)
                                                            userInfo:nil 
                                                             repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
     }
     
     if (!_alternatingLabelTimer || ![_alternatingLabelTimer isValid]) {
-        self._alternatingLabelTimer = [NSTimer scheduledTimerWithTimeInterval:4.0 
-                                                                       target:self 
-                                                                     selector:@selector(alternateData)
-                                                                     userInfo:nil 
-                                                                      repeats:YES];
+        self._alternatingLabelTimer = [NSTimer timerWithTimeInterval:4.0 
+                                                              target:self 
+                                                            selector:@selector(alternateData)
+                                                            userInfo:nil 
+                                                             repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:_alternatingLabelTimer forMode:NSRunLoopCommonModes];
+        [self._alternatingLabelTimer fire];
     }
 }
 
@@ -872,13 +875,14 @@
 
 
 - (void)fadeOut:(UIView *)aView fadeIn:(UIView *)anotherView {
+    anotherView.alpha = 0.0f;
+    
     [UIView animateWithDuration:0.5
                      animations:^{
                          aView.alpha = 0.0f;
                      }
                      completion:^(BOOL finished) {
                          anotherView.alpha = 0.0f;
-                         
                          [UIView animateWithDuration:0.5 
                                           animations:^{
                                               anotherView.alpha = 1.0f;
