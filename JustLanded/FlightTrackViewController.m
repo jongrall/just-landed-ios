@@ -50,7 +50,6 @@
 @property (strong, nonatomic) JLNoConnectionView *_noConnectionOverlay;
 @property (strong, nonatomic) JLServerErrorView *_serverErrorOverlay;
 @property (strong, nonatomic) JLLoadingView *_loadingOverlay;
-@property (nonatomic) BOOL _showingData;
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status;
 + (UIImage *)headerBackgroundImageForStatus:(FlightStatus)status;
@@ -125,7 +124,6 @@
 @synthesize _noConnectionOverlay;
 @synthesize _serverErrorOverlay;
 @synthesize _loadingOverlay;
-@synthesize _showingData;
 
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status {
@@ -279,14 +277,12 @@
     [_noConnectionOverlay removeFromSuperview];
     [_serverErrorOverlay removeFromSuperview];
     
-    if (!_showingData) { // Only show loading overlay if we're not already showing data
-        if (!_loadingOverlay) {
-            _loadingOverlay = [[JLLoadingView alloc] initWithFrame:self.view.bounds];
-        }
-        
-        [self.view addSubview:_loadingOverlay];
-        [_loadingOverlay startLoading];
+    if (!_loadingOverlay) {
+        _loadingOverlay = [[JLLoadingView alloc] initWithFrame:self.view.bounds];
     }
+    
+    [self.view addSubview:_loadingOverlay];
+    [_loadingOverlay startLoading];
 }
 
 
@@ -718,8 +714,6 @@
     // Hide the directions button and driving time if appropriate
     [self showDrivingTimeOrBagClaim];
     
-    _showingData = YES; // We have data
-    
     // Ask them to rate after a few seconds, if eligible
     [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible) 
                                             withObject:nil 
@@ -762,36 +756,32 @@
         }
         case TrackFailureNoConnection: {
             // No connection
-            if (!_showingData) {
-                if (!_noConnectionOverlay) {
-                    _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:self.view.bounds];
-                    _noConnectionOverlay.delegate = self;
-                }
-                _noConnectionOverlay.tryAgainbutton.enabled = YES;
-                
-                [self.view addSubview:_noConnectionOverlay];
+            if (!_noConnectionOverlay) {
+                _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:self.view.bounds];
+                _noConnectionOverlay.delegate = self;
             }
+            _noConnectionOverlay.tryAgainbutton.enabled = YES;
+            
+            [self.view addSubview:_noConnectionOverlay];
             break;
         }
         default: {
             // Error or outage
-            if (!_showingData) {
-                if (!_serverErrorOverlay) {
-                    _serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:self.view.bounds 
-                                                                         errorType:ERROR_500];
-                    _serverErrorOverlay.delegate = self;
-                }
-                _serverErrorOverlay.tryAgainbutton.enabled = YES;
-                
-                if (reason == TrackFailureOutage) {
-                    _serverErrorOverlay.errorType = ERROR_503;
-                }
-                else {
-                    _serverErrorOverlay.errorType = ERROR_500;
-                }
-                
-                [self.view addSubview:_serverErrorOverlay];
+            if (!_serverErrorOverlay) {
+                _serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:self.view.bounds 
+                                                                     errorType:ERROR_500];
+                _serverErrorOverlay.delegate = self;
             }
+            _serverErrorOverlay.tryAgainbutton.enabled = YES;
+            
+            if (reason == TrackFailureOutage) {
+                _serverErrorOverlay.errorType = ERROR_503;
+            }
+            else {
+                _serverErrorOverlay.errorType = ERROR_500;
+            }
+            
+            [self.view addSubview:_serverErrorOverlay];
             break;
         }
     }
