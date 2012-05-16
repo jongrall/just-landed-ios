@@ -41,7 +41,12 @@
                             shadowBlur:0.5f]
           forState:UIControlStateNormal];
     
+    [self setImage:[UIImage imageNamed:@"lookup" withColor:shadowColor]
+          forState:UIControlStateDisabled];
+    
     [self setTitleShadowColor:shadowColor forState:UIControlStateNormal];
+    [self setTitleColor:shadowColor forState:UIControlStateDisabled];
+    [self setTitleShadowColor:[UIColor clearColor] forState:UIControlStateDisabled];
 }
 
 @end

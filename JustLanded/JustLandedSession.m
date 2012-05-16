@@ -94,7 +94,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
         
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshTrackedFlights) 
-                                                     name:UIApplicationDidBecomeActiveNotification 
+                                                     name:UIApplicationWillEnterForegroundNotification 
                                                    object:[UIApplication sharedApplication]];
     }
     return self;

@@ -275,6 +275,7 @@
 
 
 - (void)startUpdating {
+    [_lookupButton setEnabled:NO];
     [_noConnectionOverlay removeFromSuperview];
     [_serverErrorOverlay removeFromSuperview];
     
@@ -290,6 +291,7 @@
 
 
 - (void)stopUpdating {
+    [_lookupButton setEnabled:YES]; // Disable untrack while tracking (can cause out-of-order bug)
     [_loadingOverlay stopLoading];
     [_loadingOverlay removeFromSuperview];
 }
