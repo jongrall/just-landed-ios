@@ -289,12 +289,14 @@ static NSRegularExpression *_flightNumberRegex;
     
     // Add the cloud layer
     self._cloudLayer = [[JLCloudLayer alloc] initWithFrame:CLOUD_LAYER_FRAME];
+    self._cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:_cloudLayer];
     
     // Add the cloud foreground
     UIImageView *cloudFg = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"] 
                                                                resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
     cloudFg.frame = CLOUD_FOOTER_FRAME;
+    cloudFg.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:cloudFg];
     
     // Add the logo
@@ -310,34 +312,37 @@ static NSRegularExpression *_flightNumberRegex;
     // Add the input field
     JLFlightInputField *flightNumField = [[JLFlightInputField alloc] initWithFrame:LOOKUP_TEXTFIELD_FRAME];
     flightNumField.delegate = self;
+    flightNumField.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self._flightNumberField = flightNumField;
     
     UIImageView *lookupInputContainer = [[UIImageView alloc] initWithFrame:LOOKUP_INPUT_FRAME];
     lookupInputContainer.image = [[UIImage imageNamed:@"lookup_input_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 8.0f, 0.0f, 8.0f)];
     lookupInputContainer.userInteractionEnabled = YES;
     [lookupInputContainer addSubview:flightNumField];
+    lookupInputContainer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:lookupInputContainer];
     
     // Add the lookup button
     JLButton *lookupButton = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles lookupButtonStyle] frame:LOOKUP_BUTTON_FRAME];
-    [lookupButton setTitle:NSLocalizedString(@"Lookup Flight", @"Lookup Flight") forState:UIControlStateNormal];
+    [lookupButton setTitle:NSLocalizedString(@"Find Flight", @"Find Flight") forState:UIControlStateNormal];
     lookupButton.enabled = [self isFlightNumValid:_flightNumberField.text];
     [lookupButton addTarget:self action:@selector(doLookup) forControlEvents:UIControlEventTouchUpInside];
+    lookupButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self._lookupButton = lookupButton;
     [self.view addSubview:lookupButton];
     
     // Add the results table
     UITableView *resultsTable = [[UITableView alloc] initWithFrame:RESULTS_TABLE_FRAME style:UITableViewStylePlain];
-    resultsTable.backgroundColor = [UIColor clearColor];
+    resultsTable.backgroundColor = [UIColor colorWithRed:223.0f/255.0f green:236.0f/255.0f blue:241.0f/255.0f alpha:1.0f];
     resultsTable.layer.cornerRadius = 6.0f;
     resultsTable.layer.masksToBounds = YES;
     resultsTable.dataSource = self;
     resultsTable.delegate = self;
-    resultsTable.rowHeight = FlightResultTableViewCellHeight;
     resultsTable.hidden = YES;
     resultsTable.separatorStyle = UITableViewCellSeparatorStyleNone;
     resultsTable.indicatorStyle = UIScrollViewIndicatorStyleWhite;
     resultsTable.scrollIndicatorInsets = UIEdgeInsetsMake(2.0f, 0.0f, 2.0f, 2.0f);
+    resultsTable.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self._flightResultsTable = resultsTable;
     [self.view addSubview:resultsTable];
     
@@ -347,16 +352,19 @@ static NSRegularExpression *_flightNumberRegex;
                                  85.0f,
                                  _airplane.frame.size.width,
                                  _airplane.frame.size.height);
+    _airplane.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:_airplane];
     
     // Add the table frame
     UIImage *tableFrame = [[UIImage imageNamed:@"table_frame"] resizableImageWithCapInsets:UIEdgeInsetsMake(11.0f, 11.0f, 11.0f, 11.0f)];
     self._flightResultsTableFrame = [[UIImageView alloc] initWithImage:tableFrame];
     self._flightResultsTableFrame.frame = RESULTS_TABLE_CONTAINER_FRAME;
+    self._flightResultsTableFrame.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:_flightResultsTableFrame];
     
     // Add the lookup spinner
     _lookupSpinner = [[JLSpinner alloc] initWithFrame:CGRectMake(103.0f, 278.0f, 114.0f, 115.0f)];
+    _lookupSpinner.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:_lookupSpinner];
 }
 
@@ -526,6 +534,7 @@ static NSRegularExpression *_flightNumberRegex;
     if (!cell) {
         cell = [[FlightResultTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
                                                 reuseIdentifier:@"FlightResultTableViewCell"];
+        cell.opaque = NO;
         cell.backgroundView.opaque = NO;
         cell.selectedBackgroundView.opaque = NO;
     }
@@ -572,6 +581,16 @@ static NSRegularExpression *_flightNumberRegex;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self._flightResults count];
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == [self._flightResults count] - 1) {
+        return FlightResultTableViewCellHeight + 2.0f;
+    }
+    else {
+        return FlightResultTableViewCellHeight;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

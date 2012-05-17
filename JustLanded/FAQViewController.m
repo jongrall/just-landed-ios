@@ -166,6 +166,7 @@
     self.faqWebView.backgroundColor = [UIColor clearColor];
     self.faqWebView.layer.cornerRadius = 6.0f;
     self.faqWebView.clipsToBounds = YES;
+    self.faqWebView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     faqWebView.hidden = YES;
     [self.view addSubview:blackBG];
 	[self.view addSubview:faqWebView];

@@ -255,6 +255,12 @@
                                                      name:FlightTrackFailedNotification 
                                                    object:aFlight];
         
+        // When going to the background, cover the screen with loading
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(startUpdating) 
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:[UIApplication sharedApplication]];
+        
         // Track the flight
         [self refresh];
     }
@@ -316,6 +322,7 @@
     // Create the footer background
     _footerBackground = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tracking_footer_bg"]];
     [_footerBackground setFrame:TRACK_FOOTER_FRAME];
+    _footerBackground.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Create the header background
     _headerBackground = [[UIImageView alloc] initWithFrame:TRACK_HEADER_FRAME];
@@ -350,6 +357,7 @@
                                                              progress:[_trackedFlight currentProgress]
                                                             timeOfDay:[_trackedFlight timeOfDay]
                                                          aircraftType:[_trackedFlight aircraftType]];
+    _flightProgressView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
     
     // Add the lands at labels
     _landsAtLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:LANDS_AT_LABEL_FRAME];
@@ -358,6 +366,8 @@
                                                                 frame:LANDS_AT_TIME_FRAME];
     _landsAtTimeLabel.parts = [self landsAtTimeParts];
     _landsAtTimeLabel.offsets = [self landsAtTimeOffsets];
+    _landsAtLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    _landsAtTimeLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the lands in labels
     _landsInLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:LANDS_AT_LABEL_FRAME];
@@ -374,12 +384,16 @@
                                  [NSValue valueWithCGSize:TIME_UNIT_OFFSET],nil];
     _landsInLabel.alpha = 0.0f;
     _landsInTimeLabel.alpha = 0.0f;
+    _landsInLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    _landsInTimeLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the terminal info
     _terminalLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:TERMINAL_LABEL_FRAME];
     _terminalLabel.text = [self terminalLabelText];
     _terminalValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:TERMINAL_VALUE_FRAME];
     _terminalValueLabel.text = [self terminalValue];
+    _terminalLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    _terminalValueLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the gate info
     _gateLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:TERMINAL_LABEL_FRAME];
@@ -388,6 +402,8 @@
     _gateValueLabel.text = [self gateValue];
     _gateLabel.alpha = 0.0f;
     _gateValueLabel.alpha = 0.0f;
+    _gateLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    _gateValueLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the driving time info
     _drivingTimeLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:DRIVING_TIME_LABEL_FRAME];
@@ -401,20 +417,26 @@
                                       [NSValue valueWithCGSize:TIME_UNIT_OFFSET], 
                                       [NSValue valueWithCGSize:CGSizeMake(6.0f, 0.0f)],
                                       [NSValue valueWithCGSize:TIME_UNIT_OFFSET], nil];
+    _drivingTimeLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    _drivingTimeValueLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the bag claim label
     _bagClaimLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:DRIVING_TIME_LABEL_FRAME];
     _bagClaimLabel.text = NSLocalizedString(@"BAG CLAIM", @"BAG CLAIM");
     _bagClaimValueLabel = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:DRIVING_TIME_VALUE_FRAME];
-    _bagClaimValueLabel.text = [self bagClaimValue];    
+    _bagClaimValueLabel.text = [self bagClaimValue];
+    _bagClaimLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    _bagClaimValueLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Create the directions button
     _directionsButton = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles directionsButtonStyle] frame:DIRECTIONS_BUTTON_FRAME];
     [_directionsButton addTarget:self action:@selector(showMap) forControlEvents:UIControlEventTouchUpInside];
     _directionsButton.hidden = YES;
+    _directionsButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Create the gauge
     _leaveMeter = [[JLLeaveMeter alloc] initWithFrame:LEAVE_IN_GAUGE_FRAME];
+    _leaveMeter.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     if (_trackedFlight.leaveForAirportTime) {
         _leaveMeter.timeRemaining = [_trackedFlight.leaveForAirportTime timeIntervalSinceNow];

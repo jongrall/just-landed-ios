@@ -28,6 +28,7 @@ static UIImage *_middleBg;
 static UIImage *_middleBgSelected;
 static UIImage *_bottomBg;
 static UIImage *_bottomBgSelected;
+static UIImage *_disclosureArrow;
 static CGRect _titleRect;
 static CGSize _shadowOffset;
 static CGPoint _iconCenter;
@@ -44,6 +45,7 @@ static CGPoint _iconCenter;
         _middleBgSelected = [[UIImage imageNamed:@"table_cell_middle_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
         _bottomBg = [[UIImage imageNamed:@"table_cell_bottom"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
         _bottomBgSelected = [[UIImage imageNamed:@"table_cell_bottom_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+        _disclosureArrow = [UIImage imageNamed:@"disclosure_arrow"];
         _titleRect = CGRectMake(64.5f, (AboutTableViewCellHeight / 2.0f) - 6.0f, AboutTableViewCellWidth - 84.5f, 20.0f);
         _shadowOffset = CGSizeMake(0.0f, -1.0f);
         _iconCenter = CGPointMake(30.0f, 30.0f);
@@ -70,6 +72,18 @@ static CGPoint _iconCenter;
 - (void)setCellType:(AboutCellType)aType {
     if (cellType != aType) {
         cellType = aType;
+        
+        if (cellType == BOTTOM) {
+            CGRect bounds = CGRectMake(0.0f, 0.0f, AboutTableViewCellWidth, AboutTableViewCellHeight + 2.0f);
+            [self setBounds:bounds];
+            [self.contentView setBounds:bounds];
+        }
+        else {
+            CGRect bounds = CGRectMake(0.0f, 0.0f, AboutTableViewCellWidth, AboutTableViewCellHeight - 1.0f);
+            [self setBounds:bounds];
+            [self.contentView setBounds:bounds];
+        }
+        
         [self setNeedsDisplay];
     }
 }
@@ -86,6 +100,19 @@ static CGPoint _iconCenter;
 - (void)drawContentView:(CGRect)rect highlighted:(BOOL)isHighlighted {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
+    if (!isHighlighted) {
+        self.backgroundView.hidden = NO;
+        self.selectedBackgroundView.hidden = YES;
+    }
+    else {
+        self.backgroundView.hidden = YES;
+        self.selectedBackgroundView.hidden = NO;
+    }
+    
+    if (cellType == BOTTOM) {
+        CGContextSaveGState(context);
+    }
+    
     if (cellType == TOP) {
         UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:rect
                                                    byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight
@@ -93,7 +120,8 @@ static CGPoint _iconCenter;
         [path addClip];
     }
     else if (cellType == BOTTOM) {
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:rect
+        CGRect bgBounds = CGRectMake(0.0f, 0.0f, rect.size.width, AboutTableViewCellHeight);
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:bgBounds
                                                    byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight
                                                          cornerRadii:CGSizeMake(6.0f, 6.0f)];
         [path addClip];
@@ -103,6 +131,10 @@ static CGPoint _iconCenter;
 	[_bgColor set]; 
     
     CGContextFillRect(context, rect);
+    
+    if (cellType == BOTTOM) {
+        CGContextRestoreGState(context);
+    }
     
     // Draw the text
     [_titleColor set];
@@ -121,6 +153,15 @@ static CGPoint _iconCenter;
              withFont:_titleFont 
         lineBreakMode:UILineBreakModeTailTruncation 
             alignment:UITextAlignmentLeft];
+    
+    
+    // Draw the disclosure arrow if needed
+    if (hasDisclosureArrow) {
+        [_disclosureArrow drawInRect:CGRectMake(contentView.frame.size.width - 25.0f,
+                                                (AboutTableViewCellHeight - _disclosureArrow.size.height) / 2.0f,
+                                                _disclosureArrow.size.width,
+                                                _disclosureArrow.size.height)];
+    }
     
     // Stop drawing shadows
     CGContextRestoreGState(context);

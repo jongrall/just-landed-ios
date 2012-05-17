@@ -69,7 +69,6 @@ static CGPoint _flightIconOrigin;
     }
 }
 
-
 - (void)setToAirport:(NSString *)anAirport {
     if (toAirport != anAirport) {
         toAirport = [anAirport uppercaseString];
@@ -131,6 +130,18 @@ static CGPoint _flightIconOrigin;
 - (void)setCellType:(FlightResultCellType)aType {
     if (cellType != aType) {
         cellType = aType;
+        
+        if (cellType == BOTTOM) {
+            CGRect bounds = CGRectMake(0.0f, 0.0f, FlightResultTableViewCellWidth, FlightResultTableViewCellHeight + 2.0f);
+            [self setBounds:bounds];
+            [self.contentView setBounds:bounds];
+        }
+        else {
+            CGRect bounds = CGRectMake(0.0f, 0.0f, FlightResultTableViewCellWidth, FlightResultTableViewCellHeight);
+            [self setBounds:bounds];
+            [self.contentView setBounds:bounds];
+        }
+        
         [self setNeedsDisplay];
     }
 }
@@ -145,16 +156,31 @@ static CGPoint _flightIconOrigin;
 
 
 - (void)drawContentView:(CGRect)rect highlighted:(BOOL)isHighlighted {
+    if (!isHighlighted) {
+        self.backgroundView.hidden = NO;
+        self.selectedBackgroundView.hidden = YES;
+    }
+    else {
+        self.backgroundView.hidden = YES;
+        self.selectedBackgroundView.hidden = NO;
+    }
+    
     CGContextRef context = UIGraphicsGetCurrentContext();
     
+    if (cellType == BOTTOM) {
+        CGContextSaveGState(context);
+    }
+        
+    CGRect bgBounds = CGRectMake(0.0f, 0.0f, FlightResultTableViewCellWidth, FlightResultTableViewCellHeight);
+    
     if (cellType == TOP) {
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:bgBounds
                                                 byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight
                                                            cornerRadii:CGSizeMake(6.0f, 6.0f)];
         [path addClip];
     }
     else if (cellType == BOTTOM) {
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:bgBounds
                                                    byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight
                                                          cornerRadii:CGSizeMake(6.0f, 6.0f)];
         [path addClip];
@@ -163,7 +189,11 @@ static CGPoint _flightIconOrigin;
     //Draw the background status color
 	[statusColor set]; 
     
-    CGContextFillRect(context, rect);
+    CGContextFillRect(context, bgBounds);
+    
+    if (cellType == BOTTOM) {
+        CGContextRestoreGState(context);
+    }
     
     // Draw the text
     [_textColor set];
@@ -220,29 +250,39 @@ static CGPoint _flightIconOrigin;
     CGContextRestoreGState(context);
     
     // Draw the border on top
-    if (isHighlighted) {
+    if (!isHighlighted) {
         switch (cellType) {
-            case TOP:
-                [_topBgSelected drawInRect:rect];
+            case TOP: {
+                [_topBg drawInRect:rect];
                 break;
-            case MIDDLE:
-                [_middleBgSelected drawInRect:rect];
+            }
+            case MIDDLE: {
+                [_middleBg drawInRect:rect];
                 break;
+            }
+            case BOTTOM: {
+                [_bottomBg drawInRect:rect];
+                break;
+            }
             default:
-                [_bottomBgSelected drawInRect:rect];
                 break;
         }
     }
     else {
         switch (cellType) {
-            case TOP:
-                [_topBg drawInRect:rect];
+            case TOP: {
+                [_topBgSelected drawInRect:rect];
                 break;
-            case MIDDLE:
-                [_middleBg drawInRect:rect];
+            }
+            case MIDDLE: {
+                [_middleBgSelected drawInRect:rect];
                 break;
+            }
+            case BOTTOM: {
+                [_bottomBgSelected drawInRect:rect];
+                break;
+            }
             default:
-                [_bottomBg drawInRect:rect];
                 break;
         }
     }

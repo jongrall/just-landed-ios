@@ -152,7 +152,7 @@
 
 - (void)setNeedsDisplayInRect:(CGRect)rect {
 	[super setNeedsDisplayInRect:rect];
-	[contentView setNeedsDisplayInRect:rect];
+    [contentView setNeedsDisplayInRect:rect];
 	
 	if([self isHighlighted] || [self isSelected]) {
 		[selectedContentView setNeedsDisplayInRect:rect];

@@ -58,7 +58,6 @@ typedef enum {
     [table setBackgroundColor:[UIColor clearColor]];
     [table setDelegate:self];
     [table setDataSource:self];
-    [table setRowHeight:AboutTableViewCellHeight];
     [table setScrollEnabled:NO];
     [table setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     self.aboutTable = table;
@@ -67,13 +66,16 @@ typedef enum {
     // Add the credits
     JLLabel *companyLabel = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles companyLabelStyle] frame:COMPANY_NAME_FRAME];
     companyLabel.text = NSLocalizedString(@"Little Details LLC", @"Little Details LLC");
+    companyLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     UIImageView *divider = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"divider"]];
     divider.frame = DIVIDER_FRAME;
+    divider.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     JLLabel *versionLabel = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles versionLabelStyle] frame:VERSION_FRAME];
     versionLabel.text = [NSString stringWithFormat:@"Version %@",
                          [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+    versionLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     [self.view addSubview:companyLabel];
     [self.view addSubview:divider];
@@ -306,6 +308,26 @@ typedef enum {
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSUInteger numRows = 2;
+    
+    if ([TWTweetComposeViewController canSendTweet]) {
+        numRows++;
+    }
+    
+    if ([MFMailComposeViewController canSendMail]) {
+        numRows++;
+    }
+    
+    if (indexPath.row + 1 == numRows) {
+        return AboutTableViewCellHeight + 2.0f;
+    }
+    else {
+        return AboutTableViewCellHeight;
+    }
 }
 
 

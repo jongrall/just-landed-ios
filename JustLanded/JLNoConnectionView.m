@@ -32,11 +32,12 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor clearColor];
+        self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         
         // Add background
         UIImageView *bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"overlay_screens_bg"]];
         bgView.frame = frame;
-   
+ 
         // Add no connection graphic
         UIImage *noConnImg = [UIImage imageNamed:@"no_connection" 
                                        withColor:nil 
