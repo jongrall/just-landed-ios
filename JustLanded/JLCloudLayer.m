@@ -52,9 +52,9 @@ const CGFloat LAYER4_SPEED = 5.0f;
         _layer4Offset = 200.0f;
         
         // Vertical offsets
-        CGFloat layer1VerticalOffset = 30.0f;
-        CGFloat layer2VerticalOffset = 20.0f;
-        CGFloat layer3VerticalOffset = 20.0f;
+        CGFloat layer1VerticalOffset = 0.0f;
+        CGFloat layer2VerticalOffset = 0.0f;
+        CGFloat layer3VerticalOffset = 0.0f;
         CGFloat layer4VerticalOffset = 0.0f;
         
         _layer1 = [self cloudLayerScrollViewWithRepeatingImage:clouds1];

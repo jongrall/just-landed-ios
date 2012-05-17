@@ -292,7 +292,8 @@ static NSRegularExpression *_flightNumberRegex;
     [self.view addSubview:_cloudLayer];
     
     // Add the cloud foreground
-    UIImageView *cloudFg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"lookup_cloud_fg"]];
+    UIImageView *cloudFg = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"] 
+                                                               resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
     cloudFg.frame = CLOUD_FOOTER_FRAME;
     [self.view addSubview:cloudFg];
     
