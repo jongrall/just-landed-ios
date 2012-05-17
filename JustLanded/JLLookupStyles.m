@@ -62,8 +62,8 @@ static LabelStyle *_flightFieldTextStyle;
                                                                              shadowColor:defaultStyle.disabledLabelStyle.textStyle.shadowColor 
                                                                             shadowOffset:defaultStyle.disabledLabelStyle.textStyle.shadowOffset
                                                                               shadowBlur:defaultStyle.disabledLabelStyle.textStyle.shadowBlur]
-                                                          iconOrigin:CGPointMake(55.5f, 11.5f)
-                                                         labelInsets:UIEdgeInsetsMake(-3.5f, 86.5f, 0.0f, 20.0f) 
+                                                          iconOrigin:CGPointMake(73.0f, 11.5f)
+                                                         labelInsets:UIEdgeInsetsMake(-3.5f, 104.0f, 0.0f, 20.0f) 
                                                      downLabelOffset:defaultStyle.downLabelOffset 
                                                  disabledLabelOffset:defaultStyle.disabledLabelOffset];
     }
