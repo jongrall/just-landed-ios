@@ -104,6 +104,7 @@
 		117E0E241559C28B00ED5762 /* JLServerErrorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E231559C28900ED5762 /* JLServerErrorView.m */; };
 		117E0E271559C8D600ED5762 /* JLSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E261559C8D400ED5762 /* JLSpinner.m */; };
 		118AF876156D66C8006FF807 /* TOSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AF875156D66C8006FF807 /* TOSViewController.m */; };
+		118AF878156D7BD5006FF807 /* terms@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 118AF877156D7BD5006FF807 /* terms@2x.png */; };
 		1190BF7A151925F200B1163F /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1190BF79151925F200B1163F /* AboutViewController.m */; };
 		1190CD24153A58E8005FA8E6 /* JLStyles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1190CD23153A58E8005FA8E6 /* JLStyles.m */; };
 		119EA2081539220100BBFD5E /* TextStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA2071539220100BBFD5E /* TextStyle.m */; };
@@ -405,6 +406,7 @@
 		117E0E261559C8D400ED5762 /* JLSpinner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLSpinner.m; sourceTree = "<group>"; };
 		118AF874156D66C0006FF807 /* TOSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TOSViewController.h; sourceTree = "<group>"; };
 		118AF875156D66C8006FF807 /* TOSViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TOSViewController.m; sourceTree = "<group>"; };
+		118AF877156D7BD5006FF807 /* terms@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "terms@2x.png"; sourceTree = "<group>"; };
 		1190BF78151925F200B1163F /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
 		1190BF79151925F200B1163F /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
 		1190CD22153A58E8005FA8E6 /* JLStyles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLStyles.h; sourceTree = "<group>"; };
@@ -1112,6 +1114,7 @@
 				11F96E63153AC342003E4B1D /* Icon@2x.png */,
 				1159C9E31556364C0086F04F /* JET2_day@2x.png */,
 				1159C9DF1556364C0086F04F /* JET2_night@2x.png */,
+				118AF877156D7BD5006FF807 /* terms@2x.png */,
 				1159C9F0155643D10086F04F /* JET2_night_lights@2x.png */,
 				1159C9E21556364C0086F04F /* JET2REAR_day@2x.png */,
 				1159C9DE1556364C0086F04F /* JET2REAR_night@2x.png */,
@@ -1441,6 +1444,7 @@
 				112896C21562257A0056DD34 /* no_connection@2x.png in Resources */,
 				112896C31562257A0056DD34 /* server_down@2x.png in Resources */,
 				11B357AD15659AD70063E592 /* disclosure_arrow@2x.png in Resources */,
+				118AF878156D7BD5006FF807 /* terms@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

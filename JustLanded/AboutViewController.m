@@ -220,7 +220,7 @@ typedef enum {
         }
         default: {
             cell.title = NSLocalizedString(@"Terms of service", @"Terms of service");
-            cell.icon = [UIImage imageNamed:@"faq" 
+            cell.icon = [UIImage imageNamed:@"terms" 
                                   withColor:[UIColor whiteColor] 
                                 shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
                                shadowOffset:CGSizeMake(0.0f, -0.5f) 
