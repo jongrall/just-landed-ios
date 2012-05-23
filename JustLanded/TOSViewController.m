@@ -1,11 +1,11 @@
 //
-//  FAQViewController.m
+//  TOSViewController.m
 //
-//  Created by Jon Grall on 3/25/12.
+//  Created by Jon Grall on 5/23/12.
 //  Copyright 2012 Little Details LLC. All rights reserved.
 //
 
-#import "FAQViewController.h"
+#import "TOSViewController.h"
 #import "AFHTTPRequestOperation.h"
 #import <QuartzCore/QuartzCore.h>
 
@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-@interface FAQViewController () {
+@interface TOSViewController () {
     __strong JLLoadingView *_loadingOverlay;
     __strong JLNoConnectionView *_noConnectionOverlay;
     __strong JLServerErrorView *_serverErrorOverlay;
@@ -23,7 +23,7 @@
 
 - (void)startLoading;
 - (void)stopLoading;
-- (void)loadFAQ;
+- (void)loadTOS;
 
 @end
 
@@ -34,13 +34,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-@implementation FAQViewController
+@implementation TOSViewController
 
-@synthesize faqWebView;
+@synthesize tosWebView;
 
-- (void)loadFAQ {
-    NSURL *faqURL = [NSURL URLWithString:[WEB_HOST stringByAppendingString:FAQ_PATH]];
-    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:faqURL];
+- (void)loadTOS {
+    NSURL *tosURL = [NSURL URLWithString:[WEB_HOST stringByAppendingString:TOS_PATH]];
+    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:tosURL];
     [req setTimeoutInterval:15.0];
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:req];
     AFHTTPClient *client = [AFHTTPClient clientWithBaseURL:[NSURL URLWithString:WEB_HOST]];
@@ -49,8 +49,8 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self performSelector:@selector(stopLoading) withObject:nil afterDelay:1.0]; // Delay prevents white flash as webview loads content
         NSString *responseString = [operation responseString];
-        [faqWebView setHidden:NO];
-        [faqWebView loadHTMLString:responseString baseURL:[NSURL URLWithString:WEB_HOST]];
+        [tosWebView setHidden:NO];
+        [tosWebView loadHTMLString:responseString baseURL:[NSURL URLWithString:WEB_HOST]];
     }
                                      failure:^(AFHTTPRequestOperation *operation, NSError *failure) {
                                          [self stopLoading];
@@ -115,7 +115,7 @@
 - (void)startLoading {
     [_noConnectionOverlay removeFromSuperview];
     [_serverErrorOverlay removeFromSuperview];
-    [faqWebView setHidden:YES];
+    [tosWebView setHidden:YES];
     
     if (!_loadingOverlay) {
         _loadingOverlay = [[JLLoadingView alloc] initWithFrame:CGRectMake(0.0f,
@@ -140,7 +140,7 @@
 
 
 - (void)tryConnectionAgain {
-    [self loadFAQ];
+    [self loadTOS];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,41 +157,41 @@
     UIView *blackBG = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];
     blackBG.backgroundColor = [UIColor blackColor];
     
-	self.faqWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f)];
-    self.faqWebView.scrollView.alwaysBounceVertical = NO;
-    self.faqWebView.scrollView.alwaysBounceHorizontal = NO;
-    self.faqWebView.scrollView.bounces = NO;
-	self.faqWebView.dataDetectorTypes = UIDataDetectorTypeLink;
-    self.faqWebView.backgroundColor = [UIColor clearColor];
-    self.faqWebView.layer.cornerRadius = 6.0f;
-    self.faqWebView.clipsToBounds = YES;
-    self.faqWebView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-    faqWebView.hidden = YES;
+	self.tosWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f)];
+    self.tosWebView.scrollView.alwaysBounceVertical = NO;
+    self.tosWebView.scrollView.alwaysBounceHorizontal = NO;
+    self.tosWebView.scrollView.bounces = NO;
+	self.tosWebView.dataDetectorTypes = UIDataDetectorTypeLink;
+    self.tosWebView.backgroundColor = [UIColor clearColor];
+    self.tosWebView.layer.cornerRadius = 6.0f;
+    self.tosWebView.clipsToBounds = YES;
+    self.tosWebView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    self.tosWebView.hidden = YES;
     [self.view addSubview:blackBG];
-	[self.view addSubview:faqWebView];
+	[self.view addSubview:tosWebView];
 }
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
-	self.navigationItem.title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
+	self.navigationItem.title = NSLocalizedString(@"Terms of Service", @"Terms of Service.");
 	
 	//Load the TOS from the web
-	[self loadFAQ];
+	[self loadTOS];
 }
 
 
 - (void)viewDidUnload {
     [super viewDidUnload];
-	self.faqWebView = nil;
+	self.tosWebView = nil;
     _noConnectionOverlay = nil;
     _serverErrorOverlay = nil;
 }
 
 
 - (void)dealloc {
-    faqWebView.delegate = nil;
+    tosWebView.delegate = nil;
     _noConnectionOverlay.delegate = nil;
     _serverErrorOverlay.delegate = nil;
 }

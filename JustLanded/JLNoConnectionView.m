@@ -3,7 +3,7 @@
 //  JustLanded
 //
 //  Created by Jon Grall on 5/8/12.
-//  Copyright (c) 2012 SimplyListed. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "JLNoConnectionView.h"

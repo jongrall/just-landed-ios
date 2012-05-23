@@ -32,6 +32,7 @@ extern NSString * const API_USERNAME;
 extern NSString * const API_KEY;
 extern NSString * const WEB_HOST;
 extern NSString * const FAQ_PATH;
+extern NSString * const TOS_PATH;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -57,7 +58,7 @@ extern NSString * const FY_SENT_FEEDBACK;
 extern NSString * const FY_STARTED_TWEETING;
 extern NSString * const FY_ABANDONED_TWEETING;
 extern NSString * const FY_POSTED_TWEET;
-extern NSString * const FY_VISITED_WEBSITE;
+extern NSString * const FY_READ_TERMS;
 extern NSString * const FY_READ_FAQ;
 extern NSString * const FY_ASKED_TO_RATE;
 extern NSString * const FY_RATED;

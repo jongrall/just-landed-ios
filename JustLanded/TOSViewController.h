@@ -1,7 +1,7 @@
 //
-//  FAQViewController.h
+//  TOSViewController.h
 //
-//  Created by Jon Grall on 3/25/12.
+//  Created by Jon Grall on 5/23/12.
 //  Copyright 2012 Little Details LLC. All rights reserved.
 //
 
@@ -14,10 +14,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-@interface FAQViewController : UIViewController <NoConnectionDelegate> {
+@interface TOSViewController : UIViewController <NoConnectionDelegate> {
 
 }
 
-@property (nonatomic, retain) UIWebView *faqWebView;
+@property (nonatomic, retain) UIWebView *tosWebView;
 
 @end

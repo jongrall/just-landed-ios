@@ -3,12 +3,13 @@
 //  JustLanded
 //
 //  Created by Jon Grall on 3/20/12.
-//  Copyright (c) 2012 SimplyListed. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "AboutViewController.h"
 #import "AboutTableViewCell.h"
 #import "FAQViewController.h"
+#import "TOSViewController.h"
 #import "JLMailComposeViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
@@ -19,8 +20,8 @@
 typedef enum {
     AboutCellTagFeedback = 0,
     AboutCellTagTweet,
-    AboutCellTagWebsite,
     AboutCellTagFAQ,
+    AboutCellTagTerms,
 } AboutCellTag;
 
 
@@ -150,7 +151,7 @@ typedef enum {
         [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTweet]];
     }
     
-    [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagWebsite]];
+    [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTerms]];
     [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFAQ]];
     
     if (row < [tableRows count]) {
@@ -207,18 +208,18 @@ typedef enum {
             cell.hasDisclosureArrow = NO;
             break;
         }
-        case AboutCellTagWebsite: {
-            cell.title = NSLocalizedString(@"Visit the website", @"Just Landed Website");
-            cell.icon = [UIImage imageNamed:@"visit_site" 
+        case AboutCellTagFAQ: {
+            cell.title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
+            cell.icon = [UIImage imageNamed:@"faq" 
                                   withColor:[UIColor whiteColor] 
                                 shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
                                shadowOffset:CGSizeMake(0.0f, -0.5f) 
                                  shadowBlur:0.0f];
-            cell.hasDisclosureArrow = NO;
+            cell.hasDisclosureArrow = YES;
             break;
         }
         default: {
-            cell.title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
+            cell.title = NSLocalizedString(@"Terms of service", @"Terms of service");
             cell.icon = [UIImage imageNamed:@"faq" 
                                   withColor:[UIColor whiteColor] 
                                 shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
@@ -288,9 +289,10 @@ typedef enum {
             [FlurryAnalytics logEvent:FY_STARTED_TWEETING];
             break;
         }
-        case AboutCellTagWebsite: {
-            [FlurryAnalytics logEvent:FY_VISITED_WEBSITE];
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.getjustlanded.com"]];
+        case AboutCellTagTerms: {
+            TOSViewController *tosVC = [[TOSViewController alloc] init];
+            [self.navigationController pushViewController:tosVC animated:YES];
+            [FlurryAnalytics logEvent:FY_READ_TERMS];
             break;
         }
         default: {

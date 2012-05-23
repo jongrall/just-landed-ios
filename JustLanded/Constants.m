@@ -64,6 +64,7 @@ NSString * const WEB_HOST = @"http://www.getjustlanded.com";
 #endif
 
 NSString * const FAQ_PATH = @"/iphonefaq";
+NSString * const TOS_PATH = @"/terms";
 NSString * const LOOKUP_URL_FORMAT = @"search/%@";
 NSString * const TRACK_URL_FORMAT = @"track/%@/%@";
 NSString * const UNTRACK_URL_FORMAT = @"untrack/%@";
@@ -100,7 +101,7 @@ NSString * const FY_SENT_FEEDBACK = @"Sent Feedback";
 NSString * const FY_STARTED_TWEETING = @"Started Tweeting"; 
 NSString * const FY_ABANDONED_TWEETING = @"Abandoned Tweeting";
 NSString * const FY_POSTED_TWEET = @"Posted Tweet";
-NSString * const FY_VISITED_WEBSITE = @"Visited Website";
+NSString * const FY_READ_TERMS = @"Read Terms";
 NSString * const FY_READ_FAQ = @"Read FAQ";
 NSString * const FY_ASKED_TO_RATE = @"Asked to Rate App";
 NSString * const FY_RATED = @"Rated App";

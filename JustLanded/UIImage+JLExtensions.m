@@ -1,9 +1,8 @@
 //
 //  UIImage+JLExtensions.m
-//  SimplyListed
 //
-//  Created by Jon Grall on 4/27/11.
-//  Copyright 2011 Friendfer. All rights reserved.
+//  Created by Jon Grall on 4/20/12.
+//  Copyright 2012 Little Details LLC. All rights reserved.
 //
 
 #import "UIImage+JLExtensions.h"
