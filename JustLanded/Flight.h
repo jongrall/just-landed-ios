@@ -123,5 +123,6 @@ extern NSString * const StopTrackingFailedReasonKey;
 - (NSString *)flightDataAsJson;
 - (NSUInteger)minutesBeforeLanding;
 - (CGFloat)currentProgress;
+- (BOOL)isDataFresh;
 
 @end

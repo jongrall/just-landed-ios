@@ -50,6 +50,7 @@
 @property (strong, nonatomic) JLNoConnectionView *_noConnectionOverlay;
 @property (strong, nonatomic) JLServerErrorView *_serverErrorOverlay;
 @property (strong, nonatomic) JLLoadingView *_loadingOverlay;
+@property (nonatomic) BOOL _showingValidData;
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status;
 + (UIImage *)headerBackgroundImageForStatus:(FlightStatus)status;
@@ -67,6 +68,7 @@
 - (void)stopTrackingUserInitiated:(BOOL)userInitiated;
 - (void)setFlightNumber:(NSString *)fnum;
 - (void)setStatus:(FlightStatus)newStatus;
+- (void)invalidateData;
 - (NSString *)landsAtLabelText;
 - (NSArray *)landsAtTimeParts;
 - (NSArray *)landsAtTimeOffsets;
@@ -124,7 +126,7 @@
 @synthesize _noConnectionOverlay;
 @synthesize _serverErrorOverlay;
 @synthesize _loadingOverlay;
-
+@synthesize _showingValidData;
 
 + (UIImage *)arrowImageForStatus:(FlightStatus)status {
     return [UIImage imageNamed:@"arrow" 
@@ -255,9 +257,9 @@
                                                      name:FlightTrackFailedNotification 
                                                    object:aFlight];
         
-        // When going to the background, cover the screen with loading
+        // When going to the background, cover the screen with loading        
         [[NSNotificationCenter defaultCenter] addObserver:self 
-                                                 selector:@selector(startUpdating) 
+                                                 selector:@selector(invalidateData) 
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:[UIApplication sharedApplication]];
         
@@ -283,12 +285,14 @@
     [_noConnectionOverlay removeFromSuperview];
     [_serverErrorOverlay removeFromSuperview];
     
-    if (!_loadingOverlay) {
-        _loadingOverlay = [[JLLoadingView alloc] initWithFrame:self.view.bounds];
+    if (!_showingValidData || ![_trackedFlight isDataFresh]) {
+        if (!_loadingOverlay) {
+            _loadingOverlay = [[JLLoadingView alloc] initWithFrame:self.view.bounds];
+        }
+        
+        [self.view addSubview:_loadingOverlay];
+        [_loadingOverlay startLoading];
     }
-    
-    [self.view addSubview:_loadingOverlay];
-    [_loadingOverlay startLoading];
 }
 
 
@@ -305,6 +309,13 @@
     [_flightProgressView stopAnimating];
     [delegate didFinishTracking:self userInitiated:userInitiated];
     [self dismissModalViewControllerAnimated:YES];
+}
+
+
+- (void)invalidateData {
+    // Invalidates that data and covers the screen with loading... so on resume we're showing the right thing.
+    self._showingValidData = NO;
+    [self startUpdating];
 }
 
 
@@ -703,6 +714,7 @@
 
 - (void)didTrackFlight:(NSNotification *)notification {
     // Stop loading animation
+    self._showingValidData = YES;
     [self stopUpdating];
     
     // Update displayed information
@@ -778,32 +790,36 @@
         }
         case TrackFailureNoConnection: {
             // No connection
-            if (!_noConnectionOverlay) {
-                _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:self.view.bounds];
-                _noConnectionOverlay.delegate = self;
+            if (![_trackedFlight isDataFresh] || !_showingValidData) { // Only show no connection if the data is old
+                if (!_noConnectionOverlay) {
+                    _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:self.view.bounds];
+                    _noConnectionOverlay.delegate = self;
+                }
+                _noConnectionOverlay.tryAgainbutton.enabled = YES;
+                
+                [self.view addSubview:_noConnectionOverlay];
             }
-            _noConnectionOverlay.tryAgainbutton.enabled = YES;
-            
-            [self.view addSubview:_noConnectionOverlay];
             break;
         }
         default: {
             // Error or outage
-            if (!_serverErrorOverlay) {
-                _serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:self.view.bounds 
-                                                                     errorType:ERROR_500];
-                _serverErrorOverlay.delegate = self;
+            if (![_trackedFlight isDataFresh] || !_showingValidData) { // Only show 500 if data is old or no data
+                if (!_serverErrorOverlay) {
+                    _serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:self.view.bounds 
+                                                                         errorType:ERROR_500];
+                    _serverErrorOverlay.delegate = self;
+                }
+                _serverErrorOverlay.tryAgainbutton.enabled = YES;
+                
+                if (reason == TrackFailureOutage) {
+                    _serverErrorOverlay.errorType = ERROR_503;
+                }
+                else {
+                    _serverErrorOverlay.errorType = ERROR_500;
+                }
+                
+                [self.view addSubview:_serverErrorOverlay];
             }
-            _serverErrorOverlay.tryAgainbutton.enabled = YES;
-            
-            if (reason == TrackFailureOutage) {
-                _serverErrorOverlay.errorType = ERROR_503;
-            }
-            else {
-                _serverErrorOverlay.errorType = ERROR_500;
-            }
-            
-            [self.view addSubview:_serverErrorOverlay];
             break;
         }
     }
