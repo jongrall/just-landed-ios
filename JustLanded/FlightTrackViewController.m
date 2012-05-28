@@ -752,7 +752,7 @@
     [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible) 
                                             withObject:nil 
                                             afterDelay:4.0];
-    
+
     if (!_updateTimer || ![_updateTimer isValid]) {
         self._updateTimer = [NSTimer timerWithTimeInterval:1.0 
                                                              target:self 

@@ -383,6 +383,18 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+- (NSUInteger)trackCount {
+    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
+    
+    if (trackCount) {
+        return [trackCount intValue];
+    }
+    else {
+        return 0;
+    }
+}
+
+
 - (void)incrementTrackCount {    
     NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
     

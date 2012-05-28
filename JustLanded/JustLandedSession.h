@@ -33,6 +33,7 @@ extern NSString * const DidFailToRegisterForRemoteNotifications;
 @property (readonly, nonatomic) BOOL triedToRegisterForRemoteNotifications;
 @property (readonly, nonatomic) BOOL triedToGetLocation;
 @property (readonly, nonatomic) BOOL locationServicesAvailable;
+@property (readonly, nonatomic) NSUInteger trackCount;
 @property (copy, nonatomic) NSString *pushToken;
 
 + (JustLandedSession *)sharedSession;
@@ -49,7 +50,6 @@ extern NSString * const DidFailToRegisterForRemoteNotifications;
 - (void)registerForPushNotifications;
 - (void)didFailToRegisterForRemoteNotifications:(NSError *)error;
 - (void)updatePushTokenAfterRegisteringWithApple:(NSString *)token;
-
 - (void)incrementTrackCount;
 - (BOOL)isEligibleToRate;
 - (void)showRatingRequestIfEligible;
