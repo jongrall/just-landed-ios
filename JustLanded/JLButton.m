@@ -66,6 +66,7 @@
             TextStyle *textStyle = [disabledStyle textStyle];
             self.titleLabel.font = [textStyle font];
             self.titleLabel.textAlignment = [[_style labelStyle] alignment];
+            self.titleLabel.shadowOffset = [textStyle shadowOffset];
             [self setTitleColor:[textStyle color] forState:UIControlStateDisabled];
             [self setTitleShadowColor:[textStyle shadowColor] forState:UIControlStateDisabled];
         }

@@ -242,20 +242,20 @@
                                                  selector:@selector(triedToRegisterForRemoteNotifications:) 
                                                      name:DidFailToRegisterForRemoteNotifications 
                                                    object:[JustLandedSession sharedSession]];
-    
+        
         // Listen for notifications for the Flight
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(willTrackFlight:)
                                                      name:WillTrackFlightNotification 
-                                                   object:aFlight];
+                                                   object:_trackedFlight];
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(didTrackFlight:)
                                                      name:DidTrackFlightNotification 
-                                                   object:aFlight];
+                                                   object:_trackedFlight];
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(flightTrackFailed:)
                                                      name:FlightTrackFailedNotification 
-                                                   object:aFlight];
+                                                   object:_trackedFlight];
         
         // When going to the background, cover the screen with loading        
         [[NSNotificationCenter defaultCenter] addObserver:self 
@@ -640,7 +640,7 @@
 
 
 - (NSString *)gateValue {
-    if (_trackedFlight.destination.gate && [_trackedFlight.destination.gate length] > 0) {
+    if (_trackedFlight.destination && [_trackedFlight.destination.gate length] > 0) {
         return [_trackedFlight.destination.gate uppercaseString];
     }
     else {
@@ -834,7 +834,7 @@
     _landsInTimeLabel.parts = [self landsInTimeParts];
     
     if (_trackedFlight.leaveForAirportTime) {
-         self._leaveMeter.timeRemaining = [_trackedFlight.leaveForAirportTime timeIntervalSinceNow];
+        self._leaveMeter.timeRemaining = [_trackedFlight.leaveForAirportTime timeIntervalSinceNow];
     }
     
 }
@@ -875,7 +875,7 @@
 - (void)alternateData {
     // Show lands in only during the last hour of the flight
     BOOL showLandsIn = [_trackedFlight status] != LANDED && [[_trackedFlight estimatedArrivalTime] timeIntervalSinceNow] < 3600.0;
-    BOOL showGate = _trackedFlight.destination.gate && [_trackedFlight.destination.gate length] > 0;
+    BOOL showGate = _trackedFlight.destination && [_trackedFlight.destination.gate length] > 0;
     BOOL showTerminal = _trackedFlight.destination.terminal && [_trackedFlight.destination.terminal length] > 0;
     
     // Transition from lands at to lands in
@@ -976,9 +976,10 @@
 #pragma mark - Memory Management
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 - (void)dealloc {
-    [[JustLandedSession sharedSession] stopLocationServices];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[JustLandedSession sharedSession] stopLocationServices];
     [_updateTimer invalidate];
     [_alternatingLabelTimer invalidate];
     _noConnectionOverlay.delegate = nil;

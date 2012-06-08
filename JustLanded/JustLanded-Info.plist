@@ -67,7 +67,6 @@
 		<string>wifi</string>
 		<string>location-services</string>
 		<string>gps</string>
-		<string>gyroscope</string>
 		<string>telephony</string>
 	</array>
 	<key>UIStatusBarHidden</key>

@@ -54,10 +54,10 @@
                                                     nil] 
                                           forState:UIControlStateDisabled];
     
-    [[UIBarButtonItem appearance] setTitlePositionAdjustment:UIOffsetMake(0.0f, 1.5f)
+    [[UIBarButtonItem appearance] setTitlePositionAdjustment:UIOffsetMake(0.0f, 1.0f)
                                                forBarMetrics:UIBarMetricsDefault];
     
-    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-2.0f, 2.5f) 
+    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-2.0f, 2.0f) 
                                                          forBarMetrics:UIBarMetricsDefault];
 }
 

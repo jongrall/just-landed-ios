@@ -8,14 +8,14 @@
 
 #import "JLLookupStyles.h"
 
-CGRect const LOGO_FRAME = {35.5f, 33.5f, 248.0f, 40.0f};
-CGRect const LOOKUP_BUTTON_FRAME = {12.0f, 179.5f, 296.0f, 56.0f};
+CGRect const LOGO_FRAME = {35.0f, 33.0f, 248.0f, 40.0f};
+CGRect const LOOKUP_BUTTON_FRAME = {12.0f, 179.0f, 296.0f, 56.0f};
 CGRect const ABOUT_BUTTON_FRAME = {271.0f, 0.0f, 49.0f, 49.0f};
-CGRect const LOOKUP_INPUT_FRAME = {14.0f, 117.5f, 292.0f, 49.0f};
+CGRect const LOOKUP_INPUT_FRAME = {14.0f, 117.0f, 292.0f, 49.0f};
 CGRect const LOOKUP_TEXTFIELD_FRAME = {0.0f, 0.0f, 288.0f, 49.0f};
 CGRect const LOOKUP_LABEL_FRAME = {0.0f, 0.0f, 150.0f, 49.0f};
 CGPoint const LOOKUP_SEPARATOR_ORIGIN = {113.5f , 12.0f};
-CGRect const LOOKUP_LABEL_TEXT_FRAME = {0.0f, 15.5f, 150.0f, 49.0f};
+CGRect const LOOKUP_LABEL_TEXT_FRAME = {0.0f, 15.0f, 150.0f, 49.0f};
 CGRect const LOOKUP_FIELD_FRAME = {0.0f, 0.0f, 100.0f, 49.0f};
 CGRect const CLOUD_LAYER_FRAME = {0.0f, 168.0f, 320.0f, 30.0f};
 CGRect const CLOUD_FOOTER_FRAME = {0.0f, 198.0f, 320.0f, 262.0f};
@@ -62,8 +62,8 @@ static LabelStyle *_flightFieldTextStyle;
                                                                              shadowColor:defaultStyle.disabledLabelStyle.textStyle.shadowColor 
                                                                             shadowOffset:defaultStyle.disabledLabelStyle.textStyle.shadowOffset
                                                                               shadowBlur:defaultStyle.disabledLabelStyle.textStyle.shadowBlur]
-                                                          iconOrigin:CGPointMake(73.0f, 11.5f)
-                                                         labelInsets:UIEdgeInsetsMake(-3.5f, 104.0f, 0.0f, 20.0f) 
+                                                          iconOrigin:CGPointMake(73.0f, 11.0f)
+                                                         labelInsets:UIEdgeInsetsMake(-3.0f, 104.0f, 0.0f, 20.0f) 
                                                      downLabelOffset:defaultStyle.downLabelOffset 
                                                  disabledLabelOffset:defaultStyle.disabledLabelOffset];
     }

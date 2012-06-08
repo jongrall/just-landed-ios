@@ -27,11 +27,37 @@
 
 - (NSDictionary *)toDict {
     NSMutableDictionary *info = [[NSMutableDictionary alloc] initWithDictionary:[super toDict]];
-    [info setValue:bagClaim ? bagClaim : [NSNull null]
-            forKey:@"bagClaim"];
-    [info setValue:gate ? gate : [NSNull null]
-            forKey:@"gate"];
+    [info setValue:(bagClaim ? bagClaim : [NSNull null]) forKey:@"bagClaim"];
+    [info setValue:(gate ? gate : [NSNull null]) forKey:@"gate"];
     return info;
+}
+
+
+- (NSDictionary *)toJSONFriendlyDict {
+    NSMutableDictionary *info = [[NSMutableDictionary alloc] initWithDictionary:[super toJSONFriendlyDict]];
+    [info setValue:(bagClaim ? bagClaim : [NSNull null]) forKey:@"bagClaim"];
+    [info setValue:(gate ? gate : [NSNull null]) forKey:@"gate"];
+    return info;
+}
+
+
+- (NSString *)bagClaim {
+    if (bagClaim == nil || [bagClaim isKindOfClass:[NSNull class]]) {
+        return @"";
+    }
+    else {
+        return bagClaim;
+    }
+}
+
+
+- (NSString *)gate {
+    if (gate == nil || [gate isKindOfClass:[NSNull class]]) {
+        return @"";
+    }
+    else {
+        return gate;
+    }
 }
 
 

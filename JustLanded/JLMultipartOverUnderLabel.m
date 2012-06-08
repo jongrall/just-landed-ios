@@ -93,7 +93,7 @@
         // Draw the under part
         CGContextSaveGState(context);
         CGSize underSize = [nextUnderPart sizeWithFont:[lowerTextStyle font]];
-        CGPoint underStartPoint = CGPointMake(startPoint.x + (snippetSize.width / 2.0f) - underSize.width/2.0f + nextLowerOffset.width,
+        CGPoint underStartPoint = CGPointMake(roundf(startPoint.x + (snippetSize.width / 2.0f) - underSize.width/2.0f + nextLowerOffset.width),
                                               nextLowerOffset.height);
         
         // Shadow

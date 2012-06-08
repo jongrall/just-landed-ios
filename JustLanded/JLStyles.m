@@ -361,9 +361,9 @@ static ButtonStyle *_defaultButtonStyle;
                                                            iconImage:nil
                                                    iconDisabledImage:nil
                                                           iconOrigin:CGPointZero 
-                                                         labelInsets:UIEdgeInsetsMake(-3.5f, 0.0f, 0.0f, 0.0f) 
+                                                         labelInsets:UIEdgeInsetsMake(-3.0f, 0.0f, 0.0f, 0.0f) 
                                                      downLabelOffset:CGSizeMake(0.0f, 5.0f) 
-                                                 disabledLabelOffset:CGSizeMake(0.0f, 2.5f)];
+                                                 disabledLabelOffset:CGSizeMake(0.0f, 2.0f)];
     }
     
     return _defaultButtonStyle;

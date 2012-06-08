@@ -94,7 +94,7 @@
     
     BOOL needsRedraw = fabs(timeRemaining - newTime) > 60.0; // Only redraw meter every 60s
     
-    if (meterMaxTimeRemaining == 0.0) { // Only set this the first time
+    if (meterMaxTimeRemaining == 0.0 || meterMaxTimeRemaining <= newTime) { // Only set this the first time or if the time remaining increases
         double maxTimeLeft = ceil(newTime / 3600.0) * 3600.0; // Max is next largest whole number of hours
         self.meterMaxTimeRemaining = maxTimeLeft;
         needsRedraw = YES;

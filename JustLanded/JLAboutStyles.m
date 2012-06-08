@@ -11,8 +11,8 @@
 #import "JLStyles.h"
 
 CGRect const TABLE_FRAME = {7.0f, 8.0f, 306.0f, 300.0f};
-CGRect const COMPANY_NAME_FRAME = {20.0f, 347.5f, 280.0f, 20.0f};
-CGRect const VERSION_FRAME = {20.0f, 385.5f, 280.0f, 20.0f};
+CGRect const COMPANY_NAME_FRAME = {20.0f, 347.0f, 280.0f, 20.0f};
+CGRect const VERSION_FRAME = {20.0f, 385.0f, 280.0f, 20.0f};
 CGRect const DIVIDER_FRAME = {35.0f, 372.0f, 250.0f, 1.0f};
 
 @implementation JLAboutStyles

@@ -130,7 +130,7 @@ static NSArray *_aircraftTypes;
     self.flightID = [info valueForKeyOrNil:@"flightID"];
     self.flightNumber = [info valueForKeyOrNil:@"flightNumber"];
     NSUInteger parsed_aircraft_type = [_aircraftTypes indexOfObject:[info valueForKeyOrNil:@"aircraftType"]];
-    self.aircraftType = (parsed_aircraft_type == NSNotFound) ? PROP2 : parsed_aircraft_type;
+    self.aircraftType = (parsed_aircraft_type == NSNotFound) ? JET2 : parsed_aircraft_type;
     self.timeOfDay = ([[info valueForKey:@"isNight"] boolValue]) ? NIGHT : DAY;
     
     // Process and set all the flight date and time information

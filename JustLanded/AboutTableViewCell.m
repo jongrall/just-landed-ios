@@ -46,7 +46,7 @@ static CGPoint _iconCenter;
         _bottomBg = [[UIImage imageNamed:@"table_cell_bottom"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
         _bottomBgSelected = [[UIImage imageNamed:@"table_cell_bottom_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
         _disclosureArrow = [UIImage imageNamed:@"disclosure_arrow"];
-        _titleRect = CGRectMake(64.5f, (AboutTableViewCellHeight / 2.0f) - 6.0f, AboutTableViewCellWidth - 84.5f, 20.0f);
+        _titleRect = CGRectMake(64.0f, (AboutTableViewCellHeight / 2.0f) - 7.0f, AboutTableViewCellWidth - 84.0f, 20.0f);
         _shadowOffset = CGSizeMake(0.0f, -1.0f);
         _iconCenter = CGPointMake(30.0f, 30.0f);
     }
@@ -147,7 +147,7 @@ static CGPoint _iconCenter;
     // Save the graphics state before we draw shadowed elements
     CGContextSetShadowWithColor(context, _shadowOffset, 0.0f, [_shadowColor CGColor]);
     
-    [icon drawAtPoint:CGPointMake(_iconCenter.x - icon.size.width/2.0f, _iconCenter.y - icon.size.height/2.0f)];
+    [icon drawAtPoint:CGPointMake(roundf(_iconCenter.x - icon.size.width/2.0f), roundf(_iconCenter.y - icon.size.height/2.0f))];
     
     [title drawInRect:_titleRect 
              withFont:_titleFont 

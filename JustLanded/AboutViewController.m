@@ -187,13 +187,16 @@ typedef enum {
         cell.cellType = MIDDLE;
     }
     
+    // Hack for retina/non-retina
+    CGFloat shadowVOffset = ([[UIScreen mainScreen] scale] == 1.0f) ? -1.0f : -0.5f;
+    
     switch (tag) {
         case AboutCellTagFeedback: {
             cell.title = NSLocalizedString(@"Send us feedback", @"Send Feedback");
             cell.icon = [UIImage imageNamed:@"email_feedback" 
                                   withColor:[UIColor whiteColor] 
                                 shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                               shadowOffset:CGSizeMake(0.0f, -0.5f) 
+                               shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
                                  shadowBlur:0.0f];
             cell.hasDisclosureArrow = NO;
             break;
@@ -203,7 +206,7 @@ typedef enum {
             cell.icon = [UIImage imageNamed:@"twitter" 
                                   withColor:[UIColor whiteColor] 
                                 shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                               shadowOffset:CGSizeMake(0.0f, -0.5f) 
+                               shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
                                  shadowBlur:0.0f];
             cell.hasDisclosureArrow = NO;
             break;
@@ -213,7 +216,7 @@ typedef enum {
             cell.icon = [UIImage imageNamed:@"faq" 
                                   withColor:[UIColor whiteColor] 
                                 shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                               shadowOffset:CGSizeMake(0.0f, -0.5f) 
+                               shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
                                  shadowBlur:0.0f];
             cell.hasDisclosureArrow = YES;
             break;
@@ -223,7 +226,7 @@ typedef enum {
             cell.icon = [UIImage imageNamed:@"terms" 
                                   withColor:[UIColor whiteColor] 
                                 shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                               shadowOffset:CGSizeMake(0.0f, -0.5f) 
+                               shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
                                  shadowBlur:0.0f];
             cell.hasDisclosureArrow = YES;
             break;

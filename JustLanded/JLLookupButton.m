@@ -38,13 +38,14 @@
                              withColor:[UIColor whiteColor] 
                            shadowColor:[JLStyles labelShadowColorForStatus:newStatus]
                           shadowOffset:CGSizeMake(0.0f, -1.0f)
-                            shadowBlur:0.5f]
+                            shadowBlur:0.0f]
           forState:UIControlStateNormal];
     
     [self setImage:[UIImage imageNamed:@"lookup" withColor:shadowColor]
           forState:UIControlStateDisabled];
     
     [self setTitleShadowColor:shadowColor forState:UIControlStateNormal];
+    self.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
     [self setTitleColor:shadowColor forState:UIControlStateDisabled];
     [self setTitleShadowColor:[UIColor clearColor] forState:UIControlStateDisabled];
 }

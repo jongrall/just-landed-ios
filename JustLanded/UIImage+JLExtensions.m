@@ -128,7 +128,7 @@
 	
     CGContextTranslateCTM(ctx, srcImage.size.width/2.0f, srcImage.size.height/2.0f);
     CGContextRotateCTM(ctx, angleInRadians);
-    CGContextTranslateCTM(ctx, -srcImage.size.width/2.0, -srcImage.size.height/2.0f);
+    CGContextTranslateCTM(ctx, -srcImage.size.width/2.0f, -srcImage.size.height/2.0f);
     [srcImage drawAtPoint:CGPointZero];
     
     UIImage *rotatedImage = UIGraphicsGetImageFromCurrentImageContext();
