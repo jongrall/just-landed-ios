@@ -964,7 +964,7 @@
 
 
 - (void)refresh {
-    CLLocation *location = [[JustLandedSession sharedSession] lastKnownLocation];
+    CLLocation *location = location = [[JustLandedSession sharedSession] lastKnownLocation];
     
     if (location) {
         // We already have a location (it may be stale), track now
@@ -979,7 +979,6 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[JustLandedSession sharedSession] stopLocationServices];
     [_updateTimer invalidate];
     [_alternatingLabelTimer invalidate];
     _noConnectionOverlay.delegate = nil;

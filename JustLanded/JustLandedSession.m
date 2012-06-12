@@ -28,7 +28,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
     __strong CLLocation *_lastLocation;
 }
 
-@property (strong, nonatomic) CLLocationManager *_locationManager;
+@property (nonatomic, strong) CLLocationManager *_locationManager;
 
 - (NSString *)archivedFlightsPath;
 - (void)archiveCurrentlyTrackedFlights;
@@ -94,7 +94,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
         
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshTrackedFlights) 
-                                                     name:UIApplicationWillEnterForegroundNotification 
+                                                     name:UIApplicationDidBecomeActiveNotification 
                                                    object:[UIApplication sharedApplication]];
     }
     return self;
@@ -104,7 +104,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 - (void)dealloc {
     // Note: Should never be called since singleton, but implemented anyway
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    _locationManager.delegate = nil;
+    self._locationManager.delegate = nil;
     
 }
 
@@ -199,25 +199,34 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
         locMgr.distanceFilter = LOCATION_DISTANCE_FILTER;
 		locMgr.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
 										   @"Reason we need your location");
-		self._locationManager = locMgr;
+		_locationManager = locMgr;
 	}
     
     return _locationManager;
 }
 
 - (void)startLocationServices {
+    NSLog(@"START REGULAR LOCATION SERVICES");
     //Create the location manager if needed
 	[self._locationManager startUpdatingLocation];
 }
 
 
 - (void)stopLocationServices {
+    NSLog(@"STOP REGULAR LOCATION SERVICES");
     [self._locationManager stopUpdatingLocation];
+    [self._locationManager stopMonitoringSignificantLocationChanges];
 }
 
 
 - (CLLocation *)lastKnownLocation {
-    [self startLocationServices];
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive && [[self currentlyTrackedFlights] count] > 0) {
+        [self startLocationServices];
+    }
+    else {
+        _lastLocation = self._locationManager.location;
+    }
+    
     return _lastLocation;
 }
 
@@ -231,7 +240,8 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // If they later allow location services, get their location
-    if (status == kCLAuthorizationStatusAuthorized) {
+    if (status == kCLAuthorizationStatusAuthorized && [[self currentlyTrackedFlights] count] > 0 && 
+        [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self startLocationServices];
     }
 }
@@ -266,14 +276,15 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 
 - (void)startBackgroundMonitoring {
+    [self stopLocationServices];
+    
+    // Switch to significant location change monitoring if appropriate
     if ([_currentlyTrackedFlights count] > 0) {
-        // Switch to significant location change monitoring
-        [self stopLocationServices];
-        
         Flight *currentFlight = [_currentlyTrackedFlights lastObject];
         
         // Monitor their location in the background as long as the flight hasn't already landed or been canceled.
         if (currentFlight.status != LANDED && currentFlight.status != CANCELED) {
+            NSLog(@"START SIGNIFICANT LOCATION CHANGE MONITORING");
             [self._locationManager startMonitoringSignificantLocationChanges];
         }
     }
@@ -281,6 +292,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 
 - (void)stopBackgroundMonitoring {
+    NSLog(@"STOP SIGNIFICANT LOCATION CHANGE MONITORING");
     [self._locationManager stopMonitoringSignificantLocationChanges];
 }
 

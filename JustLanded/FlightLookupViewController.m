@@ -246,7 +246,7 @@ static NSRegularExpression *_flightNumberRegex;
         if ([flights count] == 0) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"),
                                                                      _flightNumberField.text]
-                                                            message:NSLocalizedString(@"Just Landed can only track U.S. domestic flights that are arriving within the next 48 hours.",
+                                                            message:NSLocalizedString(@"Just Landed can only track flights that are arriving at US, UK, French or Canadian airports within the next 48 hours.",
                                                                                       @"Just Landed Flight Not Found")
                                                            delegate:self 
                                                   cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
