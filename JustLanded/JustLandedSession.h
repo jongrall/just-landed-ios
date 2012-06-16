@@ -40,9 +40,6 @@ extern NSString * const DidFailToRegisterForRemoteNotifications;
 - (void)addTrackedFlight:(Flight *)aFlight;
 - (void)removeTrackedFlight:(Flight *)aFlight;
 
-- (void)startLocationServices;
-- (void)stopLocationServices;
-
 - (void)playSound:(JustLandedSoundType)type;
 - (void)vibrateDevice;
 
@@ -53,5 +50,10 @@ extern NSString * const DidFailToRegisterForRemoteNotifications;
 - (void)incrementTrackCount;
 - (BOOL)isEligibleToRate;
 - (void)showRatingRequestIfEligible;
+
+- (NSArray *)recentlyLookedUpAirlines;
+- (void)addToRecentlyLookedUpAirlines:(NSDictionary *)airlineInfo;
+- (void)clearRecentlyLookedUpAirlines;
+- (void)refreshTrackedFlights;
 
 @end

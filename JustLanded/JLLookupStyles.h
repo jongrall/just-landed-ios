@@ -13,6 +13,9 @@
 
 extern CGRect const LOGO_FRAME;
 extern CGRect const LOOKUP_BUTTON_FRAME;
+extern CGRect const AIRPORT_CODES_LABEL_FRAME;
+extern CGRect const AIRPORT_CODES_BUTTON_FRAME;
+extern CGRect const AIRLINE_NO_RESULTS_LABEL_FRAME;
 extern CGRect const ABOUT_BUTTON_FRAME;
 extern CGRect const LOOKUP_INPUT_FRAME;
 extern CGRect const LOOKUP_TEXTFIELD_FRAME;
@@ -29,7 +32,10 @@ extern CGRect const RESULTS_TABLE_CONTAINER_FRAME;
 
 + (ButtonStyle *)lookupButtonStyle;
 + (ButtonStyle *)aboutButtonStyle;
++ (ButtonStyle *)airportCodesButtonStyle;
++ (ButtonStyle *)airportCodesLabelButtonStyle;
 + (LabelStyle *)flightFieldLabelStyle;
 + (LabelStyle *)flightFieldTextStyle;
++ (LabelStyle *)noAirlineResultsLabel;
 
 @end

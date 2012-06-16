@@ -10,6 +10,9 @@
 
 CGRect const LOGO_FRAME = {35.0f, 33.0f, 248.0f, 40.0f};
 CGRect const LOOKUP_BUTTON_FRAME = {12.0f, 179.0f, 296.0f, 56.0f};
+CGRect const AIRPORT_CODES_LABEL_FRAME = {20.0f, 204.0f, 280.0f, 30.0f};
+CGRect const AIRPORT_CODES_BUTTON_FRAME = {229.0f, 201.0f, 33.0f, 34.0f};
+CGRect const AIRLINE_NO_RESULTS_LABEL_FRAME = {20.0f, 57.0f, 280.0f, 40.0f};
 CGRect const ABOUT_BUTTON_FRAME = {271.0f, 0.0f, 49.0f, 49.0f};
 CGRect const LOOKUP_INPUT_FRAME = {14.0f, 117.0f, 292.0f, 49.0f};
 CGRect const LOOKUP_TEXTFIELD_FRAME = {0.0f, 0.0f, 288.0f, 49.0f};
@@ -27,8 +30,11 @@ CGRect const RESULTS_TABLE_CONTAINER_FRAME = {15.0f, 185.0f, 290.0f, 261.0f};
 
 static ButtonStyle *_lookupButtonStyle;
 static ButtonStyle *_aboutButtonStyle;
+static ButtonStyle *_airportCodesButtonStyle;
+static ButtonStyle *_airportCodesLabelButtonStyle;
 static LabelStyle *_flightFieldLabelStyle;
 static LabelStyle *_flightFieldTextStyle;
+static LabelStyle *_airlineNoResultsLabelStyle;
 
 
 + (ButtonStyle *)lookupButtonStyle {
@@ -55,7 +61,7 @@ static LabelStyle *_flightFieldTextStyle;
                                                            iconImage:[UIImage imageNamed:@"lookup_glass" 
                                                                                withColor:defaultStyle.labelStyle.textStyle.color
                                                                              shadowColor:defaultStyle.labelStyle.textStyle.shadowColor
-                                                                            shadowOffset:defaultStyle.labelStyle.textStyle.shadowOffset
+                                                                            shadowOffset:CGSizeMake(0.0f, -1.0f)
                                                                               shadowBlur:defaultStyle.labelStyle.textStyle.shadowBlur]
                                                    iconDisabledImage:[UIImage imageNamed:@"lookup_glass" 
                                                                                withColor:defaultStyle.disabledLabelStyle.textStyle.color
@@ -89,6 +95,61 @@ static LabelStyle *_flightFieldTextStyle;
     }
     
     return _aboutButtonStyle;
+}
+
+
++ (ButtonStyle *)airportCodesButtonStyle {
+    if (!_airportCodesButtonStyle) {
+        _airportCodesButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil 
+                                                        disabledLabelStyle:nil
+                                                           backgroundColor:nil
+                                                                   upImage:[[UIImage imageNamed:@"small_button_white_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)]
+                                                                 downImage:[[UIImage imageNamed:@"small_button_white_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)] 
+                                                             disabledImage:nil 
+                                                                 iconImage:[UIImage imageNamed:@"lookup" withColor:[UIColor colorWithRed:98.0f/255.0f green:98.0f/255.0f blue:98.0f/255.0f alpha:1.0f]
+                                                                                   shadowColor:[UIColor whiteColor] 
+                                                                                  shadowOffset:CGSizeMake(0.0f, 1.0f)
+                                                                                    shadowBlur:1.0f]
+                                                         iconDisabledImage:nil
+                                                                iconOrigin:CGPointMake(8.0f, 8.0f)
+                                                             labelInsets:UIEdgeInsetsZero
+                                                         downLabelOffset:CGSizeMake(0.0f, 1.0f)
+                                                     disabledLabelOffset:CGSizeZero];
+    }
+    
+    return _airportCodesButtonStyle;
+}
+
+
++ (ButtonStyle *)airportCodesLabelButtonStyle {
+    if (!_airportCodesLabelButtonStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:13.5f]  
+                                                         color:[UIColor colorWithRed:98.0f/255.0f green:98.0f/255.0f blue:98.0f/255.0f alpha:1.0f]
+                                                   shadowColor:[UIColor whiteColor]
+                                                  shadowOffset:CGSizeMake(0.0f, 1.0f) 
+                                                    shadowBlur:0.0f];
+        
+        LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+                                                       backgroundColor:nil
+                                                             alignment:UITextAlignmentLeft 
+                                                         lineBreakMode:UILineBreakModeTailTruncation];
+        
+        
+        _airportCodesLabelButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
+                                                             disabledLabelStyle:nil
+                                                                backgroundColor:nil
+                                                                        upImage:nil
+                                                                      downImage:nil
+                                                                  disabledImage:nil 
+                                                                      iconImage:nil
+                                                              iconDisabledImage:nil
+                                                                     iconOrigin:CGPointZero
+                                                                    labelInsets:UIEdgeInsetsMake(5.0f, 33.5f, 5.0f, 40.0f)
+                                                                downLabelOffset:CGSizeZero
+                                                            disabledLabelOffset:CGSizeZero];
+    }
+    
+    return _airportCodesLabelButtonStyle;
 }
 
 
@@ -127,6 +188,25 @@ static LabelStyle *_flightFieldTextStyle;
     }
     
     return _flightFieldTextStyle;
+}
+
+
++ (LabelStyle *)noAirlineResultsLabel {
+    if (!_airlineNoResultsLabelStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:20.0f]
+                                                         color:[UIColor colorWithRed:98.0f/255.0f green:98.0f/255.0f blue:98.0f/255.0f alpha:1.0f]
+                                                   shadowColor:nil 
+                                                  shadowOffset:CGSizeZero 
+                                                    shadowBlur:0.0f];
+        
+        _airlineNoResultsLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                      backgroundColor:nil 
+                                                            alignment:UITextAlignmentCenter 
+                                                        lineBreakMode:UILineBreakModeClip];
+        
+    }
+    
+    return _airlineNoResultsLabelStyle;
 }
 
 @end

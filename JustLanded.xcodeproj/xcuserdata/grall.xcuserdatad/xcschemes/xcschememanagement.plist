@@ -7,17 +7,17 @@
 		<key>ABTableViewCell.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<key>AFNetworking.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>2</integer>
 		</dict>
 		<key>HockeyKit.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>4</integer>
+			<integer>3</integer>
 		</dict>
 		<key>JustLanded.xcscheme</key>
 		<dict>
@@ -27,11 +27,51 @@
 		<key>QuincyKit.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>SQLiteFTS3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
+		<key>Sqlite.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>7</integer>
+		</dict>
+		<key>sqlite-fts3-extension.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>5</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>1145C913158828DE002D5EDE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1145C923158828FE002D5EDE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1145C97F1588331B002D5EDE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1145C98F15883362002D5EDE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1145C9A6158833C6002D5EDE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>116CB8E714EF4E67003AB446</key>
 		<dict>
 			<key>primary</key>
@@ -73,6 +113,11 @@
 			<true/>
 		</dict>
 		<key>11F7DC70151185C000DFA5AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>11FA36C7158838E40004149F</key>
 		<dict>
 			<key>primary</key>
 			<true/>

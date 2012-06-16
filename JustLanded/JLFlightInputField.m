@@ -18,7 +18,7 @@
         LabelStyle *textLabelStyle = [JLLookupStyles flightFieldTextStyle];
         TextStyle *textStyle = [textLabelStyle textStyle];
         
-        self.placeholder = NSLocalizedString(@"ex. AA320", @"Flight number input placeholder");
+        self.placeholder = NSLocalizedString(@"ex. VX29", @"Flight number input placeholder");
         self.backgroundColor = [UIColor clearColor];
         self.leftViewMode = UITextFieldViewModeAlways;
         self.textAlignment = [textLabelStyle alignment];

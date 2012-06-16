@@ -40,6 +40,7 @@ extern NSString * const TOS_PATH;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 extern NSTimeInterval const TRACK_FRESHNESS_THRESHOLD;
+extern NSString * const RecentAirlineLookupsKey;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -70,6 +71,10 @@ extern NSString * const FY_READ_FAQ;
 extern NSString * const FY_ASKED_TO_RATE;
 extern NSString * const FY_RATED;
 extern NSString * const FY_DECLINED_TO_RATE;
+extern NSString * const FY_BEGAN_AIRLINE_LOOKUP;
+extern NSString * const FY_CANCELED_AIRLINE_LOOKUP;
+extern NSString * const FY_CHOSE_AIRLINE;
+extern NSString * const FY_CLEARED_RECENT;
 
 // Errors
 extern NSString * const FY_INVALID_FLIGHT_NUM_ERROR;

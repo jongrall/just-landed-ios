@@ -34,7 +34,7 @@ NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKey";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKey";
 #endif
 
-NSUInteger const RATINGS_USAGE_THRESHOLD = 5;
+NSUInteger const RATINGS_USAGE_THRESHOLD = 3;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -74,6 +74,14 @@ NSString * const UNTRACK_URL_FORMAT = @"untrack/%@";
 
 NSTimeInterval const TRACK_FRESHNESS_THRESHOLD = 1800.0;
 
+#if defined(CONFIGURATION_Debug)
+NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Development";
+#elif defined(CONFIGURATION_Adhoc)
+NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Adhoc";
+#else
+NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Production";
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark 3rd Party Keys & IDs
@@ -111,6 +119,10 @@ NSString * const FY_READ_FAQ = @"Read FAQ";
 NSString * const FY_ASKED_TO_RATE = @"Asked to Rate App";
 NSString * const FY_RATED = @"Rated App";
 NSString * const FY_DECLINED_TO_RATE = @"Declined to Rate App";
+NSString * const FY_BEGAN_AIRLINE_LOOKUP = @"Began Airline Lookup";
+NSString * const FY_CANCELED_AIRLINE_LOOKUP = @"Canceled Airline Lookup";
+NSString * const FY_CHOSE_AIRLINE = @"Chose Airline";
+NSString * const FY_CLEARED_RECENT = @"Cleared Recent Airlines";
 
 // Errors
 NSString * const FY_INVALID_FLIGHT_NUM_ERROR = @"Invalid Flight Number";

@@ -15,7 +15,6 @@ NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdate
 NSString * const WillRegisterForRemoteNotifications = @"WillRegisterForRemoteNotifications";
 NSString * const DidRegisterForRemoteNotifications = @"DidRegisterForRemoteNotifications";
 NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterForRemoteNotifications";
-CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
@@ -34,9 +33,6 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 - (void)archiveCurrentlyTrackedFlights;
 - (NSMutableArray *)unarchiveTrackedFlights;
 - (void)deleteArchivedTrackedFlights;
-- (void)startBackgroundMonitoring;
-- (void)stopBackgroundMonitoring;
-- (void)refreshTrackedFlights;
 
 @end
 
@@ -81,17 +77,7 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
                                                      name:DidTrackFlightNotification 
                                                    object:nil];
         
-        // Track background / return from background events
-        [[NSNotificationCenter defaultCenter] addObserver:self 
-                                                 selector:@selector(startBackgroundMonitoring) 
-                                                     name:UIApplicationDidEnterBackgroundNotification 
-                                                   object:[UIApplication sharedApplication]];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(stopBackgroundMonitoring) 
-                                                     name:UIApplicationDidBecomeActiveNotification 
-                                                   object:[UIApplication sharedApplication]];
-        
+        // Track background / return from background events        
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshTrackedFlights) 
                                                      name:UIApplicationDidBecomeActiveNotification 
@@ -148,6 +134,14 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
     else {
         _currentlyTrackedFlights = [[NSMutableArray alloc] init];
         [self deleteArchivedTrackedFlights];
+        
+        // If they're no longer tracking any flights, stop location services
+        [self._locationManager stopMonitoringSignificantLocationChanges];
+        
+        // Clear past notifications from the notification center
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+        [[UIApplication sharedApplication] cancelAllLocalNotifications];
     }
 }
 
@@ -196,7 +190,6 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
         CLLocationManager *locMgr = [[CLLocationManager alloc] init]; 
 		locMgr.delegate = self;
 		locMgr.desiredAccuracy = kCLLocationAccuracyBest;
-        locMgr.distanceFilter = LOCATION_DISTANCE_FILTER;
 		locMgr.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
 										   @"Reason we need your location");
 		_locationManager = locMgr;
@@ -205,26 +198,13 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
     return _locationManager;
 }
 
-- (void)startLocationServices {
-    NSLog(@"START REGULAR LOCATION SERVICES");
-    //Create the location manager if needed
-	[self._locationManager startUpdatingLocation];
-}
-
-
-- (void)stopLocationServices {
-    NSLog(@"STOP REGULAR LOCATION SERVICES");
-    [self._locationManager stopUpdatingLocation];
-    [self._locationManager stopMonitoringSignificantLocationChanges];
-}
-
 
 - (CLLocation *)lastKnownLocation {
-    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive && [[self currentlyTrackedFlights] count] > 0) {
-        [self startLocationServices];
-    }
-    else {
-        _lastLocation = self._locationManager.location;
+    if ([[self currentlyTrackedFlights] count] > 0) {
+        // Hack to force event report
+        [self._locationManager startMonitoringSignificantLocationChanges];
+        [self._locationManager stopMonitoringSignificantLocationChanges];
+        [self._locationManager startMonitoringSignificantLocationChanges];
     }
     
     return _lastLocation;
@@ -233,27 +213,25 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 
 - (BOOL)locationServicesAvailable {
     // Application needs both S.L.C.M. and standard location services to be reliable.
-    return [CLLocationManager significantLocationChangeMonitoringAvailable] && [CLLocationManager locationServicesEnabled] && 
+    return [CLLocationManager significantLocationChangeMonitoringAvailable] && 
             [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized;
 }
 
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // If they later allow location services, get their location
-    if (status == kCLAuthorizationStatusAuthorized && [[self currentlyTrackedFlights] count] > 0 && 
-        [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
-        [self startLocationServices];
+    if (status == kCLAuthorizationStatusAuthorized) {
+        [self lastKnownLocation];
     }
 }
 
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    NSLog(@"LOCATION UPDATED");
+    
     //Notify observers that the location has been updated
     _triedToGetLocation = YES;
-    
-    // Only report location changes
-    if (!_lastLocation || [newLocation distanceFromLocation:_lastLocation] >= LOCATION_DISTANCE_FILTER) {
-        _lastLocation = newLocation;
+    _lastLocation = newLocation;
     
     [FlurryAnalytics setLatitude:newLocation.coordinate.latitude 
                        longitude:newLocation.coordinate.longitude 
@@ -264,7 +242,6 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 	[[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidUpdateNotification 
                                                         object:self 
                                                       userInfo:dict];
-    }
 }
 
 
@@ -275,32 +252,56 @@ CLLocationDistance const LOCATION_DISTANCE_FILTER = 200.0;
 }
 
 
-- (void)startBackgroundMonitoring {
-    [self stopLocationServices];
-    
-    // Switch to significant location change monitoring if appropriate
-    if ([_currentlyTrackedFlights count] > 0) {
-        Flight *currentFlight = [_currentlyTrackedFlights lastObject];
-        
-        // Monitor their location in the background as long as the flight hasn't already landed or been canceled.
-        if (currentFlight.status != LANDED && currentFlight.status != CANCELED) {
-            NSLog(@"START SIGNIFICANT LOCATION CHANGE MONITORING");
-            [self._locationManager startMonitoringSignificantLocationChanges];
-        }
-    }
-}
-
-
-- (void)stopBackgroundMonitoring {
-    NSLog(@"STOP SIGNIFICANT LOCATION CHANGE MONITORING");
-    [self._locationManager stopMonitoringSignificantLocationChanges];
-}
-
-
 - (void)refreshTrackedFlights {
     for (Flight *f in [self currentlyTrackedFlights]) {
         [f trackWithLocation:[self lastKnownLocation] pushEnabled:[self pushEnabled]];
     }
+}
+
+
+- (NSArray *)recentlyLookedUpAirlines {
+    NSArray *airlines = [[NSUserDefaults standardUserDefaults] objectForKey:RecentAirlineLookupsKey];
+    
+    if (airlines) {
+        return airlines;
+    }
+    else {
+        return [[NSArray alloc] init];
+    }
+}
+
+
+- (void)addToRecentlyLookedUpAirlines:(NSDictionary *)airlineInfo {
+    NSArray *currentAirlines = [[NSUserDefaults standardUserDefaults] objectForKey:RecentAirlineLookupsKey];
+    
+    if (currentAirlines) {
+        NSMutableArray *toRemove = [[NSMutableArray alloc] init];
+        
+        for (NSDictionary *airline in currentAirlines) {
+            if ([(NSString *)[airline valueForKeyOrNil:@"icao"] isEqualToString:[airlineInfo valueForKeyOrNil:@"icao"]]) {
+                [toRemove addObject:airline];
+            }
+        }
+        
+        NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:currentAirlines];
+        [newArray removeObjectsInArray:toRemove];
+        [newArray insertObject:airlineInfo atIndex:0];
+    
+        if ([newArray count] > 5) {
+            newArray = [[newArray subarrayWithRange:NSMakeRange(0, 5)] mutableCopy]; // No more than 5 recent
+        }
+        [[NSUserDefaults standardUserDefaults] setObject:newArray forKey:RecentAirlineLookupsKey];
+    }
+    else {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithObject:airlineInfo] forKey:RecentAirlineLookupsKey];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)clearRecentlyLookedUpAirlines {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:RecentAirlineLookupsKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 

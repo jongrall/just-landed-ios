@@ -7,9 +7,10 @@
 //
 
 #import "FlightTrackViewController.h"
+#import "AirlineLookupViewController.h"
 #import "Flight.h"
 
-@interface FlightLookupViewController : UIViewController <FlightTrackViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
+@interface FlightLookupViewController : UIViewController <FlightTrackViewControllerDelegate, AirlineLookupDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, readonly) UITextField *flightNumberField;
 

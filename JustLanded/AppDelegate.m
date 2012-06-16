@@ -204,9 +204,7 @@
         [[JustLandedSession sharedSession] vibrateDevice];
         
         // Refresh the flight information
-        Flight *currentFlight = [currentlyTrackedFlights lastObject];
-        [currentFlight trackWithLocation:[[JustLandedSession sharedSession] lastKnownLocation] 
-                             pushEnabled:[[JustLandedSession sharedSession] pushEnabled]];
+        [[JustLandedSession sharedSession] refreshTrackedFlights];
     }
 }
 

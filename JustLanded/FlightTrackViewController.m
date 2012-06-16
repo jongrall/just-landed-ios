@@ -940,17 +940,16 @@
 
 - (void)showMap {
     // Trigger getting the location
-    CLLocation *lastLoc = [[JustLandedSession sharedSession] lastKnownLocation];
+    CLLocationManager *locMgr = [[CLLocationManager alloc] init];
+    locMgr.desiredAccuracy = kCLLocationAccuracyBest;
+    [locMgr startUpdatingLocation];
     
     NSString *mapURL = nil;
     NSString *destName = (_trackedFlight.destination.iataCode) ? _trackedFlight.destination.iataCode : 
                                                                  _trackedFlight.destination.icaoCode;
     destName = [destName stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
     
-    NSString *origLoc = lastLoc ? [NSString stringWithFormat:@"%f,%f", 
-                        lastLoc.coordinate.latitude,
-                        lastLoc.coordinate.longitude] : @"Current+Location";
-    
+    NSString *origLoc = @"Current+Location";
     NSString *destLoc = [NSString stringWithFormat:@"%f,%f", 
                          _trackedFlight.destination.location.coordinate.latitude,
                          _trackedFlight.destination.location.coordinate.longitude];
@@ -960,11 +959,12 @@
 
     [FlurryAnalytics logEvent:FY_GOT_DIRECTIONS];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];
+    [locMgr stopUpdatingLocation];
 }
 
 
 - (void)refresh {
-    CLLocation *location = location = [[JustLandedSession sharedSession] lastKnownLocation];
+    CLLocation *location = [[JustLandedSession sharedSession] lastKnownLocation];
     
     if (location) {
         // We already have a location (it may be stale), track now
