@@ -265,11 +265,11 @@ typedef enum {
         }
         case AboutCellTagTweet: {
             TWTweetComposeViewController *tweetComposer = [[TWTweetComposeViewController alloc] init];
-            NSArray *possibleTweets = [NSArray arrayWithObjects:@"The free Just Landed iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/LOEyWO",
-                                       @"The free Just Landed iPhone app makes it easy to pick people up at the airport! http://bit.ly/JR6pXf",
-                                       @"Just Landed for iPhone makes it easy to pick people up at the airport! http://bit.ly/LOEDK3",
+            NSArray *possibleTweets = [NSArray arrayWithObjects:@"The free @justlanded iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/LOEyWO",
+                                       @"The free @justlanded iPhone app makes it easy to pick people up at the airport! http://bit.ly/JR6pXf",
+                                       @"@justlanded for iPhone makes it easy to pick people up at the airport! http://bit.ly/LOEDK3",
                                        @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/Ja3UQX",
-                                       @"Just Landed is a new kind of flight tracker that tells you when to leave for the airport! http://bit.ly/JlJUK2", nil];
+                                       @"@justlanded is a new kind of flight tracker that tells you when to leave for the airport! http://bit.ly/JlJUK2", nil];
             
             // Choose a random tweet for some variety
             NSUInteger randomIndex = arc4random() % [possibleTweets count];
