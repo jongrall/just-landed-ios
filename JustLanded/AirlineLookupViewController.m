@@ -153,7 +153,7 @@
         for (NSDictionary *airline in _airlines) {
             NSString *airlineNameNoSpaces = [[airline objectForKeyOrNil:@"name"] stringByReplacingOccurrencesOfString:@" " withString:@""];
             
-            if ([airlineNameNoSpaces rangeOfString:searchTermNoSpaces options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound) {
+            if ([airlineNameNoSpaces rangeOfString:searchTermNoSpaces options:(NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound) {
                 [matchingAirlines addObject:airline];
             }
         }
