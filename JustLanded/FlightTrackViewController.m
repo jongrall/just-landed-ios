@@ -712,7 +712,7 @@
 }
 
 
-- (void)didTrackFlight:(NSNotification *)notification {
+- (void)didTrackFlight:(NSNotification *)notification {    
     // Stop loading animation
     self._showingValidData = YES;
     [self stopUpdating];
@@ -774,7 +774,7 @@
 }
 
 
-- (void)flightTrackFailed:(NSNotification *)notification {
+- (void)flightTrackFailed:(NSNotification *)notification {    
     // Stop loading animation
     [self stopUpdating];
     

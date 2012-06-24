@@ -160,7 +160,7 @@ static NSArray *_aircraftTypes;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 + (void)lookupFlights:(NSString *)aFlightNumber {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WillLookupFlightNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillLookupFlightNotification object:nil];
     
     NSString *lookupPath = [JustLandedAPIClient lookupPathWithFlightNumber:aFlightNumber];
     
@@ -188,9 +188,9 @@ static NSArray *_aircraftTypes;
                     }
                     
                     // Post success notification with fetched flights attached
-                    [[NSNotificationCenter defaultCenter] postNotificationName:DidLookupFlightNotification 
-                                                                        object:nil
-                                                                      userInfo:flights];
+                    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidLookupFlightNotification 
+                                                                                    object:nil
+                                                                                  userInfo:flights];
                 }
 
             }
@@ -237,9 +237,9 @@ static NSArray *_aircraftTypes;
     NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:reason] 
                                                            forKey:FlightLookupFailedReasonKey];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:FlightLookupFailedNotification 
-                                                        object:nil 
-                                                      userInfo:reasonDict];
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:FlightLookupFailedNotification 
+                                                                    object:nil 
+                                                                  userInfo:reasonDict];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ static NSArray *_aircraftTypes;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WillTrackFlightNotification object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillTrackFlightNotification object:self];
     
     NSString *trackingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
     NSMutableDictionary *trackingParams = [[NSMutableDictionary alloc] init];
@@ -282,10 +282,10 @@ static NSArray *_aircraftTypes;
                     }
                     
                     _lastTracked = [NSDate date];
-                    [[NSNotificationCenter defaultCenter] postNotificationName:DidTrackFlightNotification object:self];
+                    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidTrackFlightNotification object:self];
                 }
             }
-            failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            failure:^(AFHTTPRequestOperation *operation, NSError *error) {                
                 NSHTTPURLResponse *response = [operation response];
                 
                 if (response) {
@@ -335,14 +335,14 @@ static NSArray *_aircraftTypes;
     NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:reason] 
                                                            forKey:FlightTrackFailedReasonKey];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:FlightTrackFailedNotification 
-                                                        object:self 
-                                                      userInfo:reasonDict];
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:FlightTrackFailedNotification 
+                                                                    object:self 
+                                                                  userInfo:reasonDict];
 }
 
 
 - (void)stopTracking {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WillStopTrackingFlightNotification object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillStopTrackingFlightNotification object:self];
     
     NSString *stopTrackingPath = [JustLandedAPIClient stopTrackingPathWithFlightID:flightID];
     
@@ -350,10 +350,10 @@ static NSArray *_aircraftTypes;
      getPath:stopTrackingPath 
      parameters:nil 
      success:^(AFHTTPRequestOperation *operation, id JSON) {
-         [[NSNotificationCenter defaultCenter] postNotificationName:DidStopTrackingFlightNotification object:self];
+         [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidStopTrackingFlightNotification object:self];
      }
      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         [[NSNotificationCenter defaultCenter] postNotificationName:StopTrackingFlightFailedNotification object:self];
+         [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:StopTrackingFlightFailedNotification object:self];
      }];
 }
 

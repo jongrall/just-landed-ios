@@ -150,11 +150,12 @@
     if ([searchTerm length] > 0) {
         NSMutableArray *matchingAirlines = [[NSMutableArray alloc] init];
         
-        for (NSDictionary *airline in _airlines) {
-            NSString *airlineNameNoSpaces = [[airline objectForKeyOrNil:@"name"] stringByReplacingOccurrencesOfString:@" " withString:@""];
-            
-            if ([airlineNameNoSpaces rangeOfString:searchTermNoSpaces options:(NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound) {
-                [matchingAirlines addObject:airline];
+        for (id airline in _airlines) {
+            if ([airline isKindOfClass:[NSDictionary class]]) {
+                NSString *airlineNameNoSpaces = [[airline objectForKeyOrNil:@"name"] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                if ([airlineNameNoSpaces rangeOfString:searchTermNoSpaces options:(NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound) {
+                    [matchingAirlines addObject:airline];
+                }
             }
         }
         

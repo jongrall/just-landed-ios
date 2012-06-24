@@ -140,7 +140,10 @@
         NSMutableArray *flightData = [[NSMutableArray alloc] init];
         
         for (Flight *f in [[JustLandedSession sharedSession] currentlyTrackedFlights]) {
-            [flightData addObject:[f flightDataAsJson]];
+            NSString *jsonString = [f flightDataAsJson];
+            if (jsonString != nil) {
+                [flightData addObject:jsonString];
+            }
         }
         
         return [NSString stringWithFormat:@"%@\n\n%@", message_start,

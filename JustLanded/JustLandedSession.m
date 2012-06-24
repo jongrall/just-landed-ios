@@ -227,8 +227,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    NSLog(@"LOCATION UPDATED");
-    
     //Notify observers that the location has been updated
     _triedToGetLocation = YES;
     _lastLocation = newLocation;
@@ -239,15 +237,15 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
                 verticalAccuracy:newLocation.verticalAccuracy];
 	
     NSDictionary *dict = [NSDictionary dictionaryWithObject:newLocation forKey:@"location"];
-	[[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidUpdateNotification 
-                                                        object:self 
-                                                      userInfo:dict];
+	[[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:LastKnownLocationDidUpdateNotification 
+                                                                    object:self 
+                                                                  userInfo:dict];
 }
 
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     _triedToGetLocation = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:LastKnownLocationDidFailToUpdateNotification object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:LastKnownLocationDidFailToUpdateNotification object:self];
     [FlurryAnalytics logEvent:FY_UNABLE_TO_GET_LOCATION];
 }
 
@@ -359,7 +357,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 
 - (void)registerForPushNotifications {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WillRegisterForRemoteNotifications object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillRegisterForRemoteNotifications object:self];
 	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
 }
 
@@ -367,9 +365,9 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)didFailToRegisterForRemoteNotifications:(NSError *)error {
     _triedToRegisterForRemoteNotifications = YES;
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:DidFailToRegisterForRemoteNotifications 
-                                                        object:self 
-                                                      userInfo:[NSDictionary dictionaryWithObject:error 
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidFailToRegisterForRemoteNotifications 
+                                                                    object:self 
+                                                                  userInfo:[NSDictionary dictionaryWithObject:error 
                                                                                            forKey:@"error"]];
     [FlurryAnalytics logEvent:FY_UNABLE_TO_REGISTER_PUSH];
 }
@@ -379,10 +377,10 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 	_triedToRegisterForRemoteNotifications = YES;
     self.pushToken = token;
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:DidRegisterForRemoteNotifications
-                                                        object:self
-                                                      userInfo:[NSDictionary dictionaryWithObject:token
-                                                                                           forKey:@"pushToken"]];
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidRegisterForRemoteNotifications
+                                                                    object:self
+                                                                  userInfo:[NSDictionary dictionaryWithObject:token
+                                                                                                       forKey:@"pushToken"]];
 }
 
 

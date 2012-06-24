@@ -275,18 +275,23 @@ typedef enum {
             NSUInteger randomIndex = arc4random() % [possibleTweets count];
             [tweetComposer setInitialText:[possibleTweets objectAtIndex:randomIndex]];
             [tweetComposer setCompletionHandler:^(TWTweetComposeViewControllerResult result) {
-                if (result == TWTweetComposeViewControllerResultDone) {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                                    message:NSLocalizedString(@"Thanks, we appreciate it!", @"Tweet Sent Thanks")
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
-                                                          otherButtonTitles:nil];
-                    [alert show];
-                    [FlurryAnalytics logEvent:FY_POSTED_TWEET];
-                }
-                else {
-                    [FlurryAnalytics logEvent:FY_ABANDONED_TWEETING];
-                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // Always perform this on the main thread
+                    if (result == TWTweetComposeViewControllerResultDone) {
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                                        message:NSLocalizedString(@"Thanks, we appreciate it!", @"Tweet Sent Thanks")
+                                                                       delegate:nil
+                                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
+                                                              otherButtonTitles:nil];
+                        [alert show];
+                        [FlurryAnalytics logEvent:FY_POSTED_TWEET];
+                    }
+                    else {
+                        [FlurryAnalytics logEvent:FY_ABANDONED_TWEETING];
+                    }
+                    
+                    [self dismissModalViewControllerAnimated:NO];
+                });
             }];
             [self presentModalViewController:tweetComposer animated:YES];
             [FlurryAnalytics logEvent:FY_STARTED_TWEETING];

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1100A1EB1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1100A1EA1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m */; };
 		11019B4215194F1B00F7F0F2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11019B3F15194F1400F7F0F2 /* MessageUI.framework */; };
 		11019B45151970E200F7F0F2 /* AboutTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 11019B44151970E200F7F0F2 /* AboutTableViewCell.m */; };
 		11019B8115198B8300F7F0F2 /* FAQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11019B8015198B8300F7F0F2 /* FAQViewController.m */; };
@@ -384,6 +385,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1100A1E91594C96100058EC2 /* NSNotificationCenter+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+JLExtensions.h"; sourceTree = "<group>"; };
+		1100A1EA1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+JLExtensions.m"; sourceTree = "<group>"; };
 		11019B3F15194F1400F7F0F2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		11019B43151970E200F7F0F2 /* AboutTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutTableViewCell.h; sourceTree = "<group>"; };
 		11019B44151970E200F7F0F2 /* AboutTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutTableViewCell.m; sourceTree = "<group>"; };
@@ -1077,6 +1080,8 @@
 				11F96E57153ABF20003E4B1D /* UIImage+JLExtensions.m */,
 				1159C9F6155659C60086F04F /* UINavigationBar+JLExtensions.h */,
 				1159C9F7155659C70086F04F /* UINavigationBar+JLExtensions.m */,
+				1100A1E91594C96100058EC2 /* NSNotificationCenter+JLExtensions.h */,
+				1100A1EA1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -1960,6 +1965,7 @@
 				118AF876156D66C8006FF807 /* TOSViewController.m in Sources */,
 				1145C90215880241002D5EDE /* AirlineLookupViewController.m in Sources */,
 				11FA36E7158852E20004149F /* AirlineResultTableViewCell.m in Sources */,
+				1100A1EB1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

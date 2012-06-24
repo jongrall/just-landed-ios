@@ -50,4 +50,5 @@
     #import "NSData+JLExtensions.h"
     #import "UIImage+JLExtensions.h"
     #import "UIBarButtonItem+JLExtensions.h"
+    #import "NSNotificationCenter+JLExtensions.h"
 #endif
