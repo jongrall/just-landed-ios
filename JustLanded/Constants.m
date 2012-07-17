@@ -42,11 +42,11 @@ NSUInteger const RATINGS_USAGE_THRESHOLD = 3;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined(CONFIGURATION_Debug)
-NSString * const BASE_URL = @"http://10.0.1.100:8082/api/v1/";
+NSString * const BASE_URL = @"http://localhost:8082/api/v1/";
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Development";
 NSString * const API_KEY = @"d90816f7e6ea93001a2aa62cd8dd8f0e830a93d1";
-NSString * const WEB_HOST = @"http://10.0.1.100:8082";
+NSString * const WEB_HOST = @"http://localhost:8082";
 #elif defined(CONFIGURATION_Adhoc)
 NSString * const BASE_URL = @"https://just-landed-staging.appspot.com/api/v1/";
 NSUInteger const API_VERSION = 1;
