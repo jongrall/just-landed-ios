@@ -315,8 +315,6 @@
 		11F11353151182C80008D301 /* PSWebTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F11339151182C80008D301 /* PSWebTableViewCell.m */; };
 		11F11354151182C80008D301 /* UIImage+HockeyAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 11F1133A151182C80008D301 /* UIImage+HockeyAdditions.h */; };
 		11F11355151182C80008D301 /* UIImage+HockeyAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F1133B151182C80008D301 /* UIImage+HockeyAdditions.m */; };
-		11F11356151182C80008D301 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 11F1133E151182C80008D301 /* JSONKit.h */; };
-		11F11357151182C80008D301 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 11F1133F151182C80008D301 /* JSONKit.m */; };
 		11F11358151182F40008D301 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97F814EB5FDA00F7ED46 /* QuartzCore.framework */; };
 		11F11359151182F40008D301 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A914EB5ADE00F7ED46 /* SystemConfiguration.framework */; };
 		11F1135A151182F40008D301 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAB14DCCDDF006D1DB4 /* UIKit.framework */; };
@@ -741,8 +739,6 @@
 		11F1133A151182C80008D301 /* UIImage+HockeyAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+HockeyAdditions.h"; sourceTree = "<group>"; };
 		11F1133B151182C80008D301 /* UIImage+HockeyAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HockeyAdditions.m"; sourceTree = "<group>"; };
 		11F1133C151182C80008D301 /* Hockey.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Hockey.bundle; sourceTree = "<group>"; };
-		11F1133E151182C80008D301 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
-		11F1133F151182C80008D301 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		11F7DC71151185C000DFA5AF /* libQuincyKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libQuincyKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		11F7DC7D151185E400DFA5AF /* BWQuincyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWQuincyManager.h; sourceTree = "<group>"; };
 		11F7DC7E151185E400DFA5AF /* BWQuincyManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWQuincyManager.m; sourceTree = "<group>"; };
@@ -1343,7 +1339,6 @@
 				11F11330151182C80008D301 /* BWHockeyViewController.m */,
 				11F11331151182C80008D301 /* Helper */,
 				11F1133C151182C80008D301 /* Hockey.bundle */,
-				11F1133D151182C80008D301 /* JSON */,
 			);
 			path = HockeyKit;
 			sourceTree = "<group>";
@@ -1363,15 +1358,6 @@
 				11F1133B151182C80008D301 /* UIImage+HockeyAdditions.m */,
 			);
 			path = Helper;
-			sourceTree = "<group>";
-		};
-		11F1133D151182C80008D301 /* JSON */ = {
-			isa = PBXGroup;
-			children = (
-				11F1133E151182C80008D301 /* JSONKit.h */,
-				11F1133F151182C80008D301 /* JSONKit.m */,
-			);
-			path = JSON;
 			sourceTree = "<group>";
 		};
 		11F7DC73151185C000DFA5AF /* QuincyKit */ = {
@@ -1496,7 +1482,6 @@
 				11F11350151182C80008D301 /* PSStoreButton.h in Headers */,
 				11F11352151182C80008D301 /* PSWebTableViewCell.h in Headers */,
 				11F11354151182C80008D301 /* UIImage+HockeyAdditions.h in Headers */,
-				11F11356151182C80008D301 /* JSONKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1991,7 +1976,6 @@
 				11F11351151182C80008D301 /* PSStoreButton.m in Sources */,
 				11F11353151182C80008D301 /* PSWebTableViewCell.m in Sources */,
 				11F11355151182C80008D301 /* UIImage+HockeyAdditions.m in Sources */,
-				11F11357151182C80008D301 /* JSONKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
