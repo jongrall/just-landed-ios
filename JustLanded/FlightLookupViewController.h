@@ -1,9 +1,9 @@
 //
 //  FlightLookupViewController.h
-//  JustLanded
+//  Just Landed
 //
 //  Created by Jon Grall on 2/3/12.
-//  Copyright (c) 2012 Just Landed. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "FlightTrackViewController.h"

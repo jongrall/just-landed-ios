@@ -1,5 +1,6 @@
 //
 // Prefix header for all source files of the 'JustLanded' target in the 'JustLanded' project
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import <Availability.h>

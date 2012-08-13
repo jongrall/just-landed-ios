@@ -1,8 +1,9 @@
 //
-//  JustLandedSession.h
+//  Just LandedSession.h
 //  Just Landed
 //
 //  Created by Jon Grall on 2/17/12.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

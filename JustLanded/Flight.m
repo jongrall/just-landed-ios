@@ -1,9 +1,9 @@
 //
 //  Flight.m
-//  JustLanded
+//  Just Landed
 //
 //  Created by Jon Grall on 2/15/12.
-//  Copyright (c) 2012 Just Landed. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "Flight.h"
@@ -249,7 +249,7 @@ static NSArray *_aircraftTypes;
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag {
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillTrackFlightNotification object:self];
     
-    NSString *trackingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
+    NSString *trackiingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
     NSMutableDictionary *trackingParams = [[NSMutableDictionary alloc] init];
     
     if (loc) {
@@ -262,7 +262,7 @@ static NSArray *_aircraftTypes;
     }
     
     [[JustLandedAPIClient sharedClient] 
-            getPath:trackingPath 
+            getPath:trackiingPath
          parameters:trackingParams 
             success:^(AFHTTPRequestOperation *operation, id JSON){
                 if (JSON && [JSON isKindOfClass:[NSDictionary class]]) {

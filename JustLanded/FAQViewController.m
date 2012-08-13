@@ -1,8 +1,9 @@
 //
 //  FAQViewController.m
+//  Just Landed
 //
 //  Created by Jon Grall on 3/25/12.
-//  Copyright 2012 Little Details LLC. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "FAQViewController.h"

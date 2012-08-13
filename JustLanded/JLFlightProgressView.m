@@ -1,6 +1,6 @@
 //
 //  JLFlightProgressView.m
-//  JustLanded
+//  Just Landed
 //
 //  Created by Jon Grall on 4/16/12.
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
@@ -148,7 +148,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 - (void)setTimeOfDay:(TimeOfDay)newTimeOfDay {
     timeOfDay = newTimeOfDay;
     
-    // Update the backgrounds and flight icon
+    // Updale the backgrounds and flight icon
     UIImage *groundBg = nil;
     UIImage *cloudBg = nil;
     

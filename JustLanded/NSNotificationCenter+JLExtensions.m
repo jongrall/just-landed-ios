@@ -1,9 +1,9 @@
 //
 //  NSNotificationCenter+JLExtensions.m
-//  JustLanded
+//  Just Landed
 //
 //  Created by Jon Grall on 6/22/12.
-//  Copyright (c) 2012 SimplyListed. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "NSNotificationCenter+JLExtensions.h"

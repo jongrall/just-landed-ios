@@ -3,6 +3,7 @@
 //  Just Landed
 //
 //  Created by Jon Grall on 2/18/12
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "NSDate+JLExtensions.h"

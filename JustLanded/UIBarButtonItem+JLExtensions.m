@@ -1,9 +1,9 @@
 //
 //  UIBarButtonItem+JLExtensions.m
-//  Just Landed LLC
+//  Just Landed
 //
 //  Created by Jon Grall on 5/4/12.
-//  Copyright 2012 Just Landed LLC. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "UIBarButtonItem+JLExtensions.h"

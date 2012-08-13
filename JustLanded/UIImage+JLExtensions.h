@@ -1,8 +1,9 @@
 //
 //  UIImage+JLExtensions.h
+//  Just Landed
 //
 //  Created by Jon Grall on 4/20/12.
-//  Copyright 2012 Little Details LLC. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

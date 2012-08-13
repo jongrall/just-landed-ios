@@ -1,8 +1,9 @@
 //
 //  TOSViewController.m
+//  Just Landed
 //
 //  Created by Jon Grall on 5/23/12.
-//  Copyright 2012 Little Details LLC. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "TOSViewController.h"

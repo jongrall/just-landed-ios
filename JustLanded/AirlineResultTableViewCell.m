@@ -1,9 +1,9 @@
 //
 //  AirlineResultTableViewCell.m
-//  JustLanded
+//  Just Landed
 //
 //  Created by Jon Grall on 6/12/12.
-//  Copyright (c) 2012 SimplyListed. All rights reserved.
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
 #import "AirlineResultTableViewCell.h"
