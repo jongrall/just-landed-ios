@@ -8,14 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    OTHER_DATE = 0,
+    YESTERDAY,
+    TODAY,
+    TOMORROW,
+} RelativeDateKind;
 
 @interface NSDate (JLExtensions)
 
 + (NSDate *)dateWithTimestamp:(NSNumber *)timestamp;
 + (NSDate *)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag;
++ (RelativeDateKind)currentDateRelativeToDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
 + (NSString *)naturalDateStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
-+ (NSString *)naturalDayStringFromDate:(NSDate *)date;
-+ (NSString *)naturalTimeStringFromDate:(NSDate *)date;
++ (NSString *)naturalDayStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
++ (NSString *)naturalTimeStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
 + (NSString *)prettyPrintTimeDifference:(NSDate *)date;
 + (NSString *)timeIntervalToShortUnitString:(NSTimeInterval)interval leadingZeros:(BOOL)zeros;
 

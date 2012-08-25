@@ -12,38 +12,6 @@
 
 @implementation NSDate (JLExtensions)
 
-static NSDateFormatter *_naturalDateFormatter;
-static NSDateFormatter *_naturalDayFormatter;
-static NSDateFormatter *_naturalTimeFormatter;
-
-+ (void)initialize {
-	if (self == [NSDate class]) {
-        NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
-        NSTimeZone *timezone = [NSTimeZone localTimeZone];
-        NSLocale *locale = [NSLocale currentLocale];
-        
-		//Create a nice date formatter
-		_naturalDateFormatter = [[NSDateFormatter alloc] init];
-		[_naturalDateFormatter setCalendar:calendar];
-		[_naturalDateFormatter setTimeZone:timezone];
-		[_naturalDateFormatter setLocale:locale];
-		[_naturalDateFormatter setDateFormat:@"EEE, MMMM d"];
-        
-        _naturalDayFormatter = [[NSDateFormatter alloc] init];
-        [_naturalDayFormatter setCalendar:calendar];
-		[_naturalDayFormatter setTimeZone:timezone];
-		[_naturalDayFormatter setLocale:locale];
-		[_naturalDayFormatter setDateFormat:@"M/d"];
-        
-        _naturalTimeFormatter = [[NSDateFormatter alloc] init];
-        [_naturalTimeFormatter setCalendar:calendar];
-		[_naturalTimeFormatter setTimeZone:timezone];
-		[_naturalTimeFormatter setLocale:locale];
-		[_naturalTimeFormatter setDateFormat:@"h:mm a"];
-	}
-}
-
-
 + (NSDate *)dateWithTimestamp:(NSNumber *)timestamp {
     return [self dateWithTimestamp:timestamp returnNilForZero:NO];
 }
@@ -62,48 +30,89 @@ static NSDateFormatter *_naturalTimeFormatter;
 }
 
 
++ (RelativeDateKind)currentDateRelativeToDate:(NSDate *)date withTimezone:(NSTimeZone *)tz {
+    if (date) {
+        NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+        tz = tz ? tz : [NSTimeZone localTimeZone];
+        [calendar setTimeZone:tz];
+        [calendar setLocale:[NSLocale currentLocale]];
+        NSDate *now = [NSDate date];
+        NSDateComponents *components = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit)
+												   fromDate:now];
+		NSDate *todayAtMidnight = [calendar dateFromComponents:components];
+        
+        if ([todayAtMidnight timeIntervalSinceDate:date] > 0.0 && [todayAtMidnight timeIntervalSinceDate:date] <= 86400.0) {
+            return YESTERDAY;
+        }
+        else if ([date timeIntervalSinceDate:todayAtMidnight] >= 0.0 && [date timeIntervalSinceDate:todayAtMidnight] < 86400.0) {
+            return TODAY;
+        }
+        else if ([date timeIntervalSinceDate:todayAtMidnight] >= 86400.0 && [date timeIntervalSinceDate:todayAtMidnight] < 172800.0) {
+            return TOMORROW;
+        }
+        else {
+            return OTHER_DATE;
+        }
+    }
+    else {
+        return OTHER_DATE;
+    }
+}
+
+
 + (NSString *)naturalDateStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz {
 	
 	if (date) {
-		NSDate *now = [NSDate date];
-		
-		//Calculations for "Today", "Yesterday" and "Tomorrow"
-		NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
-		NSDateComponents *components = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit)
-												   fromDate:now];
-		
-		NSDate *todayAtMidnight = [calendar dateFromComponents:components];
-		BOOL yesterday = [todayAtMidnight timeIntervalSinceDate:date] > 0.0 && [todayAtMidnight timeIntervalSinceDate:date] <= 86400.0;
-		BOOL today = [date timeIntervalSinceDate:todayAtMidnight] >= 0.0 && [date timeIntervalSinceDate:todayAtMidnight] < 86400.0;
-		BOOL tomorrow = [date timeIntervalSinceDate:todayAtMidnight] >= 86400.0 && [date timeIntervalSinceDate:todayAtMidnight] < 172800.0;
+		NSTimeZone *localTimeZone = [NSTimeZone localTimeZone];
+        tz = tz ? tz : localTimeZone;
+        NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+        [calendar setTimeZone:tz];
+        [calendar setLocale:[NSLocale currentLocale]];
         
+		RelativeDateKind relativeKind = [NSDate currentDateRelativeToDate:date withTimezone:tz];
         NSString *timeString = nil;
         
-        if (tz == nil || [[tz abbreviation] isEqualToString:[[NSTimeZone localTimeZone] abbreviation]]) {
-            timeString = [NSDateFormatter localizedStringFromDate:date dateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle];
+        if (relativeKind == OTHER_DATE) {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setCalendar:calendar];
+            [formatter setTimeZone:tz];
+            [formatter setLocale:calendar.locale];
+            [formatter setDateFormat:@"EEE, MMMM d"];
+			return [formatter stringFromDate:date];
         }
         else {
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            [formatter setCalendar:[NSCalendar autoupdatingCurrentCalendar]];
-            [formatter setTimeZone:tz];
-            [formatter setLocale:[NSLocale currentLocale]];
-            [formatter setDateFormat:@"h:mm a"];
-            timeString = [formatter stringFromDate:date];
-            timeString = [timeString stringByAppendingFormat:@" %@", [tz abbreviation]];
+            // Only show timezone abbreviation if not the current timezone
+            if ([tz isEqualToTimeZone:localTimeZone]) {
+                timeString = [NSDateFormatter localizedStringFromDate:date
+                                                            dateStyle:NSDateFormatterNoStyle
+                                                            timeStyle:NSDateFormatterShortStyle];
+            }
+            else {
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                [formatter setCalendar:calendar];
+                [formatter setTimeZone:calendar.timeZone];
+                [formatter setLocale:calendar.locale];
+                [formatter setDateFormat:@"h:mm a"];
+                timeString = [formatter stringFromDate:date];
+                // Ensure tz abbreviation not too long, tz for date not now
+                NSUInteger maxAbbrevLen = 4;
+                NSString *tzAbbrev = [tz abbreviationForDate:date];
+                tzAbbrev = [tzAbbrev length] > maxAbbrevLen ? [tzAbbrev substringToIndex:maxAbbrevLen] : tzAbbrev;
+                timeString = [timeString stringByAppendingFormat:@" %@", tzAbbrev];
+            }
+            
+            switch (relativeKind) {
+                case YESTERDAY: {
+                    return [NSString stringWithFormat:NSLocalizedString(@"yesterday %@", @"yesterday at 3:24pm"), timeString];
+                }
+                case TODAY: {
+                    return [NSString stringWithFormat:NSLocalizedString(@"today %@", @"today at 3:24pm"), timeString];
+                }
+                default: {
+                    return [NSString stringWithFormat:NSLocalizedString(@"tomorrow %@", @"tomorrow at 3:24pm"), timeString];
+                }
+            }
         }
-        
-		if (yesterday) {
-			return [NSString stringWithFormat:NSLocalizedString(@"yesterday %@", @"yesterday at 3:24pm"), timeString];
-		}
-		else if (today) {
-			return [NSString stringWithFormat:NSLocalizedString(@"today %@", @"today at 3:24pm"), timeString];
-		}
-		else if (tomorrow) {
-			return [NSString stringWithFormat:NSLocalizedString(@"tomorrow %@", @"tomorrow at 3:24pm"), timeString];
-		}
-		else {
-			return [_naturalDateFormatter stringFromDate:date];
-		}
 	}
 	else {
 		return NSLocalizedString(@"Unknown Date", @"Unknown Date");
@@ -111,32 +120,37 @@ static NSDateFormatter *_naturalTimeFormatter;
 }
 
 
-+ (NSString *)naturalDayStringFromDate:(NSDate *)date {
++ (NSString *)naturalDayStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz {
     if (date) {
-        NSDate *now = [NSDate date];
-        
         //Calculations for "Today", "Yesterday" and "Tomorrow"
 		NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
-		NSDateComponents *components = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit)
-												   fromDate:now];
-		
-		NSDate *todayAtMidnight = [calendar dateFromComponents:components];
-		BOOL yesterday = [todayAtMidnight timeIntervalSinceDate:date] > 0.0 && [todayAtMidnight timeIntervalSinceDate:date] <= 86400.0;
-		BOOL today = [date timeIntervalSinceDate:todayAtMidnight] >= 0.0 && [date timeIntervalSinceDate:todayAtMidnight] < 86400.0;
-		BOOL tomorrow = [date timeIntervalSinceDate:todayAtMidnight] >= 86400.0 && [date timeIntervalSinceDate:todayAtMidnight] < 172800.0;
-		
-		if (yesterday) {
-			return NSLocalizedString(@"Yesterday", @"Yesterday");
-		}
-		else if (today) {
-			return NSLocalizedString(@"Today", @"Today");
-		}
-		else if (tomorrow) {
-            return NSLocalizedString(@"Tomorrow", @"Tomorrow");
-		}
-		else {
-			return [_naturalDayFormatter stringFromDate:date];
-		}
+        NSTimeZone *localTimeZone = [NSTimeZone localTimeZone];
+        NSLocale *currentLocale = [NSLocale currentLocale];
+        tz = tz ? tz : localTimeZone;
+        [calendar setTimeZone:tz];
+		[calendar setLocale:currentLocale];
+        
+        RelativeDateKind relativeKind = [NSDate currentDateRelativeToDate:date withTimezone:tz];
+        
+        switch (relativeKind) {
+            case YESTERDAY: {
+                return NSLocalizedString(@"Yesterday", @"Yesterday");
+            }
+            case TODAY: {
+                return NSLocalizedString(@"Today", @"Today");
+            }
+            case TOMORROW: {
+                return NSLocalizedString(@"Tomorrow", @"Tomorrow");
+            }
+            default: {
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                [formatter setCalendar:calendar];
+                [formatter setTimeZone:tz];
+                [formatter setLocale:currentLocale];
+                [formatter setDateFormat:@"M/d"];
+                return [formatter stringFromDate:date];
+            }
+        }
     }
     else {
         return @"";
@@ -144,9 +158,21 @@ static NSDateFormatter *_naturalTimeFormatter;
 }
 
 
-+ (NSString *)naturalTimeStringFromDate:(NSDate *)date {
++ (NSString *)naturalTimeStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz {
     if (date) {
-        return [_naturalTimeFormatter stringFromDate:date];
+        NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+        NSTimeZone *localTimeZone = [NSTimeZone localTimeZone];
+        NSLocale *currentLocale = [NSLocale currentLocale];
+        tz = tz ? tz : localTimeZone;
+        [calendar setTimeZone:tz];
+		[calendar setLocale:currentLocale];
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setCalendar:calendar];
+		[formatter setTimeZone:tz];
+		[formatter setLocale:currentLocale];
+		[formatter setDateFormat:@"h:mm a"];
+        return [formatter stringFromDate:date];
     }
     else {
         return @"";

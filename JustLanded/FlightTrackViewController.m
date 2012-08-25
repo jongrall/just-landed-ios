@@ -55,6 +55,7 @@
 + (UIImage *)arrowImageForStatus:(FlightStatus)status;
 + (UIImage *)headerBackgroundImageForStatus:(FlightStatus)status;
 
+- (NSTimeZone *)displayTimezone;
 - (NSString *)labelForStatus:(FlightStatus)status;
 - (void)trackFlightWithLocation:(CLLocation *)loc;
 - (void)locationUpdated:(NSNotification *)notification;
@@ -143,6 +144,12 @@
 }
 
 
+- (NSTimeZone *)displayTimezone {
+    // The timezone to use for display purposes
+    return [NSTimeZone localTimeZone];
+}
+
+
 - (NSString *)labelForStatus:(FlightStatus)status {
     // Note: Spaces added at the end to work with script font.
     switch (status) {
@@ -221,7 +228,7 @@
     if (self) {
         NSAssert(aFlight != nil, @"Flight to track is nil!");
         _trackedFlight = aFlight;
-        
+                
         // Listen for location update notifications
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(locationUpdated:) 
@@ -554,25 +561,22 @@
 
 - (NSString *)landsAtLabelText {
     if ([_trackedFlight actualArrivalTime]) {
-        return [[NSString stringWithFormat:@"LANDED %@ AT", [NSDate naturalDayStringFromDate:[_trackedFlight actualArrivalTime]]] uppercaseString];
+        return [[NSString stringWithFormat:@"LANDED %@ AT", [NSDate naturalDayStringFromDate:[_trackedFlight actualArrivalTime] withTimezone:[self displayTimezone]]] uppercaseString];
     }
     else {
-        return [[NSString stringWithFormat:@"LANDS %@ AT", [NSDate naturalDayStringFromDate:[_trackedFlight estimatedArrivalTime]]] uppercaseString];
+        return [[NSString stringWithFormat:@"LANDS %@ AT", [NSDate naturalDayStringFromDate:[_trackedFlight estimatedArrivalTime] withTimezone:[self displayTimezone]]] uppercaseString];
     }
 }
                           
 
 - (NSArray *)landsAtTimeParts {
-    NSString *timeString;
-    
-    if ([_trackedFlight actualArrivalTime]) {
-        timeString = [NSDate naturalTimeStringFromDate:[_trackedFlight actualArrivalTime]];
-    }
-    else {
-        timeString = [NSDate naturalTimeStringFromDate:[_trackedFlight estimatedArrivalTime]];
-    }
-    
-    timeString = [timeString stringByAppendingFormat:@" %@", [[NSTimeZone localTimeZone] abbreviation]];
+    // Prefer actual arrival time over estimated
+    NSDate *landsAtDate = [_trackedFlight actualArrivalTime] ? [_trackedFlight actualArrivalTime] : [_trackedFlight estimatedArrivalTime];
+    NSString *timeString = [NSDate naturalTimeStringFromDate:landsAtDate withTimezone:[self displayTimezone]];
+    NSString *tzAbbrev = [[self displayTimezone] abbreviationForDate:landsAtDate];
+    NSUInteger MAX_TIMEZONE_LENGTH = 4;
+    tzAbbrev = [tzAbbrev length] > MAX_TIMEZONE_LENGTH ? [tzAbbrev substringToIndex:4] : tzAbbrev;
+    timeString = [timeString stringByAppendingFormat:@" %@", tzAbbrev];
     return [timeString componentsSeparatedByString:@" "];
 }
 

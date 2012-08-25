@@ -268,6 +268,7 @@ static NSArray *_aircraftTypes;
                 if (JSON && [JSON isKindOfClass:[NSDictionary class]]) {
                     NSDictionary *prevData = [self flightData];
                     NSDictionary *flightInfo = (NSDictionary *)JSON;
+                    
                     @try {
                         [self updateWithFlightInfo:flightInfo];
                     }

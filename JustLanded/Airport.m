@@ -57,7 +57,8 @@
             icaoCode ? icaoCode : [NSNull null], @"icaoCode",         
             city ? city : [NSNull null], @"city",
             location ? location : [NSNull null], @"location",            
-            terminal ? terminal : [NSNull null], @"terminal", nil];
+            terminal ? terminal : [NSNull null], @"terminal",
+            timezone ? timezone : [NSNull null], @"timezone", nil];
 }
 
 
@@ -68,7 +69,8 @@
             city ? city : [NSNull null], @"city",
             location ? [NSNumber numberWithDouble:location.coordinate.latitude] : [NSNull null], @"latitude",
             location ? [NSNumber numberWithDouble:location.coordinate.longitude] : [NSNull null], @"longitude",
-            terminal ? terminal : [NSNull null], @"terminal", nil];
+            terminal ? terminal : [NSNull null], @"terminal",
+            timezone ? [timezone name] : [NSNull null], @"timezone", nil];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,6 +86,7 @@
         self.city = [aDecoder decodeObjectForKey:@"city"];
         self.location = [aDecoder decodeObjectForKey:@"location"];
         self.terminal = [aDecoder decodeObjectForKey:@"terminal"];
+        self.timezone = [aDecoder decodeObjectForKey:@"timezone"];
     }
     
     return self;
@@ -97,6 +100,7 @@
     [aCoder encodeObject:city forKey:@"city"];
     [aCoder encodeObject:location forKey:@"location"];
     [aCoder encodeObject:terminal forKey:@"terminal"];
+    [aCoder encodeObject:timezone forKey:@"timezone"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
