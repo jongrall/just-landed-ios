@@ -109,6 +109,10 @@
 	// X-UUID HTTP Header
 	[self setDefaultHeader:@"X-Just-Landed-UUID" value:[[JustLandedSession sharedSession] UUID]];
     
+    // X-Just-Landed-App-Version HTTP Header
+    [self setDefaultHeader:@"X-Just-Landed-App-Version"
+                     value:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+    
     return self;
 }
 
