@@ -113,6 +113,9 @@
     [self setDefaultHeader:@"X-Just-Landed-App-Version"
                      value:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     
+    // X-Just-Landed-User-Language
+    [self setDefaultHeader:@"X-Just-Landed-User-Language" value:[[NSLocale preferredLanguages] objectAtIndex:0]];
+    
     return self;
 }
 
