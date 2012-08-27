@@ -113,9 +113,6 @@
     [self setDefaultHeader:@"X-Just-Landed-App-Version"
                      value:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     
-    // X-Just-Landed-User-Language
-    [self setDefaultHeader:@"X-Just-Landed-User-Language" value:[[NSLocale preferredLanguages] objectAtIndex:0]];
-    
     return self;
 }
 
@@ -131,6 +128,9 @@
     // Sign the request
     NSString *sig = [[self class] apiRequestSignatureWithPath:path params:parameters];
     [request setValue:sig forHTTPHeaderField:@"X-Just-Landed-Signature"];
+    
+    // Set the language (can change between requests)
+    [request setValue:[[NSLocale preferredLanguages] objectAtIndex:0] forHTTPHeaderField:@"X-Just-Landed-User-Language"];
     
     // Force gzip encoding from GAE
     [request setValue:@"gzip, deflate" forHTTPHeaderField:@"Accept-Encoding"];
