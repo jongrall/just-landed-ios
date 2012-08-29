@@ -44,7 +44,7 @@ NSUInteger const RATINGS_USAGE_THRESHOLD = 3;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined(CONFIGURATION_Debug)
-    #if defined(TARGET_IPHONE_SIMULATOR)
+    #if TARGET_IPHONE_SIMULATOR
         NSString * const WEB_HOST = @"http://localhost:8082";
         NSString * const BASE_URL = @"http://localhost:8082/api/v1/";
     #else
