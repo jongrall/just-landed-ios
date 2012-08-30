@@ -34,6 +34,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)archiveCurrentlyTrackedFlights;
 - (NSMutableArray *)unarchiveTrackedFlights;
 - (void)deleteArchivedTrackedFlights;
+- (void)disableLocationMonitoringIfNecessary;
 
 @end
 
@@ -72,6 +73,14 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
             _currentlyTrackedFlights = [[NSMutableArray alloc] init];
         }
         
+        // Register default preferences (not automatically pulled in from Settings.bundle defaults
+        NSDictionary *defaultPrefs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], SendFlightEventsPreferenceKey,
+                                      [NSNumber numberWithBool:YES], SendRemindersPreferenceKey,
+                                      [NSNumber numberWithInt:300], ReminderLeadTimePreferenceKey,
+                                      [NSNumber numberWithBool:YES], PlayFlightSoundsPreferenceKey,
+                                      [NSNumber numberWithBool:YES], MonitorLocationPreferenceKey, nil];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPrefs];
+        
         // Archive tracked flights whenever any flight is updated
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(archiveCurrentlyTrackedFlights) 
@@ -82,6 +91,12 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshTrackedFlights) 
                                                      name:UIApplicationDidBecomeActiveNotification 
+                                                   object:[UIApplication sharedApplication]];
+        
+        // Disable background location monitoring if prefs demand it
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(disableLocationMonitoringIfNecessary)
+                                                     name:UIApplicationDidEnterBackgroundNotification
                                                    object:[UIApplication sharedApplication]];
     }
     return self;
@@ -258,6 +273,17 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 }
 
 
+- (void)disableLocationMonitoringIfNecessary {
+    // Flush pref caches
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    BOOL monitorLocation = [[NSUserDefaults standardUserDefaults] boolForKey:MonitorLocationPreferenceKey];
+    
+    if (!monitorLocation) {
+        [self._locationManager stopMonitoringSignificantLocationChanges];
+    }
+}
+
+
 - (NSArray *)recentlyLookedUpAirlines {
     NSArray *airlines = [[NSUserDefaults standardUserDefaults] objectForKey:RecentAirlineLookupsKey];
     
@@ -334,6 +360,12 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
 }
 
+
+- (BOOL)wantsToHearFlightSounds {
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Push Notifications
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -354,6 +386,23 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     }
     
     return currentUUID;
+}
+
+
+- (NSMutableDictionary *)currentTrackingPreferences {
+    // Force refresh of pref caches
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // Get the prefs
+    BOOL sendFlightEvents = [[NSUserDefaults standardUserDefaults] boolForKey:SendFlightEventsPreferenceKey];
+    BOOL sendReminders = [[NSUserDefaults standardUserDefaults] boolForKey:SendRemindersPreferenceKey];
+    BOOL playFlightSounds = [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
+    NSUInteger reminderLeadTime = [[NSUserDefaults standardUserDefaults] integerForKey:ReminderLeadTimePreferenceKey];
+    
+    return [[NSMutableDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:sendFlightEvents], SendFlightEventsPreferenceKey,
+            [NSNumber numberWithBool:sendReminders], SendRemindersPreferenceKey,
+            [NSNumber numberWithBool:playFlightSounds], PlayFlightSoundsPreferenceKey,
+            [NSNumber numberWithInteger:reminderLeadTime], ReminderLeadTimePreferenceKey, nil];
 }
 
 
@@ -389,6 +438,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     // Returns true if alerts are allowed - minimum to consider push enabled for the app (badge & sound not required)
     return ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] & UIRemoteNotificationTypeAlert) && pushToken;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - App Ratings

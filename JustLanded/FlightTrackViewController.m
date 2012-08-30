@@ -733,6 +733,7 @@
     _flightProgressView.progress = [_trackedFlight currentProgress];
     _landsAtLabel.text = [self landsAtLabelText];
     _landsAtTimeLabel.parts = [self landsAtTimeParts];
+    _landsAtTimeLabel.offsets = [self landsAtTimeOffsets]; // Need to recalc offsets
     _landsInLabel.text = [self landsInLabelText];
     _landsInTimeLabel.parts = [self landsInTimeParts];
     _terminalLabel.text = [self terminalLabelText];

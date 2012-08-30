@@ -38,6 +38,13 @@ NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKey";
 
 NSUInteger const RATINGS_USAGE_THRESHOLD = 3;
 
+// Preferences
+NSString * const SendFlightEventsPreferenceKey = @"send_flight_events";
+NSString * const SendRemindersPreferenceKey = @"send_reminders";
+NSString * const ReminderLeadTimePreferenceKey = @"reminder_lead_time";
+NSString * const PlayFlightSoundsPreferenceKey = @"play_flight_sounds";
+NSString * const MonitorLocationPreferenceKey = @"monitor_location";
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Server Constants

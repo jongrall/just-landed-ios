@@ -13,11 +13,20 @@
 
 extern NSString * const APP_ID;
 extern NSString * const UUIDKey;
+extern NSString * const UUIDKey;
 extern NSString * const BeganUsingDate;
 extern NSString * const ARCHIVED_FLIGHTS_FILE;
 extern NSString * const HasBeenAskedToRateKey;
 extern NSString * const FlightsTrackedCountKey;
 extern NSUInteger const RATINGS_USAGE_THRESHOLD;
+
+// Preferences
+extern NSString * const SendFlightEventsPreferenceKey;
+extern NSString * const SendRemindersPreferenceKey;
+extern NSString * const ReminderLeadTimePreferenceKey;
+extern NSString * const PlayFlightSoundsPreferenceKey;
+extern NSString * const MonitorLocationPreferenceKey;
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

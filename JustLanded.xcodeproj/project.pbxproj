@@ -18,6 +18,7 @@
 		1108D279154C8D91007844D8 /* table_cell_middle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1108D273154C8D91007844D8 /* table_cell_middle@2x.png */; };
 		1108D27A154C8D91007844D8 /* table_cell_top_selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1108D274154C8D91007844D8 /* table_cell_top_selected@2x.png */; };
 		1108D27B154C8D91007844D8 /* table_cell_top@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1108D275154C8D91007844D8 /* table_cell_top@2x.png */; };
+		11096A2115EEA693002A87E7 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 11096A2015EEA693002A87E7 /* Settings.bundle */; };
 		112896B615621B070056DD34 /* plane_contrail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B515621B070056DD34 /* plane_contrail@2x.png */; };
 		112896BB15621BB80056DD34 /* spinner_2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B815621BB80056DD34 /* spinner_2@2x.png */; };
 		112896BC15621BB80056DD34 /* spinner_3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B915621BB80056DD34 /* spinner_3@2x.png */; };
@@ -397,6 +398,7 @@
 		1108D273154C8D91007844D8 /* table_cell_middle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "table_cell_middle@2x.png"; sourceTree = "<group>"; };
 		1108D274154C8D91007844D8 /* table_cell_top_selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "table_cell_top_selected@2x.png"; sourceTree = "<group>"; };
 		1108D275154C8D91007844D8 /* table_cell_top@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "table_cell_top@2x.png"; sourceTree = "<group>"; };
+		11096A2015EEA693002A87E7 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		112896B515621B070056DD34 /* plane_contrail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plane_contrail@2x.png"; sourceTree = "<group>"; };
 		112896B815621BB80056DD34 /* spinner_2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spinner_2@2x.png"; sourceTree = "<group>"; };
 		112896B915621BB80056DD34 /* spinner_3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spinner_3@2x.png"; sourceTree = "<group>"; };
@@ -1150,6 +1152,7 @@
 				11C5DFB414DCCDDF006D1DB4 /* InfoPlist.strings */,
 				11C5DFB714DCCDDF006D1DB4 /* main.m */,
 				11C5DFB914DCCDDF006D1DB4 /* JustLanded-Prefix.pch */,
+				11096A2015EEA693002A87E7 /* Settings.bundle */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1845,6 +1848,7 @@
 				11D95D251589214F00331366 /* query_bg@2x.png in Resources */,
 				11D95D261589214F00331366 /* query_field.png in Resources */,
 				11D95D271589214F00331366 /* query_field@2x.png in Resources */,
+				11096A2115EEA693002A87E7 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

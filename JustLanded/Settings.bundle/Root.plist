@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PreferenceSpecifiers</key>
+	<array>
+		<dict>
+			<key>Title</key>
+			<string>Notifications</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<true/>
+			<key>Key</key>
+			<string>send_flight_events</string>
+			<key>Title</key>
+			<string>Takeoff, Landing, etc.</string>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<true/>
+			<key>Key</key>
+			<string>send_reminders</string>
+			<key>Title</key>
+			<string>Go To Airport</string>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<integer>300</integer>
+			<key>Key</key>
+			<string>reminder_lead_time</string>
+			<key>Title</key>
+			<string>Leave Soon</string>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Titles</key>
+			<array>
+				<string>1 minute before leaving</string>
+				<string>5 minutes before leaving</string>
+				<string>15 minutes before leaving</string>
+				<string>30 minutes before leaving</string>
+			</array>
+			<key>ShortTitles</key>
+			<array>
+				<string>1 minute before</string>
+				<string>5 minutes before</string>
+				<string>15 minutes before</string>
+				<string>30 minutes before</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>60</integer>
+				<integer>300</integer>
+				<integer>900</integer>
+				<integer>1800</integer>
+			</array>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<true/>
+			<key>Key</key>
+			<string>play_flight_sounds</string>
+			<key>Title</key>
+			<string>Alert Sounds</string>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Titles</key>
+			<array>
+				<string>Airplane Noises</string>
+				<string>Standard Alert Sounds</string>
+			</array>
+			<key>ShortTitles</key>
+			<array>
+				<string>Airplane</string>
+				<string>Standard</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<true/>
+				<false/>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Background Services</string>
+			<key>FooterText</key>
+			<string>Automatically updates reminders when you move location. Battery friendly.</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Monitor Location</string>
+			<key>Key</key>
+			<string>monitor_location</string>
+			<key>DefaultValue</key>
+			<true/>
+		</dict>
+	</array>
+	<key>StringsTable</key>
+	<string>Root</string>
+</dict>
+</plist>

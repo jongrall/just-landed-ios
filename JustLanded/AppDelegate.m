@@ -184,26 +184,30 @@
         
         NSString *notificationType = [userInfo valueForKeyPathOrNil:@"notification_type"];
         
-        // Play the right sound - UILocalNotification won't always play the sound
-        if (notificationType) {
-            PushType type = [Flight stringToPushType:notificationType];
-            
-            switch (type) {
-                case FlightDeparted:
-                    [[JustLandedSession sharedSession] playSound:TakeOffSound];
-                    break;
-                case FlightArrived:
-                    [[JustLandedSession sharedSession] playSound:LandingSound];
-                    break;
-                default:
-                    [[JustLandedSession sharedSession] playSound:AnnouncementSound];
-                    break;
+        // Figure out whether they want to hear airplane sounds
+        if ([[JustLandedSession sharedSession] wantsToHearFlightSounds]) {
+            // Play the right sound - UILocalNotification won't always play the sound
+            if (notificationType) {
+                PushType type = [Flight stringToPushType:notificationType];
+                
+                switch (type) {
+                    case FlightDeparted:
+                        [[JustLandedSession sharedSession] playSound:TakeOffSound];
+                        break;
+                    case FlightArrived:
+                        [[JustLandedSession sharedSession] playSound:LandingSound];
+                        break;
+                    default:
+                        [[JustLandedSession sharedSession] playSound:AnnouncementSound];
+                        break;
+                }
+            }
+            else {
+                [[JustLandedSession sharedSession] playSound:AnnouncementSound];
             }
         }
-        else {
-            [[JustLandedSession sharedSession] playSound:AnnouncementSound];
-        }
         
+        // Always vibrate on update
         [[JustLandedSession sharedSession] vibrateDevice];
         
         // Refresh the flight information

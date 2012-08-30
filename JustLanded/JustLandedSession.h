@@ -45,12 +45,14 @@ extern NSString * const DidFailToRegisterForRemoteNotifications;
 - (void)vibrateDevice;
 
 - (NSString *)UUID;
+- (NSMutableDictionary *)currentTrackingPreferences;
 - (void)registerForPushNotifications;
 - (void)didFailToRegisterForRemoteNotifications:(NSError *)error;
 - (void)updatePushTokenAfterRegisteringWithApple:(NSString *)token;
 - (void)incrementTrackCount;
 - (BOOL)isEligibleToRate;
 - (void)showRatingRequestIfEligible;
+- (BOOL)wantsToHearFlightSounds;
 
 - (NSArray *)recentlyLookedUpAirlines;
 - (void)addToRecentlyLookedUpAirlines:(NSDictionary *)airlineInfo;

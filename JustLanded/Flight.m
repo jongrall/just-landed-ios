@@ -161,7 +161,7 @@ static NSArray *_aircraftTypes;
 
 + (void)lookupFlights:(NSString *)aFlightNumber {
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillLookupFlightNotification object:nil];
-    
+
     NSString *lookupPath = [JustLandedAPIClient lookupPathWithFlightNumber:aFlightNumber];
     
     [[JustLandedAPIClient sharedClient] 
@@ -249,8 +249,8 @@ static NSArray *_aircraftTypes;
 - (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag {
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillTrackFlightNotification object:self];
     
-    NSString *trackiingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
-    NSMutableDictionary *trackingParams = [[NSMutableDictionary alloc] init];
+    NSString *trackingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
+    NSMutableDictionary *trackingParams = [[JustLandedSession sharedSession] currentTrackingPreferences];
     
     if (loc) {
         [trackingParams setValue:[NSNumber numberWithFloat:loc.coordinate.latitude] forKey:@"latitude"];
@@ -262,7 +262,7 @@ static NSArray *_aircraftTypes;
     }
     
     [[JustLandedAPIClient sharedClient] 
-            getPath:trackiingPath
+            getPath:trackingPath
          parameters:trackingParams 
             success:^(AFHTTPRequestOperation *operation, id JSON){
                 if (JSON && [JSON isKindOfClass:[NSDictionary class]]) {
