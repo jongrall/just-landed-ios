@@ -19,6 +19,8 @@
 		1108D27A154C8D91007844D8 /* table_cell_top_selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1108D274154C8D91007844D8 /* table_cell_top_selected@2x.png */; };
 		1108D27B154C8D91007844D8 /* table_cell_top@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1108D275154C8D91007844D8 /* table_cell_top@2x.png */; };
 		11096A2115EEA693002A87E7 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 11096A2015EEA693002A87E7 /* Settings.bundle */; };
+		111A6F8215F007550006FB37 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
+		111A6F9015F007B00006FB37 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 111A6F8F15F007B00006FB37 /* Reachability.m */; };
 		112896B615621B070056DD34 /* plane_contrail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B515621B070056DD34 /* plane_contrail@2x.png */; };
 		112896BB15621BB80056DD34 /* spinner_2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B815621BB80056DD34 /* spinner_2@2x.png */; };
 		112896BC15621BB80056DD34 /* spinner_3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B915621BB80056DD34 /* spinner_3@2x.png */; };
@@ -346,6 +348,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		111A6F9115F007C90006FB37 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 11C5DF9E14DCCDDF006D1DB4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 111A6F8015F007550006FB37;
+			remoteInfo = Reachability;
+		};
 		116CB91E14EF4F70003AB446 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 11C5DF9E14DCCDDF006D1DB4 /* Project object */;
@@ -383,6 +392,18 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		111A6F7F15F007550006FB37 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/${PRODUCT_NAME}";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		1100A1E91594C96100058EC2 /* NSNotificationCenter+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+JLExtensions.h"; sourceTree = "<group>"; };
 		1100A1EA1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+JLExtensions.m"; sourceTree = "<group>"; };
@@ -399,6 +420,9 @@
 		1108D274154C8D91007844D8 /* table_cell_top_selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "table_cell_top_selected@2x.png"; sourceTree = "<group>"; };
 		1108D275154C8D91007844D8 /* table_cell_top@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "table_cell_top@2x.png"; sourceTree = "<group>"; };
 		11096A2015EEA693002A87E7 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		111A6F8115F007550006FB37 /* libReachability.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libReachability.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		111A6F8E15F007B00006FB37 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		111A6F8F15F007B00006FB37 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		112896B515621B070056DD34 /* plane_contrail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plane_contrail@2x.png"; sourceTree = "<group>"; };
 		112896B815621BB80056DD34 /* spinner_2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spinner_2@2x.png"; sourceTree = "<group>"; };
 		112896B915621BB80056DD34 /* spinner_3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spinner_3@2x.png"; sourceTree = "<group>"; };
@@ -763,6 +787,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		111A6F7E15F007550006FB37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				111A6F8215F007550006FB37 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		116CB8E514EF4E67003AB446 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -845,6 +877,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		111A6F8315F007560006FB37 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				111A6F8E15F007B00006FB37 /* Reachability.h */,
+				111A6F8F15F007B00006FB37 /* Reachability.m */,
+			);
+			path = Reachability;
+			sourceTree = "<group>";
+		};
 		116CB8F314EF4E9F003AB446 /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
@@ -1092,6 +1133,7 @@
 				117C48D814EB68D10049452F /* FlurryAnalytics */,
 				11F1131D151182A00008D301 /* HockeyKit */,
 				11F7DC73151185C000DFA5AF /* QuincyKit */,
+				111A6F8315F007560006FB37 /* Reachability */,
 				11C5DFAA14DCCDDF006D1DB4 /* Frameworks */,
 				11C5DFB114DCCDDF006D1DB4 /* JustLanded */,
 				11C5DFD514DCCDDF006D1DB4 /* JustLandedTests */,
@@ -1108,6 +1150,7 @@
 				116CB8E814EF4E67003AB446 /* libAFNetworking.a */,
 				11F1131B151182A00008D301 /* libHockeyKit.a */,
 				11F7DC71151185C000DFA5AF /* libQuincyKit.a */,
+				111A6F8115F007550006FB37 /* libReachability.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1499,6 +1542,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		111A6F8015F007550006FB37 /* Reachability */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 111A6F8A15F007560006FB37 /* Build configuration list for PBXNativeTarget "Reachability" */;
+			buildPhases = (
+				111A6F7D15F007550006FB37 /* Sources */,
+				111A6F7E15F007550006FB37 /* Frameworks */,
+				111A6F7F15F007550006FB37 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Reachability;
+			productName = Reachability;
+			productReference = 111A6F8115F007550006FB37 /* libReachability.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		116CB8E714EF4E67003AB446 /* AFNetworking */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 116CB8F014EF4E67003AB446 /* Build configuration list for PBXNativeTarget "AFNetworking" */;
@@ -1544,6 +1604,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				111A6F9215F007C90006FB37 /* PBXTargetDependency */,
 				11F7DC891511872900DFA5AF /* PBXTargetDependency */,
 				11F1135D151183110008D301 /* PBXTargetDependency */,
 				116CB91F14EF4F70003AB446 /* PBXTargetDependency */,
@@ -1634,6 +1695,7 @@
 				116CB8E714EF4E67003AB446 /* AFNetworking */,
 				11F1131A151182A00008D301 /* HockeyKit */,
 				11F7DC70151185C000DFA5AF /* QuincyKit */,
+				111A6F8015F007550006FB37 /* Reachability */,
 			);
 		};
 /* End PBXProject section */
@@ -1879,6 +1941,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		111A6F7D15F007550006FB37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				111A6F9015F007B00006FB37 /* Reachability.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		116CB8E414EF4E67003AB446 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1994,6 +2064,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		111A6F9215F007C90006FB37 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 111A6F8015F007550006FB37 /* Reachability */;
+			targetProxy = 111A6F9115F007C90006FB37 /* PBXContainerItemProxy */;
+		};
 		116CB91F14EF4F70003AB446 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 116CB8E714EF4E67003AB446 /* AFNetworking */;
@@ -2041,6 +2116,45 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		111A6F8B15F007560006FB37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DSTROOT = /tmp/Reachability.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		111A6F8C15F007560006FB37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DSTROOT = /tmp/Reachability.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		111A6F8D15F007560006FB37 /* Adhoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DSTROOT = /tmp/Reachability.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Adhoc;
+		};
 		115E8F4B14F74EED00E9F06B /* Adhoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2416,6 +2530,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		111A6F8A15F007560006FB37 /* Build configuration list for PBXNativeTarget "Reachability" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				111A6F8B15F007560006FB37 /* Debug */,
+				111A6F8C15F007560006FB37 /* Release */,
+				111A6F8D15F007560006FB37 /* Adhoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		116CB8F014EF4E67003AB446 /* Build configuration list for PBXNativeTarget "AFNetworking" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
