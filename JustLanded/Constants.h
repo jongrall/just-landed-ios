@@ -33,16 +33,17 @@ extern NSString * const MonitorLocationPreferenceKey;
 #pragma mark Server Constants
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+extern NSString * const JL_HOST_NAME;
+extern NSString * const WEB_HOST;
 extern NSString * const BASE_URL;
-extern NSString * const LOOKUP_URL_FORMAT;
-extern NSString * const TRACK_URL_FORMAT;
-extern NSString * const UNTRACK_URL_FORMAT;
 extern NSUInteger const API_VERSION;
 extern NSString * const API_USERNAME;
 extern NSString * const API_KEY;
-extern NSString * const WEB_HOST;
 extern NSString * const FAQ_PATH;
 extern NSString * const TOS_PATH;
+extern NSString * const LOOKUP_URL_FORMAT;
+extern NSString * const TRACK_URL_FORMAT;
+extern NSString * const UNTRACK_URL_FORMAT;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

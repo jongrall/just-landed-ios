@@ -52,9 +52,11 @@ NSString * const MonitorLocationPreferenceKey = @"monitor_location";
 
 #if defined(CONFIGURATION_Debug)
     #if TARGET_IPHONE_SIMULATOR
+        NSString * const JL_HOST_NAME = @"localhost";
         NSString * const WEB_HOST = @"http://localhost:8082";
         NSString * const BASE_URL = @"http://localhost:8082/api/v1/";
     #else
+        NSString * const JL_HOST_NAME = @"c-98-207-175-25.hsd1.ca.comcast.net";
         NSString * const WEB_HOST = @"http://c-98-207-175-25.hsd1.ca.comcast.net:8082";
         NSString * const BASE_URL = @"http://c-98-207-175-25.hsd1.ca.comcast.net:8082/api/v1/";
     #endif
@@ -62,12 +64,14 @@ NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Development";
 NSString * const API_KEY = @"d90816f7e6ea93001a2aa62cd8dd8f0e830a93d1";
 #elif defined(CONFIGURATION_Adhoc)
+NSString * const JL_HOST_NAME = @"just-landed-staging.appspot.com";
 NSString * const WEB_HOST = @"http://just-landed-staging.appspot.com";
 NSString * const BASE_URL = @"https://just-landed-staging.appspot.com/api/v1/";
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Staging";
 NSString * const API_KEY = @"55ca8681039e129bb985991014f61774de31fe1e";
 #else
+NSString * const JL_HOST_NAME = @"just-landed.appspot.com";
 NSString * const WEB_HOST = @"http://www.getjustlanded.com";
 NSString * const BASE_URL = @"https://just-landed.appspot.com/api/v1/";
 NSUInteger const API_VERSION = 1;

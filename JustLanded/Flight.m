@@ -167,7 +167,7 @@ static NSArray *_aircraftTypes;
     [[JustLandedAPIClient sharedClient] 
             getPath:lookupPath 
          parameters:nil 
-            success:^(AFHTTPRequestOperation *operation, id JSON){                
+            success:^(AFHTTPRequestOperation *operation, id JSON){               
                 if (JSON && [JSON isKindOfClass:[NSArray class]]) {
                     // Got the flight data, return a list of flights
                     NSDictionary *flights = nil;
@@ -225,9 +225,17 @@ static NSArray *_aircraftTypes;
                     }
                 }
                 else {
-                    // Handle connection problem
-                    [self failToLookupWithReason:LookupFailureNoConnection];
-                    [FlurryAnalytics logEvent:FY_NO_CONNECTION_ERROR];
+                    // Handle possible connection problem / server not responding
+                    if ([[JustLandedSession sharedSession] isJustLandedReachable]) {
+                        // JL is reachable, there must be a server outage
+                        [self failToLookupWithReason:LookupFailureOutage];
+                        [FlurryAnalytics logEvent:FY_OUTAGE];
+                    }
+                    else {
+                        // JL is not reachable, they have no connection
+                        [self failToLookupWithReason:LookupFailureNoConnection];
+                        [FlurryAnalytics logEvent:FY_NO_CONNECTION_ERROR];
+                    }
                 }
             }];
 }
@@ -324,9 +332,17 @@ static NSArray *_aircraftTypes;
                     }
                 }
                 else {
-                    // Deal with no connection
-                    [self failToTrackWithReason:TrackFailureNoConnection];
-                    [FlurryAnalytics logEvent:FY_NO_CONNECTION_ERROR];
+                    // Handle possible connection problem / server not responding
+                    if ([[JustLandedSession sharedSession] isJustLandedReachable]) {
+                        // JL is reachable, there must be a server outage
+                        [self failToTrackWithReason:TrackFailureOutage];
+                        [FlurryAnalytics logEvent:FY_OUTAGE];
+                    }
+                    else {
+                        // JL is not reachable, they have no connection
+                        [self failToTrackWithReason:TrackFailureNoConnection];
+                        [FlurryAnalytics logEvent:FY_NO_CONNECTION_ERROR];
+                    }
                 }
             }];
 }

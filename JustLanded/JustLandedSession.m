@@ -9,6 +9,7 @@
 #import "JustLandedSession.h"
 #import "Flight.h"
 #import "BWQuincyManager.h"
+#import "Reachability.h"
 #import <AudioToolbox/AudioToolbox.h>
 
 NSString * const LastKnownLocationDidUpdateNotification = @"LastKnownLocationUpdatedNotification";
@@ -22,18 +23,21 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface JustLandedSession () {
-    BOOL _triedToRegisterForRemoteNotifications;
     BOOL _triedToGetLocation;
+    BOOL _triedToRegisterForRemoteNotifications;
     __strong NSMutableArray *_currentlyTrackedFlights;
     __strong CLLocation *_lastLocation;
 }
 
 @property (nonatomic, strong) CLLocationManager *_locationManager;
 
+// Flight management
 - (NSString *)archivedFlightsPath;
 - (void)archiveCurrentlyTrackedFlights;
 - (NSMutableArray *)unarchiveTrackedFlights;
 - (void)deleteArchivedTrackedFlights;
+
+// Location
 - (void)disableLocationMonitoringIfNecessary;
 
 @end
@@ -44,9 +48,9 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 @implementation JustLandedSession
 
-@synthesize pushToken;
 @synthesize triedToGetLocation=_triedToGetLocation;
 @synthesize triedToRegisterForRemoteNotifications=_triedToRegisterForRemoteNotifications;
+@synthesize pushToken;
 @synthesize _locationManager;
 
 
@@ -110,8 +114,131 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Currently Tracked Flights & Archiving Flights
+#pragma mark - User Management & Prefs
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (NSString *)UUID {
+    NSString *currentUUID = [[NSUserDefaults standardUserDefaults] objectForKey:UUIDKey];
+    
+    if (!currentUUID) {
+        //Should only be run once for a single install unless NSUserDefaults gets cleared or corrupted
+        //Create the UUID to use for the app (persists across sessions) and persist to NSUserDefaults
+        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+        NSString *uuid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+        currentUUID = [NSString stringWithString:uuid];
+        [[NSUserDefaults standardUserDefaults] setObject:uuid forKey:UUIDKey];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:BeganUsingDate];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        CFRelease(uuidRef);
+    }
+    
+    return currentUUID;
+}
+
+
+- (NSMutableDictionary *)currentTrackingPreferences {
+    // Force refresh of pref caches
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // Get the prefs
+    BOOL sendFlightEvents = [[NSUserDefaults standardUserDefaults] boolForKey:SendFlightEventsPreferenceKey];
+    BOOL sendReminders = [[NSUserDefaults standardUserDefaults] boolForKey:SendRemindersPreferenceKey];
+    BOOL playFlightSounds = [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
+    NSUInteger reminderLeadTime = [[NSUserDefaults standardUserDefaults] integerForKey:ReminderLeadTimePreferenceKey];
+    
+    return [[NSMutableDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:sendFlightEvents], SendFlightEventsPreferenceKey,
+            [NSNumber numberWithBool:sendReminders], SendRemindersPreferenceKey,
+            [NSNumber numberWithBool:playFlightSounds], PlayFlightSoundsPreferenceKey,
+            [NSNumber numberWithInteger:reminderLeadTime], ReminderLeadTimePreferenceKey, nil];
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - App Ratings
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+- (NSUInteger)trackCount {
+    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
+    
+    if (trackCount) {
+        return [trackCount intValue];
+    }
+    else {
+        return 0;
+    }
+}
+
+
+- (void)incrementTrackCount {
+    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
+    
+    if (trackCount) {
+        NSUInteger newCount = [trackCount integerValue] + 1;
+        trackCount = [NSNumber numberWithInt:newCount];
+    }
+    else {
+        trackCount = [NSNumber numberWithInt:1];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:trackCount forKey:FlightsTrackedCountKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+- (BOOL)isEligibleToRate {
+    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
+    BOOL hasBeenAsked = [[[NSUserDefaults standardUserDefaults] objectForKey:HasBeenAskedToRateKey] boolValue];
+    NSDate *beganUsing = [[NSUserDefaults standardUserDefaults] objectForKey:BeganUsingDate];
+    BOOL oldEnoughUser = beganUsing && [[NSDate date] timeIntervalSinceDate:beganUsing] > (3.0 * 86400.0);
+    BOOL appInForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
+    
+    if (trackCount && !hasBeenAsked && oldEnoughUser && appInForeground) {
+        NSUInteger currentCount = [trackCount integerValue];
+        
+        if (currentCount >= RATINGS_USAGE_THRESHOLD && ![[BWQuincyManager sharedQuincyManager] didCrashInLastSession]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+
+- (void)showRatingRequestIfEligible {
+    if ([self isEligibleToRate]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Enjoying Just Landed?", @"Ratings Alert Title")
+                                                        message:NSLocalizedString(@"We'd appreciate it if you'd give us a good rating on the App Store.", @"Ratings Alert Body")
+                                                       delegate:self
+                                              cancelButtonTitle:NSLocalizedString(@"No Thanks", @"No Thanks")
+                                              otherButtonTitles:NSLocalizedString(@"Sure", @"Sure") , nil];
+        
+        // Mark them as having been asked, prevents multiple alerts
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:HasBeenAskedToRateKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        [alert show];
+        [FlurryAnalytics logEvent:FY_ASKED_TO_RATE];
+    }
+}
+
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if ([alertView cancelButtonIndex] != buttonIndex) {
+        NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", APP_ID]];
+        [[UIApplication sharedApplication] openURL:ratingURL];
+        [FlurryAnalytics logEvent:FY_RATED];
+    }
+    else {
+        [FlurryAnalytics logEvent:FY_DECLINED_TO_RATE];
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Flight management
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (NSArray *)currentlyTrackedFlights {
@@ -193,13 +320,66 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 
 - (void)deleteArchivedTrackedFlights {
     NSFileManager *mgr = [NSFileManager defaultManager];
-    [mgr removeItemAtPath:[self archivedFlightsPath] error:nil]; 
+    [mgr removeItemAtPath:[self archivedFlightsPath] error:nil];
+}
+
+
+- (void)refreshTrackedFlights {
+    for (Flight *f in [self currentlyTrackedFlights]) {
+        [f trackWithLocation:[self lastKnownLocation] pushEnabled:[self pushEnabled]];
+    }
+}
+
+
+- (NSArray *)recentlyLookedUpAirlines {
+    NSArray *airlines = [[NSUserDefaults standardUserDefaults] objectForKey:RecentAirlineLookupsKey];
+    
+    if (airlines) {
+        return airlines;
+    }
+    else {
+        return [[NSArray alloc] init];
+    }
+}
+
+
+- (void)addToRecentlyLookedUpAirlines:(NSDictionary *)airlineInfo {
+    NSArray *currentAirlines = [[NSUserDefaults standardUserDefaults] objectForKey:RecentAirlineLookupsKey];
+    
+    if (currentAirlines) {
+        NSMutableArray *toRemove = [[NSMutableArray alloc] init];
+        
+        for (NSDictionary *airline in currentAirlines) {
+            if ([(NSString *)[airline valueForKeyOrNil:@"icao"] isEqualToString:[airlineInfo valueForKeyOrNil:@"icao"]]) {
+                [toRemove addObject:airline];
+            }
+        }
+        
+        NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:currentAirlines];
+        [newArray removeObjectsInArray:toRemove];
+        [newArray insertObject:airlineInfo atIndex:0];
+        
+        if ([newArray count] > 5) {
+            newArray = [[newArray subarrayWithRange:NSMakeRange(0, 5)] mutableCopy]; // No more than 5 recent
+        }
+        [[NSUserDefaults standardUserDefaults] setObject:newArray forKey:RecentAirlineLookupsKey];
+    }
+    else {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithObject:airlineInfo] forKey:RecentAirlineLookupsKey];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+- (void)clearRecentlyLookedUpAirlines {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:RecentAirlineLookupsKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Location Services & CLLocationManagerDelegate Methods
+#pragma mark - Location Services
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 - (CLLocationManager *)_locationManager {
     if (!_locationManager) {
@@ -266,13 +446,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 }
 
 
-- (void)refreshTrackedFlights {
-    for (Flight *f in [self currentlyTrackedFlights]) {
-        [f trackWithLocation:[self lastKnownLocation] pushEnabled:[self pushEnabled]];
-    }
-}
-
-
 - (void)disableLocationMonitoringIfNecessary {
     // Flush pref caches
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -283,128 +456,9 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     }
 }
 
-
-- (NSArray *)recentlyLookedUpAirlines {
-    NSArray *airlines = [[NSUserDefaults standardUserDefaults] objectForKey:RecentAirlineLookupsKey];
-    
-    if (airlines) {
-        return airlines;
-    }
-    else {
-        return [[NSArray alloc] init];
-    }
-}
-
-
-- (void)addToRecentlyLookedUpAirlines:(NSDictionary *)airlineInfo {
-    NSArray *currentAirlines = [[NSUserDefaults standardUserDefaults] objectForKey:RecentAirlineLookupsKey];
-    
-    if (currentAirlines) {
-        NSMutableArray *toRemove = [[NSMutableArray alloc] init];
-        
-        for (NSDictionary *airline in currentAirlines) {
-            if ([(NSString *)[airline valueForKeyOrNil:@"icao"] isEqualToString:[airlineInfo valueForKeyOrNil:@"icao"]]) {
-                [toRemove addObject:airline];
-            }
-        }
-        
-        NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:currentAirlines];
-        [newArray removeObjectsInArray:toRemove];
-        [newArray insertObject:airlineInfo atIndex:0];
-    
-        if ([newArray count] > 5) {
-            newArray = [[newArray subarrayWithRange:NSMakeRange(0, 5)] mutableCopy]; // No more than 5 recent
-        }
-        [[NSUserDefaults standardUserDefaults] setObject:newArray forKey:RecentAirlineLookupsKey];
-    }
-    else {
-        [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithObject:airlineInfo] forKey:RecentAirlineLookupsKey];
-    }
-    
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-- (void)clearRecentlyLookedUpAirlines {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:RecentAirlineLookupsKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Sounds
+#pragma mark - Push Notifications & Associated Sounds
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (void)playSound:(JustLandedSoundType)type {
-    NSString *soundPath = nil;
-    
-    switch (type) {
-        case TakeOffSound:
-            soundPath = [[NSBundle mainBundle] pathForResource:@"takeoff" ofType:@"wav"];
-            break;
-        case LandingSound:
-            soundPath = [[NSBundle mainBundle] pathForResource:@"landing" ofType:@"wav"];
-            break;
-        default:
-            soundPath = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"wav"];              
-            break;
-    }
-    
-    SystemSoundID soundID;
-    
-    AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath: soundPath], &soundID);
-    AudioServicesPlaySystemSound (soundID);
-}
-
-
-- (void)vibrateDevice {
-    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-}
-
-
-- (BOOL)wantsToHearFlightSounds {
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    return [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Push Notifications
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (NSString *)UUID {
-    NSString *currentUUID = [[NSUserDefaults standardUserDefaults] objectForKey:UUIDKey];
-    
-    if (!currentUUID) {
-        //Should only be run once for a single install unless NSUserDefaults gets cleared or corrupted
-        //Create the UUID to use for the app (persists across sessions) and persist to NSUserDefaults
-        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-        NSString *uuid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
-        currentUUID = [NSString stringWithString:uuid];
-        [[NSUserDefaults standardUserDefaults] setObject:uuid forKey:UUIDKey];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:BeganUsingDate];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        CFRelease(uuidRef);
-    }
-    
-    return currentUUID;
-}
-
-
-- (NSMutableDictionary *)currentTrackingPreferences {
-    // Force refresh of pref caches
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    // Get the prefs
-    BOOL sendFlightEvents = [[NSUserDefaults standardUserDefaults] boolForKey:SendFlightEventsPreferenceKey];
-    BOOL sendReminders = [[NSUserDefaults standardUserDefaults] boolForKey:SendRemindersPreferenceKey];
-    BOOL playFlightSounds = [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
-    NSUInteger reminderLeadTime = [[NSUserDefaults standardUserDefaults] integerForKey:ReminderLeadTimePreferenceKey];
-    
-    return [[NSMutableDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:sendFlightEvents], SendFlightEventsPreferenceKey,
-            [NSNumber numberWithBool:sendReminders], SendRemindersPreferenceKey,
-            [NSNumber numberWithBool:playFlightSounds], PlayFlightSoundsPreferenceKey,
-            [NSNumber numberWithInteger:reminderLeadTime], ReminderLeadTimePreferenceKey, nil];
-}
-
 
 - (void)registerForPushNotifications {
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillRegisterForRemoteNotifications object:self];
@@ -440,85 +494,44 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - App Ratings
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-- (NSUInteger)trackCount {
-    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
+- (void)playSound:(JustLandedSoundType)type {
+    NSString *soundPath = nil;
     
-    if (trackCount) {
-        return [trackCount intValue];
+    switch (type) {
+        case TakeOffSound:
+            soundPath = [[NSBundle mainBundle] pathForResource:@"takeoff" ofType:@"wav"];
+            break;
+        case LandingSound:
+            soundPath = [[NSBundle mainBundle] pathForResource:@"landing" ofType:@"wav"];
+            break;
+        default:
+            soundPath = [[NSBundle mainBundle] pathForResource:@"announcement" ofType:@"wav"];
+            break;
     }
-    else {
-        return 0;
-    }
+    
+    SystemSoundID soundID;
+    
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath: soundPath], &soundID);
+    AudioServicesPlaySystemSound (soundID);
 }
 
 
-- (void)incrementTrackCount {    
-    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
-    
-    if (trackCount) {
-        NSUInteger newCount = [trackCount integerValue] + 1;
-        trackCount = [NSNumber numberWithInt:newCount];
-    }
-    else {
-        trackCount = [NSNumber numberWithInt:1];
-    }
-    
-    [[NSUserDefaults standardUserDefaults] setObject:trackCount forKey:FlightsTrackedCountKey];
+- (void)vibrateDevice {
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+}
+
+
+- (BOOL)wantsToHearFlightSounds {
     [[NSUserDefaults standardUserDefaults] synchronize];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Connectivity Testing
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL)isEligibleToRate {
-    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
-    BOOL hasBeenAsked = [[[NSUserDefaults standardUserDefaults] objectForKey:HasBeenAskedToRateKey] boolValue];
-    NSDate *beganUsing = [[NSUserDefaults standardUserDefaults] objectForKey:BeganUsingDate];
-    BOOL oldEnoughUser = beganUsing && [[NSDate date] timeIntervalSinceDate:beganUsing] > (3.0 * 86400.0);
-    BOOL appInForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
-    
-    if (trackCount && !hasBeenAsked && oldEnoughUser && appInForeground) {
-        NSUInteger currentCount = [trackCount integerValue];
-        
-        if (currentCount >= RATINGS_USAGE_THRESHOLD && ![[BWQuincyManager sharedQuincyManager] didCrashInLastSession]) {
-            return YES;
-        }
-    }
-    
-    return NO;
-}
-
-
-- (void)showRatingRequestIfEligible {
-    if ([self isEligibleToRate]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Enjoying Just Landed?", @"Ratings Alert Title")
-                                                        message:NSLocalizedString(@"We'd appreciate it if you'd give us a good rating on the App Store.", @"Ratings Alert Body") 
-                                                       delegate:self 
-                                              cancelButtonTitle:NSLocalizedString(@"No Thanks", @"No Thanks") 
-                                              otherButtonTitles:NSLocalizedString(@"Sure", @"Sure") , nil];
-        
-        // Mark them as having been asked, prevents multiple alerts
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:HasBeenAskedToRateKey];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        [alert show];
-        [FlurryAnalytics logEvent:FY_ASKED_TO_RATE];
-    }
-}
-
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {    
-    if ([alertView cancelButtonIndex] != buttonIndex) {
-        NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", APP_ID]];
-        [[UIApplication sharedApplication] openURL:ratingURL];
-        [FlurryAnalytics logEvent:FY_RATED];
-    }
-    else {
-        [FlurryAnalytics logEvent:FY_DECLINED_TO_RATE];
-    }
+- (BOOL)isJustLandedReachable {
+    return [[Reachability reachabilityWithHostname:JL_HOST_NAME] isReachable];
 }
 
 @end

@@ -45,7 +45,7 @@
     [req setTimeoutInterval:15.0];
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:req];
     AFHTTPClient *client = [AFHTTPClient clientWithBaseURL:[NSURL URLWithString:WEB_HOST]];
-    operation.acceptableStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(200, 2)];
+    operation.acceptableStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(200, 4)];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self performSelector:@selector(stopLoading) withObject:nil afterDelay:1.0]; // Delay prevents white flash as webview loads content
@@ -86,25 +86,34 @@
                                              [self.view addSubview:_serverErrorOverlay];
                                          }
                                          else {
-                                             // Handle no connection
-                                             if (!_noConnectionOverlay) {
-                                                 _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:CGRectMake(0.0f,
-                                                                                                                             0.0f,
-                                                                                                                             320.0f,
-                                                                                                                             460.0f)];
-                                                 _noConnectionOverlay.frame = CGRectMake(0.0f,
-                                                                                        -44.0f,
-                                                                                        320.0f,
-                                                                                        460.0f);
-                                                 _noConnectionOverlay.noConnectionImageView.frame = CGRectMake(_noConnectionOverlay.noConnectionImageView.frame.origin.x,
-                                                                                                               70.0f,
-                                                                                                               _noConnectionOverlay.noConnectionImageView.frame.size.width,
-                                                                                                               _noConnectionOverlay.noConnectionImageView.frame.size.height);
-                                                 _noConnectionOverlay.delegate = self;
+                                             // Handle possible no connection
+                                             if ([[JustLandedSession sharedSession] isJustLandedReachable]) {
+                                                 // JL is reachable, we must be having an outage
+                                                 _serverErrorOverlay.errorType = ERROR_503;
+                                                 _serverErrorOverlay.tryAgainbutton.enabled = YES;
+                                                 [self.view addSubview:_serverErrorOverlay];
                                              }
-                                             
-                                             _noConnectionOverlay.tryAgainbutton.enabled = YES;
-                                             [self.view addSubview:_noConnectionOverlay];
+                                             else {
+                                                 // JL is not reachable - no connection
+                                                 if (!_noConnectionOverlay) {
+                                                     _noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                                                                                 0.0f,
+                                                                                                                                 320.0f,
+                                                                                                                                 460.0f)];
+                                                     _noConnectionOverlay.frame = CGRectMake(0.0f,
+                                                                                             -44.0f,
+                                                                                             320.0f,
+                                                                                             460.0f);
+                                                     _noConnectionOverlay.noConnectionImageView.frame = CGRectMake(_noConnectionOverlay.noConnectionImageView.frame.origin.x,
+                                                                                                                   70.0f,
+                                                                                                                   _noConnectionOverlay.noConnectionImageView.frame.size.width,
+                                                                                                                   _noConnectionOverlay.noConnectionImageView.frame.size.height);
+                                                     _noConnectionOverlay.delegate = self;
+                                                 }
+                                                 
+                                                 _noConnectionOverlay.tryAgainbutton.enabled = YES;
+                                                 [self.view addSubview:_noConnectionOverlay];
+                                            }
                                          }
                                      }];
     

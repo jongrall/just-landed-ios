@@ -30,33 +30,41 @@ extern NSString * const DidFailToRegisterForRemoteNotifications;
 
 @property (readonly, nonatomic) NSArray *currentlyTrackedFlights;
 @property (readonly, nonatomic) CLLocation *lastKnownLocation;
+@property (readonly, nonatomic) BOOL locationServicesAvailable;
 @property (readonly, nonatomic) BOOL pushEnabled;
 @property (readonly, nonatomic) BOOL triedToRegisterForRemoteNotifications;
 @property (readonly, nonatomic) BOOL triedToGetLocation;
-@property (readonly, nonatomic) BOOL locationServicesAvailable;
 @property (readonly, nonatomic) NSUInteger trackCount;
 @property (copy, nonatomic) NSString *pushToken;
 
 + (JustLandedSession *)sharedSession;
-- (void)addTrackedFlight:(Flight *)aFlight;
-- (void)removeTrackedFlight:(Flight *)aFlight;
 
-- (void)playSound:(JustLandedSoundType)type;
-- (void)vibrateDevice;
-
+// User management & prefs
 - (NSString *)UUID;
 - (NSMutableDictionary *)currentTrackingPreferences;
-- (void)registerForPushNotifications;
-- (void)didFailToRegisterForRemoteNotifications:(NSError *)error;
-- (void)updatePushTokenAfterRegisteringWithApple:(NSString *)token;
+
+// App ratings
 - (void)incrementTrackCount;
 - (BOOL)isEligibleToRate;
 - (void)showRatingRequestIfEligible;
-- (BOOL)wantsToHearFlightSounds;
 
+// Flight management
+- (void)addTrackedFlight:(Flight *)aFlight;
+- (void)removeTrackedFlight:(Flight *)aFlight;
+- (void)refreshTrackedFlights;
 - (NSArray *)recentlyLookedUpAirlines;
 - (void)addToRecentlyLookedUpAirlines:(NSDictionary *)airlineInfo;
 - (void)clearRecentlyLookedUpAirlines;
-- (void)refreshTrackedFlights;
+
+// Push notifications & associated sounds
+- (void)registerForPushNotifications;
+- (void)didFailToRegisterForRemoteNotifications:(NSError *)error;
+- (void)updatePushTokenAfterRegisteringWithApple:(NSString *)token;
+- (void)playSound:(JustLandedSoundType)type;
+- (void)vibrateDevice;
+- (BOOL)wantsToHearFlightSounds;
+
+// Connectivity Testing
+- (BOOL)isJustLandedReachable;
 
 @end

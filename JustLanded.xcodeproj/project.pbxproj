@@ -21,6 +21,7 @@
 		11096A2115EEA693002A87E7 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 11096A2015EEA693002A87E7 /* Settings.bundle */; };
 		111A6F8215F007550006FB37 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
 		111A6F9015F007B00006FB37 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 111A6F8F15F007B00006FB37 /* Reachability.m */; };
+		111A6F9315F014A70006FB37 /* libReachability.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 111A6F8115F007550006FB37 /* libReachability.a */; };
 		112896B615621B070056DD34 /* plane_contrail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B515621B070056DD34 /* plane_contrail@2x.png */; };
 		112896BB15621BB80056DD34 /* spinner_2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B815621BB80056DD34 /* spinner_2@2x.png */; };
 		112896BC15621BB80056DD34 /* spinner_3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 112896B915621BB80056DD34 /* spinner_3@2x.png */; };
@@ -817,6 +818,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				111A6F9315F014A70006FB37 /* libReachability.a in Frameworks */,
 				11F7DC8B1511873A00DFA5AF /* libQuincyKit.a in Frameworks */,
 				11019B4215194F1B00F7F0F2 /* MessageUI.framework in Frameworks */,
 				11F7DC8A1511873600DFA5AF /* libHockeyKit.a in Frameworks */,
