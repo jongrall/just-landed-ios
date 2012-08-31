@@ -94,7 +94,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
         // Track background / return from background events        
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshTrackedFlights) 
-                                                     name:UIApplicationDidBecomeActiveNotification 
+                                                     name:UIApplicationWillEnterForegroundNotification
                                                    object:[UIApplication sharedApplication]];
         
         // Disable background location monitoring if prefs demand it
