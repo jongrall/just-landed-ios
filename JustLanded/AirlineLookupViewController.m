@@ -19,6 +19,7 @@
 }
 
 - (void)keyboardWasShown:(NSNotification *)notification;
+- (NSString *)airlineCode:(NSDictionary *)airlineInfo;
 
 @end
 
@@ -153,7 +154,7 @@
         for (id airline in _airlines) {
             if ([airline isKindOfClass:[NSDictionary class]]) {
                 NSString *airlineNameNoSpaces = [[airline objectForKeyOrNil:@"name"] stringByReplacingOccurrencesOfString:@" " withString:@""];
-                if ([airlineNameNoSpaces rangeOfString:searchTermNoSpaces options:(NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound) {
+                if ([airlineNameNoSpaces rangeOfString:searchTermNoSpaces options:(NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch)].location != NSNotFound) {
                     [matchingAirlines addObject:airline];
                 }
             }
@@ -186,6 +187,24 @@
 #pragma mark - UITableView Delegate & DataSource Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+- (NSString *)airlineCode:(NSDictionary *)airlineInfo {
+    NSString *iataCode = [airlineInfo valueForKeyOrNil:@"iata"];
+    NSString *icaoCode = [airlineInfo valueForKeyOrNil:@"icao"];
+    
+    // First choice: IATA code without numbers
+    if ([iataCode length] > 0 && [iataCode rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet]].location == NSNotFound) {
+        return iataCode;
+    }
+    // Second choice: ICAO code
+    else if ([icaoCode length] > 0) {
+        return icaoCode;
+    }
+    // Third choice IATA code as-is
+    else {
+        return iataCode;
+    }
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     AirlineResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AirlineResultCell"];
     
@@ -199,9 +218,7 @@
     if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
         NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
         cell.airlineName = [airlineInfo valueForKeyOrNil:@"name"];
-        NSString *iataCode = [airlineInfo valueForKeyOrNil:@"iata"];
-        NSString *icaoCode = [airlineInfo valueForKeyOrNil:@"icao"];
-        cell.code = icaoCode != nil && [icaoCode length] > 0? icaoCode : iataCode;
+        cell.code = [self airlineCode:airlineInfo];
         cell.clearText = nil;
         cell.clearCell = NO;
     }
@@ -221,9 +238,7 @@
         if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
             NSDictionary *airlineInfo = [_airlines objectAtIndex:indexPath.row];
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
-            NSString *iataCode = [airlineInfo valueForKeyOrNil:@"iata"];
-            NSString *icaoCode = [airlineInfo valueForKeyOrNil:@"icao"];
-            NSString *code = icaoCode != nil && [icaoCode length] > 0 ? icaoCode : iataCode;
+            NSString *code = [self airlineCode:airlineInfo];
             [[JustLandedSession sharedSession] addToRecentlyLookedUpAirlines:airlineInfo];
             [self.delegate didChooseAirlineCode:code];
             [FlurryAnalytics logEvent:FY_CHOSE_AIRLINE];
