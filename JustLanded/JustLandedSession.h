@@ -41,7 +41,6 @@ typedef enum {
 
 // Sounds
 - (void)playSound:(JustLandedSoundType)type;
-- (void)vibrateDevice;
 - (BOOL)wantsToHearFlightSounds;
 
 // Connectivity Testing

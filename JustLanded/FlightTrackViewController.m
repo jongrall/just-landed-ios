@@ -84,7 +84,6 @@
 - (void)fadeOut:(UIView *)aView fadeIn:(UIView *)anotherView;
 
 // Update methods
-- (void)track;
 - (void)stopTrackingUserInitiated:(BOOL)userInitiated;
 - (void)willTrackFlight:(NSNotification *)notification;
 - (void)didTrackFlight:(NSNotification *)notification;
@@ -96,6 +95,9 @@
 // Button Actions
 - (void)backToLookup;
 - (void)showMap;
+
+// Bg task cleanup
+- (void)finishWakeupTrackTaskIfNecessary;
 
 @end
 
@@ -878,6 +880,9 @@
         [[NSRunLoop currentRunLoop] addTimer:_alternatingLabelTimer forMode:NSRunLoopCommonModes];
         [self._alternatingLabelTimer fire];
     }
+    
+    // End app delegate bg task if one was in progress
+    [self finishWakeupTrackTaskIfNecessary];
 }
 
 
@@ -930,6 +935,9 @@
             break;
         }
     }
+    
+    // End app delegate bg task if one was in progress
+    [self finishWakeupTrackTaskIfNecessary];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -982,7 +990,7 @@
         // Stop updating now that we have an acceptable location
         [self._locationManager stopUpdatingLocation];
         
-        // Start monitoring for refresh
+        // Start monitoring for refresh while active purposes
         [appDelegate startMonitoringMovementFromLocation:newLocation];
     }
 }
@@ -1050,6 +1058,18 @@
 
 - (void)backToLookup {
     [self stopTrackingUserInitiated:YES];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Background Task Cleanup
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)finishWakeupTrackTaskIfNecessary {
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (appDelegate.wakeupTrackTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:appDelegate.wakeupTrackTask];
+        appDelegate.wakeupTrackTask = UIBackgroundTaskInvalid;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

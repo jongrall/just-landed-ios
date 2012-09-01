@@ -21,5 +21,6 @@
 @property (weak, nonatomic) id <FlightTrackViewControllerDelegate> delegate;
 
 - (id)initWithFlight:(Flight *)aFlight;
+- (void)track;
 
 @end

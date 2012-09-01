@@ -357,12 +357,9 @@
     SystemSoundID soundID;
     
     AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath: soundPath], &soundID);
-    AudioServicesPlaySystemSound (soundID);
-}
-
-
-- (void)vibrateDevice {
-    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    
+    // Plays sounds & invokes vibration if appropriate
+    AudioServicesPlayAlertSound (soundID);
 }
 
 
