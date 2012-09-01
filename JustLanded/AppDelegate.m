@@ -7,10 +7,27 @@
 //
 
 #import "AppDelegate.h"
-
+#import <CoreLocation/CoreLocation.h>
 #import "FlightLookupViewController.h"
 #import "Flight.h"
-#import <CoreLocation/CoreLocation.h>
+#import "FlurryAnalytics.h"
+#include "Math.h"
+
+NSString * const DidUpdatePushTokenNotification = @"DidUpdatePushTokenNotification";
+NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTokenNotification";
+
+@interface AppDelegate () <BWQuincyManagerDelegate, BWHockeyManagerDelegate, CLLocationManagerDelegate> {
+    __strong NSString *_pushToken;
+    UIBackgroundTaskIdentifier _wakeupTask;
+    BOOL _triedToRegisterForRemoteNotifications;
+}
+
+@property (strong, nonatomic) CLLocationManager *_locationManager;
+@property (strong, nonatomic) FlightLookupViewController *_mainViewController;
+
+- (void)refreshTrackedFlights;
+
+@end
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,19 +37,14 @@
 @implementation AppDelegate
 
 @synthesize window = _window;
-@synthesize mainViewController = _mainViewController;
+@synthesize pushToken = _pushToken;
+@synthesize triedToRegisterForRemoteNotifications = _triedToRegisterForRemoteNotifications;
+@synthesize _locationManager;
+@synthesize _mainViewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
-    // Show the status bar
-    [[UIApplication sharedApplication] setStatusBarHidden:NO];
-    
-    // Configure Flurry
-    [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
-    [FlurryAnalytics setSessionReportsOnPauseEnabled:YES];
-    [FlurryAnalytics setSecureTransportEnabled:YES];
-    
+        
     // App distribution
     #ifdef CONFIGURATION_Adhoc
     [[BWHockeyManager sharedHockeyManager] setAppIdentifier:HOCKEY_APP_ID];
@@ -46,24 +58,59 @@
     [[BWQuincyManager sharedQuincyManager] setAutoSubmitCrashReport:YES];
     [[BWQuincyManager sharedQuincyManager] setDelegate:self];
     #endif
-        
-    // Register for push notifications
-    [[JustLandedSession sharedSession] registerForPushNotifications];
     
-    // Show the flight lookup UI    
-    self.mainViewController = [[FlightLookupViewController alloc] init];
-    self.window.rootViewController = self.mainViewController;
+    // Configure Flurry
+    [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
+    [FlurryAnalytics setSessionReportsOnPauseEnabled:YES];
+    [FlurryAnalytics setSecureTransportEnabled:YES];
+    
+    // Create the app delegate's location manager
+    self._locationManager = [[CLLocationManager alloc] init];
+    self._locationManager.delegate = self;
+    self._locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self._locationManager.distanceFilter = LOCATION_DISTANCE_FILTER;
+    self._locationManager.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
+                                                      @"Location Purpose");
+    
+    // Register for push notifications
+    _pushToken = nil;
+    _triedToRegisterForRemoteNotifications = NO;
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    
+    // The app was launched because of a location change event, start a BG task to give it more time to finish
+    _wakeupTask = UIBackgroundTaskInvalid;
+    if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey]) {
+        _wakeupTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            [[UIApplication sharedApplication] endBackgroundTask:_wakeupTask];
+        }];
+    }
+    
+    // Show the status bar
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    
+    // Show the flight lookup UI
+    self._mainViewController = [[FlightLookupViewController alloc] init];
+    self.window.rootViewController = _mainViewController;
     [self.window makeKeyAndVisible];
     
     // Show previous flights being tracked, if any
     NSArray *prevFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
+    BOOL isTrackingFlights = [prevFlights count] > 0;
     
-    if ([prevFlights count] > 0) {
+    if (isTrackingFlights) {
         // Display the most recently tracked flight
-        [self.mainViewController beginTrackingFlight:[prevFlights lastObject] animated:NO];
+        [_mainViewController beginTrackingFlight:[prevFlights lastObject] animated:NO];
     }
     else {
-        [self.mainViewController.flightNumberField becomeFirstResponder];
+        [_mainViewController.flightNumberField becomeFirstResponder];
+    }
+    
+    if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey]) {
+        // Need to update the region being monitored with the new location
+        if (isTrackingFlights) {
+            [self startMonitoringMovementFromLocation:_locationManager.location];
+        }
+        [[UIApplication sharedApplication] endBackgroundTask:_wakeupTask];
     }
     
     return YES;
@@ -83,6 +130,15 @@
      Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
      If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
      */
+    
+    // Disable background location monitoring if prefs demand it
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    BOOL monitorLocation = [[NSUserDefaults standardUserDefaults] boolForKey:MonitorLocationPreferenceKey];
+    BOOL isTrackingFlights = [[[JustLandedSession sharedSession] currentlyTrackedFlights] count] > 0;
+    
+    if (!monitorLocation || !isTrackingFlights) {
+        [self stopMonitoringMovement];
+    }
 }
 
 
@@ -151,18 +207,85 @@
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Refreshing Flights
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)refreshTrackedFlights {
+    // Uses the device's last location
+    for (Flight *f in [[JustLandedSession sharedSession] currentlyTrackedFlights]) {
+        [f trackWithLocation:self._locationManager.location pushToken:self.pushToken];
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Region / Significant Location Change Monitoring Code
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)startMonitoringMovementFromLocation:(CLLocation *)loc {
+    // Only start monitoring for movement if region monitoring is enabled
+    if ([CLLocationManager regionMonitoringEnabled]) {
+        CLLocationDistance regionRadius = fmin(SIGNIFICANT_LOCATION_CHANGE_DISTANCE, [_locationManager maximumRegionMonitoringDistance]);
+        CLRegion *newRegion = [[CLRegion alloc] initCircularRegionWithCenter:loc.coordinate
+                                                                      radius:regionRadius
+                                                                  identifier:JustLandedCurrentRegionIdentifier];
+        [_locationManager startMonitoringForRegion:newRegion desiredAccuracy:kCLLocationAccuracyBest];
+    }
+}
+
+
+- (void)stopMonitoringMovement {
+    for (CLRegion *r in [_locationManager monitoredRegions]) {
+        if ([r.identifier isEqualToString:JustLandedCurrentRegionIdentifier]) {
+            [_locationManager stopMonitoringForRegion:r];
+        }
+    }
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
+    BOOL trackingFlights = [[[JustLandedSession sharedSession] currentlyTrackedFlights] count] > 0;
+    if (trackingFlights) {
+        // Exited region, refresh with the most recent location
+        [self refreshTrackedFlights];
+        
+        // Start monitoring using the new location as the center
+        [self startMonitoringMovementFromLocation:_locationManager.location];
+    }
+    else {
+        [self stopMonitoringMovement];
+    }
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error {
+    switch ([error code]) {
+        case kCLErrorRegionMonitoringDenied: {
+            // If permission was denied to get location, Apple docs say to stop the location monitor
+            [self stopMonitoringMovement];
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Push Notifications
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-	[[JustLandedSession sharedSession] updatePushTokenAfterRegisteringWithApple:[deviceToken hexString]];
+    _pushToken = [deviceToken hexString];
+    _triedToRegisterForRemoteNotifications = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidUpdatePushTokenNotification object:application];
 }
 
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    [[JustLandedSession sharedSession] didFailToRegisterForRemoteNotifications:error];
+    [FlurryAnalytics logEvent:FY_UNABLE_TO_REGISTER_PUSH];
+    _triedToRegisterForRemoteNotifications = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidFailToUpdatePushTokenNotification object:application];
     NSLog(@"Just Landed failed to register for remote notifications: %@", error);
 }
 
@@ -181,7 +304,6 @@
         notification.fireDate = [NSDate date];
         notification.alertBody = [userInfo valueForKeyPathOrNil:@"aps.alert"];
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-        
         NSString *notificationType = [userInfo valueForKeyPathOrNil:@"notification_type"];
         
         // Figure out whether they want to hear airplane sounds
@@ -211,7 +333,7 @@
         [[JustLandedSession sharedSession] vibrateDevice];
         
         // Refresh the flight information
-        [[JustLandedSession sharedSession] refreshTrackedFlights];
+        [self refreshTrackedFlights];
     }
 }
 

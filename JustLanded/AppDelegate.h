@@ -10,11 +10,18 @@
 #import "BWQuincyManager.h"
 #import "BWHockeyManager.h"
 
+extern NSString * const DidUpdatePushTokenNotification;
+extern NSString * const DidFailToUpdatePushTokenNotification;
+
 @class FlightLookupViewController;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, BWQuincyManagerDelegate, BWHockeyManagerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) FlightLookupViewController *mainViewController;
+@property (readonly, copy, nonatomic) NSString *pushToken;
+@property (readonly, nonatomic) BOOL triedToRegisterForRemoteNotifications;
+
+- (void)startMonitoringMovementFromLocation:(CLLocation *)loc;
+- (void)stopMonitoringMovement;
 
 @end

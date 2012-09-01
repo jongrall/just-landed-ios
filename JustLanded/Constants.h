@@ -50,6 +50,11 @@ extern NSString * const UNTRACK_URL_FORMAT;
 #pragma mark Misc Constants
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+extern NSString * JustLandedCurrentRegionIdentifier;
+extern double const LOCATION_DISTANCE_FILTER;
+extern double const SIGNIFICANT_LOCATION_CHANGE_DISTANCE;
+extern double const LOCATION_MAXIMUM_ACCEPTABLE_ERROR;
+extern double const LOCATION_MAXIMUM_ACCEPTABLE_AGE;
 extern NSTimeInterval const TRACK_FRESHNESS_THRESHOLD;
 extern NSString * const RecentAirlineLookupsKey;
 

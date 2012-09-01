@@ -254,9 +254,8 @@ static NSArray *_aircraftTypes;
 #pragma mark - Flight Tracking
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag {
+- (void)trackWithLocation:(CLLocation *)loc pushToken:(NSString *)pushToken {
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillTrackFlightNotification object:self];
-    
     NSString *trackingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
     NSMutableDictionary *trackingParams = [[JustLandedSession sharedSession] currentTrackingPreferences];
     
@@ -265,8 +264,8 @@ static NSArray *_aircraftTypes;
         [trackingParams setValue:[NSNumber numberWithFloat:loc.coordinate.longitude] forKey:@"longitude"];
     }
     
-    if (pushFlag) {
-        [trackingParams setValue:[[JustLandedSession sharedSession] pushToken] forKey:@"push_token"];
+    if (pushToken) {
+        [trackingParams setValue:pushToken forKey:@"push_token"];
     }
     
     [[JustLandedAPIClient sharedClient] 

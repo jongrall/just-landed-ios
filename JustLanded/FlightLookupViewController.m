@@ -748,8 +748,7 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
 #pragma mark - FlightTrackViewControllerDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)didFinishTracking:(FlightTrackViewController *)controller userInitiated:(BOOL)user_flag {
-    controller.delegate = nil;
+- (void)didFinishTrackingFlight:(Flight *)aFlight userInitiated:(BOOL)userFlag {
     self._flightResultsTable.hidden = YES;
     self._flightResultsTableFrame.hidden = YES;
     self._lookupButton.hidden = NO;
@@ -758,13 +757,11 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
     [_cloudLayer startAnimating]; // Begin animating the cloud layer
     [self startAnimatingPlane];
     
-    Flight *flight = controller.trackedFlight;
-    
     // If the user stopped tracking, pre-fill the field with the flight they were tracking
-    if (user_flag) {
-        self._flightNumberField.text = flight.flightNumber;
+    if (userFlag) {
+        self._flightNumberField.text = aFlight.flightNumber;
         [FlurryAnalytics logEvent:FY_STOPPED_TRACKING_FLIGHT 
-                   withParameters:[NSDictionary dictionaryWithObject:(flight.status == LANDED) ? @"YES" : @"NO"
+                   withParameters:[NSDictionary dictionaryWithObject:(aFlight.status == LANDED) ? @"YES" : @"NO"
                                                               forKey:@"Flight Landed"]];
     }
     else {
@@ -780,8 +777,8 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
         [self disallowLookup];
     }
         
-    [[JustLandedSession sharedSession] removeTrackedFlight:flight];
-    [flight stopTracking];
+    [[JustLandedSession sharedSession] removeTrackedFlight:aFlight];
+    [aFlight stopTracking];
     
     self._flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
     [self._flightNumberField.textInputView reloadInputViews];

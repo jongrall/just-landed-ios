@@ -12,33 +12,19 @@
 #import "Reachability.h"
 #import <AudioToolbox/AudioToolbox.h>
 
-NSString * const LastKnownLocationDidUpdateNotification = @"LastKnownLocationUpdatedNotification";
-NSString * const LastKnownLocationDidFailToUpdateNotification = @"LocationUpdateFailedNotification";
-NSString * const WillRegisterForRemoteNotifications = @"WillRegisterForRemoteNotifications";
-NSString * const DidRegisterForRemoteNotifications = @"DidRegisterForRemoteNotifications";
-NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterForRemoteNotifications";
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface JustLandedSession () {
-    BOOL _triedToGetLocation;
-    BOOL _triedToRegisterForRemoteNotifications;
+@interface JustLandedSession () <UIAlertViewDelegate > {
     __strong NSMutableArray *_currentlyTrackedFlights;
-    __strong CLLocation *_lastLocation;
 }
-
-@property (nonatomic, strong) CLLocationManager *_locationManager;
 
 // Flight management
 - (NSString *)archivedFlightsPath;
 - (void)archiveCurrentlyTrackedFlights;
 - (NSMutableArray *)unarchiveTrackedFlights;
 - (void)deleteArchivedTrackedFlights;
-
-// Location
-- (void)disableLocationMonitoringIfNecessary;
 
 @end
 
@@ -47,11 +33,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation JustLandedSession
-
-@synthesize triedToGetLocation=_triedToGetLocation;
-@synthesize triedToRegisterForRemoteNotifications=_triedToRegisterForRemoteNotifications;
-@synthesize pushToken;
-@synthesize _locationManager;
 
 
 + (JustLandedSession *)sharedSession {
@@ -90,18 +71,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
                                                  selector:@selector(archiveCurrentlyTrackedFlights) 
                                                      name:DidTrackFlightNotification 
                                                    object:nil];
-        
-        // Track background / return from background events        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(refreshTrackedFlights) 
-                                                     name:UIApplicationWillEnterForegroundNotification
-                                                   object:[UIApplication sharedApplication]];
-        
-        // Disable background location monitoring if prefs demand it
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(disableLocationMonitoringIfNecessary)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:[UIApplication sharedApplication]];
     }
     return self;
 }
@@ -110,8 +79,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)dealloc {
     // Note: Should never be called since singleton, but implemented anyway
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    self._locationManager.delegate = nil;
-    
 }
 
 
@@ -224,7 +191,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     }
 }
 
-
+// Handle ratings alert
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if ([alertView cancelButtonIndex] != buttonIndex) {
         NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", APP_ID]];
@@ -242,6 +209,7 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (NSArray *)currentlyTrackedFlights {
+    // Make a copy - don't return the original directly
     return [NSArray arrayWithArray:_currentlyTrackedFlights];
 }
 
@@ -277,11 +245,8 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
     else {
         _currentlyTrackedFlights = [[NSMutableArray alloc] init];
         [self deleteArchivedTrackedFlights];
-        
-        // If they're no longer tracking any flights, stop location services
-        [self._locationManager stopMonitoringSignificantLocationChanges];
-        
-        // Clear past notifications from the notification center
+                
+        // Hack to clear past notifications from the notification center
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
         [[UIApplication sharedApplication] cancelAllLocalNotifications];
@@ -321,13 +286,6 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 - (void)deleteArchivedTrackedFlights {
     NSFileManager *mgr = [NSFileManager defaultManager];
     [mgr removeItemAtPath:[self archivedFlightsPath] error:nil];
-}
-
-
-- (void)refreshTrackedFlights {
-    for (Flight *f in [self currentlyTrackedFlights]) {
-        [f trackWithLocation:[self lastKnownLocation] pushEnabled:[self pushEnabled]];
-    }
 }
 
 
@@ -378,121 +336,8 @@ NSString * const DidFailToRegisterForRemoteNotifications = @"DidFailToRegisterFo
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Location Services
+#pragma mark - Sounds
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (CLLocationManager *)_locationManager {
-    if (!_locationManager) {
-        CLLocationManager *locMgr = [[CLLocationManager alloc] init]; 
-		locMgr.delegate = self;
-		locMgr.desiredAccuracy = kCLLocationAccuracyBest;
-		locMgr.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
-										   @"Reason we need your location");
-		_locationManager = locMgr;
-	}
-    
-    return _locationManager;
-}
-
-
-- (CLLocation *)lastKnownLocation {
-    if ([[self currentlyTrackedFlights] count] > 0) {
-        // Hack to force event report
-        [self._locationManager startMonitoringSignificantLocationChanges];
-        [self._locationManager stopMonitoringSignificantLocationChanges];
-        [self._locationManager startMonitoringSignificantLocationChanges];
-    }
-    
-    return _lastLocation;
-}
-
-
-- (BOOL)locationServicesAvailable {
-    // Application needs both S.L.C.M. and standard location services to be reliable.
-    return [CLLocationManager significantLocationChangeMonitoringAvailable] && 
-            [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized;
-}
-
-
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    // If they later allow location services, get their location
-    if (status == kCLAuthorizationStatusAuthorized) {
-        [self lastKnownLocation];
-    }
-}
-
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    //Notify observers that the location has been updated
-    _triedToGetLocation = YES;
-    _lastLocation = newLocation;
-    
-    [FlurryAnalytics setLatitude:newLocation.coordinate.latitude 
-                       longitude:newLocation.coordinate.longitude 
-              horizontalAccuracy:newLocation.horizontalAccuracy 
-                verticalAccuracy:newLocation.verticalAccuracy];
-	
-    NSDictionary *dict = [NSDictionary dictionaryWithObject:newLocation forKey:@"location"];
-	[[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:LastKnownLocationDidUpdateNotification 
-                                                                    object:self 
-                                                                  userInfo:dict];
-}
-
-
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    _triedToGetLocation = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:LastKnownLocationDidFailToUpdateNotification object:self];
-    [FlurryAnalytics logEvent:FY_UNABLE_TO_GET_LOCATION];
-}
-
-
-- (void)disableLocationMonitoringIfNecessary {
-    // Flush pref caches
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    BOOL monitorLocation = [[NSUserDefaults standardUserDefaults] boolForKey:MonitorLocationPreferenceKey];
-    
-    if (!monitorLocation) {
-        [self._locationManager stopMonitoringSignificantLocationChanges];
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Push Notifications & Associated Sounds
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (void)registerForPushNotifications {
-    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillRegisterForRemoteNotifications object:self];
-	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-}
-
-
-- (void)didFailToRegisterForRemoteNotifications:(NSError *)error {
-    _triedToRegisterForRemoteNotifications = YES;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidFailToRegisterForRemoteNotifications 
-                                                                    object:self 
-                                                                  userInfo:[NSDictionary dictionaryWithObject:error 
-                                                                                           forKey:@"error"]];
-    [FlurryAnalytics logEvent:FY_UNABLE_TO_REGISTER_PUSH];
-}
-
-
-- (void)updatePushTokenAfterRegisteringWithApple:(NSString *)token {
-	_triedToRegisterForRemoteNotifications = YES;
-    self.pushToken = token;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidRegisterForRemoteNotifications
-                                                                    object:self
-                                                                  userInfo:[NSDictionary dictionaryWithObject:token
-                                                                                                       forKey:@"pushToken"]];
-}
-
-
-- (BOOL)pushEnabled {
-    // Returns true if alerts are allowed - minimum to consider push enabled for the app (badge & sound not required)
-    return ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] & UIRemoteNotificationTypeAlert) && pushToken;
-}
-
 
 - (void)playSound:(JustLandedSoundType)type {
     NSString *soundPath = nil;

@@ -2540,6 +2540,7 @@
 				111A6F8D15F007560006FB37 /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		116CB8F014EF4E67003AB446 /* Build configuration list for PBXNativeTarget "AFNetworking" */ = {
 			isa = XCConfigurationList;

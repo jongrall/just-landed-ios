@@ -16,10 +16,8 @@
 
 @synthesize iataCode;
 @synthesize icaoCode;
-
 @synthesize city;
 @synthesize location;
-
 @synthesize terminal;
 @synthesize timezone;
 

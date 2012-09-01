@@ -118,7 +118,7 @@ extern NSString * const StopTrackingFailedReasonKey;
 + (PushType)stringToPushType:(NSString *)typeString;
 + (void)lookupFlights:(NSString *)aFlightNumber;
 - (id)initWithFlightInfo:(NSDictionary *)info;
-- (void)trackWithLocation:(CLLocation *)loc pushEnabled:(BOOL)pushFlag;
+- (void)trackWithLocation:(CLLocation *)loc pushToken:(NSString *)pushToken;
 - (void)stopTracking;
 - (NSString *)flightDataAsJson;
 - (NSUInteger)minutesBeforeLanding;
