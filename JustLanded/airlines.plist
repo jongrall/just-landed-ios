@@ -6167,7 +6167,7 @@
                         <key>icao</key>
                         <string>RPA</string>
                         <key>iata</key>
-                        <string>RW</string>
+                        <string>YX</string>
                         <key>name</key>
                         <string>Republic Airlines</string>
                 </dict>
@@ -7613,7 +7613,7 @@
                 </dict>
                 <dict>
                         <key>icao</key>
-                        <string>USA</string>
+                        <string>AWE</string>
                         <key>iata</key>
                         <string>US</string>
                         <key>name</key>
