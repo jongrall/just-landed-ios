@@ -1,8 +1,8 @@
 //
-//  TOSViewController.h
+//  WebContentViewController.h
 //  Just Landed
 //
-//  Created by Jon Grall on 5/23/12.
+//  Created by Jon Grall on 3/25/12.
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
@@ -15,10 +15,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-@interface TOSViewController : UIViewController <NoConnectionDelegate> {
+@interface WebContentViewController : UIViewController {
 
 }
 
-@property (nonatomic, retain) UIWebView *tosWebView;
+@property (strong, nonatomic) UIWebView *webView;
+
+- (id)initWithContentTitle:(NSString *)aTitle URL:(NSURL *)aContentURL;
 
 @end

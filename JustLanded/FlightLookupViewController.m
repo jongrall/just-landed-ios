@@ -15,6 +15,18 @@
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+typedef enum {
+    LookupErrorInvalidFlightNumber = 0,
+    LookupErrorFlightNotFound,
+    LookupErrorNonexistentAirline,
+    LookupErrorNoCurrentFlight,
+    LookupErrorFlightNumberMissingAirlineCode,
+    LookupErrorOutage,
+    LookupErrorNoConnection,
+    LookupErrorServerError,
+} LookupErrorType;
+
+
 @interface FlightLookupViewController ()
 
 @property (strong, nonatomic) JLButton *_lookupButton;
@@ -37,6 +49,7 @@
 - (void)flightLookupFailed:(NSNotification *)notification;
 - (void)willLookupFlight:(NSNotification *)notification;
 - (void)didLookupFlight:(NSNotification *)notification;
+- (void)alertWithError:(LookupErrorType)errorType;
 - (void)doLookup;
 - (void)lookupCodes;
 - (void)indicateLookingUp;
@@ -45,6 +58,8 @@
 - (void)animatePlane;
 - (void)allowLookup;
 - (void)disallowLookup;
+- (void)clearFlightNumberField;
+- (void)resetFlightInputKeyboard;
 
 @end
 
@@ -70,7 +85,6 @@
 
 static NSRegularExpression *_flightNumberRegex;
 static NSRegularExpression *_airlineCodeRegex;
-NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
 
 
 + (void)initialize {
@@ -79,7 +93,7 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
         _flightNumberRegex = [NSRegularExpression regularExpressionWithPattern:@"\\A[A-Z0-9]{2}[A-Z]{0,1}[0-9]{1,4}[A-Z]{0,1}\\Z"
                                                                        options:NSRegularExpressionCaseInsensitive
                                                                          error:&error];
-        _airlineCodeRegex = [NSRegularExpression regularExpressionWithPattern:@"\\A[A-Z][0-9][A-Z]{0,1}|\\A[0-9][A-Z]{1,2}|\\A[A-Z]{2,3}|\\A[A-Z0-9]{2}"
+        _airlineCodeRegex = [NSRegularExpression regularExpressionWithPattern:@"\\A[A-Z][0-9][A-Z]{0,1}|\\A[0-9][A-Z]{1,2}|\\A[A-Z]{2,3}"
                                                                       options:NSRegularExpressionCaseInsensitive
                                                                         error:&error];
     }
@@ -123,7 +137,7 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
     
     NSString *sanitizedNum = [self sanitizedFlightNum:flightNum];
     NSUInteger numMatches = [_flightNumberRegex numberOfMatchesInString:sanitizedNum
-                                                                options:0
+                                                                options:NSMatchingAnchored
                                                                   range:NSMakeRange(0, [sanitizedNum length])];
     return (numMatches == 1) ? YES : NO;
 }
@@ -246,12 +260,8 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)doLookup {
-    NSString *flightNumber = [[[_flightNumberField text] uppercaseString] stringByReplacingOccurrencesOfString:@" " 
-                                                                                                    withString:@""];
-    if ([[self class] isFlightNumValid:flightNumber]) {
-        [_flightNumberField resignFirstResponder];
-        [Flight lookupFlights:flightNumber];
-    }
+    [_flightNumberField resignFirstResponder];
+    [Flight lookupFlights:[[self class] sanitizedFlightNum:_flightNumberField.text]];
 }
 
 
@@ -287,102 +297,40 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
     
     switch (reason) {
         case LookupFailureInvalidFlightNumber: {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Flight Number", @"Invalid Flight Number") 
-                                                            message:NSLocalizedString(@"Please check that you entered your flight number correctly.",
-                                                                                      @"Please check flight #")
-                                                           delegate:self 
-                                                  cancelButtonTitle:NSLocalizedString(@"Try Again", @"Try Again")
-                                                  otherButtonTitles:nil];
-            alert.tag = LookupFailureInvalidFlightNumber;
-            [alert show];
+            [self alertWithError:LookupErrorInvalidFlightNumber];
             break;   
         }
         case LookupFailureNoCurrentFlight: {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Can't Track Flight Yet", @"No Current Flight")
-                                                            message:[NSString stringWithFormat:NSLocalizedString(@"Flight %@ is not arriving in the next 48 hours. Please try again closer to the arrival date.",
-                                                                                      @"No Current Flight Explanantion"), _flightNumberField.text]
-                                                           delegate:self
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                  otherButtonTitles:nil];
-            [alert show];
+            [self alertWithError:LookupErrorNoCurrentFlight];
             break;
         }
         case LookupFailureFlightNotFound: {
-            UIAlertView *alert;
-            
             if ([[self class] isFlightNumInteger:_flightNumberField.text]) {
                 // They've entered all numbers - not understanding desired input
-                alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Missing Airline Code", @"Missing Airline Code")
-                                                    message:NSLocalizedString(@"Flight numbers are made up of an airline code and a number e.g.UA72. Don't know the airline code? We can look it up for you!", @"Airline Code Explanation")
-                                                  delegate:self
-                                         cancelButtonTitle:nil
-                                         otherButtonTitles:NSLocalizedString(@"Lookup Airline Code", @"Lookup Airline Code"), nil];
-                alert.tag = FLIGHT_NUMBER_EXPLANATION_ALERT;
+                [self alertWithError:LookupErrorFlightNumberMissingAirlineCode];
             }
             else if (![[self class] flightNumContainsValidAirlineCode:_flightNumberField.text]) {
                 // They've entered an invalid airline code
-                NSArray *flightNumParts = [[self class] splitFlightNumber:_flightNumberField.text];
-                NSString *airlineCode = ([flightNumParts count] == 2) ? [flightNumParts objectAtIndex:0] : _flightNumberField.text;
-                
-                alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Unknown Airline Code", @"Unknown Airline Code")
-                                                   message:[NSString stringWithFormat:NSLocalizedString(@"We don't recognize airline code %@. Don't know the airline code? We can look it up for you!", @"Unknown Airline Code Explanation"),
-                                                            airlineCode]
-                                                  delegate:self
-                                         cancelButtonTitle:nil
-                                         otherButtonTitles:NSLocalizedString(@"Lookup Airline Code", @"Lookup Airline Code"), nil];
-                alert.tag = FLIGHT_NUMBER_EXPLANATION_ALERT;
+                [self alertWithError:LookupErrorNonexistentAirline];
             }
             else {
                 // Code is valid, not all numbers, we just don't have it
-                alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"),
-                                                            _flightNumberField.text]
-                                                   message:[NSString stringWithFormat:NSLocalizedString(@"Unfortunately we don't have information for flight %@. We've recorded this missing flight and will try to add it in the future.",
-                                                                             @"Flight not found."), _flightNumberField.text]
-                                                  delegate:self 
-                                         cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                         otherButtonTitles:nil];
-                alert.tag = LookupFailureFlightNotFound;
+                [self alertWithError:LookupErrorFlightNotFound];
             }
-            
-            [alert show];
             break;
         }
         case LookupFailureNoConnection: {
-             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No Internet Connection", 
-                                                                                       @"No Internet Connection")
-                                                          message:NSLocalizedString(@"Please check your wireless signal and try again.",
-                                                                                    @"Please check your connection.")
-                                                         delegate:self 
-                                                cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                otherButtonTitles:nil];
-            alert.tag = LookupFailureNoConnection;
-            [alert show];
+            [self alertWithError:LookupErrorNoConnection];
             break;
         }
         case LookupFailureOutage: {
             // Outage
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Service Outage", 
-                                                                                      @"Service Outage")
-                                                            message:NSLocalizedString(@"Just Landed is currently unavailable. Our engineers are working to restore service. Please try again later.",
-                                                                                      @"Service outage msg.")
-                                                           delegate:self 
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                  otherButtonTitles:nil];
-            alert.tag = LookupFailureOutage;
-            [alert show];
+            [self alertWithError:LookupErrorOutage];
             break; 
         }
         default: {
             // Some error
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Server Error", 
-                                                                                      @"Server Error")
-                                                            message:NSLocalizedString(@"An error has occurred. Our engineers have been notified. Please try again later.",
-                                                                                      @"Server error msg.")
-                                                           delegate:self 
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                  otherButtonTitles:nil];
-            alert.tag = LookupFailureError;
-            [alert show];
+            [self alertWithError:LookupErrorServerError];
             break; 
         }
     }
@@ -402,14 +350,7 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
         self._flightResults = flights;
     
         if ([flights count] == 0) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"),
-                                                                     _flightNumberField.text]
-                                                            message:NSLocalizedString(@"Just Landed can only track flights that are arriving at US, UK, French or Canadian airports within the next 48 hours.",
-                                                                                      @"Just Landed Flight Not Found")
-                                                           delegate:self 
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                  otherButtonTitles:nil];
-            [alert show];
+            [self alertWithError:LookupErrorFlightNotFound];
         }
         else if ([flights count] == 1) {
             [self beginTrackingFlight:[flights objectAtIndex:0] animated:YES];
@@ -433,6 +374,92 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
 
 - (UITextField *)flightNumberField {
     return _flightNumberField;
+}
+
+
+- (void)alertWithError:(LookupErrorType)errorType {
+    NSString *alertTitle = nil;
+    NSString *alertMessage = nil;
+    NSString *cancelButtonTitle = nil;
+    NSString *otherButtonTitle = nil;
+    
+    switch (errorType) {
+        case LookupErrorInvalidFlightNumber: {
+            alertTitle = NSLocalizedString(@"Invalid Flight Number", @"Invalid Flight Number");
+            alertMessage = NSLocalizedString(@"Flight numbers are made up of an airline code and a number e.g.UA72. Don't know the airline code? We can look it up for you!",
+                                             @"Airline Code Explanation");
+            otherButtonTitle = NSLocalizedString(@"Lookup Airline Code", @"Lookup Airline Code");
+            break;
+        }
+        case LookupErrorFlightNotFound: {
+            alertTitle = [NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"), _flightNumberField.text];
+            alertMessage = [NSString stringWithFormat:NSLocalizedString(@"Unfortunately we don't have information for flight %@. We've recorded this missing flight and will try to add it in the future.",
+                                                                        @"Flight not found."), _flightNumberField.text];
+            // Reversed intentionally
+            otherButtonTitle = NSLocalizedString(@"OK", @"OK");
+            cancelButtonTitle = NSLocalizedString(@"More Info", @"More Info");
+            break;
+        }
+        case LookupErrorNonexistentAirline: {
+            NSArray *flightNumParts = [[self class] splitFlightNumber:_flightNumberField.text];
+            NSString *airlineCode = ([flightNumParts count] == 2) ? [flightNumParts objectAtIndex:0] : _flightNumberField.text;
+            alertTitle = NSLocalizedString(@"Unknown Airline Code", @"Unknown Airline Code");
+            alertMessage = [NSString stringWithFormat:NSLocalizedString(@"We don't recognize airline code %@. Don't know the airline code? We can look it up for you!",
+                                                                        @"Unknown Airline Code Explanation"), airlineCode];
+            otherButtonTitle = NSLocalizedString(@"Lookup Airline Code", @"Lookup Airline Code");
+            break;
+        }
+        case LookupErrorNoCurrentFlight: {
+            alertTitle = NSLocalizedString(@"Can't Track Flight Yet", @"No Current Flight");
+            alertMessage = [NSString stringWithFormat:NSLocalizedString(@"Flight %@ is not arriving in the next 48 hours. Please try again closer to the arrival date.",
+                                                                        @"No Current Flight Explanantion"), _flightNumberField.text];
+            // Reversed intentionally
+            otherButtonTitle = NSLocalizedString(@"OK", @"OK");
+            cancelButtonTitle = NSLocalizedString(@"More Info", @"More Info");
+            break;
+        }
+        case LookupErrorFlightNumberMissingAirlineCode: {
+            alertTitle = NSLocalizedString(@"Missing Airline Code", @"Missing Airline Code");
+            alertMessage = NSLocalizedString(@"Flight numbers are made up of an airline code and a number e.g.UA72. Don't know the airline code? We can look it up for you!",
+                                             @"Airline Code Explanation");
+            otherButtonTitle = NSLocalizedString(@"Lookup Airline Code", @"Lookup Airline Code");
+            break;
+        }
+        case LookupErrorOutage: {
+            alertTitle = NSLocalizedString(@"Service Outage", @"Service Outage");
+            alertMessage = NSLocalizedString(@"Just Landed is currently unavailable. Our engineers are working to restore service. Please try again later.",
+                                             @"Service outage msg.");
+            // Reversed intentionally
+            otherButtonTitle = NSLocalizedString(@"OK", @"OK");
+            cancelButtonTitle = NSLocalizedString(@"More Info", @"More Info");
+            break;
+        }
+        case LookupErrorNoConnection: {
+            alertTitle = NSLocalizedString(@"No Internet Connection", @"No Internet Connection");
+            alertMessage = NSLocalizedString(@"Please check your wireless signal and try again.", @"Please check your connection.");
+            cancelButtonTitle = NSLocalizedString(@"OK", @"OK");
+            break;
+        }
+        case LookupErrorServerError: {
+            alertTitle = NSLocalizedString(@"Server Error", @"Server Error");
+            alertMessage = NSLocalizedString(@"An error has occurred. Our engineers have been notified. Please try again later.",
+                                             @"Server error msg.");
+            cancelButtonTitle = NSLocalizedString(@"OK", @"OK");
+            break;
+        }
+        default:{
+            return;
+            break;
+        }
+    }
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:alertTitle
+                                                    message:alertMessage
+                                                   delegate:self
+                                          cancelButtonTitle:cancelButtonTitle
+                                          otherButtonTitles:otherButtonTitle, nil];
+    alert.tag = errorType;
+    [alert show];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -672,6 +699,19 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
 #pragma mark - UITextFieldDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+- (void)clearFlightNumberField {
+    self._flightNumberField.text = @"";
+    [self resetFlightInputKeyboard];
+    [self disallowLookup];
+}
+
+
+- (void)resetFlightInputKeyboard {
+    self._flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
+    [self._flightNumberField.textInputView reloadInputViews];
+}
+
+
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     self._flightResultsTable.hidden = YES;
     self._flightResultsTableFrame.hidden = YES;
@@ -682,29 +722,23 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
 
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField {
-    [self disallowLookup];
-    self._flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
-    [self._flightNumberField.textInputView reloadInputViews];
+    [self clearFlightNumberField];
     return YES;
 }
 
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    BOOL validFlightNum = [[self class] isFlightNumValid:textField.text];
-    
-    // Stop them from searching for a non-existent integer flight airline code + number
-    if (validFlightNum && (![[self class] isFlightNumInteger:textField.text] || [[self class] flightNumContainsValidAirlineCode:textField.text])) {
-        [self doLookup];
+    // Don't allow lookup if flight num is invalid or all digits
+    if ([[self class] isFlightNumInteger:textField.text]) {
+        [self alertWithError:LookupErrorFlightNumberMissingAirlineCode];
     }
     else {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Invalid Flight Number", @"Invalid Flight Number")
-                                                        message:NSLocalizedString(@"Flight numbers are made up of an airline code and a number. For example, to find United Airlines flight 72, you would enter UA72.", @"Airline Code Explanation")
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:NSLocalizedString(@"Lookup Airline Code", @"Lookup Airline Code"), nil];
-        alert.tag = FLIGHT_NUMBER_EXPLANATION_ALERT;
-        [alert show];
-        
+        if ([[self class] isFlightNumValid:textField.text]) {
+            [self doLookup];
+        }
+        else {
+            [self alertWithError:LookupErrorInvalidFlightNumber];
+        }
     }
     return NO;
 }
@@ -716,23 +750,23 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
     NSString *newText = [[[textField text] stringByReplacingCharactersInRange:range withString:string] uppercaseString];
     BOOL colorTextAsError = NO;
     
+    // Truncate after 9 chars
     if ([newText length] < 9) {
         [textField setText:newText];
     }
     
     // Enable/disable lookup button based on whether flight num is valid
-    if ([[self class] isFlightNumValid:newText]) {
-        BOOL containsValidAirlineCode = [[self class] flightNumContainsValidAirlineCode:newText];
-        
-        if ([[self class] isFlightNumInteger:textField.text] && !containsValidAirlineCode) {
+    if ([[self class] isFlightNumValid:newText]) {        
+        if ([[self class] isFlightNumInteger:textField.text]) {
             [self disallowLookup];
+            colorTextAsError = YES;
         }
         else {
             [self allowLookup];
         }
             
         // If the airline code is there but doesn't exist, color the text red
-        if (!containsValidAirlineCode) {
+        if (![[self class] flightNumContainsValidAirlineCode:newText]) {
             colorTextAsError = YES;
         }
     }
@@ -743,10 +777,13 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
         if ([[[self class] sanitizedFlightNum:newText] length] >= 4) {
             colorTextAsError = YES;
         }
-        
-        if ([newText length] < [oldText length]) {
-            self._flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
-            [self._flightNumberField.textInputView reloadInputViews];
+    }
+    
+    // Show appropriate keyboard if they deleted text, depending on what they deleted
+    if ([newText length] < [oldText length]) {
+        // Figure out if the last character they deleted was a letter or digit
+        if (![[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[oldText characterAtIndex:[newText length]]]) {
+            [self resetFlightInputKeyboard];
         }
     }
     
@@ -758,31 +795,37 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - UITextFieldDelegate Methods
+#pragma mark - UIAlertViewDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (alertView.tag == LookupFailureFlightNotFound || alertView.tag == LookupFailureInvalidFlightNumber) {
-        // Clear the field only on bad flight # or flight number not found
-        self._flightNumberField.text = @"";
-        self._flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
-        [self._flightNumberField.textInputView reloadInputViews];
-        [self._flightNumberField becomeFirstResponder];
-        [self disallowLookup];
-    }
-    else if (alertView.tag == FLIGHT_NUMBER_EXPLANATION_ALERT) {
-        self._flightNumberField.text = @"";
-        [self._flightNumberField becomeFirstResponder];
-        [self disallowLookup];
-        
-        if ([alertView cancelButtonIndex] != buttonIndex) {
+    switch (alertView.tag) {
+        case LookupErrorInvalidFlightNumber:
+        case LookupErrorNonexistentAirline:
+        case LookupErrorFlightNumberMissingAirlineCode: {
+            [self clearFlightNumberField];
+            [_flightNumberField becomeFirstResponder];
             [self lookupCodes];
+            break;
         }
-    }
-    else {
-        self._flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
-        [self._flightNumberField.textInputView reloadInputViews];
-        [self._flightNumberField becomeFirstResponder];
+        case LookupErrorFlightNotFound:
+        case LookupErrorNoCurrentFlight:
+        case LookupErrorOutage: {
+            // Keep their input
+            [_flightNumberField becomeFirstResponder];
+            
+            if ([alertView cancelButtonIndex] == buttonIndex) {
+                // TODO: They want to see more info... (we're using cancel as more info)
+            }
+            break;
+        }
+        case LookupErrorNoConnection:
+        case LookupErrorServerError:
+        default: {
+            // Keep their input
+            [_flightNumberField becomeFirstResponder];
+            break;
+        }
     }
 }
 
@@ -884,10 +927,10 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
     }
     else {
         // Probably an old flight, clear the field
-        self._flightNumberField.text = @"";
+        [self clearFlightNumberField];
     }
     
-    
+    // Enable / disable lookup as appropriate
     if ([[self class] isFlightNumValid:_flightNumberField.text]) {
         [self allowLookup];
     }
@@ -897,9 +940,6 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
         
     [[JustLandedSession sharedSession] removeTrackedFlight:aFlight];
     [aFlight stopTracking];
-    
-    self._flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
-    [self._flightNumberField.textInputView reloadInputViews];
     [self._flightNumberField becomeFirstResponder];
 }
 
@@ -911,9 +951,8 @@ NSUInteger const FLIGHT_NUMBER_EXPLANATION_ALERT = 999;
     [self disallowLookup];
     self._flightNumberField.text = airlineCode;
     self._flightNumberField.errorState = FlightInputNoError;
+    [self resetFlightInputKeyboard];
     [self._flightNumberField becomeFirstResponder];
-    self._flightNumberField.keyboardType = UIKeyboardTypeNumberPad;
-    [self._flightNumberField.textInputView reloadInputViews];
     [self dismissModalViewControllerAnimated:YES];
 }
 

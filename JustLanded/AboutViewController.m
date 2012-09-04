@@ -8,8 +8,7 @@
 
 #import "AboutViewController.h"
 #import "AboutTableViewCell.h"
-#import "FAQViewController.h"
-#import "TOSViewController.h"
+#import "WebContentViewController.h"
 #import "JLMailComposeViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
@@ -298,15 +297,20 @@ typedef enum {
             break;
         }
         case AboutCellTagTerms: {
-            TOSViewController *tosVC = [[TOSViewController alloc] init];
+            WebContentViewController *tosVC = [[WebContentViewController alloc] initWithContentTitle:NSLocalizedString(@"Terms of Service", @"Terms of Service.")
+                                                                                                 URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:TOS_PATH]]];
             [self.navigationController pushViewController:tosVC animated:YES];
             [FlurryAnalytics logEvent:FY_READ_TERMS];
             break;
         }
-        default: {
-            FAQViewController *faqVC = [[FAQViewController alloc] init];
+        case AboutCellTagFAQ: {
+            WebContentViewController *faqVC = [[WebContentViewController alloc] initWithContentTitle:NSLocalizedString(@"F.A.Q.", @"F.A.Q.")
+                                                                                                 URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:FAQ_PATH]]];
             [self.navigationController pushViewController:faqVC animated:YES];
             [FlurryAnalytics logEvent:FY_READ_FAQ];
+            break;
+        }
+        default: {
             break;
         }
     }
