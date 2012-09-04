@@ -34,6 +34,7 @@ static ButtonStyle *_airportCodesButtonStyle;
 static ButtonStyle *_airportCodesLabelButtonStyle;
 static LabelStyle *_flightFieldLabelStyle;
 static LabelStyle *_flightFieldTextStyle;
+static LabelStyle *_flightFieldErrorTextStyle;
 static LabelStyle *_airlineNoResultsLabelStyle;
 
 
@@ -188,6 +189,25 @@ static LabelStyle *_airlineNoResultsLabelStyle;
     }
     
     return _flightFieldTextStyle;
+}
+
+
++ (LabelStyle *)flightFieldErrorTextStyle {
+    if (!_flightFieldErrorTextStyle) {
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f]
+                                                         color:[UIColor colorWithRed:215.0/255.0f green:51.0/255.0f blue:51.0/255.0f alpha:1.0f]
+                                                   shadowColor:nil
+                                                  shadowOffset:CGSizeZero
+                                                    shadowBlur:0.0f];
+        
+        _flightFieldErrorTextStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                      backgroundColor:nil
+                                                            alignment:UITextAlignmentLeft
+                                                        lineBreakMode:UILineBreakModeClip];
+        
+    }
+    
+    return _flightFieldErrorTextStyle;
 }
 
 

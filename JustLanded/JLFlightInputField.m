@@ -10,21 +10,19 @@
 
 @implementation JLFlightInputField
 
+@synthesize errorState;
+
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     
     if (self) {
         LabelStyle *leftViewStyle = [JLLookupStyles flightFieldLabelStyle];
-        LabelStyle *textLabelStyle = [JLLookupStyles flightFieldTextStyle];
-        TextStyle *textStyle = [textLabelStyle textStyle];
         
         self.placeholder = NSLocalizedString(@"ex. VX29", @"Flight number input placeholder");
         self.backgroundColor = [UIColor clearColor];
         self.leftViewMode = UITextFieldViewModeAlways;
-        self.textAlignment = [textLabelStyle alignment];
         self.borderStyle = UITextBorderStyleNone;
-        self.font = [textStyle font];
-        self.textColor = [textStyle color];
+        self.errorState = FlightInputNoError;
         self.clearsOnBeginEditing = NO;
         self.clearButtonMode = UITextFieldViewModeWhileEditing;
         self.autocapitalizationType = UITextAutocapitalizationTypeAllCharacters;
@@ -52,6 +50,29 @@
     }
     
     return self;
+}
+
+
+- (void)setErrorState:(FlightInputErrorState)aState {
+        errorState = aState;
+        LabelStyle *labelStyle = nil;
+            
+        // Change the text style based on the error state
+        switch (errorState) {
+            case FlightInputError: {
+                labelStyle = [JLLookupStyles flightFieldErrorTextStyle];
+                break;
+            }
+            default: {
+                labelStyle = [JLLookupStyles flightFieldTextStyle];
+                break;
+            }
+        }
+        
+        TextStyle *textStyle = [labelStyle textStyle];
+        self.textAlignment = [labelStyle alignment];
+        self.font = [textStyle font];
+        self.textColor = [textStyle color];
 }
 
 

@@ -11,7 +11,6 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface AirlineLookupViewController () {
-    __strong NSArray *_allAirlines;
     __strong NSArray *_airlines;
     __strong JLLabel *_noResultsLabel;
     __strong UISearchBar *_searchBar;
@@ -27,12 +26,39 @@
 
 @synthesize delegate;
 
+static NSArray *_allAirlines;
+
+
++ (void)initialize {
+    if (self == [AirlineLookupViewController class]) {
+        _allAirlines = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"airlines" ofType:@"plist"]];
+    }
+}
+
+
++ (BOOL)airlineCodeExists:(NSString *)aCode {
+    for (id airline in _allAirlines) {
+        if ([airline isKindOfClass:[NSDictionary class]]) {
+            NSString *iataCode = [airline objectForKeyOrNil:@"iata"];
+            NSString *icaoCode = [airline objectForKeyOrNil:@"icao"];
+            
+            if ([iataCode length] > 0 && [iataCode isEqualToString:aCode]) {
+                return YES;
+            }
+            else if ([icaoCode length] > 0 && [icaoCode isEqualToString:aCode]) {
+                return YES;
+            }
+        }
+    }
+    
+    return NO;
+}
+
 
 - (id)init {
     self = [super init];
     
     if (self) {
-        _allAirlines = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"airlines" ofType:@"plist"]];
         _airlines = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
         
         if ([_airlines count] > 0) {

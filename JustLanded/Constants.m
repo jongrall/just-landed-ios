@@ -95,7 +95,7 @@ double const LOCATION_DISTANCE_FILTER = 100.0; // Must move 100m for location ev
 double const SIGNIFICANT_LOCATION_CHANGE_DISTANCE = 804.67; // 0.5mi Distance that we consider a significant location change
 double const LOCATION_MAXIMUM_ACCEPTABLE_ERROR = 100.0; // Horizontal accuracy we're looking for
 double const LOCATION_MAXIMUM_ACCEPTABLE_AGE = 60.0; // When fetching fresh location, 1 min old is max acceptable amount
-NSTimeInterval const TRACK_FRESHNESS_THRESHOLD = 1800.0;
+NSTimeInterval const TRACK_FRESHNESS_THRESHOLD = 900.0;
 
 #if defined(CONFIGURATION_Debug)
 NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Development";
@@ -151,6 +151,7 @@ NSString * const FY_CLEARED_RECENT = @"Cleared Recent Airlines";
 NSString * const FY_INVALID_FLIGHT_NUM_ERROR = @"Invalid Flight Number";
 NSString * const FY_OLD_FLIGHT_ERROR = @"Old Flight";
 NSString * const FY_FLIGHT_NOT_FOUND_ERROR = @"Flight Not Found";
+NSString * const FY_CURRENT_FLIGHT_NOT_FOUND_ERROR = @"Current Flight Not Found";
 NSString * const FY_NO_CONNECTION_ERROR = @"No Connection";
 NSString * const FY_SERVER_500 = @"500 Error";
 NSString * const FY_OUTAGE = @"Service Outage";

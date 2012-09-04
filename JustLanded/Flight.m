@@ -205,9 +205,29 @@ static NSArray *_aircraftTypes;
                             break;
                         }
                         case 404: {
-                            // Flight not found
-                            [self failToLookupWithReason:LookupFailureFlightNotFound];
-                            [FlurryAnalytics logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
+                            // Flight not found or no current flight found
+                            BOOL noCurrentFlight = NO;
+                            
+                            // Figure out if this is a situation where we have no current flight matching vs. no flight at all
+                            if ([operation isKindOfClass:[AFJSONRequestOperation class]] && [(AFJSONRequestOperation *)operation responseJSON]) {
+                                id responseJSON = [(AFJSONRequestOperation *)operation responseJSON];
+                                if ([responseJSON isKindOfClass:[NSDictionary class]]) {
+                                    NSDictionary *response = (NSDictionary *)responseJSON;
+                                    NSString *errorMsg = [response valueForKeyOrNil:@"error"];
+                                    if ([errorMsg isKindOfClass:[NSString class]]) {
+                                        noCurrentFlight = [errorMsg hasPrefix:@"No recent"];
+                                    }
+                                }
+                            }
+                            
+                            if (noCurrentFlight) {
+                                [self failToLookupWithReason:LookupFailureNoCurrentFlight];
+                                [FlurryAnalytics logEvent:FY_CURRENT_FLIGHT_NOT_FOUND_ERROR];
+                            }
+                            else {
+                                [self failToLookupWithReason:LookupFailureFlightNotFound];
+                                [FlurryAnalytics logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
+                            }
                             break;
                         }
                         case 503: {

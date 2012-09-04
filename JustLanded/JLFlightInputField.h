@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    FlightInputNoError = 0,
+    FlightInputError,
+} FlightInputErrorState;
+
+
 @interface JLFlightInputField : UITextField
+
+@property (nonatomic) FlightInputErrorState errorState;
 
 @end

@@ -96,6 +96,7 @@ extern NSString * const FY_CLEARED_RECENT;
 extern NSString * const FY_INVALID_FLIGHT_NUM_ERROR;
 extern NSString * const FY_OLD_FLIGHT_ERROR;
 extern NSString * const FY_FLIGHT_NOT_FOUND_ERROR;
+extern NSString * const FY_CURRENT_FLIGHT_NOT_FOUND_ERROR;
 extern NSString * const FY_NO_CONNECTION_ERROR;
 extern NSString * const FY_SERVER_500;
 extern NSString * const FY_OUTAGE;

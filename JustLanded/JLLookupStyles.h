@@ -35,6 +35,7 @@ extern CGRect const RESULTS_TABLE_CONTAINER_FRAME;
 + (ButtonStyle *)airportCodesButtonStyle;
 + (ButtonStyle *)airportCodesLabelButtonStyle;
 + (LabelStyle *)flightFieldLabelStyle;
++ (LabelStyle *)flightFieldErrorTextStyle;
 + (LabelStyle *)flightFieldTextStyle;
 + (LabelStyle *)noAirlineResultsLabel;
 
