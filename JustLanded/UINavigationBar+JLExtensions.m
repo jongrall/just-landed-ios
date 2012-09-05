@@ -14,7 +14,7 @@
     [super initialize];
     
     // Custom navbar
-    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"nav_bg"] 
+    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"nav_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(7.0, 0.0, 37.0, 0.0)]
                                        forBarMetrics:UIBarMetricsDefault];
     
     [[UINavigationBar appearance] setTitleVerticalPositionAdjustment:3.5f
