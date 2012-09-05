@@ -37,6 +37,7 @@
 		1140A76615438E3C0017AF79 /* gauge_inset@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1140A76215438E3C0017AF79 /* gauge_inset@2x.png */; };
 		1140A76715438E3C0017AF79 /* gauge_top@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1140A76315438E3C0017AF79 /* gauge_top@2x.png */; };
 		1140A76A1543917D0017AF79 /* gauge_gradient@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1140A7691543917D0017AF79 /* gauge_gradient@2x.png */; };
+		1142AC0515F6FC0E00DD264D /* JLMessageComposeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1142AC0415F6FC0E00DD264D /* JLMessageComposeViewController.m */; };
 		1145C90215880241002D5EDE /* AirlineLookupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1145C90115880241002D5EDE /* AirlineLookupViewController.m */; };
 		1148447F1545BC0200CCB0B8 /* JLCloudLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1148447E1545BC0200CCB0B8 /* JLCloudLayer.m */; };
 		114ADBAD14EC354700463F0C /* Flight.m in Sources */ = {isa = PBXBuildFile; fileRef = 114ADBAC14EC354700463F0C /* Flight.m */; };
@@ -438,6 +439,8 @@
 		1140A76215438E3C0017AF79 /* gauge_inset@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gauge_inset@2x.png"; sourceTree = "<group>"; };
 		1140A76315438E3C0017AF79 /* gauge_top@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gauge_top@2x.png"; sourceTree = "<group>"; };
 		1140A7691543917D0017AF79 /* gauge_gradient@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gauge_gradient@2x.png"; sourceTree = "<group>"; };
+		1142AC0315F6FC0E00DD264D /* JLMessageComposeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLMessageComposeViewController.h; sourceTree = "<group>"; };
+		1142AC0415F6FC0E00DD264D /* JLMessageComposeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLMessageComposeViewController.m; sourceTree = "<group>"; };
 		1145C90015880241002D5EDE /* AirlineLookupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirlineLookupViewController.h; sourceTree = "<group>"; };
 		1145C90115880241002D5EDE /* AirlineLookupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirlineLookupViewController.m; sourceTree = "<group>"; };
 		1148447D1545BC0200CCB0B8 /* JLCloudLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLCloudLayer.h; sourceTree = "<group>"; };
@@ -1011,6 +1014,8 @@
 				11C5DFC114DCCDDF006D1DB4 /* FlightTrackViewController.m */,
 				1159C9D615562E6C0086F04F /* JLMailComposeViewController.h */,
 				1159C9D715562E6C0086F04F /* JLMailComposeViewController.m */,
+				1142AC0315F6FC0E00DD264D /* JLMessageComposeViewController.h */,
+				1142AC0415F6FC0E00DD264D /* JLMessageComposeViewController.m */,
 				11A64F9015F6A7F4008ED7E6 /* WebContentViewController.h */,
 				11A64F9215F6A80B008ED7E6 /* WebContentViewController.m */,
 			);
@@ -2021,6 +2026,7 @@
 				11FA36E7158852E20004149F /* AirlineResultTableViewCell.m in Sources */,
 				1100A1EB1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m in Sources */,
 				11A64F9315F6A80B008ED7E6 /* WebContentViewController.m in Sources */,
+				1142AC0515F6FC0E00DD264D /* JLMessageComposeViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

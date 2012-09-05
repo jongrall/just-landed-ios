@@ -8,6 +8,7 @@
 
 #import "WebContentViewController.h"
 #import "AFHTTPRequestOperation.h"
+#import "AFHTTPClient.h"
 #import <QuartzCore/QuartzCore.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-@interface WebContentViewController () <NoConnectionDelegate>
+@interface WebContentViewController () <NoConnectionDelegate, UIWebViewDelegate>
 
 @property (strong, nonatomic) NSString *_contentTitle;
 @property (strong, nonatomic) NSURL *_contentURL;
@@ -66,6 +67,11 @@
     // Compute base URL
     NSURL *baseURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", [_contentURL scheme], [_contentURL host]]];
     AFHTTPClient *client = [AFHTTPClient clientWithBaseURL:baseURL];
+    
+    // Use iOS user agent string
+    NSString *userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+    [client setDefaultHeader:@"User-Agent" value:userAgent];
+    
     operation.acceptableStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(200, 4)];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self performSelector:@selector(indicateStoppedLoading) withObject:nil afterDelay:1.0]; // Delay prevents white flash as webview loads content
@@ -173,6 +179,14 @@
     [self loadContent];
 }
 
+
+- (void)webViewDidFinishLoad:(UIWebView *)aWebView {
+    //Process anchor links
+    if ([_contentURL fragment]) {
+        [aWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"window.location.hash='%@';", [_contentURL fragment]]];
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark View Lifecycle
@@ -197,6 +211,7 @@
     self.webView.clipsToBounds = YES;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     self.webView.hidden = YES;
+    self.webView.delegate = self;
     [self.view addSubview:blackBG];
 	[self.view addSubview:webView];
 }
@@ -205,6 +220,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	self.navigationItem.title = _contentTitle;
+    
+    // Customize the navbar
+    self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);
+    self.navigationController.navigationBar.layer.shadowColor = [[UIColor blackColor] CGColor];
+    self.navigationController.navigationBar.layer.shadowOpacity = 0.5f;
+    self.navigationController.navigationBar.layer.shadowRadius = 0.25f;
+    self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
+    
 	[self loadContent];
 }
 

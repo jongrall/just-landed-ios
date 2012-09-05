@@ -9,6 +9,7 @@
 #import "FlightLookupViewController.h"
 #import "FlightResultTableViewCell.h"
 #import "AboutViewController.h"
+#import "WebContentViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +61,7 @@ typedef enum {
 - (void)disallowLookup;
 - (void)clearFlightNumberField;
 - (void)resetFlightInputKeyboard;
+- (void)dismissVC;
 
 @end
 
@@ -695,6 +697,11 @@ static NSRegularExpression *_airlineCodeRegex;
 }
 
 
+- (void)dismissVC {
+    [self dismissViewControllerAnimated:YES completion:^{}];
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - UITextFieldDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -809,15 +816,50 @@ static NSRegularExpression *_airlineCodeRegex;
             break;
         }
         case LookupErrorFlightNotFound:
-        case LookupErrorNoCurrentFlight:
-        case LookupErrorOutage: {
+        case LookupErrorNoCurrentFlight: {
             // Keep their input
             [_flightNumberField becomeFirstResponder];
             
             if ([alertView cancelButtonIndex] == buttonIndex) {
                 // TODO: They want to see more info... (we're using cancel as more info)
+                NSString *title = nil;
+                NSURL *url = nil;
+                
+                switch (alertView.tag) {
+                    case LookupErrorFlightNotFound: {
+                        title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
+                        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, FNF_ANCHOR]];
+                        [FlurryAnalytics logEvent:FY_READ_FAQ];
+                        break;
+                    }
+                    default: {
+                        title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
+                        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, HRS48_ANCHOR]];
+                        [FlurryAnalytics logEvent:FY_READ_FAQ];
+                        break;
+                    }
+                }
+                
+                WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:url];
+                UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webContentVC];
+                navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+                webContentVC.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"Done")
+                                                                                                  style:UIBarButtonItemStylePlain
+                                                                                                 target:self
+                                                                                                 action:@selector(dismissVC)];
+                [self presentModalViewController:navController animated:YES];
             }
             break;
+        }
+        case LookupErrorOutage: {
+            [FlurryAnalytics logEvent:FY_VISITED_OPS_FEED];
+            
+            if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]]) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]];
+            }
+            else {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:TWITTER_JL_OPS]];
+            }
         }
         case LookupErrorNoConnection:
         case LookupErrorServerError:

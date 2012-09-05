@@ -10,6 +10,10 @@
 #import "AboutTableViewCell.h"
 #import "WebContentViewController.h"
 #import "JLMailComposeViewController.h"
+#import "JLMessageComposeViewController.h"
+#import <Twitter/TWTweetComposeViewController.h>
+#import <MessageUI/MFMailComposeViewController.h>
+#import <MessageUI/MFMessageComposeViewController.h>
 #import <QuartzCore/QuartzCore.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,13 +22,14 @@
 
 typedef enum {
     AboutCellTagFeedback = 0,
+    AboutCellTagSMS,
     AboutCellTagTweet,
     AboutCellTagFAQ,
     AboutCellTagTerms,
 } AboutCellTag;
 
 
-@interface AboutViewController ()
+@interface AboutViewController () <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate>
 
 @property (strong, nonatomic) UITableView *aboutTable;
 
@@ -146,6 +151,9 @@ typedef enum {
     if ([MFMailComposeViewController canSendMail]) {
         [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFeedback]];
     }
+    if ([MFMessageComposeViewController canSendText]) {
+        [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagSMS]];
+    }
     if ([TWTweetComposeViewController canSendTweet]) {
         [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTweet]];
     }
@@ -186,7 +194,7 @@ typedef enum {
         cell.cellType = MIDDLE;
     }
     
-    // Hack for retina/non-retina
+    // FIXME: Hack for retina/non-retina
     CGFloat shadowVOffset = ([[UIScreen mainScreen] scale] == 1.0f) ? -1.0f : -0.5f;
     
     switch (tag) {
@@ -197,6 +205,16 @@ typedef enum {
                                 shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
                                shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
                                  shadowBlur:0.0f];
+            cell.hasDisclosureArrow = NO;
+            break;
+        }
+        case AboutCellTagSMS: {
+            cell.title = NSLocalizedString(@"Text a friend", @"Text a Friend About Just Landed");
+            cell.icon = [UIImage imageNamed:@"email_feedback" // FIXMENOW
+                                 withColor:[UIColor whiteColor]
+                               shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
+                              shadowOffset:CGSizeMake(0.0f, shadowVOffset)
+                                shadowBlur:0.0f];
             cell.hasDisclosureArrow = NO;
             break;
         }
@@ -247,13 +265,6 @@ typedef enum {
                                       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
             [mailComposer setMailComposeDelegate:self];
             mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            
-            mailComposer.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);
-            mailComposer.navigationBar.layer.shadowColor = [[UIColor blackColor] CGColor];
-            mailComposer.navigationBar.layer.shadowOpacity = 0.5f;
-            mailComposer.navigationBar.layer.shadowRadius = 0.25f;
-            mailComposer.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
-            
             [self presentModalViewController:mailComposer animated:YES];
             
             // WARN: Make the body first responder - this could get us rejected
@@ -262,13 +273,31 @@ typedef enum {
             [FlurryAnalytics logEvent:FY_STARTED_SENDING_FEEDBACK];
             break;
         }
+        case AboutCellTagSMS: {
+            JLMessageComposeViewController *smsComposer = [[JLMessageComposeViewController alloc] init];
+            [smsComposer setMessageComposeDelegate:self];
+            
+            NSArray *possibleMessages = [NSArray arrayWithObjects:@"The Just Landed iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/QkAJfu",
+                                       @"No more waiting at airport arrivals with Just Landed for iPhone! http://bit.ly/SirUWY",
+                                       @"The Just Landed iPhone app tells you when to leave for the airport to pick someone up! http://bit.ly/NbLqkJ",
+                                       @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/TkBoi2",
+                                       @"The Just Landed iPhone app is great for tracking arriving flights. http://bit.ly/QkAYqH", nil];
+            NSUInteger randomIndex = arc4random() % [possibleMessages count];
+            [smsComposer setBody:[possibleMessages objectAtIndex:randomIndex]];
+            smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            [self presentModalViewController:smsComposer animated:YES];
+            // Hack to fix MFMMessageCompose changing status bar type
+            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+            [FlurryAnalytics logEvent:FY_STARTED_SENDING_SMS];
+            break;
+        }
         case AboutCellTagTweet: {
             TWTweetComposeViewController *tweetComposer = [[TWTweetComposeViewController alloc] init];
-            NSArray *possibleTweets = [NSArray arrayWithObjects:@"The free @justlanded iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/LOEyWO",
-                                       @"The free @justlanded iPhone app makes it easy to pick people up at the airport! http://bit.ly/JR6pXf",
-                                       @"@justlanded for iPhone makes it easy to pick people up at the airport! http://bit.ly/LOEDK3",
-                                       @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/Ja3UQX",
-                                       @"@justlanded is a new kind of flight tracker that tells you when to leave for the airport! http://bit.ly/JlJUK2", nil];
+            NSArray *possibleTweets = [NSArray arrayWithObjects:@"The @justlanded iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/PHaLQP",
+                                       @"No more waiting at airport arrivals with @justlanded for iPhone! http://bit.ly/Q4A6mJ",
+                                       @"The @justlanded iPhone app tells you when to leave for the airport to pick someone up! http://bit.ly/Ol9RsY",
+                                       @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/TWHHpE",
+                                       @"The @justlanded iPhone app is great for tracking arriving flights. http://bit.ly/TksJw3", nil];
             
             // Choose a random tweet for some variety
             NSUInteger randomIndex = arc4random() % [possibleTweets count];
@@ -328,6 +357,10 @@ typedef enum {
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSUInteger numRows = 2;
     
+    if ([MFMessageComposeViewController canSendText]) {
+        numRows++;
+    }
+    
     if ([TWTweetComposeViewController canSendTweet]) {
         numRows++;
     }
@@ -347,6 +380,10 @@ typedef enum {
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSUInteger numRows = 2;
+    
+    if ([MFMessageComposeViewController canSendText]) {
+        numRows++;
+    }
 
     if ([TWTweetComposeViewController canSendTweet]) {
         numRows++;
@@ -407,6 +444,28 @@ typedef enum {
     
     //field not found in this view.
     return NO;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - MFMessageComposeViewControllerDelegate Methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
+    if (result == MessageComposeResultSent) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:NSLocalizedString(@"Thanks, we appreciate you telling your friends!", @"SMS Sent Thanks")
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                              otherButtonTitles:nil];
+        [alert show];
+        [FlurryAnalytics logEvent:FY_SENT_SMS];
+    }
+    else if (result == MessageComposeResultCancelled) {
+        [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_SMS];
+    }
+    
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 @end

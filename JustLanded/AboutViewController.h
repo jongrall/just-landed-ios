@@ -7,9 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Twitter/TWTweetComposeViewController.h>
-#import <MessageUI/MFMailComposeViewController.h>
 
-@interface AboutViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate>
+@interface AboutViewController : UIViewController
 
 @end
