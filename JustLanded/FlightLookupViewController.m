@@ -35,10 +35,9 @@ typedef enum {
 @property (strong, nonatomic) JLButton *_airportCodesLabelButton;
 @property (strong, nonatomic) JLFlightInputField *_flightNumberField;
 @property (strong, nonatomic) UITableView *_flightResultsTable;
-@property (strong, nonatomic) UIImageView *_airplane;
+@property (strong, nonatomic) JLAirplaneView *_airplane;
 @property (strong, nonatomic) UIImageView *_flightResultsTableFrame;
 @property (strong, nonatomic) JLSpinner *_lookupSpinner;
-@property (strong, nonatomic) NSTimer *_airplaneTimer;
 @property (strong, nonatomic) NSArray *_flightResults;
 @property (strong, nonatomic) JLCloudLayer *_cloudLayer;
 
@@ -56,7 +55,6 @@ typedef enum {
 - (void)indicateLookingUp;
 - (void)indicateStoppedLookingUp;
 - (void)showAboutScreen;
-- (void)animatePlane;
 - (void)allowLookup;
 - (void)disallowLookup;
 - (void)clearFlightNumberField;
@@ -81,7 +79,6 @@ typedef enum {
 @synthesize _airplane;
 @synthesize _flightResultsTableFrame;
 @synthesize _lookupSpinner;
-@synthesize _airplaneTimer;
 @synthesize _flightResults;
 @synthesize _cloudLayer;
 
@@ -216,7 +213,7 @@ static NSRegularExpression *_airlineCodeRegex;
     controller.delegate = self;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [_cloudLayer stopAnimating]; // Stop animating the clouds
-    [self stopAnimatingPlane];
+    [_airplane stopAnimating];
     [self presentModalViewController:controller animated:animateFlip];
     
     // If animated, was user-initiated, record the track
@@ -279,9 +276,18 @@ static NSRegularExpression *_airlineCodeRegex;
 
 - (void)showAboutScreen {
     AboutViewController *aboutController = [[AboutViewController alloc] init];
+    aboutController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    // HACK: Causes loadview to fire, which causes offsetting clouds before animation to work, and adds airplane to aboutController view
+    aboutController.airplane = _airplane;
+    aboutController.cloudLayer.currentCloudOffsets = _cloudLayer.currentCloudOffsets;
+    
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:aboutController];
-    navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self presentModalViewController:navController animated:YES];
+    navController.navigationBarHidden = YES;
+    [self presentViewController:navController
+                       animated:NO // Instant transition
+                     completion:^{
+                         [aboutController revealContent];
+                     }];
     [FlurryAnalytics logEvent:FY_VISITED_ABOUT_SCREEN];
 }
 
@@ -472,7 +478,7 @@ static NSRegularExpression *_airlineCodeRegex;
     // Configure the main view
     UIImageView *mainView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 460.0f)];
     mainView.backgroundColor = [UIColor blackColor];
-    mainView.image = [UIImage imageNamed:@"lookup_bg"];
+    mainView.image = [UIImage imageNamed:@"sky_bg"];
     mainView.userInteractionEnabled = YES;
     self.view = mainView;
     
@@ -481,12 +487,12 @@ static NSRegularExpression *_airlineCodeRegex;
     self._cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:_cloudLayer];
     
-    // Add the cloud foreground
-    UIImageView *cloudFg = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"] 
+    // Add the cloud footer
+    UIImageView *cloudFooter = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
                                                                resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
-    cloudFg.frame = CLOUD_FOOTER_FRAME;
-    cloudFg.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:cloudFg];
+    cloudFooter.frame = CLOUD_FOOTER_FRAME;
+    cloudFooter.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:cloudFooter];
     
     // Add the logo
     UIImageView *logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
@@ -551,12 +557,7 @@ static NSRegularExpression *_airlineCodeRegex;
     [self.view addSubview:resultsTable];
     
     // Add the airplane
-    _airplane = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plane_contrail"]];
-    _airplane.frame = CGRectMake(-_airplane.frame.size.width, // Place offscreen
-                                 85.0f,
-                                 _airplane.frame.size.width,
-                                 _airplane.frame.size.height);
-    _airplane.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    _airplane = [[JLAirplaneView alloc] initWithFrame:AIRPLANE_FRAME];
     [self.view addSubview:_airplane];
     
     // Add the table frame
@@ -575,7 +576,7 @@ static NSRegularExpression *_airlineCodeRegex;
 
 - (void)viewDidLoad {
     [_cloudLayer startAnimating];
-    [self startAnimatingPlane];
+    [_airplane startAnimating];
 }
 
 
@@ -598,54 +599,6 @@ static NSRegularExpression *_airlineCodeRegex;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Supports portrait only
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-
-- (void)startAnimatingPlane {
-    if (!_airplaneTimer || ![_airplaneTimer isValid]) {
-        // Reset
-        [_airplane setFrame:CGRectMake(-_airplane.frame.size.width,
-                                       _airplane.frame.origin.y,
-                                       _airplane.frame.size.width,
-                                       _airplane.frame.size.height)];
-        
-        _airplaneTimer = [NSTimer timerWithTimeInterval:(arc4random() % 30) 
-                                                 target:self
-                                               selector:@selector(animatePlane) 
-                                               userInfo:nil 
-                                                repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:_airplaneTimer forMode:NSRunLoopCommonModes];
-    }
-}
-
-
-- (void)stopAnimatingPlane {
-    [_airplaneTimer invalidate];
-}
-
-
-- (void)animatePlane {
-    // Start the animation over only if the plane is in the reset position
-    if (_airplane.frame.origin.x <= -_airplane.frame.size.width) {
-        //Reset
-        [UIView animateWithDuration:120.0 
-                              delay:0.0
-                            options:UIViewAnimationCurveLinear
-                         animations:^{
-                             [_airplane setFrame:CGRectMake(_airplane.frame.size.width,
-                                                            _airplane.frame.origin.y,
-                                                            _airplane.frame.size.width,
-                                                            _airplane.frame.size.height)];
-                         }
-                         completion:^(BOOL finished) {
-                             if (finished) {
-                                 [_airplane setFrame:CGRectMake(-_airplane.frame.size.width,
-                                                                _airplane.frame.origin.y,
-                                                                _airplane.frame.size.width,
-                                                                _airplane.frame.size.height)];
-                             }
-                         }];
-    }
 }
 
 
@@ -852,13 +805,16 @@ static NSRegularExpression *_airlineCodeRegex;
             break;
         }
         case LookupErrorOutage: {
-            [FlurryAnalytics logEvent:FY_VISITED_OPS_FEED];
-            
-            if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]]) {
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]];
-            }
-            else {
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:TWITTER_JL_OPS]];
+            if ([alertView cancelButtonIndex] == buttonIndex) {
+                // TODO: They want to see more info... (we're using cancel as more info)
+                [FlurryAnalytics logEvent:FY_VISITED_OPS_FEED];
+                
+                if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]]) {
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]];
+                }
+                else {
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:TWITTER_JL_OPS]];
+                }
             }
         }
         case LookupErrorNoConnection:
@@ -958,7 +914,7 @@ static NSRegularExpression *_airlineCodeRegex;
     self._airportCodesButton.hidden = NO;
     self._airportCodesLabelButton.hidden = NO;
     [_cloudLayer startAnimating]; // Begin animating the cloud layer
-    [self startAnimatingPlane];
+    [_airplane startAnimating];
     
     // If the user stopped tracking, pre-fill the field with the flight they were tracking
     if (userFlag) {
@@ -1013,7 +969,7 @@ static NSRegularExpression *_airlineCodeRegex;
     _flightNumberField.delegate = nil;
     _flightResultsTable.delegate = nil;
     [_cloudLayer stopAnimating];
-    [self stopAnimatingPlane];
+    [_airplane stopAnimating];
 }
 
 @end

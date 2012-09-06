@@ -50,27 +50,21 @@ const CGFloat LAYER4_SPEED = 5.0f;
         _layer2Offset = 200.0f;
         _layer3Offset = 200.0f;
         _layer4Offset = 200.0f;
-        
-        // Vertical offsets
-        CGFloat layer1VerticalOffset = 0.0f;
-        CGFloat layer2VerticalOffset = 0.0f;
-        CGFloat layer3VerticalOffset = 0.0f;
-        CGFloat layer4VerticalOffset = 0.0f;
-        
+                
         _layer1 = [self cloudLayerScrollViewWithRepeatingImage:clouds1];
-        _layer1.frame = CGRectMake(0.0f, layer1VerticalOffset, self.frame.size.width, self.frame.size.height);
+        _layer1.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
         _layer1.contentOffset = CGPointMake(_layer1Offset, 0.0f);
         
         _layer2 = [self cloudLayerScrollViewWithRepeatingImage:clouds2];
-        _layer2.frame = CGRectMake(0.0f, layer2VerticalOffset, self.frame.size.width, self.frame.size.height);
+        _layer2.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
         _layer2.contentOffset = CGPointMake(_layer2Offset, 0.0f);
         
         _layer3 = [self cloudLayerScrollViewWithRepeatingImage:clouds3];
-        _layer3.frame = CGRectMake(0.0f, layer3VerticalOffset, self.frame.size.width, self.frame.size.height);
+        _layer3.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
         _layer3.contentOffset = CGPointMake(_layer3Offset, 0.0f);
         
         _layer4 = [self cloudLayerScrollViewWithRepeatingImage:clouds4];
-        _layer4.frame = CGRectMake(0.0f, layer4VerticalOffset, self.frame.size.width, self.frame.size.height);
+        _layer4.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
         _layer4.contentOffset = CGPointMake(_layer4Offset, 0.0f);
         
         [self addSubview:_layer4];
@@ -90,14 +84,13 @@ const CGFloat LAYER4_SPEED = 5.0f;
     sv.showsHorizontalScrollIndicator = NO;
     sv.showsVerticalScrollIndicator = NO;
     sv.bounces = NO;
-    UIImageView *firstImage = [[UIImageView alloc] initWithImage:image];
-    UIImageView *secondImage = [[UIImageView alloc] initWithImage:image];
-    firstImage.contentMode = UIViewContentModeLeft;
-    secondImage.contentMode = UIViewContentModeLeft;
-    secondImage.frame = CGRectMake(image.size.width, 0.0f, 320.0f, image.size.height);
+    UIImageView *firstImage = [[UIImageView alloc] initWithImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(image.size.height - 1.0f, 0.0f, 1.0f, 0.0f)]];
+    UIImageView *secondImage = [[UIImageView alloc] initWithImage:[image resizableImageWithCapInsets:UIEdgeInsetsMake(image.size.height - 1.0f, 0.0f, 1.0f, 0.0f)]];
+    firstImage.frame = CGRectMake(0.0f, 0.0f, 320.0f, self.frame.size.height);
+    secondImage.frame = CGRectMake(image.size.width, 0.0f, 320.0f, self.frame.size.height);
     [sv addSubview:firstImage];
     [sv addSubview:secondImage];
-    sv.contentSize = CGSizeMake(image.size.width + 320.0f, image.size.height);
+    sv.contentSize = CGSizeMake(image.size.width + 320.0f, self.frame.size.height);
     return sv;
 }
 
@@ -145,6 +138,38 @@ const CGFloat LAYER4_SPEED = 5.0f;
     [_layer2 setContentOffset:CGPointMake(newLayer2Offset, 0.0f) animated:NO];
     [_layer3 setContentOffset:CGPointMake(newLayer3Offset, 0.0f) animated:NO];
     [_layer4 setContentOffset:CGPointMake(newLayer4Offset, 0.0f) animated:NO];
+}
+
+
+- (void)setFrame:(CGRect)newFrame {
+    [super setFrame:newFrame];
+    _layer1.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
+    _layer2.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
+    _layer3.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
+    _layer4.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
+}
+
+
+- (NSArray *)currentCloudOffsets {
+    return [NSArray arrayWithObjects:[NSNumber numberWithFloat:_layer1Offset],
+            [NSNumber numberWithFloat:_layer2Offset],
+            [NSNumber numberWithFloat:_layer3Offset],
+            [NSNumber numberWithFloat:_layer4Offset], nil];
+}
+
+
+- (void)setCurrentCloudOffsets:(NSArray *)someOffsets {
+    if (someOffsets && [someOffsets count] == 4) {
+        _layer1Offset = [[someOffsets objectAtIndex:0] floatValue];
+        _layer2Offset = [[someOffsets objectAtIndex:1] floatValue];
+        _layer3Offset = [[someOffsets objectAtIndex:2] floatValue];
+        _layer4Offset = [[someOffsets objectAtIndex:3] floatValue];
+        
+        [_layer1 setContentOffset:CGPointMake(_layer1Offset, 0.0f) animated:NO];
+        [_layer2 setContentOffset:CGPointMake(_layer2Offset, 0.0f) animated:NO];
+        [_layer3 setContentOffset:CGPointMake(_layer3Offset, 0.0f) animated:NO];
+        [_layer4 setContentOffset:CGPointMake(_layer4Offset, 0.0f) animated:NO];
+    }
 }
 
 

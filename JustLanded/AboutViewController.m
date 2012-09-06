@@ -22,16 +22,19 @@
 
 typedef enum {
     AboutCellTagFeedback = 0,
+    AboutCellTagFAQ,
     AboutCellTagSMS,
     AboutCellTagTweet,
-    AboutCellTagFAQ,
     AboutCellTagTerms,
 } AboutCellTag;
 
 
 @interface AboutViewController () <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate>
 
-@property (strong, nonatomic) UITableView *aboutTable;
+@property (strong, nonatomic) JLButton *_aboutButton;
+@property (strong, nonatomic) JLLabel *_aboutTitle;
+@property (strong, nonatomic) UITableView *_aboutTable;
+@property (strong, nonatomic) JLLabel *_copyrightLabel;
 
 - (void)dismiss;
 - (BOOL)setMFMailFieldAsFirstResponder:(UIView *)view mfMailField:(NSString *)field;
@@ -44,7 +47,12 @@ typedef enum {
 
 @implementation AboutViewController
 
-@synthesize aboutTable;
+@synthesize cloudLayer;
+@synthesize airplane;
+@synthesize _aboutButton;
+@synthesize _aboutTitle;
+@synthesize _aboutTable;
+@synthesize _copyrightLabel;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - View lifecycle
@@ -52,60 +60,64 @@ typedef enum {
 
 
 - (void)loadView {    
-    UIImageView *mainView = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"about_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
-    mainView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 416.0f);
+    UIImageView *mainView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sky_bg"]];
+    mainView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 460.0f);
     mainView.userInteractionEnabled = YES;
     self.view = mainView;
     
+    // Add the about button
+    self._aboutButton = [[JLButton alloc] initWithButtonStyle:[JLAboutStyles aboutCloseButtonStyle] frame:ABOUT_BUTTON_FRAME]; // Frame matches lookup
+    [_aboutButton addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
+    _aboutButton.enabled = NO;
+    [self.view addSubview:_aboutButton];
+    
+    // Add the title
+    self._aboutTitle = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles aboutTitleLabelStyle] frame:ABOUT_TITLE_FRAME];
+    _aboutTitle.text = NSLocalizedString(@"about", @"About Screen Title");
+    _aboutTitle.hidden = YES; // Hidden at first
+    [self.view addSubview:_aboutTitle];
+    
+    // Add the cloud layer
+    self.cloudLayer = [[JLCloudLayer alloc] initWithFrame:CLOUD_LAYER_FRAME]; // Frame matches lookup
+    cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:cloudLayer];
+    
+    // Add the cloud foreground
+    UIImageView *cloudFooter = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
+                                                               resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
+    cloudFooter.frame = CLOUD_FOOTER_FRAME; // Frame matches lookup
+    cloudFooter.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:cloudFooter];
+    
     // Add the table
     UITableView *table = [[UITableView alloc] initWithFrame:TABLE_FRAME 
-                                                      style:UITableViewStyleGrouped];
+                                                      style:UITableViewStylePlain];
     [table setBackgroundColor:[UIColor clearColor]];
     [table setDelegate:self];
     [table setDataSource:self];
     [table setScrollEnabled:NO];
     [table setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    self.aboutTable = table;
+    [table setHidden:YES]; // Hidden at first
+    [table setRowHeight:AboutTableViewCellHeight];
+    self._aboutTable = table;
     [self.view addSubview:table];
     
     // Add the credits
-    JLLabel *companyLabel = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles companyLabelStyle] frame:COMPANY_NAME_FRAME];
-    companyLabel.text = NSLocalizedString(@"Little Details LLC", @"Little Details LLC");
-    companyLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    self._copyrightLabel = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle] frame:COPYRIGHT_NOTICE_FRAME];
+    _copyrightLabel.text = [NSString stringWithFormat:NSLocalizedString(@"©2012 Little Details LLC. Just Landed %@", @"Copyright Notice"),
+                                 [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+    _copyrightLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    _copyrightLabel.hidden = YES; // Hidden at first
     
-    UIImageView *divider = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"divider"]];
-    divider.frame = DIVIDER_FRAME;
-    divider.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    
-    JLLabel *versionLabel = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles versionLabelStyle] frame:VERSION_FRAME];
-    versionLabel.text = [NSString stringWithFormat:@"Version %@",
-                         [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-    versionLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    
-    [self.view addSubview:companyLabel];
-    [self.view addSubview:divider];
-    [self.view addSubview:versionLabel];
+    [self.view addSubview:_copyrightLabel];
 }
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Custom navbar shadow
-    self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);
-	self.navigationController.navigationBar.layer.shadowColor = [[UIColor blackColor] CGColor];
-    self.navigationController.navigationBar.layer.shadowOpacity = 0.5f;
-	self.navigationController.navigationBar.layer.shadowRadius = 0.25f;
-	self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
-
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"Done") 
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:self 
-                                                                             action:@selector(dismiss)];
-	
-    // Set the title
-    self.navigationItem.title = NSLocalizedString(@"About", @"About");
-    
+    // Start animating the clouds
+    [cloudLayer startAnimating];
     
     // Override back button
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Back", @"Back")
@@ -117,8 +129,27 @@ typedef enum {
 
 - (void)viewDidUnload {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    self.aboutTable = nil;
+    // Release any retained subviews of the main view
+    self.cloudLayer = nil;
+    self.airplane = nil;
+    self._aboutButton = nil;
+    self._aboutTitle = nil;
+    self._aboutTable = nil;
+    self._copyrightLabel = nil;
+}
+
+
+- (void)viewWillAppear:(BOOL)animated {
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    [super viewWillAppear:animated];
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated {
+    if (!self.modalViewController) { // Don't show the navbar again for modal view controllers covering
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+    }
+    [super viewWillDisappear:animated];
 }
 
 
@@ -128,8 +159,48 @@ typedef enum {
 }
 
 
-- (void)dealloc {
-    aboutTable.delegate = nil;
+- (void)revealContent {
+    // Animate the clouds out of the way, and the table into view
+    [UIView animateWithDuration:CLOUD_REVEAL_ANIMATION_DURATION
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{
+                         cloudLayer.frame = CLOUD_LAYER_LOWER_FRAME;
+                         airplane.frame = AIRPLANE_LOWER_FRAME;
+                     }
+                     completion:^(BOOL finished) {
+                         _aboutTitle.alpha = 0.0f;
+                         _aboutTitle.hidden = NO;
+                         _aboutTable.alpha = 0.0f;
+                         _aboutTable.hidden = NO;
+                         _copyrightLabel.alpha = 0.0f;
+                         _copyrightLabel.hidden = NO;
+                         
+                         [UIView animateWithDuration:FADE_ANIMATION_DURATION
+                                               delay:0.0
+                                             options:UIViewAnimationOptionCurveLinear
+                                          animations:^{
+                                              _aboutTitle.alpha = 1.0f;
+                                              _aboutTable.alpha = 1.0f;
+                                              _copyrightLabel.alpha = 1.0f;
+                                          }
+                                          completion:^(BOOL finished) {
+                                              _aboutButton.enabled = YES;
+                                          }];
+                     }];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Custom Accessors
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)setAirplane:(JLAirplaneView *)anAirplane {
+    if (anAirplane != airplane) {
+        airplane = anAirplane;
+    
+        // Side effect - adds the plane to the view
+        [[self view] insertSubview:airplane belowSubview:_aboutTable];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +208,29 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)dismiss {
-    [self dismissModalViewControllerAnimated:YES];
+    // Fade the table, and the clouds back into view, then dismiss the about screen
+    self._aboutButton.enabled = NO;
+    [UIView animateWithDuration:FADE_ANIMATION_DURATION
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         _aboutTitle.alpha = 0.0f;
+                         _aboutTable.alpha = 0.0f;
+                         _copyrightLabel.alpha = 0.0f;
+                     }
+                     completion:^(BOOL finished) {
+                         [UIView animateWithDuration:CLOUD_REVEAL_ANIMATION_DURATION
+                                               delay:0.0
+                                             options:UIViewAnimationOptionCurveEaseInOut
+                                          animations:^{
+                                              cloudLayer.frame = CLOUD_LAYER_FRAME;
+                                              airplane.frame = AIRPLANE_FRAME;
+                                          }
+                                          completion:^(BOOL finished) {
+                                              [[self.presentingViewController view] addSubview:airplane]; // Give the airplane back :)
+                                              [self dismissModalViewControllerAnimated:NO]; // Instant transition
+                                          }];
+                     }];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,15 +244,17 @@ typedef enum {
     if ([MFMailComposeViewController canSendMail]) {
         [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFeedback]];
     }
+    
+    [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFAQ]];
+    
     if ([MFMessageComposeViewController canSendText]) {
         [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagSMS]];
     }
     if ([TWTweetComposeViewController canSendTweet]) {
         [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTweet]];
     }
-    
+
     [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTerms]];
-    [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFAQ]];
     
     if (row < [tableRows count]) {
         return [[tableRows objectAtIndex:row] integerValue];
@@ -194,57 +289,39 @@ typedef enum {
         cell.cellType = MIDDLE;
     }
     
-    // FIXME: Hack for retina/non-retina
-    CGFloat shadowVOffset = ([[UIScreen mainScreen] scale] == 1.0f) ? -1.0f : -0.5f;
-    
     switch (tag) {
         case AboutCellTagFeedback: {
             cell.title = NSLocalizedString(@"Send us feedback", @"Send Feedback");
-            cell.icon = [UIImage imageNamed:@"email_feedback" 
-                                  withColor:[UIColor whiteColor] 
-                                shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                               shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
-                                 shadowBlur:0.0f];
+            cell.icon = [UIImage imageNamed:@"email_feedback_up"];
+            cell.downIcon = [UIImage imageNamed:@"email_feedback_down"];
             cell.hasDisclosureArrow = NO;
             break;
         }
         case AboutCellTagSMS: {
             cell.title = NSLocalizedString(@"Text a friend", @"Text a Friend About Just Landed");
-            cell.icon = [UIImage imageNamed:@"email_feedback" // FIXMENOW
-                                 withColor:[UIColor whiteColor]
-                               shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                              shadowOffset:CGSizeMake(0.0f, shadowVOffset)
-                                shadowBlur:0.0f];
+            cell.icon = [UIImage imageNamed:@"text_up"];
+            cell.downIcon = [UIImage imageNamed:@"text_down"];
             cell.hasDisclosureArrow = NO;
             break;
         }
         case AboutCellTagTweet: {
             cell.title = NSLocalizedString(@"Tell your followers", @"Tweet About Us");
-            cell.icon = [UIImage imageNamed:@"twitter" 
-                                  withColor:[UIColor whiteColor] 
-                                shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                               shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
-                                 shadowBlur:0.0f];
+            cell.icon = [UIImage imageNamed:@"twitter_up"];
+            cell.downIcon = [UIImage imageNamed:@"twitter_down"];
             cell.hasDisclosureArrow = NO;
             break;
         }
         case AboutCellTagFAQ: {
             cell.title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
-            cell.icon = [UIImage imageNamed:@"faq" 
-                                  withColor:[UIColor whiteColor] 
-                                shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                               shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
-                                 shadowBlur:0.0f];
+            cell.icon = [UIImage imageNamed:@"faq_up"];
+            cell.downIcon = [UIImage imageNamed:@"faq_down"];
             cell.hasDisclosureArrow = YES;
             break;
         }
         default: {
             cell.title = NSLocalizedString(@"Terms of service", @"Terms of service");
-            cell.icon = [UIImage imageNamed:@"terms" 
-                                  withColor:[UIColor whiteColor] 
-                                shadowColor:[UIColor colorWithRed:16.0f/255.0f green:82.0f/255.0f blue:113.0f/255.0f alpha:1.0f]
-                               shadowOffset:CGSizeMake(0.0f, shadowVOffset) 
-                                 shadowBlur:0.0f];
+            cell.icon = [UIImage imageNamed:@"terms_up"];
+            cell.downIcon = [UIImage imageNamed:@"terms_down"];
             cell.hasDisclosureArrow = YES;
             break;
         }
@@ -277,11 +354,11 @@ typedef enum {
             JLMessageComposeViewController *smsComposer = [[JLMessageComposeViewController alloc] init];
             [smsComposer setMessageComposeDelegate:self];
             
-            NSArray *possibleMessages = [NSArray arrayWithObjects:@"The Just Landed iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/QkAJfu",
+            NSArray *possibleMessages = [NSArray arrayWithObjects:@"Check out the Just Landed iPhone app - it makes it easy to pick people up at the airport. http://bit.ly/QkAJfu",
                                        @"No more waiting at airport arrivals with Just Landed for iPhone! http://bit.ly/SirUWY",
-                                       @"The Just Landed iPhone app tells you when to leave for the airport to pick someone up! http://bit.ly/NbLqkJ",
+                                       @"I'm loving the Just Landed iPhone app. It tells you when to leave for the airport to pick someone up! http://bit.ly/NbLqkJ",
                                        @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/TkBoi2",
-                                       @"The Just Landed iPhone app is great for tracking arriving flights. http://bit.ly/QkAYqH", nil];
+                                       @"I've found an iPhone app called Just Landed that is great for tracking arriving flights! http://bit.ly/QkAYqH", nil];
             NSUInteger randomIndex = arc4random() % [possibleMessages count];
             [smsComposer setBody:[possibleMessages objectAtIndex:randomIndex]];
             smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -354,42 +431,18 @@ typedef enum {
 }
 
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSUInteger numRows = 2;
-    
-    if ([MFMessageComposeViewController canSendText]) {
-        numRows++;
-    }
-    
-    if ([TWTweetComposeViewController canSendTweet]) {
-        numRows++;
-    }
-    
-    if ([MFMailComposeViewController canSendMail]) {
-        numRows++;
-    }
-    
-    if (indexPath.row + 1 == numRows) {
-        return AboutTableViewCellHeight + 2.0f;
-    }
-    else {
-        return AboutTableViewCellHeight;
-    }
-}
-
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSUInteger numRows = 2;
     
+    if ([MFMailComposeViewController canSendMail]) {
+        numRows++;
+    }
+    
     if ([MFMessageComposeViewController canSendText]) {
         numRows++;
     }
 
     if ([TWTweetComposeViewController canSendTweet]) {
-        numRows++;
-    }
-    
-    if ([MFMailComposeViewController canSendMail]) {
         numRows++;
     }
 
@@ -446,7 +499,6 @@ typedef enum {
     return NO;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - MFMessageComposeViewControllerDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -466,6 +518,14 @@ typedef enum {
     }
     
     [self dismissModalViewControllerAnimated:YES];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Memory management
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)dealloc {
+    _aboutTable.delegate = nil;
 }
 
 @end

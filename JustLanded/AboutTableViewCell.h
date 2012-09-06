@@ -23,6 +23,7 @@ extern CGFloat const AboutTableViewCellHeight;
 
 @property (copy, nonatomic) NSString *title;
 @property (strong, nonatomic) UIImage *icon;
+@property (strong, nonatomic) UIImage *downIcon;
 @property (nonatomic) AboutCellType cellType;
 @property (nonatomic) BOOL hasDisclosureArrow;
 

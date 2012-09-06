@@ -10,4 +10,9 @@
 
 @interface AboutViewController : UIViewController
 
+@property (strong, nonatomic) JLCloudLayer *cloudLayer;
+@property (strong, nonatomic) JLAirplaneView *airplane;
+
+- (void)revealContent;
+
 @end

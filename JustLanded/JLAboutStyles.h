@@ -8,15 +8,20 @@
 
 #import <Foundation/Foundation.h>
 #import "LabelStyle.h"
+#import "ButtonStyle.h"
 
+extern CGRect const ABOUT_TITLE_FRAME;
 extern CGRect const TABLE_FRAME;
-extern CGRect const COMPANY_NAME_FRAME;
-extern CGRect const VERSION_FRAME;
-extern CGRect const DIVIDER_FRAME;
+extern CGRect const COPYRIGHT_NOTICE_FRAME;
+extern CGRect const CLOUD_LAYER_LOWER_FRAME;
+extern CGRect const AIRPLANE_LOWER_FRAME;
+extern NSTimeInterval const CLOUD_REVEAL_ANIMATION_DURATION;
+extern NSTimeInterval const FADE_ANIMATION_DURATION;
 
 @interface JLAboutStyles : NSObject
 
-+ (LabelStyle *)companyLabelStyle;
-+ (LabelStyle *)versionLabelStyle;
++ (LabelStyle *)aboutTitleLabelStyle;
++ (LabelStyle *)copyrightLabelStyle;
++ (ButtonStyle *)aboutCloseButtonStyle;
 
 @end

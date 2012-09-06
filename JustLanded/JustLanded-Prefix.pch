@@ -29,6 +29,7 @@
     #import "JLLookupButton.h"
     #import "JLFlightInputField.h"
     #import "JLCloudLayer.h"
+    #import "JLAirplaneView.h"
     #import "JLLeaveMeter.h"
     #import "JLSpinner.h"
     #import "JLFlightProgressView.h"
