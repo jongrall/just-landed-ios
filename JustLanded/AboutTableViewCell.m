@@ -22,14 +22,12 @@ CGFloat const AboutTableViewCellHeight = 60.0f;
 static UIFont *_titleFont;
 static UIColor *_titleColor;
 static UIColor *_highlightedTitleColor;
-static UIColor *_shadowColor;
 static UIColor *_highlightedShadowColor;
 static UIImage *_disclosureArrow;
 static UIImage *_highlightedDisclosureArrow;
 static UIImage *_divider;
 static CGRect _titleRect;
 static CGRect _dividerRect;
-static CGSize _shadowOffset;
 static CGSize _highlightedShadowOffset;
 static CGPoint _iconCenter;
 
@@ -38,7 +36,6 @@ static CGPoint _iconCenter;
         _titleFont = [JLStyles sansSerifLightOfSize:18.0f];
         _titleColor = [UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f];
         _highlightedTitleColor = [UIColor whiteColor];
-        _shadowColor = [UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:0.3f];
         _highlightedShadowColor = [UIColor whiteColor];
         _disclosureArrow = [UIImage imageNamed:@"disclosure_arrow_up"];
         _highlightedDisclosureArrow = [UIImage imageNamed:@"disclosure_arrow_down"];
@@ -48,7 +45,6 @@ static CGPoint _iconCenter;
                                   AboutTableViewCellHeight - _divider.size.height,
                                   _divider.size.width,
                                   _divider.size.height);
-        _shadowOffset = CGSizeMake(0.0f, 0.5f);
         _highlightedShadowOffset = CGSizeZero;
         _iconCenter = CGPointMake(46.0f, 30.0f);
     }
@@ -98,6 +94,9 @@ static CGPoint _iconCenter;
 - (void)drawContentView:(CGRect)rect highlighted:(BOOL)isHighlighted {
     CGContextRef context = UIGraphicsGetCurrentContext();
     
+    // Save the graphics state before we draw shadowed elements
+    CGContextSaveGState(context);
+    
     // Since we have transparency, need to hide/show correct cell backgrounds
     if (isHighlighted) {
         self.backgroundView.hidden = YES;
@@ -107,9 +106,6 @@ static CGPoint _iconCenter;
         [downIcon drawAtPoint:CGPointMake(roundf(_iconCenter.x - downIcon.size.width/2.0f), roundf(_iconCenter.y - downIcon.size.height/2.0f))
                     blendMode:kCGBlendModeNormal
                         alpha:0.87f];
-        
-        // Save the graphics state before we draw shadowed elements
-        CGContextSaveGState(context);
         
         CGContextSetShadowWithColor(context, _highlightedShadowOffset, 4.0f, [_highlightedShadowColor CGColor]);
     }
@@ -121,11 +117,6 @@ static CGPoint _iconCenter;
         [icon drawAtPoint:CGPointMake(roundf(_iconCenter.x - icon.size.width/2.0f), roundf(_iconCenter.y - icon.size.height/2.0f))
                     blendMode:kCGBlendModeNormal
                         alpha:0.8f];
-        
-        // Save the graphics state before we draw shadowed elements
-        CGContextSaveGState(context);
-        
-        CGContextSetShadowWithColor(context, _shadowOffset, 0.0f, [_shadowColor CGColor]);
     }
     
     // Draw the text

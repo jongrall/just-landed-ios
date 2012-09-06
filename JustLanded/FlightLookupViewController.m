@@ -557,7 +557,7 @@ static NSRegularExpression *_airlineCodeRegex;
     [self.view addSubview:resultsTable];
     
     // Add the airplane
-    _airplane = [[JLAirplaneView alloc] initWithFrame:AIRPLANE_FRAME];
+    self._airplane = [[JLAirplaneView alloc] initWithFrame:AIRPLANE_FRAME];
     [self.view addSubview:_airplane];
     
     // Add the table frame

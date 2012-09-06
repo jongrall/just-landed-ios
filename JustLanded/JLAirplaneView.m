@@ -10,14 +10,19 @@
 
 @interface JLAirplaneView ()
 
+@property (strong, nonatomic) NSTimer *_animationStartTimer;
 @property (strong, nonatomic) NSTimer *_airplaneTimer;
 @property (strong, nonatomic) UIImageView *_airplane;
+
+- (void)startAnimatingPlane;
+- (void)animationTick;
 
 @end
 
 
 @implementation JLAirplaneView
 
+@synthesize _animationStartTimer;
 @synthesize _airplaneTimer;
 @synthesize _airplane;
 
@@ -41,54 +46,65 @@
 
 
 - (void)startAnimating {
-    if (!_airplaneTimer || ![_airplaneTimer isValid]) {
+    
+    if (!_animationStartTimer || ![_animationStartTimer isValid]) {
         // Reset
         [_airplane setFrame:CGRectMake(-_airplane.frame.size.width,
                                        _airplane.frame.origin.y,
                                        _airplane.frame.size.width,
                                        _airplane.frame.size.height)];
         
-        _airplaneTimer = [NSTimer timerWithTimeInterval:(arc4random() % 30)
+        self._animationStartTimer = [NSTimer timerWithTimeInterval:(arc4random() % 30)
                                                  target:self
-                                               selector:@selector(animatePlane)
+                                               selector:@selector(startAnimatingPlane)
                                                userInfo:nil
                                                 repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:_airplaneTimer forMode:NSRunLoopCommonModes];
+        [[NSRunLoop currentRunLoop] addTimer:_animationStartTimer forMode:NSRunLoopCommonModes];
     }
 }
 
 
 - (void)stopAnimating {
+    [_animationStartTimer invalidate];
     [_airplaneTimer invalidate];
 }
 
 
-- (void)animatePlane {
+- (void)startAnimatingPlane {
     // Start the animation over only if the plane is in the reset position
     if (_airplane.frame.origin.x <= -_airplane.frame.size.width) {
         //Reset
-        [UIView animateWithDuration:120.0
-                              delay:0.0
-                            options:UIViewAnimationCurveLinear
-                         animations:^{
-                             [_airplane setFrame:CGRectMake(_airplane.frame.size.width,
-                                                            _airplane.frame.origin.y,
-                                                            _airplane.frame.size.width,
-                                                            _airplane.frame.size.height)];
-                         }
-                         completion:^(BOOL finished) {
-                             if (finished) {
-                                 [_airplane setFrame:CGRectMake(-_airplane.frame.size.width,
-                                                                _airplane.frame.origin.y,
-                                                                _airplane.frame.size.width,
-                                                                _airplane.frame.size.height)];
-                             }
-                         }];
+        self._airplaneTimer = [NSTimer timerWithTimeInterval:0.025
+                                                      target:self
+                                                    selector:@selector(animationTick)
+                                                    userInfo:nil
+                                                    repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:_airplaneTimer forMode:NSRunLoopCommonModes];
+    }
+}
+
+
+- (void)animationTick {
+    CGFloat newOffset = _airplane.frame.origin.x + 0.3f;
+    
+    if (newOffset <= _airplane.frame.size.width) {
+        [_airplane setFrame:CGRectMake(newOffset,
+                                       _airplane.frame.origin.y,
+                                       _airplane.frame.size.width,
+                                       _airplane.frame.size.height)];
+    }
+    else {
+        [_airplaneTimer invalidate];
+        [_airplane setFrame:CGRectMake(-_airplane.frame.size.width,
+                                       _airplane.frame.origin.y,
+                                       _airplane.frame.size.width,
+                                       _airplane.frame.size.height)];
     }
 }
 
 
 - (void)dealloc {
+    [_animationStartTimer invalidate];
     [_airplaneTimer invalidate];
 }
 
