@@ -15,6 +15,7 @@ extern NSString * const DidFailToUpdatePushTokenNotification;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
+@property (strong, nonatomic) UIWindow *window;
 @property (nonatomic, readonly, copy) NSString *pushToken;
 @property (nonatomic, readonly) BOOL triedToRegisterForRemoteNotifications;
 @property (atomic) UIBackgroundTaskIdentifier wakeupTrackTask;

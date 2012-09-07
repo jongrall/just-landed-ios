@@ -18,8 +18,7 @@ typedef enum {
 
 @interface JustLandedSession : NSObject
 
-@property (readonly, copy, nonatomic) NSArray *currentlyTrackedFlights;
-@property (readonly, nonatomic) NSUInteger trackCount;
+@property (nonatomic, readonly, copy) NSArray *currentlyTrackedFlights;
 
 + (JustLandedSession *)sharedSession;
 

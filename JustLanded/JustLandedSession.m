@@ -7,18 +7,18 @@
 //
 
 #import "JustLandedSession.h"
+#import <AudioToolbox/AudioToolbox.h>
 #import "Flight.h"
 #import "BWQuincyManager.h"
 #import "Reachability.h"
-#import <AudioToolbox/AudioToolbox.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface JustLandedSession () <UIAlertViewDelegate > {
-    __strong NSMutableArray *_currentlyTrackedFlights;
-}
+@interface JustLandedSession () <UIAlertViewDelegate>
+
+@property (nonatomic, strong) NSMutableArray *currentlyTrackedFlights_;
 
 // Flight management
 - (NSString *)archivedFlightsPath;
@@ -34,6 +34,7 @@
 
 @implementation JustLandedSession
 
+@synthesize currentlyTrackedFlights_;
 
 + (JustLandedSession *)sharedSession {
     static JustLandedSession *_sharedSession = nil;
@@ -52,10 +53,10 @@
     
     if (self) {
         // Checks file archive to recover any flights we were tracking on a previous run
-        _currentlyTrackedFlights = [self unarchiveTrackedFlights];
+        self.currentlyTrackedFlights_ = [self unarchiveTrackedFlights];
  
-        if (_currentlyTrackedFlights == nil) {
-            _currentlyTrackedFlights = [[NSMutableArray alloc] init];
+        if (currentlyTrackedFlights_ == nil) {
+            self.currentlyTrackedFlights_ = [[NSMutableArray alloc] init];
         }
         
         // Register default preferences (not automatically pulled in from Settings.bundle defaults
@@ -73,6 +74,11 @@
                                                    object:nil];
     }
     return self;
+}
+
+
+- (NSArray *)currentlyTrackedFlights {
+    return [[NSArray alloc] initWithArray:currentlyTrackedFlights_];
 }
 
 
@@ -125,19 +131,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - App Ratings
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-- (NSUInteger)trackCount {
-    NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
-    
-    if (trackCount) {
-        return [trackCount intValue];
-    }
-    else {
-        return 0;
-    }
-}
-
 
 - (void)incrementTrackCount {
     NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
@@ -208,26 +201,21 @@
 #pragma mark - Flight management
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (NSArray *)currentlyTrackedFlights {
-    // Make a copy - don't return the original directly
-    return [NSArray arrayWithArray:_currentlyTrackedFlights];
-}
-
 
 - (void)addTrackedFlight:(Flight *)aFlight {
-    if (![_currentlyTrackedFlights containsObject:aFlight]) { // Don't allow duplicates
-        [_currentlyTrackedFlights addObject:aFlight];
+    if (![currentlyTrackedFlights_ containsObject:aFlight]) { // Don't allow duplicates
+        [currentlyTrackedFlights_ addObject:aFlight];
         
         // Untrack any flights that are not the current one
         NSMutableArray *toRemove = [[NSMutableArray alloc] init];
-        for (Flight *f in _currentlyTrackedFlights) {
+        for (Flight *f in currentlyTrackedFlights_) {
             if (f != aFlight) {
                 [f stopTracking];
                 [toRemove addObject:f];
             }
         }
         
-        [_currentlyTrackedFlights removeObjectsInArray:toRemove];
+        [currentlyTrackedFlights_ removeObjectsInArray:toRemove];
     
         // Re-archive whenever a new flight is added
         [self archiveCurrentlyTrackedFlights];
@@ -236,14 +224,14 @@
 
 
 - (void)removeTrackedFlight:(Flight *)aFlight {
-    [_currentlyTrackedFlights removeObject:aFlight];
+    [currentlyTrackedFlights_ removeObject:aFlight];
     
     // Save the changes
-    if ([_currentlyTrackedFlights count] > 0) {
+    if ([currentlyTrackedFlights_ count] > 0) {
         [self archiveCurrentlyTrackedFlights];
     }
     else {
-        _currentlyTrackedFlights = [[NSMutableArray alloc] init];
+        self.currentlyTrackedFlights_ = [[NSMutableArray alloc] init];
         [self deleteArchivedTrackedFlights];
                 
         // Hack to clear past notifications from the notification center
@@ -266,14 +254,14 @@
         return nil;
     }
     
-    NSURL *archivedFlightsURL = [cacheDirURL URLByAppendingPathComponent:ARCHIVED_FLIGHTS_FILE];
+    NSURL *archivedFlightsURL = [cacheDirURL URLByAppendingPathComponent:ArchivedFlightsFile];
     return [archivedFlightsURL path];
 }
 
 
 - (void)archiveCurrentlyTrackedFlights {
-    if (_currentlyTrackedFlights) {
-        [NSKeyedArchiver archiveRootObject:_currentlyTrackedFlights toFile:[self archivedFlightsPath]];
+    if (currentlyTrackedFlights_) {
+        [NSKeyedArchiver archiveRootObject:currentlyTrackedFlights_ toFile:[self archivedFlightsPath]];
     }
 }
 

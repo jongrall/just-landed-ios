@@ -15,10 +15,10 @@ extern NSString * const APP_ID;
 extern NSString * const UUIDKey;
 extern NSString * const UUIDKey;
 extern NSString * const BeganUsingDate;
-extern NSString * const ARCHIVED_FLIGHTS_FILE;
+extern NSString * const ArchivedFlightsFile;
 extern NSString * const HasBeenAskedToRateKey;
 extern NSString * const FlightsTrackedCountKey;
-extern NSUInteger const RATINGS_USAGE_THRESHOLD;
+extern NSString * const RecentAirlineLookupsKey;
 
 // Preferences
 extern NSString * const SendFlightEventsPreferenceKey;
@@ -60,7 +60,7 @@ extern double const SIGNIFICANT_LOCATION_CHANGE_DISTANCE;
 extern double const LOCATION_MAXIMUM_ACCEPTABLE_ERROR;
 extern double const LOCATION_MAXIMUM_ACCEPTABLE_AGE;
 extern NSTimeInterval const TRACK_FRESHNESS_THRESHOLD;
-extern NSString * const RecentAirlineLookupsKey;
+extern NSUInteger const RATINGS_USAGE_THRESHOLD;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

@@ -20,7 +20,6 @@
 @end
 
 
-
 @implementation UIImage (JLExtensions)
 
 

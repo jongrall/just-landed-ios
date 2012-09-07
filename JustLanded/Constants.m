@@ -19,24 +19,25 @@ NSString * const APP_ID = @"520338005";
 #if defined(CONFIGURATION_Debug)
 NSString * const UUIDKey = @"UUIDKeyDev";
 NSString * const BeganUsingDate = @"BeganUsingKeyDev";
-NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsDev.data";
+NSString * const ArchivedFlightsFile = @"FlightsDev.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKeyDev";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKeyDev";
+NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Development";
 #elif defined(CONFIGURATION_Adhoc)
 NSString * const UUIDKey = @"UUIDKeyStaging";
 NSString * const BeganUsingDate = @"BeganUsingKeyStaging";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsStaging.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKeyStaging";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKeyStaging";
+NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Adhoc";
 #else
 NSString * const UUIDKey = @"UUIDKey";
 NSString * const BeganUsingDate = @"BeganUsingKey";
 NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKey";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKey";
+NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Production";
 #endif
-
-NSUInteger const RATINGS_USAGE_THRESHOLD = 3;
 
 // Preferences
 NSString * const SendFlightEventsPreferenceKey = @"send_flight_events";
@@ -100,14 +101,7 @@ double const SIGNIFICANT_LOCATION_CHANGE_DISTANCE = 804.67; // 0.5mi Distance th
 double const LOCATION_MAXIMUM_ACCEPTABLE_ERROR = 100.0; // Horizontal accuracy we're looking for
 double const LOCATION_MAXIMUM_ACCEPTABLE_AGE = 60.0; // When fetching fresh location, 1 min old is max acceptable amount
 NSTimeInterval const TRACK_FRESHNESS_THRESHOLD = 900.0;
-
-#if defined(CONFIGURATION_Debug)
-NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Development";
-#elif defined(CONFIGURATION_Adhoc)
-NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Adhoc";
-#else
-NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Production";
-#endif
+NSUInteger const RATINGS_USAGE_THRESHOLD = 3;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

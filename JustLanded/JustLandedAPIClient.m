@@ -20,14 +20,14 @@
 @implementation JustLandedAPIClient
 
 + (JustLandedAPIClient *)sharedClient {
-    static JustLandedAPIClient *_sharedClient = nil;
+    static JustLandedAPIClient *sharedClient_ = nil;
     static dispatch_once_t oncePredicate;
     
     dispatch_once(&oncePredicate, ^{
-        _sharedClient = [[self alloc] initWithBaseURL:[NSURL URLWithString:BASE_URL]];
+        sharedClient_ = [[self alloc] initWithBaseURL:[NSURL URLWithString:BASE_URL]];
     });
     
-    return _sharedClient;
+    return sharedClient_;
 }
 
 
@@ -88,30 +88,29 @@
 
 - (id)initWithBaseURL:(NSURL *)url {
     self = [super initWithBaseURL:url];
-    if (!self) {
-        return nil;
+    
+    if (self) {
+        [self registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        
+        // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
+        [self setDefaultHeader:@"Accept" value:@"application/json"];
+        
+        // Override accepted languages
+        [self setDefaultHeader:@"Accept-Language" value:@"en, en-us;q=0.8"];
+        
+        // X-Just-Landed-API-Client HTTP Header
+        [self setDefaultHeader:@"X-Just-Landed-API-Client" value:API_USERNAME];
+        
+        // X-Just-Landed-API-Version HTTP Header
+        [self setDefaultHeader:@"X-Just-Landed-API-Version" value:[NSString stringWithFormat:@"%d", API_VERSION]];
+        
+        // X-UUID HTTP Header
+        [self setDefaultHeader:@"X-Just-Landed-UUID" value:[[JustLandedSession sharedSession] UUID]];
+        
+        // X-Just-Landed-App-Version HTTP Header
+        [self setDefaultHeader:@"X-Just-Landed-App-Version"
+                         value:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     }
-    
-    [self registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
-	[self setDefaultHeader:@"Accept" value:@"application/json"];
-    
-    // Override accepted languages
-    [self setDefaultHeader:@"Accept-Language" value:@"en, en-us;q=0.8"];
-    
-    // X-Just-Landed-API-Client HTTP Header
-	[self setDefaultHeader:@"X-Just-Landed-API-Client" value:API_USERNAME];
-	
-	// X-Just-Landed-API-Version HTTP Header
-	[self setDefaultHeader:@"X-Just-Landed-API-Version" value:[NSString stringWithFormat:@"%d", API_VERSION]];
-	
-	// X-UUID HTTP Header
-	[self setDefaultHeader:@"X-Just-Landed-UUID" value:[[JustLandedSession sharedSession] UUID]];
-    
-    // X-Just-Landed-App-Version HTTP Header
-    [self setDefaultHeader:@"X-Just-Landed-App-Version"
-                     value:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     
     return self;
 }

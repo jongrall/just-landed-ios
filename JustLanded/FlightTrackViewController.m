@@ -998,11 +998,6 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     switch ([error code]) {
-        case kCLErrorDenied: {
-            // If permission was denied to get location, Apple docs say to stop the locMgr
-            [_locationManager stopUpdatingLocation];
-            break;
-        }
         case kCLErrorLocationUnknown: {
             // Indicate that we don't have location even though we were supposed to be able to use it
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Your Location Unknown", @"Your Location Unknown")
@@ -1019,6 +1014,7 @@
     }
     
     // Track anyway, without location
+    [_locationManager stopUpdatingLocation];
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [_trackedFlight trackWithLocation:nil pushToken:appDelegate.pushToken];
 }
@@ -1033,10 +1029,6 @@
 
 - (void)showMap {
     // Trigger getting the location
-    CLLocationManager *locMgr = [[CLLocationManager alloc] init];
-    locMgr.desiredAccuracy = kCLLocationAccuracyBest;
-    [locMgr startUpdatingLocation];
-    
     NSString *mapURL = nil;
     NSString *destName = (_trackedFlight.destination.iataCode) ? _trackedFlight.destination.iataCode : 
                                                                  _trackedFlight.destination.icaoCode;
@@ -1052,7 +1044,6 @@
 
     [FlurryAnalytics logEvent:FY_GOT_DIRECTIONS];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];
-    [locMgr stopUpdatingLocation];
 }
 
 

@@ -33,6 +33,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 
 @implementation AppDelegate
 
+@synthesize window;
 @synthesize pushToken = pushToken_;
 @synthesize triedToRegisterForRemoteNotifications = triedToRegisterForRemoteNotifications_;
 @synthesize wakeupTrackTask;
@@ -71,6 +72,9 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     locationManager_.distanceFilter = LOCATION_DISTANCE_FILTER;
     locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
                                                  @"Location Purpose");
+    // Stop monitoring significant location changes in case they just upgraded from previous version (otherwise could get stuck on)
+    [locationManager_ stopMonitoringSignificantLocationChanges];
+    
     
     NSArray *prevFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
     BOOL isTrackingFlights = [prevFlights count] > 0;
@@ -88,15 +92,15 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
         }];
     }
     
-    UIWindow *mainWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     // Show the status bar
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
     
     // Show the flight lookup UI
     self.mainViewController_ = [[FlightLookupViewController alloc] init];
-    mainWindow.rootViewController = mainViewController_;
-    [mainWindow makeKeyAndVisible];
+    window.rootViewController = mainViewController_;
+    [window makeKeyAndVisible];
     
     // Show previous flights being tracked, if any    
     if (isTrackingFlights) {
