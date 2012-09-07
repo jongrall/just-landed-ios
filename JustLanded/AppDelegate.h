@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 extern NSString * const DidUpdatePushTokenNotification;
 extern NSString * const DidFailToUpdatePushTokenNotification;

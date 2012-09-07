@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import <CoreLocation/CoreLocation.h>
 #import "BWQuincyManager.h"
 #import "BWHockeyManager.h"
 #import "FlightLookupViewController.h"
