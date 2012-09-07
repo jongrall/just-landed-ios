@@ -8,26 +8,25 @@
 
 #import "AppDelegate.h"
 #import <CoreLocation/CoreLocation.h>
+#import "BWQuincyManager.h"
+#import "BWHockeyManager.h"
 #import "FlightLookupViewController.h"
 #import "Flight.h"
-#import "FlurryAnalytics.h"
 #include "Math.h"
 
 NSString * const DidUpdatePushTokenNotification = @"DidUpdatePushTokenNotification";
 NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTokenNotification";
 
-@interface AppDelegate () <BWQuincyManagerDelegate, BWHockeyManagerDelegate, CLLocationManagerDelegate> {
-    __strong NSString *_pushToken;
-    BOOL _triedToRegisterForRemoteNotifications;
-}
+@interface AppDelegate () <BWQuincyManagerDelegate, BWHockeyManagerDelegate, CLLocationManagerDelegate>
 
-@property (strong, nonatomic) CLLocationManager *_locationManager;
-@property (strong, nonatomic) FlightLookupViewController *_mainViewController;
+@property (nonatomic, readwrite, copy) NSString *pushToken;
+@property (nonatomic, readwrite) BOOL triedToRegisterForRemoteNotifications;
+@property (nonatomic, strong) CLLocationManager *locationManager_;
+@property (nonatomic, strong) FlightLookupViewController *mainViewController_;
 
 - (void)trackFlightsIfNeeded;
 
 @end
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Begin Implementation
@@ -35,16 +34,18 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 
 @implementation AppDelegate
 
-@synthesize window = _window;
-@synthesize pushToken = _pushToken;
-@synthesize triedToRegisterForRemoteNotifications = _triedToRegisterForRemoteNotifications;
+@synthesize pushToken = pushToken_;
+@synthesize triedToRegisterForRemoteNotifications = triedToRegisterForRemoteNotifications_;
 @synthesize wakeupTrackTask;
-@synthesize _locationManager;
-@synthesize _mainViewController;
+@synthesize locationManager_;
+@synthesize mainViewController_;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        
+    
+    // Initialization
+    self.pushToken = nil;
+    self.wakeupTrackTask = UIBackgroundTaskInvalid;
+    
     // App distribution
     #ifdef CONFIGURATION_Adhoc
     [[BWHockeyManager sharedHockeyManager] setAppIdentifier:HOCKEY_APP_ID];
@@ -65,22 +66,19 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     [FlurryAnalytics setSecureTransportEnabled:YES];
         
     // Create the app delegate's location manager
-    self._locationManager = [[CLLocationManager alloc] init];
-    self._locationManager.delegate = self;
-    self._locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    self._locationManager.distanceFilter = LOCATION_DISTANCE_FILTER;
-    self._locationManager.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
-                                                      @"Location Purpose");
+    self.locationManager_ = [[CLLocationManager alloc] init];
+    locationManager_.delegate = self;
+    locationManager_.desiredAccuracy = kCLLocationAccuracyBest;
+    locationManager_.distanceFilter = LOCATION_DISTANCE_FILTER;
+    locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
+                                                 @"Location Purpose");
     
     NSArray *prevFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
     BOOL isTrackingFlights = [prevFlights count] > 0;
     
     // Register for push notifications
-    _pushToken = nil;
-    _triedToRegisterForRemoteNotifications = NO;
+    self.triedToRegisterForRemoteNotifications = NO;
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-    
-    self.wakeupTrackTask = UIBackgroundTaskInvalid;
     
     // The app was launched because of a location change event, and they are tracking flights start a BG task to give it more time to finish
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey] && isTrackingFlights) {        
@@ -91,21 +89,23 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
         }];
     }
     
+    UIWindow *mainWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
     // Show the status bar
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
     
     // Show the flight lookup UI
-    self._mainViewController = [[FlightLookupViewController alloc] init];
-    self.window.rootViewController = _mainViewController;
-    [self.window makeKeyAndVisible];
+    self.mainViewController_ = [[FlightLookupViewController alloc] init];
+    mainWindow.rootViewController = mainViewController_;
+    [mainWindow makeKeyAndVisible];
     
     // Show previous flights being tracked, if any    
     if (isTrackingFlights) {
         // Display the most recently tracked flight
-        [_mainViewController beginTrackingFlight:[prevFlights lastObject] animated:NO];
+        [mainViewController_ beginTrackingFlight:[prevFlights lastObject] animated:NO];
     }
     else {
-        [_mainViewController.flightNumberField becomeFirstResponder];
+        [mainViewController_.flightNumberField becomeFirstResponder];
     }
     
     return YES;
@@ -167,7 +167,6 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     #ifdef CONFIGURATION_Adhoc
     return [[JustLandedSession sharedSession] UUID];
     #endif
-    
     return nil;
 }
 
@@ -205,43 +204,38 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 #pragma mark - Region / Significant Location Change Monitoring Code
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)trackFlightsIfNeeded {
-    // Tracks flights using the active FlightTrackViewController, if one exists
-    BOOL isTrackingFlights = [[[JustLandedSession sharedSession] currentlyTrackedFlights] count] > 0;
-    
-    if (isTrackingFlights) {
-        FlightLookupViewController *lookupVC = (FlightLookupViewController *)self._mainViewController;
-        
-        if (lookupVC) {
-            UIViewController *possibleTrackVC = lookupVC.modalViewController;
-            if (possibleTrackVC && [possibleTrackVC isKindOfClass:[FlightTrackViewController class]]) {
-                [(FlightTrackViewController *)possibleTrackVC track];
-            }
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Region / Significant Location Change Monitoring Code
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 - (void)startMonitoringMovementFromLocation:(CLLocation *)loc {
     // Only start monitoring for movement if region monitoring is enabled
     if ([CLLocationManager regionMonitoringEnabled]) {
-        CLLocationDistance regionRadius = fmin(SIGNIFICANT_LOCATION_CHANGE_DISTANCE, [_locationManager maximumRegionMonitoringDistance]);
+        CLLocationDistance regionRadius = fmin(SIGNIFICANT_LOCATION_CHANGE_DISTANCE, [locationManager_ maximumRegionMonitoringDistance]);
         CLRegion *newRegion = [[CLRegion alloc] initCircularRegionWithCenter:loc.coordinate
                                                                       radius:regionRadius
                                                                   identifier:JustLandedCurrentRegionIdentifier];
-        [_locationManager startMonitoringForRegion:newRegion desiredAccuracy:kCLLocationAccuracyBest];
+        [locationManager_ startMonitoringForRegion:newRegion desiredAccuracy:kCLLocationAccuracyBest];
     }
 }
 
 
 - (void)stopMonitoringMovement {
     // Stops monitoring movement from the user's last location
-    for (CLRegion *r in [_locationManager monitoredRegions]) {
+    for (CLRegion *r in [locationManager_ monitoredRegions]) {
         if ([r.identifier isEqualToString:JustLandedCurrentRegionIdentifier]) {
-            [_locationManager stopMonitoringForRegion:r];
+            [locationManager_ stopMonitoringForRegion:r];
+        }
+    }
+}
+
+
+- (void)trackFlightsIfNeeded {
+    // Tracks flights using the active FlightTrackViewController, if one exists
+    BOOL isTrackingFlights = [[[JustLandedSession sharedSession] currentlyTrackedFlights] count] > 0;
+    
+    if (isTrackingFlights) {
+        if (mainViewController_) {
+            UIViewController *possibleTrackVC = mainViewController_.modalViewController;
+            if (possibleTrackVC && [possibleTrackVC isKindOfClass:[FlightTrackViewController class]]) {
+                [(FlightTrackViewController *)possibleTrackVC track];
+            }
         }
     }
 }
@@ -253,7 +247,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
         BOOL trackingFlights = [[[JustLandedSession sharedSession] currentlyTrackedFlights] count] > 0;
         if (trackingFlights) {
             // Start monitoring using the new location as the center (may be updated again or removed after /track or /untrack)
-            [self startMonitoringMovementFromLocation:_locationManager.location];
+            [self startMonitoringMovementFromLocation:locationManager_.location];
             
             // Exited region, track flights by getting their location
             [self trackFlightsIfNeeded];
@@ -287,16 +281,16 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    _pushToken = [deviceToken hexString];
-    _triedToRegisterForRemoteNotifications = YES;
+    self.pushToken = [deviceToken hexString];
+    self.triedToRegisterForRemoteNotifications = YES;
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidUpdatePushTokenNotification object:application];
 }
 
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    [FlurryAnalytics logEvent:FY_UNABLE_TO_REGISTER_PUSH];
-    _triedToRegisterForRemoteNotifications = YES;
+    self.triedToRegisterForRemoteNotifications = YES;
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidFailToUpdatePushTokenNotification object:application];
+    [FlurryAnalytics logEvent:FY_UNABLE_TO_REGISTER_PUSH];
     NSLog(@"Just Landed failed to register for remote notifications: %@", error);
 }
 

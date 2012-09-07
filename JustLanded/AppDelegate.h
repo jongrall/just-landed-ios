@@ -7,20 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BWQuincyManager.h"
-#import "BWHockeyManager.h"
 
 extern NSString * const DidUpdatePushTokenNotification;
 extern NSString * const DidFailToUpdatePushTokenNotification;
 
-@class FlightLookupViewController;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) UIWindow *window;
-@property (readonly, copy, nonatomic) NSString *pushToken;
-@property (readonly, nonatomic) BOOL triedToRegisterForRemoteNotifications;
-@property (nonatomic) UIBackgroundTaskIdentifier wakeupTrackTask;
+@property (nonatomic, readonly, copy) NSString *pushToken;
+@property (nonatomic, readonly) BOOL triedToRegisterForRemoteNotifications;
+@property (atomic) UIBackgroundTaskIdentifier wakeupTrackTask;
 
 - (void)startMonitoringMovementFromLocation:(CLLocation *)loc;
 - (void)stopMonitoringMovement;
