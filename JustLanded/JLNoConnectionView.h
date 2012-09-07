@@ -18,7 +18,7 @@
 @property (weak, nonatomic) id <NoConnectionDelegate> delegate;
 @property (strong, nonatomic) UIImageView *noConnectionImageView;
 @property (strong, nonatomic) UIImageView *divider;
-@property (copy, nonatomic) NSString *noConnectionText;
+@property (readonly, nonatomic) JLLabel *noConnectionLabel;
 @property (readonly, nonatomic) JLButton *tryAgainbutton;
 
 @end

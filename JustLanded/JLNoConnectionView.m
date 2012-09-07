@@ -24,7 +24,7 @@
 
 @synthesize delegate;
 @synthesize noConnectionImageView=_noConnectionView;
-@synthesize noConnectionText;
+@synthesize noConnectionLabel=_noConnectionLabel;
 @synthesize divider;
 @synthesize tryAgainbutton=_retryButton;
 
@@ -85,10 +85,6 @@
     return self;
 }
 
-
-- (void)setNoConnectionText:(NSString *)text {
-    _noConnectionLabel.text = text;
-}
 
 - (void)tryAgain {
     _retryButton.enabled = NO;
