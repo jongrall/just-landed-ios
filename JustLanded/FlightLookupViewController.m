@@ -108,7 +108,7 @@ static NSRegularExpression *_airlineCodeRegex;
         // Strip leading zeros
         NSMutableArray *chars = [[NSMutableArray alloc] init];
         BOOL strip = YES;
-        for (int i=0; i < [sanitizedNum length]; i++) {
+        for (NSUInteger i=0; i < [sanitizedNum length]; i++) {
             NSString *ichar  = [NSString stringWithFormat:@"%c", [sanitizedNum characterAtIndex:i]];
             if (strip && [ichar rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet]].location != NSNotFound) {
                 if ([ichar isEqualToString:@"0"]) {
@@ -895,7 +895,7 @@ static NSRegularExpression *_airlineCodeRegex;
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == [self._flightResults count] - 1) {
+    if (indexPath.row == (NSInteger)[self._flightResults count] - 1) {
         return FlightResultTableViewCellHeight + 2.0f;
     }
     else {

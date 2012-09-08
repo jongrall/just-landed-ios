@@ -10,7 +10,7 @@
 
 @interface DestinationAirport : Airport
 
-@property (strong, nonatomic) NSString *bagClaim;
-@property (strong, nonatomic) NSString *gate;
+@property (copy, nonatomic) NSString *bagClaim;
+@property (copy, nonatomic) NSString *gate;
 
 @end

@@ -20,14 +20,14 @@
 @implementation JustLandedAPIClient
 
 + (JustLandedAPIClient *)sharedClient {
-    static JustLandedAPIClient *sharedClient_ = nil;
-    static dispatch_once_t oncePredicate;
+    static JustLandedAPIClient *sSharedClient_ = nil;
+    static dispatch_once_t sOncePredicate;
     
-    dispatch_once(&oncePredicate, ^{
-        sharedClient_ = [[self alloc] initWithBaseURL:[NSURL URLWithString:BASE_URL]];
+    dispatch_once(&sOncePredicate, ^{
+        sSharedClient_ = [[self alloc] initWithBaseURL:[NSURL URLWithString:BASE_URL]];
     });
     
-    return sharedClient_;
+    return sSharedClient_;
 }
 
 
@@ -55,7 +55,7 @@
     NSArray *sortedValues = [params objectsForKeys:sortedKeys notFoundMarker:[NSNull null]];
     NSMutableArray *parts = [[NSMutableArray alloc] init];
     
-    for (int i = 0; i<[sortedKeys count]; i++) {
+    for (NSUInteger i = 0; i<[sortedKeys count]; i++) {
         [parts addObject:[NSString stringWithFormat:@"%@=%@", [sortedKeys objectAtIndex:i],
                           [sortedValues objectAtIndex:i]]];
     }
@@ -92,22 +92,11 @@
     if (self) {
         [self registerHTTPOperationClass:[AFJSONRequestOperation class]];
         
-        // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
         [self setDefaultHeader:@"Accept" value:@"application/json"];
-        
-        // Override accepted languages
         [self setDefaultHeader:@"Accept-Language" value:@"en, en-us;q=0.8"];
-        
-        // X-Just-Landed-API-Client HTTP Header
         [self setDefaultHeader:@"X-Just-Landed-API-Client" value:API_USERNAME];
-        
-        // X-Just-Landed-API-Version HTTP Header
         [self setDefaultHeader:@"X-Just-Landed-API-Version" value:[NSString stringWithFormat:@"%d", API_VERSION]];
-        
-        // X-UUID HTTP Header
         [self setDefaultHeader:@"X-Just-Landed-UUID" value:[[JustLandedSession sharedSession] UUID]];
-        
-        // X-Just-Landed-App-Version HTTP Header
         [self setDefaultHeader:@"X-Just-Landed-App-Version"
                          value:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     }
@@ -120,7 +109,7 @@
      parameters:(NSDictionary *)parameters 
         success:(void (^)(AFHTTPRequestOperation *, id))success 
         failure:(void (^)(AFHTTPRequestOperation *, NSError *))failure {
-    // Override to set custom timeout
+    // Set custom timeout
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:path parameters:parameters];
     [request setTimeoutInterval:15];
     
@@ -138,10 +127,7 @@
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
                                                                       success:success
                                                                       failure:failure];
-    
     [self enqueueHTTPRequestOperation:operation];
 }
-
-
 
 @end

@@ -92,8 +92,8 @@ extern NSString * const StopTrackingFailedReasonKey;
 @interface Flight : NSObject <NSCoding>
 
 // Flight data properties
-@property (strong, nonatomic) NSString *flightID;
-@property (strong, nonatomic) NSString *flightNumber;
+@property (copy, nonatomic) NSString *flightID;
+@property (copy, nonatomic) NSString *flightNumber;
 @property (nonatomic) AircraftType aircraftType;
 @property (nonatomic) TimeOfDay timeOfDay;
 
@@ -101,7 +101,7 @@ extern NSString * const StopTrackingFailedReasonKey;
 @property (strong, nonatomic) NSDate *actualDepartureTime;
 @property (strong, nonatomic) NSDate *estimatedArrivalTime;
 @property (strong, nonatomic) NSDate *scheduledDepartureTime;
-@property (nonatomic, readonly) NSDate *scheduledArrivalTime; // Derived from other information (readonly)
+@property (strong, readonly, nonatomic) NSDate *scheduledArrivalTime;
 @property (strong, nonatomic) NSDate *lastUpdated;
 @property (strong, nonatomic) NSDate *leaveForAirportTime;
 @property (nonatomic) NSTimeInterval drivingTime;
@@ -111,15 +111,15 @@ extern NSString * const StopTrackingFailedReasonKey;
 @property (strong, nonatomic) DestinationAirport *destination;
 
 @property (nonatomic) FlightStatus status;
-@property (strong, nonatomic) NSString *detailedStatus;
+@property (copy, nonatomic) NSString *detailedStatus;
 
-@property (nonatomic, readonly) NSDate *lastTracked;
+@property (strong, readonly, nonatomic) NSDate *lastTracked;
 
-+ (NSString *)aircraftTypeToString:(AircraftType)aType;
-+ (PushType)stringToPushType:(NSString *)typeString;
++ (NSString *)aircraftTypeToString:(AircraftType)anAircraftType;
++ (PushType)stringToPushType:(NSString *)aPushTypeString;
 + (void)lookupFlights:(NSString *)aFlightNumber;
-- (id)initWithFlightInfo:(NSDictionary *)info;
-- (void)trackWithLocation:(CLLocation *)loc pushToken:(NSString *)pushToken;
+- (id)initWithFlightInfo:(NSDictionary *)someFlightInfo;
+- (void)trackWithLocation:(CLLocation *)aLocation pushToken:(NSString *)pushToken;
 - (void)stopTracking;
 - (NSString *)flightDataAsJson;
 - (NSUInteger)minutesBeforeLanding;

@@ -11,16 +11,16 @@
 
 @interface Airport : NSObject <NSCoding>
 
-@property (strong, nonatomic) NSString *iataCode;
-@property (strong, nonatomic) NSString *icaoCode;
-@property (strong, nonatomic) NSString *city;
+@property (copy, nonatomic) NSString *iataCode;
+@property (copy, nonatomic) NSString *icaoCode;
+@property (copy, nonatomic) NSString *city;
 @property (strong, nonatomic) CLLocation *location;
-@property (strong, nonatomic) NSString *terminal;
+@property (copy, nonatomic) NSString *terminal;
 @property (strong, nonatomic) NSTimeZone *timezone;
-@property (nonatomic, readonly) NSString *bestCode;
 
-- (id)initWithAirportInfo:(NSDictionary *)info;
+- (id)initWithAirportInfo:(NSDictionary *)airportInfo;
 - (NSDictionary *)toDict;
 - (NSDictionary *)toJSONFriendlyDict;
+- (NSString *)bestAirportCode;
 
 @end

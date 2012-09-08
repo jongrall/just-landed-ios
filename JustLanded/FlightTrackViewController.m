@@ -97,7 +97,7 @@
 - (void)showMap;
 
 // Bg task cleanup
-- (void)finishWakeupTrackTaskIfNecessary;
+- (void)finishWakeupTrackTask;
 
 @end
 
@@ -244,9 +244,9 @@
     
     // Create the airport code labels
     _originCodeLabel = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles airportCodeStyle] frame:ORIGIN_CODE_LABEL_FRAME status:_trackedFlight.status];
-    _originCodeLabel.text = _trackedFlight.origin.bestCode;
+    _originCodeLabel.text = [_trackedFlight.origin bestAirportCode];
     _destinationCodeLabel = [[JLStatusLabel alloc]  initWithLabelStyle:[JLTrackStyles airportCodeStyle] frame:DESTINATION_CODE_LABEL_FRAME status:_trackedFlight.status];
-    _destinationCodeLabel.text = _trackedFlight.destination.bestCode;
+    _destinationCodeLabel.text = [_trackedFlight.destination bestAirportCode];
     
     // Create the city labels
     _originCityLabel = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles cityNameStyle] frame:ORIGIN_CITY_LABEL_FRAME status:_trackedFlight.status];
@@ -828,9 +828,9 @@
     // Update displayed information
     [self setStatus:_trackedFlight.status];
     [self setFlightNumber:_trackedFlight.flightNumber];
-    _originCodeLabel.text = _trackedFlight.origin.bestCode;
+    _originCodeLabel.text = [_trackedFlight.origin bestAirportCode];
     _originCityLabel.text = [_trackedFlight.origin.city uppercaseString];
-    _destinationCodeLabel.text = _trackedFlight.destination.bestCode;
+    _destinationCodeLabel.text = [_trackedFlight.destination bestAirportCode];
     _destinationCityLabel.text = [_trackedFlight.destination.city uppercaseString];
     _flightProgressView.timeOfDay = [_trackedFlight timeOfDay];
     _flightProgressView.aircraftType = [_trackedFlight aircraftType];
@@ -882,7 +882,7 @@
     }
     
     // End app delegate bg task if one was in progress
-    [self finishWakeupTrackTaskIfNecessary];
+    [self finishWakeupTrackTask];
 }
 
 
@@ -937,7 +937,7 @@
     }
     
     // End app delegate bg task if one was in progress
-    [self finishWakeupTrackTaskIfNecessary];
+    [self finishWakeupTrackTask];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1055,7 +1055,7 @@
 #pragma mark - Background Task Cleanup
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)finishWakeupTrackTaskIfNecessary {
+- (void)finishWakeupTrackTask {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     if (appDelegate.wakeupTrackTask != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:appDelegate.wakeupTrackTask];

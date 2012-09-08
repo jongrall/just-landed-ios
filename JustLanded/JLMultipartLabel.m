@@ -25,7 +25,7 @@
         NSMutableArray *labelParts = [NSMutableArray array];
         NSMutableArray *labelOffsets = [NSMutableArray array];
         
-        for (int i=0; i < [someStyles count]; i++) {
+        for (NSUInteger i=0; i < [someStyles count]; i++) {
             [labelParts addObject:@""];
             [labelOffsets addObject:[NSValue valueWithCGSize:CGSizeZero]];
         }
@@ -58,7 +58,7 @@
     
     CGRect remainingRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
-    for (int i = 0; i < [parts count]; i++) {
+    for (NSUInteger i = 0; i < [parts count]; i++) {
         NSString *nextPart = [parts objectAtIndex:i];
         
         CGContextSaveGState(context);

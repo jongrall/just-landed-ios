@@ -26,4 +26,4 @@ typedef enum {
 + (NSString *)prettyPrintTimeDifference:(NSDate *)date;
 + (NSString *)timeIntervalToShortUnitString:(NSTimeInterval)interval leadingZeros:(BOOL)zeros;
 
-@end;
+@end

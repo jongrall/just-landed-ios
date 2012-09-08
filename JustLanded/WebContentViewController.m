@@ -73,15 +73,15 @@
     [client setDefaultHeader:@"User-Agent" value:userAgent];
     
     operation.acceptableStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(200, 4)];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *theOperation, id responseObject) {
         [self performSelector:@selector(indicateStoppedLoading) withObject:nil afterDelay:1.0]; // Delay prevents white flash as webview loads content
-        NSString *responseString = [operation responseString];
+        NSString *responseString = [theOperation responseString];
         [webView setHidden:NO];
         [webView loadHTMLString:responseString baseURL:[NSURL URLWithString:WEB_HOST]];
     }
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *failure) {
+                                     failure:^(AFHTTPRequestOperation *theOperation, NSError *failure) {
                                          [self indicateStoppedLoading];
-                                         NSHTTPURLResponse *response = [operation response];
+                                         NSHTTPURLResponse *response = [theOperation response];
                                          
                                          if (!_serverErrorOverlay) {
                                              self._serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:CGRectMake(0.0f,

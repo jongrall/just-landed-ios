@@ -16,7 +16,7 @@
 	NSMutableString *stringBuffer = [NSMutableString stringWithCapacity:([self length] * 2)];
 	const unsigned char *dataBuffer = [self bytes];
 	
-	for (int i = 0; i < [self length]; ++i) {
+	for (NSUInteger i = 0; i < [self length]; ++i) {
 		[stringBuffer appendFormat:@"%02lX", (unsigned long)dataBuffer[ i ]];
 	}
 	

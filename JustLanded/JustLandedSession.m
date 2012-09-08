@@ -18,9 +18,8 @@
 
 @interface JustLandedSession () <UIAlertViewDelegate>
 
-@property (nonatomic, strong) NSMutableArray *currentlyTrackedFlights_;
+@property (strong, nonatomic) NSMutableArray *currentlyTrackedFlights_;
 
-// Flight management
 - (NSString *)archivedFlightsPath;
 - (void)archiveCurrentlyTrackedFlights;
 - (NSMutableArray *)unarchiveTrackedFlights;
@@ -37,14 +36,14 @@
 @synthesize currentlyTrackedFlights_;
 
 + (JustLandedSession *)sharedSession {
-    static JustLandedSession *_sharedSession = nil;
-    static dispatch_once_t oncePredicate;
+    static JustLandedSession *sSharedSession_ = nil;
+    static dispatch_once_t sOncePredicate;
     
-    dispatch_once(&oncePredicate, ^{
-        _sharedSession = [[self alloc] init];
+    dispatch_once(&sOncePredicate, ^{
+        sSharedSession_ = [[self alloc] init];
     });
     
-    return _sharedSession;
+    return sSharedSession_;
 }
 
 
@@ -55,7 +54,7 @@
         // Checks file archive to recover any flights we were tracking on a previous run
         self.currentlyTrackedFlights_ = [self unarchiveTrackedFlights];
  
-        if (currentlyTrackedFlights_ == nil) {
+        if (self.currentlyTrackedFlights_ == nil) {
             self.currentlyTrackedFlights_ = [[NSMutableArray alloc] init];
         }
         
@@ -74,11 +73,6 @@
                                                    object:nil];
     }
     return self;
-}
-
-
-- (NSArray *)currentlyTrackedFlights {
-    return [[NSArray alloc] initWithArray:currentlyTrackedFlights_];
 }
 
 
@@ -201,21 +195,25 @@
 #pragma mark - Flight management
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+- (NSArray *)currentlyTrackedFlights {
+    return [NSArray arrayWithArray:self.currentlyTrackedFlights_];
+}
+
 
 - (void)addTrackedFlight:(Flight *)aFlight {
-    if (![currentlyTrackedFlights_ containsObject:aFlight]) { // Don't allow duplicates
-        [currentlyTrackedFlights_ addObject:aFlight];
+    if (![self.currentlyTrackedFlights_ containsObject:aFlight]) { // Don't allow duplicates
+        [self.currentlyTrackedFlights_ addObject:aFlight];
         
         // Untrack any flights that are not the current one
         NSMutableArray *toRemove = [[NSMutableArray alloc] init];
-        for (Flight *f in currentlyTrackedFlights_) {
+        for (Flight *f in self.currentlyTrackedFlights_) {
             if (f != aFlight) {
                 [f stopTracking];
                 [toRemove addObject:f];
             }
         }
         
-        [currentlyTrackedFlights_ removeObjectsInArray:toRemove];
+        [self.currentlyTrackedFlights_ removeObjectsInArray:toRemove];
     
         // Re-archive whenever a new flight is added
         [self archiveCurrentlyTrackedFlights];
@@ -224,10 +222,10 @@
 
 
 - (void)removeTrackedFlight:(Flight *)aFlight {
-    [currentlyTrackedFlights_ removeObject:aFlight];
+    [self.currentlyTrackedFlights_ removeObject:aFlight];
     
     // Save the changes
-    if ([currentlyTrackedFlights_ count] > 0) {
+    if ([self.currentlyTrackedFlights_ count] > 0) {
         [self archiveCurrentlyTrackedFlights];
     }
     else {
@@ -260,8 +258,8 @@
 
 
 - (void)archiveCurrentlyTrackedFlights {
-    if (currentlyTrackedFlights_) {
-        [NSKeyedArchiver archiveRootObject:currentlyTrackedFlights_ toFile:[self archivedFlightsPath]];
+    if (self.currentlyTrackedFlights_) {
+        [NSKeyedArchiver archiveRootObject:self.currentlyTrackedFlights_ toFile:[self archivedFlightsPath]];
     }
 }
 
@@ -327,10 +325,10 @@
 #pragma mark - Sounds
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)playSound:(JustLandedSoundType)type {
+- (void)playSound:(JustLandedSoundType)soundType {
     NSString *soundPath = nil;
     
-    switch (type) {
+    switch (soundType) {
         case TakeOffSound:
             soundPath = [[NSBundle mainBundle] pathForResource:@"takeoff" ofType:@"wav"];
             break;

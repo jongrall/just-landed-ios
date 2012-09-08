@@ -29,7 +29,7 @@
     CGFloat midpoint = rect.size.width / 2.0f;
     CGFloat totalWidth = 0.0f;
     
-    for (int i = 0; i < [self.parts count]; i=i+2) {
+    for (NSUInteger i = 0; i < [self.parts count]; i=i+2) {
         NSString *nextPart = [self.parts objectAtIndex:i];
         LabelStyle *nextStyle;
         
@@ -48,7 +48,7 @@
     totalWidth = totalWidth + numSeparators * labelSeparation;
     CGPoint startPoint = CGPointMake(midpoint - (totalWidth / 2.0f), 0.0f);
  
-    for (int i = 0; i < [self.parts count]; i=i+2) {
+    for (NSUInteger i = 0; i < [self.parts count]; i=i+2) {
         NSString *nextUpperPart = [self.parts objectAtIndex:i];
         NSString *nextUnderPart = [self.parts objectAtIndex:i+1];
         

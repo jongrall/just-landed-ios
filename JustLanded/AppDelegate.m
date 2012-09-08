@@ -18,12 +18,15 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 
 @interface AppDelegate () <BWQuincyManagerDelegate, BWHockeyManagerDelegate, CLLocationManagerDelegate>
 
-@property (nonatomic, readwrite, copy) NSString *pushToken;
-@property (nonatomic, readwrite) BOOL triedToRegisterForRemoteNotifications;
-@property (nonatomic, strong) CLLocationManager *locationManager_;
-@property (nonatomic, strong) FlightLookupViewController *mainViewController_;
+// Redefine as readwrite
+@property (copy, readwrite, nonatomic) NSString *pushToken;
+@property (readwrite, nonatomic) BOOL triedToRegisterForRemoteNotifications;
+
+@property (strong, nonatomic) CLLocationManager *locationManager_;
+@property (strong, nonatomic) FlightLookupViewController *mainViewController_;
 
 - (void)trackFlightsIfNeeded;
+- (void)beginWakeupTask;
 
 @end
 
@@ -34,8 +37,8 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 @implementation AppDelegate
 
 @synthesize window;
-@synthesize pushToken = pushToken_;
-@synthesize triedToRegisterForRemoteNotifications = triedToRegisterForRemoteNotifications_;
+@synthesize pushToken;
+@synthesize triedToRegisterForRemoteNotifications;
 @synthesize wakeupTrackTask;
 @synthesize locationManager_;
 @synthesize mainViewController_;
@@ -67,13 +70,13 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
         
     // Create the app delegate's location manager
     self.locationManager_ = [[CLLocationManager alloc] init];
-    locationManager_.delegate = self;
-    locationManager_.desiredAccuracy = kCLLocationAccuracyBest;
-    locationManager_.distanceFilter = LOCATION_DISTANCE_FILTER;
-    locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
+    self.locationManager_.delegate = self;
+    self.locationManager_.desiredAccuracy = kCLLocationAccuracyBest;
+    self.locationManager_.distanceFilter = LOCATION_DISTANCE_FILTER;
+    self.locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
                                                  @"Location Purpose");
     // Stop monitoring significant location changes in case they just upgraded from previous version (otherwise could get stuck on)
-    [locationManager_ stopMonitoringSignificantLocationChanges];
+    [self.locationManager_ stopMonitoringSignificantLocationChanges];
     
     
     NSArray *prevFlights = [[JustLandedSession sharedSession] currentlyTrackedFlights];
@@ -85,11 +88,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     
     // The app was launched because of a location change event, and they are tracking flights start a BG task to give it more time to finish
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey] && isTrackingFlights) {        
-        self.wakeupTrackTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            // Emergency task expiration handler to prevent app getting killed
-            [[UIApplication sharedApplication] endBackgroundTask:wakeupTrackTask];
-            self.wakeupTrackTask = UIBackgroundTaskInvalid;
-        }];
+        [self beginWakeupTask];
     }
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -99,16 +98,16 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     
     // Show the flight lookup UI
     self.mainViewController_ = [[FlightLookupViewController alloc] init];
-    window.rootViewController = mainViewController_;
-    [window makeKeyAndVisible];
+    self.window.rootViewController = self.mainViewController_;
+    [self.window makeKeyAndVisible];
     
     // Show previous flights being tracked, if any    
     if (isTrackingFlights) {
         // Display the most recently tracked flight
-        [mainViewController_ beginTrackingFlight:[prevFlights lastObject] animated:NO];
+        [self.mainViewController_ beginTrackingFlight:[prevFlights lastObject] animated:NO];
     }
     else {
-        [mainViewController_.flightNumberField becomeFirstResponder];
+        [self.mainViewController_.flightNumberField becomeFirstResponder];
     }
     
     return YES;
@@ -177,7 +176,6 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 #pragma mark - Custom Crash Log
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 - (NSString *)crashReportUserID {
     return [[JustLandedSession sharedSession] UUID];
 }
@@ -207,23 +205,34 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 #pragma mark - Region / Significant Location Change Monitoring Code
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)startMonitoringMovementFromLocation:(CLLocation *)loc {
+- (void)beginWakeupTask {
+    if (self.wakeupTrackTask == UIBackgroundTaskInvalid) { // Only start if no similar bg task is in progress
+        self.wakeupTrackTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            // Emergency task expiration handler to prevent app getting killed
+            [[UIApplication sharedApplication] endBackgroundTask:self.wakeupTrackTask];
+            self.wakeupTrackTask = UIBackgroundTaskInvalid;
+        }];
+    }
+}
+
+
+- (void)startMonitoringMovementFromLocation:(CLLocation *)aLocation {
     // Only start monitoring for movement if region monitoring is enabled
     if ([CLLocationManager regionMonitoringEnabled]) {
-        CLLocationDistance regionRadius = fmin(SIGNIFICANT_LOCATION_CHANGE_DISTANCE, [locationManager_ maximumRegionMonitoringDistance]);
-        CLRegion *newRegion = [[CLRegion alloc] initCircularRegionWithCenter:loc.coordinate
+        CLLocationDistance regionRadius = fmin(SIGNIFICANT_LOCATION_CHANGE_DISTANCE, [self.locationManager_ maximumRegionMonitoringDistance]);
+        CLRegion *newRegion = [[CLRegion alloc] initCircularRegionWithCenter:aLocation.coordinate
                                                                       radius:regionRadius
                                                                   identifier:JustLandedCurrentRegionIdentifier];
-        [locationManager_ startMonitoringForRegion:newRegion desiredAccuracy:kCLLocationAccuracyBest];
+        [self.locationManager_ startMonitoringForRegion:newRegion desiredAccuracy:kCLLocationAccuracyBest];
     }
 }
 
 
 - (void)stopMonitoringMovement {
     // Stops monitoring movement from the user's last location
-    for (CLRegion *r in [locationManager_ monitoredRegions]) {
+    for (CLRegion *r in [self.locationManager_ monitoredRegions]) {
         if ([r.identifier isEqualToString:JustLandedCurrentRegionIdentifier]) {
-            [locationManager_ stopMonitoringForRegion:r];
+            [self.locationManager_ stopMonitoringForRegion:r];
         }
     }
 }
@@ -234,8 +243,8 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     BOOL isTrackingFlights = [[[JustLandedSession sharedSession] currentlyTrackedFlights] count] > 0;
     
     if (isTrackingFlights) {
-        if (mainViewController_) {
-            UIViewController *possibleTrackVC = mainViewController_.modalViewController;
+        if (self.mainViewController_) {
+            UIViewController *possibleTrackVC = self.mainViewController_.modalViewController;
             if (possibleTrackVC && [possibleTrackVC isKindOfClass:[FlightTrackViewController class]]) {
                 [(FlightTrackViewController *)possibleTrackVC track];
             }
@@ -249,8 +258,10 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     if ([region.identifier isEqualToString:JustLandedCurrentRegionIdentifier]) {
         BOOL trackingFlights = [[[JustLandedSession sharedSession] currentlyTrackedFlights] count] > 0;
         if (trackingFlights) {
+            [self beginWakeupTask];
+            
             // Start monitoring using the new location as the center (may be updated again or removed after /track or /untrack)
-            [self startMonitoringMovementFromLocation:locationManager_.location];
+            [self startMonitoringMovementFromLocation:self.locationManager_.location];
             
             // Exited region, track flights by getting their location
             [self trackFlightsIfNeeded];

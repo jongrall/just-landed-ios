@@ -22,18 +22,18 @@
 @synthesize timezone;
 
 
-- (id)initWithAirportInfo:(NSDictionary *)info {
+- (id)initWithAirportInfo:(NSDictionary *)airportInfo {
     self = [super init];
     
     if (self) {
-        self.iataCode = [info valueForKeyOrNil:@"iataCode"];
-        self.icaoCode = [info valueForKeyOrNil:@"icaoCode"];
-        self.city = [info valueForKeyOrNil:@"city"];
-        self.location = [[CLLocation alloc] initWithLatitude:[[info valueForKeyOrNil:@"latitude"] doubleValue]
-                                                   longitude:[[info valueForKeyOrNil:@"longitude"] doubleValue]];
-        self.terminal = [info valueForKeyOrNil:@"terminal"];
+        self.iataCode = [airportInfo valueForKeyOrNil:@"iataCode"];
+        self.icaoCode = [airportInfo valueForKeyOrNil:@"icaoCode"];
+        self.city = [airportInfo valueForKeyOrNil:@"city"];
+        self.location = [[CLLocation alloc] initWithLatitude:[[airportInfo valueForKeyOrNil:@"latitude"] doubleValue]
+                                                   longitude:[[airportInfo valueForKeyOrNil:@"longitude"] doubleValue]];
+        self.terminal = [airportInfo valueForKeyOrNil:@"terminal"];
         
-        NSString *tzName = [info valueForKeyOrNil:@"timezone"];
+        NSString *tzName = [airportInfo valueForKeyOrNil:@"timezone"];
         if (tzName && [tzName length] > 0) {
             self.timezone = [NSTimeZone timeZoneWithName:tzName];
         }
@@ -43,32 +43,32 @@
 }
 
 
-- (NSString *)bestCode {
-    NSString *code = (iataCode) ? iataCode : icaoCode;
+- (NSString *)bestAirportCode {
+    NSString *code = (self.iataCode) ? self.iataCode : self.icaoCode;
     return [code uppercaseString];
 }
 
 
 - (NSDictionary *)toDict {
     return [[NSDictionary alloc] initWithObjectsAndKeys:
-            iataCode ? iataCode : [NSNull null], @"iataCode",
-            icaoCode ? icaoCode : [NSNull null], @"icaoCode",         
-            city ? city : [NSNull null], @"city",
-            location ? location : [NSNull null], @"location",            
-            terminal ? terminal : [NSNull null], @"terminal",
-            timezone ? timezone : [NSNull null], @"timezone", nil];
+            self.iataCode ? self.iataCode : [NSNull null], @"iataCode",
+            self.icaoCode ? self.icaoCode : [NSNull null], @"icaoCode",
+            self.city ? self.city : [NSNull null], @"city",
+            self.location ? self.location : [NSNull null], @"location",
+            self.terminal ? self.terminal : [NSNull null], @"terminal",
+            self.timezone ? self.timezone : [NSNull null], @"timezone", nil];
 }
 
 
 - (NSDictionary *)toJSONFriendlyDict {
     return [[NSDictionary alloc] initWithObjectsAndKeys:
-            iataCode ? iataCode : [NSNull null], @"iataCode",
-            icaoCode ? icaoCode : [NSNull null], @"icaoCode",         
-            city ? city : [NSNull null], @"city",
-            location ? [NSNumber numberWithDouble:location.coordinate.latitude] : [NSNull null], @"latitude",
-            location ? [NSNumber numberWithDouble:location.coordinate.longitude] : [NSNull null], @"longitude",
-            terminal ? terminal : [NSNull null], @"terminal",
-            timezone ? [timezone name] : [NSNull null], @"timezone", nil];
+            self.iataCode ? self.iataCode : [NSNull null], @"iataCode",
+            self.icaoCode ? self.icaoCode : [NSNull null], @"icaoCode",
+            self.city ? self.city : [NSNull null], @"city",
+            self.location ? [NSNumber numberWithDouble:self.location.coordinate.latitude] : [NSNull null], @"latitude",
+            self.location ? [NSNumber numberWithDouble:self.location.coordinate.longitude] : [NSNull null], @"longitude",
+            self.terminal ? self.terminal : [NSNull null], @"terminal",
+            self.timezone ? [self.timezone name] : [NSNull null], @"timezone", nil];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,12 +93,12 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     // Encode each property using its name
-    [aCoder encodeObject:iataCode forKey:@"iataCode"];
-    [aCoder encodeObject:icaoCode forKey:@"icaoCode"];
-    [aCoder encodeObject:city forKey:@"city"];
-    [aCoder encodeObject:location forKey:@"location"];
-    [aCoder encodeObject:terminal forKey:@"terminal"];
-    [aCoder encodeObject:timezone forKey:@"timezone"];
+    [aCoder encodeObject:self.iataCode forKey:@"iataCode"];
+    [aCoder encodeObject:self.icaoCode forKey:@"icaoCode"];
+    [aCoder encodeObject:self.city forKey:@"city"];
+    [aCoder encodeObject:self.location forKey:@"location"];
+    [aCoder encodeObject:self.terminal forKey:@"terminal"];
+    [aCoder encodeObject:self.timezone forKey:@"timezone"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

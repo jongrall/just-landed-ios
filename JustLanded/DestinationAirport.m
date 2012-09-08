@@ -13,12 +13,12 @@
 @synthesize bagClaim;
 @synthesize gate;
 
-- (id)initWithAirportInfo:(NSDictionary *)info {
-    self = [super initWithAirportInfo:info];
+- (id)initWithAirportInfo:(NSDictionary *)airportInfo {
+    self = [super initWithAirportInfo:airportInfo];
     
     if (self) {
-        self.bagClaim = [info valueForKeyOrNil:@"bagClaim"];
-        self.gate = [info valueForKeyOrNil:@"gate"];
+        self.bagClaim = [airportInfo valueForKeyOrNil:@"bagClaim"];
+        self.gate = [airportInfo valueForKeyOrNil:@"gate"];
     }
     
     return self;
@@ -27,36 +27,36 @@
 
 - (NSDictionary *)toDict {
     NSMutableDictionary *info = [[NSMutableDictionary alloc] initWithDictionary:[super toDict]];
-    [info setValue:(bagClaim ? bagClaim : [NSNull null]) forKey:@"bagClaim"];
-    [info setValue:(gate ? gate : [NSNull null]) forKey:@"gate"];
+    [info setValue:(self.bagClaim ? self.bagClaim : [NSNull null]) forKey:@"bagClaim"];
+    [info setValue:(self.gate ? self.gate : [NSNull null]) forKey:@"gate"];
     return info;
 }
 
 
 - (NSDictionary *)toJSONFriendlyDict {
     NSMutableDictionary *info = [[NSMutableDictionary alloc] initWithDictionary:[super toJSONFriendlyDict]];
-    [info setValue:(bagClaim ? bagClaim : [NSNull null]) forKey:@"bagClaim"];
-    [info setValue:(gate ? gate : [NSNull null]) forKey:@"gate"];
+    [info setValue:(self.bagClaim ? self.bagClaim : [NSNull null]) forKey:@"bagClaim"];
+    [info setValue:(self.gate ? self.gate : [NSNull null]) forKey:@"gate"];
     return info;
 }
 
 
 - (NSString *)bagClaim {
-    if (bagClaim == nil || [bagClaim isKindOfClass:[NSNull class]]) {
+    if (self.bagClaim == nil || [self.bagClaim isKindOfClass:[NSNull class]]) {
         return @"";
     }
     else {
-        return bagClaim;
+        return self.bagClaim;
     }
 }
 
 
 - (NSString *)gate {
-    if (gate == nil || [gate isKindOfClass:[NSNull class]]) {
+    if (self.gate == nil || [self.gate isKindOfClass:[NSNull class]]) {
         return @"";
     }
     else {
-        return gate;
+        return self.gate;
     }
 }
 
@@ -80,8 +80,8 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     // Encode each property using its name
     [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:bagClaim forKey:@"bagClaim"];
-    [aCoder encodeObject:gate forKey:@"gate"];
+    [aCoder encodeObject:self.bagClaim forKey:@"bagClaim"];
+    [aCoder encodeObject:self.gate forKey:@"gate"];
 }
 
 @end

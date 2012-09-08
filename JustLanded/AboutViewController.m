@@ -184,7 +184,7 @@ typedef enum {
                                               _aboutTable.alpha = 1.0f;
                                               _copyrightLabel.alpha = 1.0f;
                                           }
-                                          completion:^(BOOL finished) {
+                                          completion:^(BOOL finishedAlso) {
                                               _aboutButton.enabled = YES;
                                           }];
                      }];
@@ -226,7 +226,7 @@ typedef enum {
                                               cloudLayer.frame = CLOUD_LAYER_FRAME;
                                               airplane.frame = AIRPLANE_FRAME;
                                           }
-                                          completion:^(BOOL finished) {
+                                          completion:^(BOOL finishedAlso) {
                                               [[self.presentingViewController view] addSubview:airplane]; // Give the airplane back :)
                                               [self dismissModalViewControllerAnimated:NO]; // Instant transition
                                           }];

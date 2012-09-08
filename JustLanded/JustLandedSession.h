@@ -18,8 +18,6 @@ typedef enum {
 
 @interface JustLandedSession : NSObject
 
-@property (nonatomic, readonly, copy) NSArray *currentlyTrackedFlights;
-
 + (JustLandedSession *)sharedSession;
 
 // User management & prefs
@@ -32,6 +30,7 @@ typedef enum {
 - (void)showRatingRequestIfEligible;
 
 // Flight management
+- (NSArray *)currentlyTrackedFlights;
 - (void)addTrackedFlight:(Flight *)aFlight;
 - (void)removeTrackedFlight:(Flight *)aFlight;
 - (NSArray *)recentlyLookedUpAirlines;
@@ -39,7 +38,7 @@ typedef enum {
 - (void)clearRecentlyLookedUpAirlines;
 
 // Sounds
-- (void)playSound:(JustLandedSoundType)type;
+- (void)playSound:(JustLandedSoundType)soundType;
 - (BOOL)wantsToHearFlightSounds;
 
 // Connectivity Testing

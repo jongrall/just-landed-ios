@@ -258,7 +258,7 @@ static NSArray *_allAirlines;
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row < [_airlines count]) {
+    if (indexPath.row < (NSInteger)[_airlines count]) {
         id tableRowObj = [_airlines objectAtIndex:indexPath.row];
         
         if ([tableRowObj isKindOfClass:[NSDictionary class]]) {

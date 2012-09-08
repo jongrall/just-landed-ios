@@ -27,14 +27,15 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface Flight () {
-    __strong NSDate *_scheduledArrivalTime;
-    __strong NSDate *_lastTracked;
-}
+@interface Flight ()
 
-+ (void)failToLookupWithReason:(FlightLookupFailedReason)reason;
-- (void)updateWithFlightInfo:(NSDictionary *)info;
-- (void)failToTrackWithReason:(FlightTrackFailedReason)reason;
+// Redefine as readwrite
+@property (strong, readwrite, nonatomic) NSDate *scheduledArrivalTime;
+@property (strong, readwrite, nonatomic) NSDate *lastTracked;
+
++ (void)failToLookupWithReason:(FlightLookupFailedReason)aFailureReason;
+- (void)updateWithFlightInfo:(NSDictionary *)someFlightInfo;
+- (void)failToTrackWithReason:(FlightTrackFailedReason)aFailureReason;
 - (NSDictionary *)flightData;
 
 @end
@@ -54,7 +55,7 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 @synthesize actualDepartureTime;
 @synthesize estimatedArrivalTime;
 @synthesize scheduledDepartureTime;
-@synthesize scheduledArrivalTime=_scheduledArrivalTime;
+@synthesize scheduledArrivalTime;
 @synthesize lastUpdated;
 @synthesize leaveForAirportTime;
 @synthesize drivingTime;
@@ -66,15 +67,15 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 @synthesize status;
 @synthesize detailedStatus;
 
-@synthesize lastTracked=_lastTracked;
+@synthesize lastTracked;
 
-static NSArray *_statuses;
-static NSArray *_pushTypes;
-static NSArray *_aircraftTypes;
+static NSArray *sStatuses_;
+static NSArray *sPushTypes_;
+static NSArray *sAircraftTypes_;
 
 + (void)initialize {
 	if (self == [Flight class]) {
-        _statuses = [[NSArray alloc] initWithObjects:@"SCHEDULED",
+        sStatuses_ = [[NSArray alloc] initWithObjects:@"SCHEDULED",
                      @"ON_TIME",
                      @"DELAYED",
                      @"CANCELED",
@@ -82,7 +83,7 @@ static NSArray *_aircraftTypes;
                      @"LANDED",
                      @"EARLY",
                      @"UNKNOWN", nil];
-        _pushTypes = [[NSArray alloc] initWithObjects:@"FILED",
+        sPushTypes_ = [[NSArray alloc] initWithObjects:@"FILED",
                       @"DIVERTED",
                       @"CANCELED",
                       @"DEPARTED",
@@ -90,7 +91,7 @@ static NSArray *_aircraftTypes;
                       @"CHANGED", 
                       @"LEAVE_SOON",
                       @"LEAVE_NOW", nil];
-        _aircraftTypes = [[NSArray alloc] initWithObjects:@"JET2",
+        sAircraftTypes_ = [[NSArray alloc] initWithObjects:@"JET2",
                       @"JET2REAR",
                       @"JET4",
                       @"PROP2",
@@ -99,13 +100,13 @@ static NSArray *_aircraftTypes;
 }
 
 
-+ (NSString *)aircraftTypeToString:(AircraftType)aType {
-    return [_aircraftTypes objectAtIndex:aType];
++ (NSString *)aircraftTypeToString:(AircraftType)anAircraftType {
+    return [sAircraftTypes_ objectAtIndex:anAircraftType];
 }
 
 
-+ (PushType)stringToPushType:(NSString *)typeString {
-    NSUInteger index = [_pushTypes indexOfObject:typeString];
++ (PushType)stringToPushType:(NSString *)aPushTypeString {
+    NSUInteger index = [sPushTypes_ indexOfObject:aPushTypeString];
     if (index == NSNotFound) {
         return UnknownFlightAlert;
     }
@@ -115,44 +116,43 @@ static NSArray *_aircraftTypes;
 }
 
 
-- (id)initWithFlightInfo:(NSDictionary *)info {
+- (id)initWithFlightInfo:(NSDictionary *)someFlightInfo {
     self = [super init];
     
     if (self) {
-        [self updateWithFlightInfo:info];
+        [self updateWithFlightInfo:someFlightInfo];
     }
     return self;
 }
 
 
-- (void)updateWithFlightInfo:(NSDictionary *)info {
+- (void)updateWithFlightInfo:(NSDictionary *)someFlightInfo {
     // Process flight ID and number
-    self.flightID = [info valueForKeyOrNil:@"flightID"];
-    self.flightNumber = [info valueForKeyOrNil:@"flightNumber"];
-    NSUInteger parsed_aircraft_type = [_aircraftTypes indexOfObject:[info valueForKeyOrNil:@"aircraftType"]];
+    self.flightID = [someFlightInfo valueForKeyOrNil:@"flightID"];
+    self.flightNumber = [someFlightInfo valueForKeyOrNil:@"flightNumber"];
+    NSUInteger parsed_aircraft_type = [sAircraftTypes_ indexOfObject:[someFlightInfo valueForKeyOrNil:@"aircraftType"]];
     self.aircraftType = (parsed_aircraft_type == NSNotFound) ? JET2 : parsed_aircraft_type;
-    self.timeOfDay = ([[info valueForKey:@"isNight"] boolValue]) ? NIGHT : DAY;
+    self.timeOfDay = ([[someFlightInfo valueForKey:@"isNight"] boolValue]) ? NIGHT : DAY;
     
     // Process and set all the flight date and time information
-    self.actualArrivalTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"actualArrivalTime"] returnNilForZero:YES];
-    self.actualDepartureTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"actualDepartureTime"] returnNilForZero:YES];
-    self.estimatedArrivalTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"estimatedArrivalTime"] returnNilForZero:YES];
-    self.scheduledDepartureTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"scheduledDepartureTime"] returnNilForZero:YES];
-    self.lastUpdated = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"lastUpdated"] returnNilForZero:YES];
-    self.leaveForAirportTime = [NSDate dateWithTimestamp:[info valueForKeyOrNil:@"leaveForAirportTime"] returnNilForZero:YES];
-    // -1.0 means we have no driving time
-    self.drivingTime = [info valueForKeyOrNil:@"drivingTime"] ? [[info valueForKeyOrNil:@"drivingTime"] doubleValue] : -1.0;
-    self.scheduledFlightDuration = [[info valueForKeyOrNil:@"scheduledFlightDuration"] doubleValue];
-    _scheduledArrivalTime = [NSDate dateWithTimeInterval:scheduledFlightDuration sinceDate:scheduledDepartureTime];
+    self.actualArrivalTime = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"actualArrivalTime"] returnNilForZero:YES];
+    self.actualDepartureTime = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"actualDepartureTime"] returnNilForZero:YES];
+    self.estimatedArrivalTime = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"estimatedArrivalTime"] returnNilForZero:YES];
+    self.scheduledDepartureTime = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"scheduledDepartureTime"] returnNilForZero:YES];
+    self.lastUpdated = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"lastUpdated"] returnNilForZero:YES];
+    self.leaveForAirportTime = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"leaveForAirportTime"] returnNilForZero:YES];
+    self.drivingTime = [someFlightInfo valueForKeyOrNil:@"drivingTime"] ? [[someFlightInfo valueForKeyOrNil:@"drivingTime"] doubleValue] : -1.0; // -1.0 means we have no driving time
+    self.scheduledFlightDuration = [[someFlightInfo valueForKeyOrNil:@"scheduledFlightDuration"] doubleValue];
+    self.scheduledArrivalTime = [NSDate dateWithTimeInterval:self.scheduledFlightDuration sinceDate:self.scheduledDepartureTime];
     
     // Process origin and destination
-    self.origin = [[OriginAirport alloc] initWithAirportInfo:[info valueForKeyOrNil:@"origin"]];
-    self.destination = [[DestinationAirport alloc] initWithAirportInfo:[info valueForKeyOrNil:@"destination"]];
+    self.origin = [[OriginAirport alloc] initWithAirportInfo:[someFlightInfo valueForKeyOrNil:@"origin"]];
+    self.destination = [[DestinationAirport alloc] initWithAirportInfo:[someFlightInfo valueForKeyOrNil:@"destination"]];
     
     // Process status
-    NSUInteger parsed_status = [_statuses indexOfObject:[info valueForKeyOrNil:@"status"]];
+    NSUInteger parsed_status = [sStatuses_ indexOfObject:[someFlightInfo valueForKeyOrNil:@"status"]];
     self.status = (parsed_status == NSNotFound) ? UNKNOWN : parsed_status;
-    self.detailedStatus = [info valueForKeyOrNil:@"detailedStatus"];
+    self.detailedStatus = [someFlightInfo valueForKeyOrNil:@"detailedStatus"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,8 +212,8 @@ static NSArray *_aircraftTypes;
                             if ([operation isKindOfClass:[AFJSONRequestOperation class]] && [(AFJSONRequestOperation *)operation responseJSON]) {
                                 id responseJSON = [(AFJSONRequestOperation *)operation responseJSON];
                                 if ([responseJSON isKindOfClass:[NSDictionary class]]) {
-                                    NSDictionary *response = (NSDictionary *)responseJSON;
-                                    NSString *errorMsg = [response valueForKeyOrNil:@"error"];
+                                    NSDictionary *errorResponse = (NSDictionary *)responseJSON;
+                                    NSString *errorMsg = [errorResponse valueForKeyOrNil:@"error"];
                                     if ([errorMsg isKindOfClass:[NSString class]]) {
                                         noCurrentFlight = [errorMsg hasPrefix:@"No recent"];
                                     }
@@ -261,8 +261,8 @@ static NSArray *_aircraftTypes;
 }
 
 
-+ (void)failToLookupWithReason:(FlightLookupFailedReason)reason {
-    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:reason] 
++ (void)failToLookupWithReason:(FlightLookupFailedReason)aFailureReason {
+    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:aFailureReason] 
                                                            forKey:FlightLookupFailedReasonKey];
     
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:FlightLookupFailedNotification 
@@ -274,18 +274,18 @@ static NSArray *_aircraftTypes;
 #pragma mark - Flight Tracking
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)trackWithLocation:(CLLocation *)loc pushToken:(NSString *)pushToken {
+- (void)trackWithLocation:(CLLocation *)aLocation pushToken:(NSString *)aPushToken {
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillTrackFlightNotification object:self];
-    NSString *trackingPath = [JustLandedAPIClient trackPathWithFlightNumber:flightNumber flightID:flightID];
+    NSString *trackingPath = [JustLandedAPIClient trackPathWithFlightNumber:self.flightNumber flightID:self.flightID];
     NSMutableDictionary *trackingParams = [[JustLandedSession sharedSession] currentTrackingPreferences];
     
-    if (loc) {
-        [trackingParams setValue:[NSNumber numberWithFloat:loc.coordinate.latitude] forKey:@"latitude"];
-        [trackingParams setValue:[NSNumber numberWithFloat:loc.coordinate.longitude] forKey:@"longitude"];
+    if (aLocation) {
+        [trackingParams setValue:[NSNumber numberWithFloat:aLocation.coordinate.latitude] forKey:@"latitude"];
+        [trackingParams setValue:[NSNumber numberWithFloat:aLocation.coordinate.longitude] forKey:@"longitude"];
     }
     
-    if (pushToken) {
-        [trackingParams setValue:pushToken forKey:@"push_token"];
+    if (aPushToken) {
+        [trackingParams setValue:aPushToken forKey:@"push_token"];
     }
     
     [[JustLandedAPIClient sharedClient] 
@@ -309,7 +309,7 @@ static NSArray *_aircraftTypes;
                         return;
                     }
                     
-                    _lastTracked = [NSDate date];
+                    self.lastTracked = [NSDate date];
                     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidTrackFlightNotification object:self];
                 }
             }
@@ -367,8 +367,8 @@ static NSArray *_aircraftTypes;
 }
 
 
-- (void)failToTrackWithReason:(FlightTrackFailedReason)reason {
-    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:reason] 
+- (void)failToTrackWithReason:(FlightTrackFailedReason)aFailureReason {
+    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:aFailureReason] 
                                                            forKey:FlightTrackFailedReasonKey];
     
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:FlightTrackFailedNotification 
@@ -380,7 +380,7 @@ static NSArray *_aircraftTypes;
 - (void)stopTracking {
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:WillStopTrackingFlightNotification object:self];
     
-    NSString *stopTrackingPath = [JustLandedAPIClient stopTrackingPathWithFlightID:flightID];
+    NSString *stopTrackingPath = [JustLandedAPIClient stopTrackingPathWithFlightID:self.flightID];
     
     [[JustLandedAPIClient sharedClient] 
      getPath:stopTrackingPath 
@@ -418,12 +418,12 @@ static NSArray *_aircraftTypes;
     if (self.status == LANDED) {
         return 1.0f;
     }
-    else if (!actualDepartureTime) {
+    else if (!self.actualDepartureTime) {
         return 0.0f;
     }
     else {
-        NSTimeInterval totalFlightTime = [estimatedArrivalTime timeIntervalSinceDate:actualDepartureTime];
-        NSTimeInterval timeSinceTakeoff = [[NSDate date] timeIntervalSinceDate:actualDepartureTime];
+        NSTimeInterval totalFlightTime = [self.estimatedArrivalTime timeIntervalSinceDate:self.actualDepartureTime];
+        NSTimeInterval timeSinceTakeoff = [[NSDate date] timeIntervalSinceDate:self.actualDepartureTime];
         
         if (timeSinceTakeoff > totalFlightTime) {
             return 0.9999f; // Delay before reporting landed
@@ -436,7 +436,7 @@ static NSArray *_aircraftTypes;
 
 
 - (BOOL)isDataFresh {
-    return _lastTracked != nil && ([[NSDate date] timeIntervalSinceDate:_lastTracked] < TRACK_FRESHNESS_THRESHOLD);
+    return self.lastTracked != nil && ([[NSDate date] timeIntervalSinceDate:self.lastTracked] < TRACK_FRESHNESS_THRESHOLD);
 }
 
 
@@ -458,7 +458,7 @@ static NSArray *_aircraftTypes;
         self.actualDepartureTime = [aDecoder decodeObjectForKey:@"actualDepartureTime"];
         self.estimatedArrivalTime = [aDecoder decodeObjectForKey:@"estimatedArrivalTime"];
         self.scheduledDepartureTime = [aDecoder decodeObjectForKey:@"scheduledDepartureTime"];
-        _scheduledArrivalTime = [aDecoder decodeObjectForKey:@"scheduledArrivalTime"];
+        self.scheduledArrivalTime = [aDecoder decodeObjectForKey:@"scheduledArrivalTime"];
         self.lastUpdated = [aDecoder decodeObjectForKey:@"lastUpdated"];
         self.leaveForAirportTime = [aDecoder decodeObjectForKey:@"leaveForAirportTime"];
         self.drivingTime = [aDecoder decodeDoubleForKey:@"drivingTime"];
@@ -470,7 +470,7 @@ static NSArray *_aircraftTypes;
         self.status = [aDecoder decodeIntegerForKey:@"status"];
         self.detailedStatus = [aDecoder decodeObjectForKey:@"detailedStatus"];
         
-        _lastTracked = [aDecoder decodeObjectForKey:@"_lastTracked"];
+        self.lastTracked = [aDecoder decodeObjectForKey:@"_lastTracked"];
     }
     
     return self;
@@ -479,28 +479,28 @@ static NSArray *_aircraftTypes;
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     // Archive each instance variable under its variable name
-    [aCoder encodeObject:flightID forKey:@"flightID"];
-    [aCoder encodeObject:flightNumber forKey:@"flightNumber"];
-    [aCoder encodeInteger:aircraftType forKey:@"aircraftType"];
-    [aCoder encodeInteger:timeOfDay forKey:@"timeOfDay"];
+    [aCoder encodeObject:self.flightID forKey:@"flightID"];
+    [aCoder encodeObject:self.flightNumber forKey:@"flightNumber"];
+    [aCoder encodeInteger:self.aircraftType forKey:@"aircraftType"];
+    [aCoder encodeInteger:self.timeOfDay forKey:@"timeOfDay"];
     
-    [aCoder encodeObject:actualArrivalTime forKey:@"actualArrivalTime"];
-    [aCoder encodeObject:actualDepartureTime forKey:@"actualDepartureTime"];
-    [aCoder encodeObject:estimatedArrivalTime forKey:@"estimatedArrivalTime"];
-    [aCoder encodeObject:scheduledDepartureTime forKey:@"scheduledDepartureTime"];
-    [aCoder encodeObject:_scheduledArrivalTime forKey:@"scheduledArrivalTime"];
-    [aCoder encodeObject:lastUpdated forKey:@"lastUpdated"];
-    [aCoder encodeObject:leaveForAirportTime forKey:@"leaveForAirportTime"];
-    [aCoder encodeDouble:drivingTime forKey:@"drivingTime"];
-    [aCoder encodeDouble:scheduledFlightDuration forKey:@"scheduledFlightDuration"];
+    [aCoder encodeObject:self.actualArrivalTime forKey:@"actualArrivalTime"];
+    [aCoder encodeObject:self.actualDepartureTime forKey:@"actualDepartureTime"];
+    [aCoder encodeObject:self.estimatedArrivalTime forKey:@"estimatedArrivalTime"];
+    [aCoder encodeObject:self.scheduledDepartureTime forKey:@"scheduledDepartureTime"];
+    [aCoder encodeObject:self.scheduledArrivalTime forKey:@"scheduledArrivalTime"];
+    [aCoder encodeObject:self.lastUpdated forKey:@"lastUpdated"];
+    [aCoder encodeObject:self.leaveForAirportTime forKey:@"leaveForAirportTime"];
+    [aCoder encodeDouble:self.drivingTime forKey:@"drivingTime"];
+    [aCoder encodeDouble:self.scheduledFlightDuration forKey:@"scheduledFlightDuration"];
     
-    [aCoder encodeObject:origin forKey:@"origin"];
-    [aCoder encodeObject:destination forKey:@"destination"];
+    [aCoder encodeObject:self.origin forKey:@"origin"];
+    [aCoder encodeObject:self.destination forKey:@"destination"];
     
-    [aCoder encodeInteger:status forKey:@"status"];
-    [aCoder encodeObject:detailedStatus forKey:@"detailedStatus"];
+    [aCoder encodeInteger:self.status forKey:@"status"];
+    [aCoder encodeObject:self.detailedStatus forKey:@"detailedStatus"];
     
-    [aCoder encodeObject:_lastTracked forKey:@"_lastTracked"];
+    [aCoder encodeObject:self.lastTracked forKey:@"_lastTracked"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -512,7 +512,7 @@ static NSArray *_aircraftTypes;
     
     if ([object isKindOfClass:[self class]]) {
         Flight *aFlight = (Flight *)object;
-        return [flightID isEqualToString:aFlight.flightID];
+        return [self.flightID isEqualToString:aFlight.flightID];
     }
     else {
         return NO;
@@ -522,24 +522,24 @@ static NSArray *_aircraftTypes;
 
 - (NSDictionary *)flightData {
     return [[NSDictionary alloc] initWithObjectsAndKeys:
-            flightID ? flightID : [NSNull null], @"flightID",
-            flightNumber ? flightNumber : [NSNull null], @"flightNumber",
-            [_aircraftTypes objectAtIndex:aircraftType], @"aircraftType",
+            self.flightID ? self.flightID : [NSNull null], @"flightID",
+            self.flightNumber ? self.flightNumber : [NSNull null], @"flightNumber",
+            [sAircraftTypes_ objectAtIndex:self.aircraftType], @"aircraftType",
             
-            actualArrivalTime ? [actualArrivalTime description] : [NSNull null], @"actualArrivalTime",
-            actualDepartureTime ? [actualDepartureTime description] : [NSNull null], @"actualDepartureTime",
-            estimatedArrivalTime ? [estimatedArrivalTime description] : [NSNull null], @"estimatedArrivalTime",
-            scheduledDepartureTime ? [scheduledDepartureTime description] : [NSNull null], @"scheduledDepartureTime",
-            lastUpdated ? [lastUpdated description] : [NSNull null], @"lastUpdated",
-            leaveForAirportTime ? [leaveForAirportTime description] : [NSNull null], @"leaveForAirportTime",
-            drivingTime >= 0.0 ? [NSNumber numberWithDouble:drivingTime] : [NSNull null], @"drivingTime",
-            [NSNumber numberWithDouble:scheduledFlightDuration], @"scheduledFlightDuration",
+            self.actualArrivalTime ? [self.actualArrivalTime description] : [NSNull null], @"actualArrivalTime",
+            self.actualDepartureTime ? [self.actualDepartureTime description] : [NSNull null], @"actualDepartureTime",
+            self.estimatedArrivalTime ? [self.estimatedArrivalTime description] : [NSNull null], @"estimatedArrivalTime",
+            self.scheduledDepartureTime ? [self.scheduledDepartureTime description] : [NSNull null], @"scheduledDepartureTime",
+            self.lastUpdated ? [self.lastUpdated description] : [NSNull null], @"lastUpdated",
+            self.leaveForAirportTime ? [self.leaveForAirportTime description] : [NSNull null], @"leaveForAirportTime",
+            self.drivingTime >= 0.0 ? [NSNumber numberWithDouble:self.drivingTime] : [NSNull null], @"drivingTime",
+            [NSNumber numberWithDouble:self.scheduledFlightDuration], @"scheduledFlightDuration",
             
-            origin ? [origin toJSONFriendlyDict] : [NSNull null], @"origin",
-            destination ? [destination toJSONFriendlyDict] : [NSNull null], @"destination",
+            self.origin ? [self.origin toJSONFriendlyDict] : [NSNull null], @"origin",
+            self.destination ? [self.destination toJSONFriendlyDict] : [NSNull null], @"destination",
             
-            [_statuses objectAtIndex:status], @"status",
-            detailedStatus ? detailedStatus : [NSNull null], @"detailedStatus", nil];
+            [sStatuses_ objectAtIndex:self.status], @"status",
+            self.detailedStatus ? self.detailedStatus : [NSNull null], @"detailedStatus", nil];
 }
 
 
