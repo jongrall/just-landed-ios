@@ -14,14 +14,6 @@
 
 @implementation Airport
 
-@synthesize iataCode;
-@synthesize icaoCode;
-@synthesize city;
-@synthesize location;
-@synthesize terminal;
-@synthesize timezone;
-
-
 - (id)initWithAirportInfo:(NSDictionary *)airportInfo {
     self = [super init];
     

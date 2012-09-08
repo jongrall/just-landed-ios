@@ -10,9 +10,6 @@
 
 @implementation DestinationAirport
 
-@synthesize bagClaim;
-@synthesize gate;
-
 - (id)initWithAirportInfo:(NSDictionary *)airportInfo {
     self = [super initWithAirportInfo:airportInfo];
     

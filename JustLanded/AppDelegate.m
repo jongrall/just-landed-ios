@@ -36,13 +36,6 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 
 @implementation AppDelegate
 
-@synthesize window;
-@synthesize pushToken;
-@synthesize triedToRegisterForRemoteNotifications;
-@synthesize wakeupTrackTask;
-@synthesize locationManager_;
-@synthesize mainViewController_;
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     // Initialization

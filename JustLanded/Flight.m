@@ -46,29 +46,6 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 
 @implementation Flight
 
-@synthesize flightID;
-@synthesize flightNumber;
-@synthesize aircraftType;
-@synthesize timeOfDay;
-
-@synthesize actualArrivalTime;
-@synthesize actualDepartureTime;
-@synthesize estimatedArrivalTime;
-@synthesize scheduledDepartureTime;
-@synthesize scheduledArrivalTime;
-@synthesize lastUpdated;
-@synthesize leaveForAirportTime;
-@synthesize drivingTime;
-@synthesize scheduledFlightDuration;
-
-@synthesize origin;
-@synthesize destination;
-
-@synthesize status;
-@synthesize detailedStatus;
-
-@synthesize lastTracked;
-
 static NSArray *sStatuses_;
 static NSArray *sPushTypes_;
 static NSArray *sAircraftTypes_;
