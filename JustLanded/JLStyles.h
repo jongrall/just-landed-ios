@@ -20,10 +20,10 @@
 + (UIFont *)sansSerifLightCondensedOfSize:(CGFloat)size;
 + (UIFont *)sansSerifBoldCondensedOfSize:(CGFloat)size;
 + (UIFont *)sansSerifLightBoldOfSize:(CGFloat)size;
-+ (NSString *)colorNameForStatus:(FlightStatus)status;
-+ (UIColor *)colorForStatus:(FlightStatus)status;
-+ (NSString *)statusTextForStatus:(FlightStatus)status;
-+ (UIColor *)labelShadowColorForStatus:(FlightStatus)status;
++ (NSString *)colorNameForStatus:(FlightStatus)aStatus;
++ (UIColor *)colorForStatus:(FlightStatus)aStatus;
++ (NSString *)statusTextForStatus:(FlightStatus)aStatus;
++ (UIColor *)labelShadowColorForStatus:(FlightStatus)aStatus;
 + (TextStyle *)navbarTitleStyle;
 + (ButtonStyle *)navbarButtonStyle;
 + (ButtonStyle *)navbarBackButtonStyle;

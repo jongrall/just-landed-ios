@@ -7,6 +7,7 @@
 //
 
 #import "JLLookupStyles.h"
+#import "TextStyle.h"
 
 CGRect const LOGO_FRAME = {{38.0f, 32.0f}, {255.0f, 43.0f}};
 CGRect const LOOKUP_BUTTON_FRAME = {{12.0f, 179.0f}, {296.0f, 56.0f}};
@@ -29,18 +30,11 @@ CGRect const RESULTS_TABLE_CONTAINER_FRAME = {{15.0f, 185.0f}, {290.0f, 261.0f}}
 
 @implementation JLLookupStyles
 
-static ButtonStyle *_lookupButtonStyle;
-static ButtonStyle *_aboutButtonStyle;
-static ButtonStyle *_airportCodesButtonStyle;
-static ButtonStyle *_airportCodesLabelButtonStyle;
-static LabelStyle *_flightFieldLabelStyle;
-static LabelStyle *_flightFieldTextStyle;
-static LabelStyle *_flightFieldErrorTextStyle;
-static LabelStyle *_airlineNoResultsLabelStyle;
-
-
 + (ButtonStyle *)lookupButtonStyle {
-    if (!_lookupButtonStyle) {
+    static ButtonStyle *sLookupButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         ButtonStyle *defaultStyle = [JLStyles defaultButtonStyle];
         
         // Override text alignment
@@ -54,7 +48,7 @@ static LabelStyle *_airlineNoResultsLabelStyle;
                                                             lineBreakMode:defaultStyle.disabledLabelStyle.lineBreakMode];
         
         // Create from the default style and ovverride the icon and insets
-        _lookupButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
+        sLookupButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
                                                   disabledLabelStyle:disabledStyle
                                                      backgroundColor:nil
                                                              upImage:defaultStyle.upImage
@@ -74,15 +68,18 @@ static LabelStyle *_airlineNoResultsLabelStyle;
                                                          labelInsets:UIEdgeInsetsMake(-3.0f, 104.0f, 0.0f, 20.0f) 
                                                      downLabelOffset:defaultStyle.downLabelOffset 
                                                  disabledLabelOffset:defaultStyle.disabledLabelOffset];
-    }
+    });
     
-    return _lookupButtonStyle;
+    return sLookupButtonStyle;
 }
 
 
 + (ButtonStyle *)aboutButtonStyle {
-    if (!_aboutButtonStyle) {
-        _aboutButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil 
+    static ButtonStyle *sAboutButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        sAboutButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil 
                                                  disabledLabelStyle:nil 
                                                     backgroundColor:nil 
                                                             upImage:[UIImage imageNamed:@"about_up"] 
@@ -94,15 +91,18 @@ static LabelStyle *_airlineNoResultsLabelStyle;
                                                         labelInsets:UIEdgeInsetsZero 
                                                     downLabelOffset:CGSizeZero 
                                                 disabledLabelOffset:CGSizeZero];
-    }
+    });
     
-    return _aboutButtonStyle;
+    return sAboutButtonStyle;
 }
 
 
 + (ButtonStyle *)airportCodesButtonStyle {
-    if (!_airportCodesButtonStyle) {
-        _airportCodesButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil 
+    static ButtonStyle *sAirportCodesButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        sAirportCodesButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil
                                                         disabledLabelStyle:nil
                                                            backgroundColor:nil
                                                                    upImage:[[UIImage imageNamed:@"small_button_white_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)]
@@ -117,14 +117,17 @@ static LabelStyle *_airlineNoResultsLabelStyle;
                                                              labelInsets:UIEdgeInsetsZero
                                                          downLabelOffset:CGSizeMake(0.0f, 1.0f)
                                                      disabledLabelOffset:CGSizeZero];
-    }
+    });
     
-    return _airportCodesButtonStyle;
+    return sAirportCodesButtonStyle;
 }
 
 
 + (ButtonStyle *)airportCodesLabelButtonStyle {
-    if (!_airportCodesLabelButtonStyle) {
+    static ButtonStyle *sAirportCodesLabelButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:13.5f]  
                                                          color:[UIColor colorWithRed:98.0f/255.0f green:98.0f/255.0f blue:98.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor whiteColor]
@@ -137,7 +140,7 @@ static LabelStyle *_airlineNoResultsLabelStyle;
                                                          lineBreakMode:UILineBreakModeTailTruncation];
         
         
-        _airportCodesLabelButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
+        sAirportCodesLabelButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
                                                              disabledLabelStyle:nil
                                                                 backgroundColor:nil
                                                                         upImage:nil
@@ -149,85 +152,97 @@ static LabelStyle *_airlineNoResultsLabelStyle;
                                                                     labelInsets:UIEdgeInsetsMake(5.0f, 33.5f, 5.0f, 40.0f)
                                                                 downLabelOffset:CGSizeZero
                                                             disabledLabelOffset:CGSizeZero];
-    }
+    });
     
-    return _airportCodesLabelButtonStyle;
+    return sAirportCodesLabelButtonStyle;
 }
 
 
 + (LabelStyle *)flightFieldLabelStyle {
-    if (!_flightFieldLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f] 
+    static LabelStyle *sFlightFieldLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f]
                                                          color:[UIColor colorWithRed:107.0f/255.0f green:157.0f/255.0f blue:178.0f/255.0f alpha:1.0f]
                                                    shadowColor:nil 
                                                   shadowOffset:CGSizeZero 
                                                     shadowBlur:0.0f];
         
-        _flightFieldLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+        sFlightFieldLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                        backgroundColor:nil 
                                                              alignment:UITextAlignmentLeft 
                                                          lineBreakMode:UILineBreakModeClip];
         
-    }
+    });
     
-    return _flightFieldLabelStyle;
+    return sFlightFieldLabelStyle;
 }
 
 
 + (LabelStyle *)flightFieldTextStyle {
-    if (!_flightFieldTextStyle) {
+    static LabelStyle *sFlightFieldTextStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f]
                                                          color:[UIColor colorWithRed:51.0/255.0f green:51.0/255.0f blue:51.0/255.0f alpha:1.0f]
                                                    shadowColor:nil 
                                                   shadowOffset:CGSizeZero 
                                                     shadowBlur:0.0f];
         
-        _flightFieldTextStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+        sFlightFieldTextStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil 
                                                             alignment:UITextAlignmentLeft 
                                                         lineBreakMode:UILineBreakModeClip];
         
-    }
+    });
     
-    return _flightFieldTextStyle;
+    return sFlightFieldTextStyle;
 }
 
 
 + (LabelStyle *)flightFieldErrorTextStyle {
-    if (!_flightFieldErrorTextStyle) {
+    static LabelStyle *sFlightFieldErrorTextStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f]
                                                          color:[UIColor colorWithRed:215.0/255.0f green:51.0/255.0f blue:51.0/255.0f alpha:1.0f]
                                                    shadowColor:nil
                                                   shadowOffset:CGSizeZero
                                                     shadowBlur:0.0f];
         
-        _flightFieldErrorTextStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+        sFlightFieldErrorTextStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil
                                                             alignment:UITextAlignmentLeft
                                                         lineBreakMode:UILineBreakModeClip];
         
-    }
+    });
     
-    return _flightFieldErrorTextStyle;
+    return sFlightFieldErrorTextStyle;
 }
 
 
 + (LabelStyle *)noAirlineResultsLabel {
-    if (!_airlineNoResultsLabelStyle) {
+    static LabelStyle *sAirlineNoResultsLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:20.0f]
                                                          color:[UIColor colorWithRed:98.0f/255.0f green:98.0f/255.0f blue:98.0f/255.0f alpha:1.0f]
                                                    shadowColor:nil 
                                                   shadowOffset:CGSizeZero 
                                                     shadowBlur:0.0f];
         
-        _airlineNoResultsLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+        sAirlineNoResultsLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil 
                                                             alignment:UITextAlignmentCenter 
                                                         lineBreakMode:UILineBreakModeClip];
         
-    }
+    });
     
-    return _airlineNoResultsLabelStyle;
+    return sAirlineNoResultsLabelStyle;
 }
 
 @end

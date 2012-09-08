@@ -8,6 +8,7 @@
 
 #import "JLTrackStyles.h"
 #import "JLStyles.h"
+#import "TextStyle.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -43,24 +44,12 @@ CGPoint const LEAVE_NOW_ORIGIN = {0.0f, 65.0f};
 
 @implementation JLTrackStyles
 
-static ButtonStyle *_lookupButtonStyle;
-static ButtonStyle *_directionsButtonStyle;
-static LabelStyle *_statusLabelStyle;
-static LabelStyle *_airportCodeStyle;
-static LabelStyle *_cityNameStyle;
-static LabelStyle *_flightDataLabelStyle;
-static LabelStyle *_flightDataValueStyle;
-static LabelStyle *_timeUnitLabelStyle;
-static LabelStyle *_timezoneLabelStyle;
-static LabelStyle *_leaveTimeLargeLabelStyle;
-static LabelStyle *_leaveTimeLargeUnitStyle;
-static LabelStyle *_leaveTimeSmallLabelStyle;
-static LabelStyle *_leaveTimeSmallUnitStyle;
-static LabelStyle *_leaveInstructionsLabelStyle;
-static LabelStyle *_leaveNowStyle;
 
 + (ButtonStyle *)lookupButtonStyle {
-    if (!_lookupButtonStyle) {
+    static ButtonStyle *sLookupButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:14.0f]
                                                          color:[UIColor whiteColor]
                                                    shadowColor:[UIColor clearColor]
@@ -72,7 +61,7 @@ static LabelStyle *_leaveNowStyle;
                                                              alignment:UITextAlignmentLeft 
                                                          lineBreakMode:UILineBreakModeClip];
         
-        _lookupButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
+        sLookupButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
                                                   disabledLabelStyle:nil
                                                      backgroundColor:nil
                                                              upImage:nil
@@ -84,15 +73,18 @@ static LabelStyle *_leaveNowStyle;
                                                          labelInsets:UIEdgeInsetsMake(8.0f, 32.0f, 4.0f, 11.0f)
                                                      downLabelOffset:CGSizeMake(0.0f, 1.0f)
                                                  disabledLabelOffset:CGSizeZero];
-    }
+    });
     
-    return _lookupButtonStyle;
+    return sLookupButtonStyle;
 }
 
 
 + (ButtonStyle *)directionsButtonStyle {
-    if (!_directionsButtonStyle) {
-        _directionsButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil 
+    static dispatch_once_t sOncePredicate;
+    static ButtonStyle *sDirectionsButtonStyle;
+    
+    dispatch_once(&sOncePredicate, ^{
+        sDirectionsButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil
                                                       disabledLabelStyle:nil
                                                          backgroundColor:nil
                                                                  upImage:[[UIImage imageNamed:@"small_button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 6.0f, 0.0f, 6.0f)]
@@ -107,243 +99,282 @@ static LabelStyle *_leaveNowStyle;
                                                              labelInsets:UIEdgeInsetsZero
                                                          downLabelOffset:CGSizeMake(0.0f, 1.0f)
                                                      disabledLabelOffset:CGSizeZero];
-    }
+    });
     
-    return _directionsButtonStyle;
+    return sDirectionsButtonStyle;
 }
 
 
 + (LabelStyle *)statusLabelStyle {
-    if (!_statusLabelStyle) {
+    static LabelStyle *sStatusLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles regularScriptOfSize:34.0f]
                                                          color:[UIColor whiteColor]
                                                    shadowColor:[UIColor blackColor]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:1.0f];
         
-        _statusLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+        sStatusLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                   backgroundColor:nil
                                                         alignment:UITextAlignmentRight
                                                     lineBreakMode:UILineBreakModeClip];
-    }
+    });
     
-    return _statusLabelStyle;
+    return sStatusLabelStyle;
 }
 
 
 + (LabelStyle *)airportCodeStyle {
-    if (!_airportCodeStyle) {
+    static LabelStyle *sAirportCodeStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifBoldCondensedOfSize:54.0f]
                                                          color:[UIColor whiteColor]
                                                    shadowColor:[UIColor blackColor]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:1.0f];
         
-        _airportCodeStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+        sAirportCodeStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                   backgroundColor:nil 
                                                         alignment:UITextAlignmentCenter 
                                                     lineBreakMode:UILineBreakModeClip];
-    }
+    });
     
-    return _airportCodeStyle;
+    return sAirportCodeStyle;
 }
 
 
 + (LabelStyle *)cityNameStyle {
-    if (!_cityNameStyle) {
+    static LabelStyle *sCityNameStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifBoldCondensedOfSize:12.0f]
                                                          color:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f] 
                                                    shadowColor:[UIColor blackColor]
                                                   shadowOffset:CGSizeMake(0.0f, -0.5f)
                                                     shadowBlur:1.5f];
         
-        _cityNameStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+        sCityNameStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                backgroundColor:nil 
                                                      alignment:UITextAlignmentCenter 
                                                  lineBreakMode:UILineBreakModeTailTruncation];
-    }
+    });
     
-    return _cityNameStyle;
+    return sCityNameStyle;
 }
 
 
 + (LabelStyle *)flightDataLabelStyle {
-    if (!_flightDataLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:13.0f] 
+    static LabelStyle *sFlightDataLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:13.0f]
                                                          color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:0.5f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _flightDataLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                  backgroundColor:nil
-                                                        alignment:UITextAlignmentLeft
-                                                    lineBreakMode:UILineBreakModeClip];
-    }
+        sFlightDataLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                      backgroundColor:nil
+                                                            alignment:UITextAlignmentLeft
+                                                        lineBreakMode:UILineBreakModeClip];
+    });
     
-    return _flightDataLabelStyle;
+    return sFlightDataLabelStyle;
 }
 
 
 + (LabelStyle *)flightDataValueStyle {
-    if (!_flightDataValueStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifBoldCondensedOfSize:33.0f] 
+    static LabelStyle *sFlightDataValueStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifBoldCondensedOfSize:33.0f]
                                                          color:[UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _flightDataValueStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                  backgroundColor:nil
-                                                        alignment:UITextAlignmentLeft
-                                                    lineBreakMode:UILineBreakModeClip];
-    }
+        sFlightDataValueStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                      backgroundColor:nil
+                                                            alignment:UITextAlignmentLeft
+                                                        lineBreakMode:UILineBreakModeClip];
+    });
     
-    return _flightDataValueStyle;
+    return sFlightDataValueStyle;
 }
 
 
 + (LabelStyle *)timeUnitLabelStyle {
-    if (!_timeUnitLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:11.0f] 
+    static LabelStyle *sTimeUnitLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:11.0f]
                                                          color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _timeUnitLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                      backgroundColor:nil
-                                                            alignment:UITextAlignmentLeft
-                                                        lineBreakMode:UILineBreakModeClip];
-    }
+        sTimeUnitLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                    backgroundColor:nil
+                                                          alignment:UITextAlignmentLeft
+                                                      lineBreakMode:UILineBreakModeClip];
+    });
     
-    return _timeUnitLabelStyle;
+    return sTimeUnitLabelStyle;
 }
 
 
 + (LabelStyle *)timezoneLabelStyle {
-    if (!_timezoneLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:11.0f] 
+    static LabelStyle *sTimezoneLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:11.0f]
                                                          color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:0.5f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _timezoneLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+        sTimezoneLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                     backgroundColor:nil
                                                           alignment:UITextAlignmentLeft
                                                       lineBreakMode:UILineBreakModeClip];
-    }
+    });
     
-    return _timezoneLabelStyle;
+    return sTimezoneLabelStyle;
 }
 
 
 + (LabelStyle *)leaveTimeLargeLabelStyle {
-    if (!_leaveTimeLargeLabelStyle) {
+    static LabelStyle *sLeaveTimeLargeLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifBoldCondensedOfSize:70.0f]
                                                          color:[UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f] 
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _leaveTimeLargeLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
-                                                     backgroundColor:nil 
-                                                           alignment:UITextAlignmentCenter 
-                                                       lineBreakMode:UILineBreakModeClip];
-    }
+        sLeaveTimeLargeLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+                                                          backgroundColor:nil 
+                                                                alignment:UITextAlignmentCenter 
+                                                            lineBreakMode:UILineBreakModeClip];
+    });
     
-    return _leaveTimeLargeLabelStyle;
+    return sLeaveTimeLargeLabelStyle;
 }
 
 
 + (LabelStyle *)leaveTimeLargeUnitStyle {
-    if (!_leaveTimeLargeUnitStyle) {
+    static LabelStyle *sLeaveTimeLargeUnitStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:10.0f]
                                                          color:[UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f] 
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _leaveTimeLargeUnitStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
-                                                    backgroundColor:nil 
-                                                          alignment:UITextAlignmentCenter 
-                                                      lineBreakMode:UILineBreakModeClip];
-    }
+        sLeaveTimeLargeUnitStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+                                                         backgroundColor:nil 
+                                                               alignment:UITextAlignmentCenter 
+                                                           lineBreakMode:UILineBreakModeClip];
+    });
     
-    return _leaveTimeLargeUnitStyle;
+    return sLeaveTimeLargeUnitStyle;
 }
 
 
 + (LabelStyle *)leaveTimeSmallLabelStyle {
-    if (!_leaveTimeSmallLabelStyle) {
+    static LabelStyle *sLeaveTimeSmallLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifBoldCondensedOfSize:33.0f]
                                                          color:[UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f] 
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _leaveTimeSmallLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+        sLeaveTimeSmallLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                           backgroundColor:nil 
                                                                 alignment:UITextAlignmentCenter 
                                                             lineBreakMode:UILineBreakModeClip];
-    }
+    });
     
-    return _leaveTimeSmallLabelStyle;
+    return sLeaveTimeSmallLabelStyle;
 }
 
 
 + (LabelStyle *)leaveTimeSmallUnitStyle {
-    if (!_leaveTimeSmallUnitStyle) {
+    static LabelStyle *sLeaveTimeSmallUnitStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:10.0f]
                                                          color:[UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f] 
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _leaveTimeSmallUnitStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+        sLeaveTimeSmallUnitStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                          backgroundColor:nil 
                                                                alignment:UITextAlignmentCenter 
                                                            lineBreakMode:UILineBreakModeClip];
-    }
+    });
     
-    return _leaveTimeSmallUnitStyle;
+    return sLeaveTimeSmallUnitStyle;
 }
 
 
 + (LabelStyle *)leaveInstructionsLabelStyle {
-    if (!_leaveInstructionsLabelStyle) {
+    static LabelStyle *sLeaveInstructionsLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:12.5f]
                                                          color:[UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:0.0f/255.0f alpha:0.5f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f] 
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _leaveInstructionsLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
-                                                     backgroundColor:nil 
-                                                           alignment:UITextAlignmentCenter 
-                                                       lineBreakMode:UILineBreakModeClip];
-    }
+        sLeaveInstructionsLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+                                                             backgroundColor:nil 
+                                                                   alignment:UITextAlignmentCenter 
+                                                               lineBreakMode:UILineBreakModeClip];
+    });
     
-    return _leaveInstructionsLabelStyle;
+    return sLeaveInstructionsLabelStyle;
 }
 
 
 + (LabelStyle *)leaveNowStyle {
-    if (!_leaveNowStyle) {
+    static LabelStyle *sLeaveNowStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifBoldCondensedOfSize:25.0f]
                                                          color:[UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f] 
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _leaveNowStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
-                                                     backgroundColor:nil 
-                                                           alignment:UITextAlignmentCenter 
-                                                       lineBreakMode:UILineBreakModeWordWrap];
-    }
+        sLeaveNowStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
+                                               backgroundColor:nil
+                                                     alignment:UITextAlignmentCenter
+                                                 lineBreakMode:UILineBreakModeWordWrap];
+    });
     
-    return _leaveNowStyle;
+    return sLeaveNowStyle;
 }
 
 @end

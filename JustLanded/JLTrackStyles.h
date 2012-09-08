@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TextStyle.h"
 #import "LabelStyle.h"
 #import "ButtonStyle.h"
 

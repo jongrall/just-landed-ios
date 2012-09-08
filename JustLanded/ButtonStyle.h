@@ -11,18 +11,18 @@
 
 @interface ButtonStyle : NSObject
 
-@property (nonatomic, readonly) LabelStyle *labelStyle;
-@property (nonatomic, readonly) LabelStyle *disabledLabelStyle;
-@property (nonatomic, readonly) UIColor *backgroundColor;
-@property (nonatomic, readonly) UIImage *upImage;
-@property (nonatomic, readonly) UIImage *downImage;
-@property (nonatomic, readonly) UIImage *disabledImage;
-@property (nonatomic, readonly) UIImage *icon;
-@property (nonatomic, readonly) UIImage *disabledIcon;
-@property (nonatomic, readonly) CGPoint iconOrigin;
-@property (nonatomic, readonly) UIEdgeInsets labelInsets;
-@property (nonatomic, readonly) CGSize downLabelOffset;
-@property (nonatomic, readonly) CGSize disabledLabelOffset;
+@property (strong, readonly, nonatomic) LabelStyle *labelStyle;
+@property (strong, readonly, nonatomic) LabelStyle *disabledLabelStyle;
+@property (strong, readonly, nonatomic) UIColor *backgroundColor;
+@property (strong, readonly, nonatomic) UIImage *upImage;
+@property (strong, readonly, nonatomic) UIImage *downImage;
+@property (strong, readonly, nonatomic) UIImage *disabledImage;
+@property (strong, readonly, nonatomic) UIImage *icon;
+@property (strong, readonly, nonatomic) UIImage *disabledIcon;
+@property (readonly, nonatomic) CGPoint iconOrigin;
+@property (readonly, nonatomic) UIEdgeInsets labelInsets;
+@property (readonly, nonatomic) CGSize downLabelOffset;
+@property (readonly, nonatomic) CGSize disabledLabelOffset;
 
 - (id)initWithLabelStyle:(LabelStyle *)aStyle
       disabledLabelStyle:(LabelStyle *)aDisabledStyle

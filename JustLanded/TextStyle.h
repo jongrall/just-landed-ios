@@ -10,11 +10,11 @@
 
 @interface TextStyle : NSObject
 
-@property (nonatomic, readonly) UIFont *font;
-@property (nonatomic, readonly) UIColor *color;
-@property (nonatomic, readonly) UIColor *shadowColor;
-@property (nonatomic, readonly) CGSize shadowOffset;
-@property (nonatomic, readonly) CGFloat shadowBlur;
+@property (strong, readonly, nonatomic) UIFont *font;
+@property (strong, readonly, nonatomic) UIColor *color;
+@property (strong, readonly, nonatomic) UIColor *shadowColor;
+@property (readonly, nonatomic) CGSize shadowOffset;
+@property (readonly, nonatomic) CGFloat shadowBlur;
 
 - (id)initWithFont:(UIFont *)font
              color:(UIColor *)color

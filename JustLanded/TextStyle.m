@@ -9,25 +9,19 @@
 #import <UIKit/UIKit.h>
 #import "TextStyle.h"
 
-@interface TextStyle () {
-    __strong UIFont *_font;
-    __strong UIColor *_color;
-    __strong UIColor *_shadowColor;
-    CGSize _shadowOffset;
-    CGFloat _shadowBlur;
-}
+@interface TextStyle ()
+
+// Redefine as readwrite
+@property (strong, readwrite, nonatomic) UIFont *font;
+@property (strong, readwrite, nonatomic) UIColor *color;
+@property (strong, readwrite, nonatomic) UIColor *shadowColor;
+@property (readwrite, nonatomic) CGSize shadowOffset;
+@property (readwrite, nonatomic) CGFloat shadowBlur;
 
 @end
 
 
 @implementation TextStyle
-
-@synthesize font=_font;
-@synthesize color=_color;
-@synthesize shadowColor=_shadowColor;
-@synthesize shadowOffset=_shadowOffset;
-@synthesize shadowBlur=_shadowBlur;
-
 
 - (id)init {
     return [self initWithFont:[UIFont systemFontOfSize:14.0f]
@@ -36,6 +30,7 @@
                  shadowOffset:CGSizeZero
                    shadowBlur:0.0f];
 }            
+
 
 - (id)initWithFont:(UIFont *)font
              color:(UIColor *)aColor
@@ -48,11 +43,11 @@
     self = [super init];
     
     if (self) {
-        _font = font;
-        _color = aColor;
-        _shadowColor = aShadowColor;
-        _shadowOffset = offset;
-        _shadowBlur = blur;
+        self.font = font;
+        self.color = aColor;
+        self.shadowColor = aShadowColor;
+        self.shadowOffset = offset;
+        self.shadowBlur = blur;
     }
     
     return self;

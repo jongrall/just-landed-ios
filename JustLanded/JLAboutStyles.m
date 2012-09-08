@@ -20,61 +20,68 @@ NSTimeInterval const FADE_ANIMATION_DURATION = 0.15;
 
 @implementation JLAboutStyles
 
-static LabelStyle *_aboutTitleLabelStyle;
-static LabelStyle *_copyrightLabelStyle;
-static ButtonStyle *_aboutCloseButtonStyle;
-
 + (LabelStyle *)aboutTitleLabelStyle {
-    if (!_aboutTitleLabelStyle) {
+    static LabelStyle *sAboutTitleLabelStyle = nil;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles regularScriptOfSize:50.0f]
                                                          color:[UIColor colorWithRed:234.0f/255.0f green:241.0f/255.0f blue:246.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:16.0f/255.0f green:33.0f/255.0f blue:91.0f/255.0f alpha:0.33f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.5f)
                                                     shadowBlur:1.0f];
         
-        _aboutTitleLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                     backgroundColor:nil
-                                                           alignment:UITextAlignmentCenter
-                                                       lineBreakMode:UILineBreakModeTailTruncation];
-    }
-    
-    return _aboutTitleLabelStyle;
+        sAboutTitleLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                      backgroundColor:nil
+                                                            alignment:UITextAlignmentCenter
+                                                        lineBreakMode:UILineBreakModeTailTruncation];
+    });
+
+    return sAboutTitleLabelStyle;
 }
 
+
 + (LabelStyle *)copyrightLabelStyle {
-    if (!_copyrightLabelStyle) {
+    static LabelStyle *sCopyrightLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:12.0f]
                                                          color:[UIColor colorWithRed:179.0f/255.0f green:195.0f/255.0f blue:206.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _copyrightLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                   backgroundColor:nil 
-                                                         alignment:UITextAlignmentCenter 
-                                                     lineBreakMode:UILineBreakModeTailTruncation];
-    }
+        sCopyrightLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                     backgroundColor:nil 
+                                                           alignment:UITextAlignmentCenter 
+                                                       lineBreakMode:UILineBreakModeTailTruncation];
+    }); 
     
-    return _copyrightLabelStyle;
+    return sCopyrightLabelStyle;
 }
 
+
 + (ButtonStyle *)aboutCloseButtonStyle {
-    if (!_aboutCloseButtonStyle) {
-        _aboutCloseButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil
-                                                 disabledLabelStyle:nil
-                                                    backgroundColor:nil
-                                                            upImage:[UIImage imageNamed:@"about_close_up"]
-                                                          downImage:[UIImage imageNamed:@"about_close_down"]
-                                                      disabledImage:nil
-                                                          iconImage:nil
-                                                  iconDisabledImage:nil
-                                                         iconOrigin:CGPointZero
-                                                        labelInsets:UIEdgeInsetsZero
-                                                    downLabelOffset:CGSizeZero
-                                                disabledLabelOffset:CGSizeZero];
-    }
+    static ButtonStyle *sAboutCloseButtonStyle;
+    static dispatch_once_t sOncePredicate;
     
-    return _aboutCloseButtonStyle;
+    dispatch_once(&sOncePredicate, ^{
+        sAboutCloseButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil
+                                                      disabledLabelStyle:nil
+                                                         backgroundColor:nil
+                                                                 upImage:[UIImage imageNamed:@"about_close_up"]
+                                                               downImage:[UIImage imageNamed:@"about_close_down"]
+                                                           disabledImage:nil
+                                                                iconImage:nil
+                                                       iconDisabledImage:nil
+                                                              iconOrigin:CGPointZero
+                                                             labelInsets:UIEdgeInsetsZero
+                                                         downLabelOffset:CGSizeZero
+                                                     disabledLabelOffset:CGSizeZero];
+    });
+    
+    return sAboutCloseButtonStyle;
 }
 
 @end

@@ -8,22 +8,18 @@
 
 #import "LabelStyle.h"
 
-@interface LabelStyle () {
-    __strong TextStyle *_textStyle;
-    __strong UIColor *_backgroundColor;
-    UITextAlignment _alignment;
-    UILineBreakMode _lineBreakMode;
-}
+@interface LabelStyle ()
+
+// Redefine as readwrite
+@property (strong, readwrite, nonatomic) TextStyle *textStyle;
+@property (strong, readwrite, nonatomic) UIColor *backgroundColor;
+@property (readwrite, nonatomic) UITextAlignment alignment;
+@property (readwrite, nonatomic) UILineBreakMode lineBreakMode;
 
 @end
 
 
 @implementation LabelStyle
-
-@synthesize textStyle=_textStyle;
-@synthesize backgroundColor=_backgroundColor;
-@synthesize alignment=_alignment;
-@synthesize lineBreakMode=_lineBreakMode;
 
 - (id)init {
     return [self initWithTextStyle:[[TextStyle alloc] init]
@@ -38,19 +34,18 @@
               alignment:(UITextAlignment)anAlignment
           lineBreakMode:(UILineBreakMode)aMode {
     NSAssert(style != nil, @"LabelStyle requires a TextStyle.");
-    
     self = [super init];
     
     if (self) {
-        _textStyle = style;
-        _alignment = anAlignment;
-        _lineBreakMode = aMode;
+        self.textStyle = style;
+        self.alignment = anAlignment;
+        self.lineBreakMode = aMode;
         
         if (aColor != nil) {
-            _backgroundColor = aColor;
+            self.backgroundColor = aColor;
         }
         else {
-            _backgroundColor = [UIColor clearColor];
+            self.backgroundColor = [UIColor clearColor];
         }
     }
     

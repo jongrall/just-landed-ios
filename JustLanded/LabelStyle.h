@@ -11,10 +11,10 @@
 
 @interface LabelStyle : NSObject
 
-@property (nonatomic, readonly) TextStyle *textStyle;
-@property (nonatomic, readonly) UIColor *backgroundColor;
-@property (nonatomic, readonly) UITextAlignment alignment;
-@property (nonatomic, readonly) UILineBreakMode lineBreakMode;
+@property (strong, readonly, nonatomic) TextStyle *textStyle;
+@property (strong, readonly, nonatomic) UIColor *backgroundColor;
+@property (readonly, nonatomic) UITextAlignment alignment;
+@property (readonly, nonatomic) UILineBreakMode lineBreakMode;
 
 - (id)initWithTextStyle:(TextStyle *)style
         backgroundColor:(UIColor *)aColor

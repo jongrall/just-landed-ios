@@ -10,15 +10,6 @@
 
 @implementation JLStyles
 
-static TextStyle *_navbarTitleStyle;
-static ButtonStyle *_navbarButtonStyle;
-static ButtonStyle *_navbarBackButtonStyle;
-static LabelStyle *_loadingLabelStyle;
-static LabelStyle *_noConnectionLabelStyle;
-static LabelStyle *_errorDescriptionLabelStyle;
-static ButtonStyle *_defaultButtonStyle;
-
-
 + (UIFont *)regularScriptOfSize:(CGFloat)size {
     return [UIFont fontWithName:@"SignPainter-HouseScript" size:size];
 }
@@ -49,8 +40,8 @@ static ButtonStyle *_defaultButtonStyle;
 }
 
 
-+ (NSString *)colorNameForStatus:(FlightStatus)status {
-    switch (status) {
++ (NSString *)colorNameForStatus:(FlightStatus)aStatus {
+    switch (aStatus) {
         case SCHEDULED:
             return @"gray";
             break;
@@ -79,8 +70,8 @@ static ButtonStyle *_defaultButtonStyle;
 }
 
 
-+ (UIColor *)colorForStatus:(FlightStatus)status {
-    switch (status) {
++ (UIColor *)colorForStatus:(FlightStatus)aStatus {
+    switch (aStatus) {
         case SCHEDULED:
             return [UIColor colorWithRed:98.0f/255.0f green:98.0f/255.0f blue:98.0f/255.0f alpha:1.0f];
             break;
@@ -109,8 +100,8 @@ static ButtonStyle *_defaultButtonStyle;
 }
 
 
-+ (NSString *)statusTextForStatus:(FlightStatus)status {
-    switch (status) {
++ (NSString *)statusTextForStatus:(FlightStatus)aStatus {
+    switch (aStatus) {
         case SCHEDULED:
             return NSLocalizedString(@"SCHEDULED", @"SCHEDULED");
             break;
@@ -139,8 +130,8 @@ static ButtonStyle *_defaultButtonStyle;
 }
 
 
-+ (UIColor *)labelShadowColorForStatus:(FlightStatus)status {
-    switch (status) {
++ (UIColor *)labelShadowColorForStatus:(FlightStatus)aStatus {
+    switch (aStatus) {
         case SCHEDULED:
             return [UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:0.8f];
             break;
@@ -170,20 +161,26 @@ static ButtonStyle *_defaultButtonStyle;
 
 
 + (TextStyle *)navbarTitleStyle {
-    if (!_navbarTitleStyle) {
-        _navbarTitleStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:22.0f] 
+    static TextStyle *sNavbarTitleStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        sNavbarTitleStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:22.0f]
                                                       color:[UIColor whiteColor]
                                                 shadowColor:[UIColor colorWithRed:183.0f/255.0f green:56.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
                                                shadowOffset:CGSizeMake(0.0f, -1.0f) 
                                                  shadowBlur:0.0f];
-    }
+    });
     
-    return _navbarTitleStyle;
+    return sNavbarTitleStyle;
 }
 
 
 + (ButtonStyle *)navbarButtonStyle {
-    if (!_navbarButtonStyle) {
+    static ButtonStyle *sNavbarButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:12.0f]
                                                          color:[UIColor whiteColor]
                                                    shadowColor:[UIColor colorWithRed:183.0f/255.0f green:56.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
@@ -210,7 +207,7 @@ static ButtonStyle *_defaultButtonStyle;
         UIImage *upImage = [[UIImage imageNamed:@"nav_button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 7.0f, 0.0f, 7.0f)];
         UIImage *downImage = [[UIImage imageNamed:@"nav_button_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 7.0f, 0.0f, 7.0f)];
         
-        _navbarButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
+        sNavbarButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
                                                   disabledLabelStyle:disabledLabelStyle 
                                                      backgroundColor:nil 
                                                              upImage:upImage
@@ -222,14 +219,17 @@ static ButtonStyle *_defaultButtonStyle;
                                                          labelInsets:UIEdgeInsetsZero
                                                      downLabelOffset:CGSizeMake(0.0f, 1.0f) 
                                                  disabledLabelOffset:CGSizeMake(0.0f, 0.0f)];
-    }
+    });
     
-    return _navbarButtonStyle;
+    return sNavbarButtonStyle;
 }
 
 
 + (ButtonStyle *)navbarBackButtonStyle {
-    if (!_navbarBackButtonStyle) {
+    static ButtonStyle *sNavbarBackButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:12.0f]
                                                          color:[UIColor whiteColor]
                                                    shadowColor:[UIColor colorWithRed:183.0f/255.0f green:56.0f/255.0f blue:0.0f/255.0f alpha:1.0f]
@@ -256,7 +256,7 @@ static ButtonStyle *_defaultButtonStyle;
         UIImage *upImage = [[UIImage imageNamed:@"nav_button_back_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 21.0f, 0.0f, 7.0f)];
         UIImage *downImage = [[UIImage imageNamed:@"nav_button_back_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 21.0f, 0.0f, 7.0f)];
         
-        _navbarBackButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
+        sNavbarBackButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
                                                   disabledLabelStyle:disabledLabelStyle 
                                                      backgroundColor:nil 
                                                              upImage:upImage
@@ -268,69 +268,81 @@ static ButtonStyle *_defaultButtonStyle;
                                                          labelInsets:UIEdgeInsetsZero 
                                                      downLabelOffset:CGSizeMake(0.0f, 1.0f) 
                                                  disabledLabelOffset:CGSizeMake(0.0f, 0.0f)];
-    }
+    });
     
-    return _navbarBackButtonStyle;
+    return sNavbarBackButtonStyle;
 }
 
 
 + (LabelStyle *)loadingLabelStyle  {
-    if (!_loadingLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f] 
+    static LabelStyle *sLoadingLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f]
                                                          color:[UIColor colorWithRed:46.0f/255.0f green:46.0f/255.0f blue:46.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _loadingLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                      backgroundColor:nil
-                                                            alignment:UITextAlignmentCenter
-                                                        lineBreakMode:UILineBreakModeTailTruncation];
-    }
+        sLoadingLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                   backgroundColor:nil
+                                                         alignment:UITextAlignmentCenter
+                                                     lineBreakMode:UILineBreakModeTailTruncation];
+    });
     
-    return _loadingLabelStyle;
+    return sLoadingLabelStyle;
 }
 
 
 + (LabelStyle *)noConnectionLabelStyle {
-    if (!_noConnectionLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f] 
+    static LabelStyle *sNoConnectionLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f]
                                                          color:[UIColor colorWithRed:46.0f/255.0f green:46.0f/255.0f blue:46.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _noConnectionLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                      backgroundColor:nil
-                                                            alignment:UITextAlignmentCenter
-                                                        lineBreakMode:UILineBreakModeTailTruncation];
-    }
+        sNoConnectionLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                        backgroundColor:nil
+                                                              alignment:UITextAlignmentCenter
+                                                          lineBreakMode:UILineBreakModeTailTruncation];
+    });
     
-    return _noConnectionLabelStyle;
+    return sNoConnectionLabelStyle;
 }
 
 
 + (LabelStyle *)errorDescriptionLabelStyle {
-    if (!_errorDescriptionLabelStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:13.0f] 
+    static LabelStyle *sErrorDescriptionLabelStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightOfSize:13.0f]
                                                          color:[UIColor colorWithRed:46.0f/255.0f green:46.0f/255.0f blue:46.0f/255.0f alpha:1.0f]
                                                    shadowColor:[UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                                     shadowBlur:0.0f];
         
-        _errorDescriptionLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
-                                                      backgroundColor:nil
-                                                            alignment:UITextAlignmentCenter
-                                                        lineBreakMode:UILineBreakModeWordWrap];
-    }
+        sErrorDescriptionLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
+                                                            backgroundColor:nil
+                                                                  alignment:UITextAlignmentCenter
+                                                              lineBreakMode:UILineBreakModeWordWrap];
+    });
     
-    return _errorDescriptionLabelStyle;
+    return sErrorDescriptionLabelStyle;
 }
 
 
 + (ButtonStyle *)defaultButtonStyle {
-    if (!_defaultButtonStyle) {
-        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:24.0f] 
+    static ButtonStyle *sDefaultButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:24.0f]
                                                          color:[UIColor whiteColor]
                                                    shadowColor:[UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.25f]
                                                   shadowOffset:CGSizeMake(0.0f, 1.0f)
@@ -352,21 +364,21 @@ static ButtonStyle *_defaultButtonStyle;
                                                                      alignment:UITextAlignmentCenter 
                                                                  lineBreakMode:UILineBreakModeClip];
         
-        _defaultButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
-                                                  disabledLabelStyle:disabledLabelStyle
-                                                     backgroundColor:nil
-                                                             upImage:[[UIImage imageNamed:@"button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)]
-                                                           downImage:[[UIImage imageNamed:@"button_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)] 
-                                                       disabledImage:[[UIImage imageNamed:@"button_disabled"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)]
-                                                           iconImage:nil
-                                                   iconDisabledImage:nil
-                                                          iconOrigin:CGPointZero 
-                                                         labelInsets:UIEdgeInsetsMake(-3.0f, 0.0f, 0.0f, 0.0f) 
-                                                     downLabelOffset:CGSizeMake(0.0f, 5.0f) 
-                                                 disabledLabelOffset:CGSizeMake(0.0f, 2.0f)];
-    }
+        sDefaultButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
+                                                   disabledLabelStyle:disabledLabelStyle
+                                                      backgroundColor:nil
+                                                              upImage:[[UIImage imageNamed:@"button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)]
+                                                            downImage:[[UIImage imageNamed:@"button_down"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)] 
+                                                        disabledImage:[[UIImage imageNamed:@"button_disabled"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 12.0f, 0.0f, 12.0f)]
+                                                            iconImage:nil
+                                                    iconDisabledImage:nil
+                                                           iconOrigin:CGPointZero 
+                                                          labelInsets:UIEdgeInsetsMake(-3.0f, 0.0f, 0.0f, 0.0f) 
+                                                      downLabelOffset:CGSizeMake(0.0f, 5.0f) 
+                                                  disabledLabelOffset:CGSizeMake(0.0f, 2.0f)];
+    });
     
-    return _defaultButtonStyle;
+    return sDefaultButtonStyle;
 }
 
 @end

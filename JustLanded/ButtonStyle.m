@@ -8,38 +8,25 @@
 
 #import "ButtonStyle.h"
 
-@interface ButtonStyle () {
-    __strong LabelStyle *_labelStyle;
-    __strong LabelStyle *_disabledLabelStyle;
-    __strong UIColor *_backgroundColor;
-    __strong UIImage *_upImage;
-    __strong UIImage *_downImage;
-    __strong UIImage *_disabledImage;
-    __strong UIImage *_iconImage;
-    __strong UIImage *_disabledIconImage;
-    CGPoint _iconOrigin;
-    UIEdgeInsets _labelInsets;
-    CGSize _downLabelOffset;
-    CGSize _disabledLabelOffset;
-}
+@interface ButtonStyle ()
+
+// Redefine as readwrite
+@property (strong, readwrite, nonatomic) LabelStyle *labelStyle;
+@property (strong, readwrite, nonatomic) LabelStyle *disabledLabelStyle;
+@property (strong, readwrite, nonatomic) UIColor *backgroundColor;
+@property (strong, readwrite, nonatomic) UIImage *upImage;
+@property (strong, readwrite, nonatomic) UIImage *downImage;
+@property (strong, readwrite, nonatomic) UIImage *disabledImage;
+@property (strong, readwrite, nonatomic) UIImage *icon;
+@property (strong, readwrite, nonatomic) UIImage *disabledIcon;
+@property (readwrite, nonatomic) CGPoint iconOrigin;
+@property (readwrite, nonatomic) UIEdgeInsets labelInsets;
+@property (readwrite, nonatomic) CGSize downLabelOffset;
+@property (readwrite, nonatomic) CGSize disabledLabelOffset;
 
 @end
 
 @implementation ButtonStyle
-
-@synthesize labelStyle=_labelStyle;
-@synthesize disabledLabelStyle=_disabledLabelStyle;
-@synthesize backgroundColor=_backgroundColor;
-@synthesize upImage=_upImage;
-@synthesize downImage=_downImage;
-@synthesize disabledImage=_disabledImage;
-@synthesize icon=_iconImage;
-@synthesize disabledIcon=_disabledIconImage;
-@synthesize iconOrigin=_iconOrigin;
-@synthesize labelInsets=_labelInsets;
-@synthesize downLabelOffset=_downLabelOffset;
-@synthesize disabledLabelOffset=_disabledLabelOffset;
-
 
 - (id)initWithLabelStyle:(LabelStyle *)aStyle
         disabledLabelStyle:(LabelStyle *)aDisabledStyle
@@ -56,26 +43,25 @@
     self = [super init];
     
     if (self) {
-        _labelStyle = aStyle;
+        self.labelStyle = aStyle;
         
         if (aColor != nil) {
-            _backgroundColor = aColor;
+            self.backgroundColor = aColor;
         }
         else {
-            _backgroundColor = [UIColor clearColor];
+            self.backgroundColor = [UIColor clearColor];
         }
         
-        
-        _disabledLabelStyle = aDisabledStyle;
-        _upImage = anUpImage;
-        _downImage = aDownImage;
-        _disabledImage = aDisabledImage;
-        _iconImage = anIcon;
-        _disabledIconImage = aDisabledIcon;
-        _iconOrigin = aPoint;
-        _labelInsets = someLabelInsets;
-        _downLabelOffset = aDownOffset;
-        _disabledLabelOffset = aDisabledOffset;
+        self.disabledLabelStyle = aDisabledStyle;
+        self.upImage = anUpImage;
+        self.downImage = aDownImage;
+        self.disabledImage = aDisabledImage;
+        self.icon = anIcon;
+        self.disabledIcon = aDisabledIcon;
+        self.iconOrigin = aPoint;
+        self.labelInsets = someLabelInsets;
+        self.downLabelOffset = aDownOffset;
+        self.disabledLabelOffset = aDisabledOffset;
     }
     
     return self;
