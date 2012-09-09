@@ -44,7 +44,6 @@ CGPoint const LEAVE_NOW_ORIGIN = {0.0f, 65.0f};
 
 @implementation JLTrackStyles
 
-
 + (ButtonStyle *)lookupButtonStyle {
     static ButtonStyle *sLookupButtonStyle;
     static dispatch_once_t sOncePredicate;

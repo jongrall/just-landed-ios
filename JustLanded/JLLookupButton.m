@@ -11,7 +11,7 @@
 
 @implementation JLLookupButton
 
-@synthesize status;
+@synthesize status = status_;
 
 - (id)initWithButtonStyle:(ButtonStyle *)aStyle frame:(CGRect)aFrame status:(FlightStatus)aStatus {
     self = [super initWithButtonStyle:aStyle frame:aFrame];
@@ -25,7 +25,7 @@
 
 
 - (void)setStatus:(FlightStatus)newStatus {
-    status = newStatus;
+    status_ = newStatus;
     NSString *upFileName = [NSString stringWithFormat:@"lookup_button_up_%@", [JLStyles colorNameForStatus:newStatus]];
     NSString *downFileName = [NSString stringWithFormat:@"lookup_button_down_%@", [JLStyles colorNameForStatus:newStatus]];
     UIColor *shadowColor = [JLStyles labelShadowColorForStatus:newStatus];
@@ -45,7 +45,7 @@
           forState:UIControlStateDisabled];
     
     [self setTitleShadowColor:shadowColor forState:UIControlStateNormal];
-    self.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
+    [self.titleLabel setShadowOffset:CGSizeMake(0.0f, -1.0f)];
     [self setTitleColor:shadowColor forState:UIControlStateDisabled];
     [self setTitleShadowColor:[UIColor clearColor] forState:UIControlStateDisabled];
 }

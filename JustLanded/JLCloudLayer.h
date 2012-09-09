@@ -13,6 +13,6 @@
 - (void)startAnimating;
 - (void)stopAnimating;
 
-@property (nonatomic, copy) NSArray *currentCloudOffsets;
+@property (copy, nonatomic) NSArray *currentCloudOffsets;
 
 @end

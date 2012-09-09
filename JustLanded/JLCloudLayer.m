@@ -15,17 +15,17 @@ const CGFloat LAYER3_SPEED = 10.0f;
 const CGFloat LAYER4_SPEED = 5.0f;
 
 
-@interface JLCloudLayer () {
-    __strong UIScrollView *_layer1;
-    __strong UIScrollView *_layer2;
-    __strong UIScrollView *_layer3;
-    __strong UIScrollView *_layer4;
-    __strong NSTimer *_animationTimer;
-    CGFloat _layer1Offset;
-    CGFloat _layer2Offset;
-    CGFloat _layer3Offset;
-    CGFloat _layer4Offset;
-}
+@interface JLCloudLayer ()
+
+@property (strong, nonatomic) UIScrollView *layer1_;
+@property (strong, nonatomic) UIScrollView *layer2_;
+@property (strong, nonatomic) UIScrollView *layer3_;
+@property (strong, nonatomic) UIScrollView *layer4_;
+@property (strong, nonatomic) NSTimer *animationTimer_;
+@property (nonatomic) CGFloat layer1Offset_;
+@property (nonatomic) CGFloat layer2Offset_;
+@property (nonatomic) CGFloat layer3Offset_;
+@property (nonatomic) CGFloat layer4Offset_;
 
 - (void)animationTick;
 - (UIScrollView *)cloudLayerScrollViewWithRepeatingImage:(UIImage *)image;
@@ -46,31 +46,31 @@ const CGFloat LAYER4_SPEED = 5.0f;
         UIImage *clouds4 = [UIImage imageNamed:@"lookup_clouds_4"];
         
         // Set start offsets
-        _layer1Offset = 200.0f;
-        _layer2Offset = 200.0f;
-        _layer3Offset = 200.0f;
-        _layer4Offset = 200.0f;
+        self.layer1Offset_ = 200.0f;
+        self.layer2Offset_ = 200.0f;
+        self.layer3Offset_ = 200.0f;
+        self.layer4Offset_ = 200.0f;
                 
-        _layer1 = [self cloudLayerScrollViewWithRepeatingImage:clouds1];
-        _layer1.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
-        _layer1.contentOffset = CGPointMake(_layer1Offset, 0.0f);
+        self.layer1_ = [self cloudLayerScrollViewWithRepeatingImage:clouds1];
+        self.layer1_.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
+        self.layer1_.contentOffset = CGPointMake(self.layer1Offset_, 0.0f);
         
-        _layer2 = [self cloudLayerScrollViewWithRepeatingImage:clouds2];
-        _layer2.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
-        _layer2.contentOffset = CGPointMake(_layer2Offset, 0.0f);
+        self.layer2_ = [self cloudLayerScrollViewWithRepeatingImage:clouds2];
+        self.layer2_.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
+        self.layer2_.contentOffset = CGPointMake(self.layer2Offset_, 0.0f);
         
-        _layer3 = [self cloudLayerScrollViewWithRepeatingImage:clouds3];
-        _layer3.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
-        _layer3.contentOffset = CGPointMake(_layer3Offset, 0.0f);
+        self.layer3_ = [self cloudLayerScrollViewWithRepeatingImage:clouds3];
+        self.layer3_.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
+        self.layer3_.contentOffset = CGPointMake(self.layer3Offset_, 0.0f);
         
-        _layer4 = [self cloudLayerScrollViewWithRepeatingImage:clouds4];
-        _layer4.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
-        _layer4.contentOffset = CGPointMake(_layer4Offset, 0.0f);
+        self.layer4_ = [self cloudLayerScrollViewWithRepeatingImage:clouds4];
+        self.layer4_.frame = CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
+        self.layer4_.contentOffset = CGPointMake(self.layer4Offset_, 0.0f);
         
-        [self addSubview:_layer4];
-        [self addSubview:_layer3];
-        [self addSubview:_layer2];
-        [self addSubview:_layer1];
+        [self addSubview:self.layer4_];
+        [self addSubview:self.layer3_];
+        [self addSubview:self.layer2_];
+        [self addSubview:self.layer1_];
     }
     return self;
 }
@@ -96,85 +96,83 @@ const CGFloat LAYER4_SPEED = 5.0f;
 
 
 - (void)startAnimating {
-    if (!_animationTimer || ![_animationTimer isValid]) {
-        _animationTimer = [NSTimer timerWithTimeInterval:0.025 
-                                                  target:self 
-                                                selector:@selector(animationTick) 
-                                                userInfo:nil 
-                                                 repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:_animationTimer forMode:NSRunLoopCommonModes];
+    if (!self.animationTimer_ || ![self.animationTimer_ isValid]) {
+        self.animationTimer_ = [NSTimer timerWithTimeInterval:0.025 
+                                                       target:self 
+                                                     selector:@selector(animationTick) 
+                                                     userInfo:nil 
+                                                      repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:self.animationTimer_ forMode:NSRunLoopCommonModes];
 
     }
 }
 
 
 - (void)stopAnimating {
-    [_animationTimer invalidate];
+    [self.animationTimer_ invalidate];
 }
 
 
 - (void)animationTick {
-    CGFloat newLayer1Offset = _layer1Offset + ([_animationTimer timeInterval] * LAYER1_SPEED);
-    newLayer1Offset = (newLayer1Offset > [_layer1 contentSize].width - 320.0f) ? newLayer1Offset - ([_layer1 contentSize].width - 320.0f):
+    CGFloat newLayer1Offset = self.layer1Offset_ + ([self.animationTimer_ timeInterval] * LAYER1_SPEED);
+    newLayer1Offset = (newLayer1Offset > [self.layer1_ contentSize].width - 320.0f) ? newLayer1Offset - ([self.layer1_ contentSize].width - 320.0f):
                                                                                     newLayer1Offset;
-    _layer1Offset = newLayer1Offset;
+    self.layer1Offset_ = newLayer1Offset;
     
-    CGFloat newLayer2Offset = _layer2Offset + ([_animationTimer timeInterval] * LAYER2_SPEED);
-    newLayer2Offset = (newLayer2Offset > [_layer2 contentSize].width - 320.0f) ? newLayer2Offset - ([_layer2 contentSize].width - 320.0f):
+    CGFloat newLayer2Offset = self.layer2Offset_ + ([self.animationTimer_ timeInterval] * LAYER2_SPEED);
+    newLayer2Offset = (newLayer2Offset > [self.layer2_ contentSize].width - 320.0f) ? newLayer2Offset - ([self.layer2_ contentSize].width - 320.0f):
                                                                                     newLayer2Offset;
-    _layer2Offset = newLayer2Offset;
+    self.layer2Offset_ = newLayer2Offset;
     
-    CGFloat newLayer3Offset = _layer3Offset + ([_animationTimer timeInterval] * LAYER3_SPEED);
-    newLayer3Offset = (newLayer3Offset > [_layer3 contentSize].width - 320.0f) ? newLayer3Offset - ([_layer3 contentSize].width - 320.0f):
+    CGFloat newLayer3Offset = self.layer3Offset_ + ([self.animationTimer_ timeInterval] * LAYER3_SPEED);
+    newLayer3Offset = (newLayer3Offset > [self.layer3_ contentSize].width - 320.0f) ? newLayer3Offset - ([self.layer3_ contentSize].width - 320.0f):
                                                                                     newLayer3Offset;
-    _layer3Offset = newLayer3Offset;
+    self.layer3Offset_ = newLayer3Offset;
     
-    CGFloat newLayer4Offset = _layer4Offset + ([_animationTimer timeInterval] * LAYER4_SPEED);
-    newLayer4Offset = (newLayer4Offset > [_layer4 contentSize].width - 320.0f) ? newLayer4Offset - ([_layer4 contentSize].width - 320.0f):
+    CGFloat newLayer4Offset = self.layer4Offset_ + ([self.animationTimer_ timeInterval] * LAYER4_SPEED);
+    newLayer4Offset = (newLayer4Offset > [self.layer4_ contentSize].width - 320.0f) ? newLayer4Offset - ([self.layer4_ contentSize].width - 320.0f):
                                                                                     newLayer4Offset;
-    _layer4Offset = newLayer4Offset;
+    self.layer4Offset_ = newLayer4Offset;
     
-    [_layer1 setContentOffset:CGPointMake(newLayer1Offset, 0.0f) animated:NO];
-    [_layer2 setContentOffset:CGPointMake(newLayer2Offset, 0.0f) animated:NO];
-    [_layer3 setContentOffset:CGPointMake(newLayer3Offset, 0.0f) animated:NO];
-    [_layer4 setContentOffset:CGPointMake(newLayer4Offset, 0.0f) animated:NO];
+    [self.layer1_ setContentOffset:CGPointMake(newLayer1Offset, 0.0f) animated:NO];
+    [self.layer2_ setContentOffset:CGPointMake(newLayer2Offset, 0.0f) animated:NO];
+    [self.layer3_ setContentOffset:CGPointMake(newLayer3Offset, 0.0f) animated:NO];
+    [self.layer4_ setContentOffset:CGPointMake(newLayer4Offset, 0.0f) animated:NO];
 }
 
 
 - (void)setFrame:(CGRect)newFrame {
     [super setFrame:newFrame];
-    _layer1.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
-    _layer2.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
-    _layer3.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
-    _layer4.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
+    self.layer1_.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
+    self.layer2_.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
+    self.layer3_.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
+    self.layer4_.frame = CGRectMake(0.0f, 0.0f, newFrame.size.width, newFrame.size.height);
 }
 
 
 - (NSArray *)currentCloudOffsets {
-    return [NSArray arrayWithObjects:[NSNumber numberWithFloat:_layer1Offset],
-            [NSNumber numberWithFloat:_layer2Offset],
-            [NSNumber numberWithFloat:_layer3Offset],
-            [NSNumber numberWithFloat:_layer4Offset], nil];
+    return [NSArray arrayWithObjects:[NSNumber numberWithFloat:self.layer1Offset_],
+            [NSNumber numberWithFloat:self.layer2Offset_],
+            [NSNumber numberWithFloat:self.layer3Offset_],
+            [NSNumber numberWithFloat:self.layer4Offset_], nil];
 }
 
 
 - (void)setCurrentCloudOffsets:(NSArray *)someOffsets {
-    if (someOffsets && [someOffsets count] == 4) {
-        _layer1Offset = [[someOffsets objectAtIndex:0] floatValue];
-        _layer2Offset = [[someOffsets objectAtIndex:1] floatValue];
-        _layer3Offset = [[someOffsets objectAtIndex:2] floatValue];
-        _layer4Offset = [[someOffsets objectAtIndex:3] floatValue];
-        
-        [_layer1 setContentOffset:CGPointMake(_layer1Offset, 0.0f) animated:NO];
-        [_layer2 setContentOffset:CGPointMake(_layer2Offset, 0.0f) animated:NO];
-        [_layer3 setContentOffset:CGPointMake(_layer3Offset, 0.0f) animated:NO];
-        [_layer4 setContentOffset:CGPointMake(_layer4Offset, 0.0f) animated:NO];
-    }
+    NSAssert(someOffsets && [someOffsets count] == 4, @"Missing required number of offsets.");
+    self.layer1Offset_ = [[someOffsets objectAtIndex:0] floatValue];
+    self.layer2Offset_ = [[someOffsets objectAtIndex:1] floatValue];
+    self.layer3Offset_ = [[someOffsets objectAtIndex:2] floatValue];
+    self.layer4Offset_ = [[someOffsets objectAtIndex:3] floatValue];
+    [self.layer1_ setContentOffset:CGPointMake(self.layer1Offset_, 0.0f) animated:NO];
+    [self.layer2_ setContentOffset:CGPointMake(self.layer2Offset_, 0.0f) animated:NO];
+    [self.layer3_ setContentOffset:CGPointMake(self.layer3Offset_, 0.0f) animated:NO];
+    [self.layer4_ setContentOffset:CGPointMake(self.layer4Offset_, 0.0f) animated:NO];
 }
 
 
 - (void)dealloc {
-    [_animationTimer invalidate];
+    [self.animationTimer_ invalidate];
 }
 
 @end

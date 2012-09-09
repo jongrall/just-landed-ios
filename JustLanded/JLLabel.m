@@ -8,24 +8,24 @@
 
 #import "JLLabel.h"
 
-@interface JLLabel () {
-    __strong LabelStyle *_style;
-}
+@interface JLLabel ()
+
+// Redefine as readwrite
+@property (strong, readwrite, nonatomic) LabelStyle *style;
 
 @end
 
 
 @implementation JLLabel
 
-@synthesize text;
-@synthesize style=_style;
+@synthesize text = text_;
 
 - (id)initWithLabelStyle:(LabelStyle *)aStyle frame:(CGRect)aFrame {
     self = [super initWithFrame:aFrame];
     
     if (self) {
-        _style = aStyle;
-        [self setOpaque:NO];
+        self.style = aStyle;
+        self.opaque = NO;
         self.text = @"";
     }
 
@@ -40,32 +40,32 @@
     CGContextClearRect(context, rect);
     
     // Background color
-    if ([_style backgroundColor]) {
-        [[_style backgroundColor] set];    
+    if (self.style.backgroundColor) {
+        [self.style.backgroundColor set];
         CGContextFillRect(context, rect);
     }
     
-    TextStyle *textStyle = [_style textStyle];
+    TextStyle *textStyle = self.style.textStyle;
     
     // Shadow
-    if ([textStyle shadowColor]) {
-        CGContextSetShadowWithColor(context, [textStyle shadowOffset], [textStyle shadowBlur], [[textStyle shadowColor] CGColor]);
+    if (textStyle.shadowColor) {
+        CGContextSetShadowWithColor(context, textStyle.shadowOffset, textStyle.shadowBlur, [textStyle.shadowColor CGColor]);
     }
     
     // Draw the text
-    [[textStyle color] set];
-    [text drawInRect:rect 
-            withFont:[textStyle font] 
-       lineBreakMode:[_style lineBreakMode] 
-           alignment:[_style alignment]];
+    [textStyle.color set];
+    [self.text drawInRect:rect
+            withFont:textStyle.font
+       lineBreakMode:self.style.lineBreakMode
+           alignment:self.style.alignment];
     
     [super drawRect:rect];
 }
 
 
 - (void)setText:(NSString *)someText {
-    if (text != someText) {
-        text = someText;
+    if (text_ != someText) {
+        text_ = [someText copy];
         [self setNeedsDisplay];
     }
 }

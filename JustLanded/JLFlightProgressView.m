@@ -15,15 +15,15 @@ const UIEdgeInsets FLIGHT_ICON_INSETS = {0.0f, 38.0f, 0.0f, 34.0f};
 const CGFloat GROUND_LAYER_POINTS_PER_SEC = 25.0f;
 const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 
-@interface JLFlightProgressView () {
-    __strong UIImageView *_onGroundBg;
-    __strong UIScrollView *_groundLayer;
-    __strong UIScrollView *_cloudLayer;
-    __strong UIImageView *_airplaneIcon;
-    __strong NSTimer *_animationTimer;
-    CGFloat _currentGroundOffset;
-    CGFloat _currentCloudOffset;
-}
+@interface JLFlightProgressView ()
+
+@property (strong, nonatomic) UIImageView *onGroundBackground_;
+@property (strong, nonatomic) UIScrollView *groundLayer_;
+@property (strong, nonatomic) UIScrollView *cloudLayer_;
+@property (strong, nonatomic) UIImageView *airplaneIcon_;
+@property (strong, nonatomic) NSTimer *animationTimer_;
+@property (nonatomic) CGFloat currentGroundOffset_;
+@property (nonatomic) CGFloat currentCloudOffset_;
 
 - (void)animateProgressBackgrounds;
 - (void)updatePlaneIcon;
@@ -33,17 +33,17 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 
 @implementation JLFlightProgressView
 
-@synthesize progress;
-@synthesize timeOfDay;
-@synthesize aircraftType;
+@synthesize progress = progress_;
+@synthesize timeOfDay = timeOfDay_;
+@synthesize aircraftType = aircraftType_;
 
 
-- (id)initWithFrame:(CGRect)frame 
+- (id)initWithFrame:(CGRect)aFrame
            progress:(CGFloat)someProgress 
-          timeOfDay:(TimeOfDay)tod 
+          timeOfDay:(TimeOfDay)aTimeOfDay
        aircraftType:(AircraftType)aType {
-    CGRect fixedSize = CGRectMake(frame.origin.x, 
-                                  frame.origin.y, 
+    CGRect fixedSize = CGRectMake(aFrame.origin.x, 
+                                  aFrame.origin.y, 
                                   FLIGHT_PROGRESS_VIEW_SIZE.width, 
                                   FLIGHT_PROGRESS_VIEW_SIZE.height);
     
@@ -54,34 +54,34 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
                                     FLIGHT_PROGRESS_VIEW_SIZE.width, 
                                     FLIGHT_PROGRESS_VIEW_SIZE.height);
         
-        _onGroundBg = [[UIImageView alloc] initWithFrame:bgFrame];
+        self.onGroundBackground_ = [[UIImageView alloc] initWithFrame:bgFrame];
         
-        _groundLayer = [[UIScrollView alloc] initWithFrame:bgFrame];
-        _groundLayer.userInteractionEnabled = NO;
-        _groundLayer.opaque = NO;
-        _groundLayer.scrollEnabled = NO;
-        _groundLayer.showsHorizontalScrollIndicator = NO;
-        _groundLayer.showsVerticalScrollIndicator = NO;
-        _groundLayer.bounces = NO;
+        self.groundLayer_ = [[UIScrollView alloc] initWithFrame:bgFrame];
+        self.groundLayer_.userInteractionEnabled = NO;
+        self.groundLayer_.opaque = NO;
+        self.groundLayer_.scrollEnabled = NO;
+        self.groundLayer_.showsHorizontalScrollIndicator = NO;
+        self.groundLayer_.showsVerticalScrollIndicator = NO;
+        self.groundLayer_.bounces = NO;
         
-        _cloudLayer = [[UIScrollView alloc] initWithFrame:bgFrame];
-        _cloudLayer.userInteractionEnabled = NO;
-        _cloudLayer.opaque = NO;
-        _cloudLayer.scrollEnabled = NO;
-        _cloudLayer.showsHorizontalScrollIndicator = NO;
-        _cloudLayer.showsVerticalScrollIndicator = NO;
-        _cloudLayer.bounces = NO;
+        self.cloudLayer_ = [[UIScrollView alloc] initWithFrame:bgFrame];
+        self.cloudLayer_.userInteractionEnabled = NO;
+        self.cloudLayer_.opaque = NO;
+        self.cloudLayer_.scrollEnabled = NO;
+        self.cloudLayer_.showsHorizontalScrollIndicator = NO;
+        self.cloudLayer_.showsVerticalScrollIndicator = NO;
+        self.cloudLayer_.bounces = NO;
         
-        _airplaneIcon = [[UIImageView alloc] initWithFrame:CGRectZero];
+        self.airplaneIcon_ = [[UIImageView alloc] initWithFrame:CGRectZero];
         
-        [self addSubview:_onGroundBg];
-        [self addSubview:_groundLayer];
-        [self addSubview:_cloudLayer];
-        [self addSubview:_airplaneIcon];
+        [self addSubview:self.onGroundBackground_];
+        [self addSubview:self.groundLayer_];
+        [self addSubview:self.cloudLayer_];
+        [self addSubview:self.airplaneIcon_];
         
-        self.timeOfDay = tod;
+        self.timeOfDay = aTimeOfDay;
         self.aircraftType = aType;
-        self.progress = progress;
+        self.progress = someProgress;
     }
     return self;
 }
@@ -96,72 +96,72 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
         newProgress = 1.0f;
     }
         
-    progress = newProgress;
+    progress_ = newProgress;
     
     // Hide/show the appropriate backgrounds
     // If progress = 0 or 1.0, show the flight landed background
-    if (progress == 0.0f || progress == 1.0f) {
+    if (progress_ == 0.0f || progress_ == 1.0f) {
         // Stop the timer if necessary
-        if ([_animationTimer isValid]) {
-            [_animationTimer invalidate];
+        if ([self.animationTimer_ isValid]) {
+            [self.animationTimer_ invalidate];
         }
         
-        if (timeOfDay == DAY) {
-            _onGroundBg.image = [UIImage imageNamed:@"flight_on_ground_day"];
+        if (self.timeOfDay == DAY) {
+            self.onGroundBackground_.image = [UIImage imageNamed:@"flight_on_ground_day"];
         }
         else {
-            _onGroundBg.image = [UIImage imageNamed:@"flight_on_ground_night"];
+            self.onGroundBackground_.image = [UIImage imageNamed:@"flight_on_ground_night"];
         }
         
-        _onGroundBg.hidden = NO;
-        _groundLayer.hidden = YES;
-        _cloudLayer.hidden = YES;
-        _airplaneIcon.hidden = YES;
+        self.onGroundBackground_.hidden = NO;
+        self.groundLayer_.hidden = YES;
+        self.cloudLayer_.hidden = YES;
+        self.airplaneIcon_.hidden = YES;
     }
     else {
         // Update the flight icon position
         CGFloat horizontalOffset = (FLIGHT_ICON_INSETS.left - FLIGHT_ICON_CENTER.x +
-                                    ((FLIGHT_PROGRESS_VIEW_SIZE.width - FLIGHT_ICON_INSETS.left - FLIGHT_ICON_INSETS.right) * progress));
+                                    ((FLIGHT_PROGRESS_VIEW_SIZE.width - FLIGHT_ICON_INSETS.left - FLIGHT_ICON_INSETS.right) * progress_));
         CGFloat verticalOffset = (FLIGHT_PROGRESS_VIEW_SIZE.height / 2.0f) - FLIGHT_ICON_CENTER.y;
         
-        _airplaneIcon.frame = CGRectMake(horizontalOffset, verticalOffset, FLIGHT_ICON_SIZE.width, FLIGHT_ICON_SIZE.height);
+        self.airplaneIcon_.frame = CGRectMake(horizontalOffset, verticalOffset, FLIGHT_ICON_SIZE.width, FLIGHT_ICON_SIZE.height);
         
-        _onGroundBg.hidden = YES;
-        _groundLayer.hidden = NO;
-        _cloudLayer.hidden = NO;
-        _airplaneIcon.hidden = NO;
+        self.onGroundBackground_.hidden = YES;
+        self.groundLayer_.hidden = NO;
+        self.cloudLayer_.hidden = NO;
+        self.airplaneIcon_.hidden = NO;
     
         // Start the timer if necessary
-        if (!_animationTimer || ![_animationTimer isValid]) {
-            _animationTimer = [NSTimer timerWithTimeInterval:0.025 
-                                                      target:self
-                                                    selector:@selector(animateProgressBackgrounds)
-                                                    userInfo:nil 
-                                                     repeats:YES];
-            [[NSRunLoop currentRunLoop] addTimer:_animationTimer forMode:NSRunLoopCommonModes];
-            [_animationTimer fire];
+        if (!self.animationTimer_ || ![self.animationTimer_ isValid]) {
+            self.animationTimer_ = [NSTimer timerWithTimeInterval:0.025 
+                                                           target:self
+                                                         selector:@selector(animateProgressBackgrounds)
+                                                         userInfo:nil 
+                                                          repeats:YES];
+            [[NSRunLoop currentRunLoop] addTimer:self.animationTimer_ forMode:NSRunLoopCommonModes];
+            [self.animationTimer_ fire];
         }
     }
 }
 
 
 - (void)setTimeOfDay:(TimeOfDay)newTimeOfDay {
-    timeOfDay = newTimeOfDay;
+    timeOfDay_ = newTimeOfDay;
     
     // Updale the backgrounds and flight icon
     UIImage *groundBg = nil;
     UIImage *cloudBg = nil;
     
     // Remove all subviews of the ground and cloud layers
-    for (UIView *aView in [_groundLayer subviews]) {
+    for (UIView *aView in [self.groundLayer_ subviews]) {
         [aView removeFromSuperview];
     }
     
-    for (UIView *aView in [_cloudLayer subviews]) {
+    for (UIView *aView in [self.cloudLayer_ subviews]) {
         [aView removeFromSuperview];
     }
     
-    if (timeOfDay == DAY) {
+    if (timeOfDay_ == DAY) {
         groundBg = [UIImage imageNamed:@"tracking_animation_ground_day"];
         cloudBg = [UIImage imageNamed:@"tracking_animation_clouds_day"];
     }
@@ -170,7 +170,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
         cloudBg = [UIImage imageNamed:@"tracking_animation_clouds_night"];
     }
     
-    BOOL zeroContentSize = CGSizeEqualToSize(_groundLayer.contentSize, CGSizeZero);
+    BOOL zeroContentSize = CGSizeEqualToSize(self.groundLayer_.contentSize, CGSizeZero);
     
     UIImageView *groundImage1 = [[UIImageView alloc] initWithImage:groundBg];
     UIImageView *groundImage2 = [[UIImageView alloc] initWithImage:groundBg];
@@ -182,38 +182,38 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     cloudImage2.contentMode = UIViewContentModeLeft;
     cloudImage2.frame = CGRectMake(cloudBg.size.width, 0.0f, 320.0f, cloudBg.size.height);
     
-    [_groundLayer addSubview:groundImage1];
-    [_groundLayer addSubview:groundImage2];
-    [_cloudLayer addSubview:cloudImage1];
-    [_cloudLayer addSubview:cloudImage2];
+    [self.groundLayer_ addSubview:groundImage1];
+    [self.groundLayer_ addSubview:groundImage2];
+    [self.cloudLayer_ addSubview:cloudImage1];
+    [self.cloudLayer_ addSubview:cloudImage2];
 
-    _groundLayer.contentSize = CGSizeMake(groundBg.size.width + 320.0f, groundBg.size.height); // 320.0f added for seamless looping
-    _cloudLayer.contentSize = CGSizeMake(cloudBg.size.width + 320.0f, cloudBg.size.height); // 320.0f added for seamless looping
+    self.groundLayer_.contentSize = CGSizeMake(groundBg.size.width + 320.0f, groundBg.size.height); // 320.0f added for seamless looping
+    self.cloudLayer_.contentSize = CGSizeMake(cloudBg.size.width + 320.0f, cloudBg.size.height); // 320.0f added for seamless looping
         
     if (zeroContentSize) {
         // Randomize the start point
-        CGFloat randomOffset = (float) (arc4random() % ((int) _groundLayer.contentSize.width));
-        _currentGroundOffset = randomOffset;
-        [_groundLayer setContentOffset:CGPointMake(randomOffset, 0.0f) animated:NO];
-        randomOffset = (float) (arc4random() % ((int) _cloudLayer.contentSize.width));
-        _currentCloudOffset = randomOffset;
-        [_cloudLayer setContentOffset:CGPointMake(randomOffset, 0.0f) animated:NO];
+        CGFloat randomOffset = (float) (arc4random() % ((int) self.groundLayer_.contentSize.width));
+        self.currentGroundOffset_ = randomOffset;
+        [self.groundLayer_ setContentOffset:CGPointMake(randomOffset, 0.0f) animated:NO];
+        randomOffset = (float) (arc4random() % ((int) self.cloudLayer_.contentSize.width));
+        self.currentCloudOffset_ = randomOffset;
+        [self.cloudLayer_ setContentOffset:CGPointMake(randomOffset, 0.0f) animated:NO];
     }
     
     [self updatePlaneIcon];
     
     // Because the icons may have changed size, set progress again
-    [self setProgress:progress];
+    [self setProgress:self.progress];
 }
 
 
 - (void)setAircraftType:(AircraftType)newAircraftType {
-    aircraftType = newAircraftType;
+    aircraftType_ = newAircraftType;
     
     [self updatePlaneIcon];
         
     // Because the icons may have changed size, set progress again
-    [self setProgress:progress];
+    [self setProgress:self.progress];
 }
 
 
@@ -221,67 +221,67 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     CGFloat newGroundOffset;
     CGFloat newCloudOffset;
         
-    if (_currentGroundOffset >= _groundLayer.contentSize.width - 320.0f) {
-        newGroundOffset = (_currentGroundOffset - (_groundLayer.contentSize.width - 320.0f)) + (GROUND_LAYER_POINTS_PER_SEC * _animationTimer.timeInterval);
+    if (self.currentGroundOffset_ >= self.groundLayer_.contentSize.width - 320.0f) {
+        newGroundOffset = (self.currentGroundOffset_ - (self.groundLayer_.contentSize.width - 320.0f)) + (GROUND_LAYER_POINTS_PER_SEC * self.animationTimer_.timeInterval);
     }
     else {
-        newGroundOffset = _currentGroundOffset + (GROUND_LAYER_POINTS_PER_SEC * _animationTimer.timeInterval);
+        newGroundOffset = self.currentGroundOffset_ + (GROUND_LAYER_POINTS_PER_SEC * self.animationTimer_.timeInterval);
     }
 
-    if (_currentCloudOffset >= _cloudLayer.contentSize.width - 320.0f) {
-        newCloudOffset = (_currentCloudOffset - (_cloudLayer.contentSize.width - 320.0f)) + (CLOUD_LAYER_POINTS_PER_SEC * _animationTimer.timeInterval);
+    if (self.currentCloudOffset_ >= self.cloudLayer_.contentSize.width - 320.0f) {
+        newCloudOffset = (self.currentCloudOffset_ - (self.cloudLayer_.contentSize.width - 320.0f)) + (CLOUD_LAYER_POINTS_PER_SEC * self.animationTimer_.timeInterval);
     }
     else {
-        newCloudOffset = _currentCloudOffset + (CLOUD_LAYER_POINTS_PER_SEC * _animationTimer.timeInterval);
+        newCloudOffset = self.currentCloudOffset_ + (CLOUD_LAYER_POINTS_PER_SEC * self.animationTimer_.timeInterval);
     }
     
-    _currentGroundOffset = newGroundOffset;
-    _currentCloudOffset = newCloudOffset;
+    self.currentGroundOffset_ = newGroundOffset;
+    self.currentCloudOffset_ = newCloudOffset;
     
-    [_groundLayer setContentOffset:CGPointMake(newGroundOffset, 0.0f) animated:NO];
-    [_cloudLayer setContentOffset:CGPointMake(newCloudOffset, 0.0f) animated:NO];
+    [self.groundLayer_ setContentOffset:CGPointMake(newGroundOffset, 0.0f) animated:NO];
+    [self.cloudLayer_ setContentOffset:CGPointMake(newCloudOffset, 0.0f) animated:NO];
 }
 
 
 - (void)updatePlaneIcon {
     // Update the icon based on the time of day and aircraft type
     // Update the backgrounds and flight icon
-    if (timeOfDay == DAY) {
-        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_day", [Flight aircraftTypeToString:aircraftType]];
+    if (self.timeOfDay == DAY) {
+        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_day", [Flight aircraftTypeToString:self.aircraftType]];
         UIImage *planeIcon = [UIImage imageNamed:airplaneIconName];
-        _airplaneIcon.image = planeIcon;
-        [_airplaneIcon stopAnimating];
-        _airplaneIcon.animationImages = nil;
+        self.airplaneIcon_.image = planeIcon;
+        [self.airplaneIcon_ stopAnimating];
+        self.airplaneIcon_.animationImages = nil;
     }
     else {
-        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_night", [Flight aircraftTypeToString:aircraftType]];
-        NSString *airplaneLightsIconName = [NSString stringWithFormat:@"%@_night_lights", [Flight aircraftTypeToString:aircraftType]];
+        NSString *airplaneIconName = [NSString stringWithFormat:@"%@_night", [Flight aircraftTypeToString:self.aircraftType]];
+        NSString *airplaneLightsIconName = [NSString stringWithFormat:@"%@_night_lights", [Flight aircraftTypeToString:self.aircraftType]];
         UIImage *planeIcon = [UIImage imageNamed:airplaneIconName];
         UIImage *planeLightsIcon = [UIImage imageNamed:airplaneLightsIconName];
-        _airplaneIcon.animationImages = [NSArray arrayWithObjects:planeIcon, 
-                                                                  planeIcon, 
-                                                                  planeIcon, 
-                                                                  planeIcon, 
-                                                                  planeIcon, 
-                                                                  planeIcon, 
-                                                                  planeIcon, 
-                                                                  planeIcon, 
-                                                                  planeIcon, 
-                                                                  planeLightsIcon, nil];
-        _airplaneIcon.image = nil;
-        _airplaneIcon.animationDuration = 2.5;
-        [_airplaneIcon startAnimating];
+        self.airplaneIcon_.animationImages = [NSArray arrayWithObjects:planeIcon, 
+                                                                    planeIcon,
+                                                                    planeIcon,
+                                                                    planeIcon,
+                                                                    planeIcon,
+                                                                    planeIcon,
+                                                                    planeIcon,
+                                                                    planeIcon,
+                                                                    planeIcon,
+                                                                    planeLightsIcon, nil];
+        self.airplaneIcon_.image = nil;
+        self.airplaneIcon_.animationDuration = 2.5;
+        [self.airplaneIcon_ startAnimating];
     }
     
-    _airplaneIcon.frame = CGRectMake(_airplaneIcon.frame.origin.x, 
-                                     _airplaneIcon.frame.origin.y,
-                                     FLIGHT_ICON_SIZE.width, 
-                                     FLIGHT_ICON_SIZE.height);
+    self.airplaneIcon_.frame = CGRectMake(self.airplaneIcon_.frame.origin.x, 
+                                          self.airplaneIcon_.frame.origin.y,
+                                          FLIGHT_ICON_SIZE.width, 
+                                          FLIGHT_ICON_SIZE.height);
 }
 
 
 - (void)stopAnimating {
-    [_animationTimer invalidate];
+    [self.animationTimer_ invalidate];
 }
 
 

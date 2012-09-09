@@ -244,7 +244,7 @@ static NSArray *_allAirlines;
     if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
         NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
         cell.airlineName = [airlineInfo valueForKeyOrNil:@"name"];
-        cell.code = [self airlineCode:airlineInfo];
+        cell.airlineCode = [self airlineCode:airlineInfo];
         cell.clearText = nil;
         cell.clearCell = NO;
     }

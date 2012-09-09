@@ -10,9 +10,9 @@
 
 @interface JLMultipartLabel : UIView
 
-@property (nonatomic, strong) NSArray *parts;
-@property (nonatomic, strong) NSArray *styles;
-@property (nonatomic, strong) NSArray *offsets;
+@property (copy, nonatomic) NSArray *parts;
+@property (copy, nonatomic) NSArray *styles;
+@property (copy, nonatomic) NSArray *offsets;
 
 - (id)initWithLabelStyles:(NSArray *)styles frame:(CGRect)aFrame;
 

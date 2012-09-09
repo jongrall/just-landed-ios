@@ -8,9 +8,10 @@
 
 #import "JLButton.h"
 
-@interface JLButton () {
-    __strong ButtonStyle *_style;
-}
+@interface JLButton ()
+
+// Redefine as readwrite
+@property (strong, readwrite, nonatomic) ButtonStyle *style;
 
 @end
 
@@ -18,57 +19,55 @@
 
 @implementation JLButton
 
-@synthesize style=_style;
-
 - (id)initWithButtonStyle:(ButtonStyle *)aStyle frame:(CGRect)aFrame {
     self = [super initWithFrame:aFrame];
     
     if (self) {
-        _style = aStyle;
+        self.style = aStyle;
         
-        [self setBackgroundColor:[_style backgroundColor]];
+        [self setBackgroundColor:self.style.backgroundColor];
         
-        if ([_style upImage]) {
-            [self setBackgroundImage:[_style upImage] forState:UIControlStateNormal];
+        if (self.style.upImage) {
+            [self setBackgroundImage:self.style.upImage forState:UIControlStateNormal];
         }
         
-        if ([_style downImage]) {
-            [self setBackgroundImage:[_style downImage] forState:UIControlStateHighlighted];
-            [self setBackgroundImage:[_style downImage] forState:UIControlStateSelected];
+        if (self.style.downImage) {
+            [self setBackgroundImage:self.style.downImage forState:UIControlStateHighlighted];
+            [self setBackgroundImage:self.style.downImage forState:UIControlStateSelected];
         }
         
-        if ([_style disabledImage]) {
-            [self setBackgroundImage:[_style disabledImage] forState:UIControlStateDisabled];
+        if (self.style.disabledImage) {
+            [self setBackgroundImage:self.style.disabledImage forState:UIControlStateDisabled];
         }
         
-        if ([_style icon]) {
-            [self setImage:[_style icon] forState:UIControlStateNormal];
+        if (self.style.icon) {
+            [self setImage:self.style.icon forState:UIControlStateNormal];
         }
         
-        if ([_style disabledIcon]) {
-            [self setImage:[_style disabledIcon] forState:UIControlStateDisabled];
+        if (self.style.disabledIcon) {
+            [self setImage:self.style.disabledIcon forState:UIControlStateDisabled];
         }
         
-        LabelStyle *labelStyle = [_style labelStyle];
+        LabelStyle *labelStyle = self.style.labelStyle;
         
         if (labelStyle) {
-            TextStyle *textStyle = [labelStyle textStyle];
-            self.titleLabel.font = [textStyle font];
-            self.titleLabel.textAlignment = [[_style labelStyle] alignment];
-            self.titleLabel.shadowOffset = [textStyle shadowOffset];
-            [self setTitleColor:[textStyle color] forState:UIControlStateNormal];
-            [self setTitleShadowColor:[textStyle shadowColor] forState:UIControlStateNormal];
+            TextStyle *textStyle = labelStyle.textStyle;
+            self.titleLabel.font = textStyle.font;
+            self.titleLabel.textAlignment = self.style.labelStyle.alignment;
+            self.titleLabel.shadowOffset = textStyle.shadowOffset;
+            [self setTitleColor:textStyle.color forState:UIControlStateNormal];
+            [self setTitleShadowColor:textStyle.shadowColor forState:UIControlStateNormal];
         }
         
-        LabelStyle *disabledStyle = [_style disabledLabelStyle];
+        LabelStyle *disabledStyle = self.style.disabledLabelStyle;
         
         if (disabledStyle) {
-            TextStyle *textStyle = [disabledStyle textStyle];
-            self.titleLabel.font = [textStyle font];
-            self.titleLabel.textAlignment = [[_style labelStyle] alignment];
-            self.titleLabel.shadowOffset = [textStyle shadowOffset];
-            [self setTitleColor:[textStyle color] forState:UIControlStateDisabled];
-            [self setTitleShadowColor:[textStyle shadowColor] forState:UIControlStateDisabled];
+            TextStyle *textStyle = disabledStyle.textStyle;
+            self.titleLabel.font = textStyle.font;
+            self.titleLabel.textAlignment = self.style.labelStyle.alignment;
+            self.titleLabel.shadowOffset = textStyle.shadowOffset;
+            [self setTitleColor:textStyle.color forState:UIControlStateDisabled];
+            [self setTitleShadowColor:textStyle.shadowColor forState:UIControlStateDisabled];
         }
         
         //Stop images from highlighting
@@ -83,12 +82,12 @@
 
 
 - (void)setEnabled:(BOOL)isEnabled {
-    LabelStyle *labelStyle = [_style labelStyle];
+    LabelStyle *labelStyle = self.style.labelStyle;
     
     if (labelStyle) {
-        TextStyle *textStyle = [labelStyle textStyle];
+        TextStyle *textStyle = labelStyle.textStyle;
         // Reverse the shadow direction when disabled
-        CGSize offset = [textStyle shadowOffset];
+        CGSize offset = textStyle.shadowOffset;
             
         if (isEnabled) {
             self.titleLabel.shadowOffset = CGSizeMake(offset.width, -offset.height);
@@ -104,14 +103,14 @@
 
 - (CGRect)titleRectForContentRect:(CGRect)contentRect {
 	//Handle title vertical movement when selected/highlighted relative to the content rect
-    UIEdgeInsets labelInsets = [_style labelInsets];
-    CGSize shadowOffset = [[[_style labelStyle] textStyle] shadowOffset];
+    UIEdgeInsets labelInsets = self.style.labelInsets;
+    CGSize shadowOffset = self.style.labelStyle.textStyle.shadowOffset;
     CGSize shadowSize = CGSizeMake(fabs(shadowOffset.width), fabs(shadowOffset.height));
     
 	switch (self.state) {
         case UIControlStateSelected:
 		case UIControlStateHighlighted: {
-            CGSize downOffset = [_style downLabelOffset];
+            CGSize downOffset = self.style.downLabelOffset;
             return CGRectMake(contentRect.origin.x + labelInsets.left + downOffset.width, 
                               contentRect.origin.y + labelInsets.top + downOffset.height, 
                               contentRect.size.width - labelInsets.left - labelInsets.right + shadowSize.width, 
@@ -119,7 +118,7 @@
             break;
         }
 		case UIControlStateDisabled: {
-            CGSize disabledOffset = [_style disabledLabelOffset];
+            CGSize disabledOffset = self.style.disabledLabelOffset;
             return CGRectMake(contentRect.origin.x + labelInsets.left + disabledOffset.width, 
                               contentRect.origin.y + labelInsets.top + disabledOffset.height, 
                               contentRect.size.width - labelInsets.left - labelInsets.right + shadowSize.width, 
@@ -139,7 +138,7 @@
 
 - (CGRect)imageRectForContentRect:(CGRect)contentRect {
     //Handle icon vertical movement when selected/highlighted relative to the content rect
-    CGPoint iconOrigin = [_style iconOrigin];
+    CGPoint iconOrigin = self.style.iconOrigin;
     
     if ([self imageForState:UIControlStateNormal]) { // If it has an image
         CGSize imageSize = [self imageForState:UIControlStateNormal].size;
@@ -147,7 +146,7 @@
         switch (self.state) {
             case UIControlStateSelected:
             case UIControlStateHighlighted: {
-                CGSize downOffset = [_style downLabelOffset];
+                CGSize downOffset = self.style.downLabelOffset;
                 return CGRectMake(iconOrigin.x + downOffset.width, 
                                   iconOrigin.y + downOffset.height, 
                                   imageSize.width, 
@@ -155,7 +154,7 @@
                 break;
             }
             case UIControlStateDisabled: {
-                CGSize disabledOffset = [_style disabledLabelOffset];
+                CGSize disabledOffset = self.style.disabledLabelOffset;
                 return CGRectMake(iconOrigin.x + disabledOffset.width, 
                                   iconOrigin.y + disabledOffset.height, 
                                   imageSize.width, 

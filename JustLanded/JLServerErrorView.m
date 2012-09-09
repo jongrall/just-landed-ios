@@ -9,11 +9,10 @@
 #import "JLServerErrorView.h"
 #import "JLStyles.h"
 
-@interface JLServerErrorView () {
-    __strong JLLabel *_errorDescriptionLabel;
-}
+@interface JLServerErrorView ()
 
-@property (nonatomic, strong) JLButton *_moreInfoButton;
+@property (strong, nonatomic) JLLabel *errorDescriptionLabel_;
+@property (strong, nonatomic) JLButton *moreInfoButton_;
 
 - (void)moreInfo;
 
@@ -22,52 +21,56 @@
 
 @implementation JLServerErrorView
 
-@synthesize errorDescription;
-@synthesize errorType;
-@synthesize _moreInfoButton;
+@synthesize errorType = errorType_;
 
 - (id)initWithFrame:(CGRect)frame errorType:(ErrorType)type {
     self = [super initWithFrame:frame];
     if (self) {
-        _errorDescriptionLabel = [[JLLabel alloc] initWithLabelStyle:[JLStyles errorDescriptionLabelStyle] 
-                                                               frame:CGRectMake(10.0f,
-                                                                                321.0f,
-                                                                                frame.size.width - 20.0f,
-                                                                                50.0f)];
+        self.errorDescriptionLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles errorDescriptionLabelStyle]
+                                                                    frame:CGRectMake(10.0f,
+                                                                                     321.0f,
+                                                                                     frame.size.width - 20.0f,
+                                                                                     50.0f)];
         
-        _moreInfoButton = [[JLButton alloc] initWithButtonStyle:[JLStyles defaultButtonStyle]
-                                                          frame:CGRectMake(10.0f,
-                                                                           313.0f,
-                                                                           frame.size.width - 20.0f,
-                                                                           56.0f)];
-        _moreInfoButton.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
-        [_moreInfoButton setTitle:NSLocalizedString(@"More Info", @"More Info") forState:UIControlStateNormal];
-        [_moreInfoButton addTarget:self action:@selector(moreInfo) forControlEvents:UIControlEventTouchUpInside];
+        self.moreInfoButton_ = [[JLButton alloc] initWithButtonStyle:[JLStyles defaultButtonStyle]
+                                                               frame:CGRectMake(10.0f,
+                                                                                313.0f,
+                                                                                frame.size.width - 20.0f,
+                                                                                56.0f)];
+        self.moreInfoButton_.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
+        [self.moreInfoButton_ setTitle:NSLocalizedString(@"More Info", @"More Info") forState:UIControlStateNormal];
+        [self.moreInfoButton_ addTarget:self action:@selector(moreInfo) forControlEvents:UIControlEventTouchUpInside];
         
         [self setErrorType:type];
-        [self addSubview:_errorDescriptionLabel];
+        [self addSubview:self.errorDescriptionLabel_];
     }
     return self;
 }
 
 
-- (void)setErrorDescription:(NSString *)desc {
-    _errorDescriptionLabel.text = desc;
+- (NSString *)errorDescription {
+    return self.errorDescriptionLabel_.text;
 }
 
 
-- (void)setErrorType:(ErrorType)type {
-    switch (type) {
+- (void)setErrorDescription:(NSString *)newDescription {
+    self.errorDescriptionLabel_.text = newDescription;
+}
+
+
+- (void)setErrorType:(ErrorType)aType {
+    errorType_ = aType;
+    switch (aType) {
         case ERROR_503: {
             self.noConnectionLabel.text = NSLocalizedString(@"Service Outage", @"Service Outage");
-            _errorDescriptionLabel.text = NSLocalizedString(@"Just Landed is currently unavailable.", @"503 description");
+            self.errorDescriptionLabel_.text = NSLocalizedString(@"Just Landed is currently unavailable.", @"503 description");
             
             self.noConnectionLabel.frame = CGRectMake((self.frame.size.width - 300.0f) / 2.0f,
                                                       234.0f,
                                                       300.0f,
                                                       30.0f);
             
-            _errorDescriptionLabel.frame = CGRectMake(10.0f,
+            self.errorDescriptionLabel_.frame = CGRectMake(10.0f,
                                                       261.0f,
                                                       self.frame.size.width - 20.0f,
                                                       50.0f);
@@ -86,20 +89,20 @@
                                             self.divider.frame.size.width,
                                             self.divider.frame.size.height);
             
-            [self addSubview:_moreInfoButton];
+            [self addSubview:self.moreInfoButton_];
             
             break;
         }
         default: {
             self.noConnectionLabel.text = NSLocalizedString(@"Server Error", @"Server Error");
-            _errorDescriptionLabel.text = NSLocalizedString(@"Our engineers have been notified.", @"500 description");
+            self.errorDescriptionLabel_.text = NSLocalizedString(@"Our engineers have been notified.", @"500 description");
             
             self.noConnectionLabel.frame = CGRectMake((self.frame.size.width - 300.0f) / 2.0f,
                                                       294.0f,
                                                       300.0f,
                                                       30.0f);
             
-            _errorDescriptionLabel.frame = CGRectMake(10.0f,
+            self.errorDescriptionLabel_.frame = CGRectMake(10.0f,
                                                       321.0f,
                                                       self.frame.size.width - 20.0f,
                                                       50.0f);
@@ -118,7 +121,7 @@
                                             self.divider.frame.size.width,
                                             self.divider.frame.size.height);
             
-            [_moreInfoButton removeFromSuperview];
+            [self.moreInfoButton_ removeFromSuperview];
             
             break;
         }

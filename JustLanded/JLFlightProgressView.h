@@ -17,7 +17,7 @@ extern const CGSize FLIGHT_PROGRESS_VIEW_SIZE;
 @property (nonatomic) TimeOfDay timeOfDay;
 @property (nonatomic) AircraftType aircraftType;
 
-- (id)initWithFrame:(CGRect)frame progress:(CGFloat)someProgress timeOfDay:(TimeOfDay)tod aircraftType:(AircraftType)aType;
+- (id)initWithFrame:(CGRect)aFrame progress:(CGFloat)someProgress timeOfDay:(TimeOfDay)aTimeOfDay aircraftType:(AircraftType)aType;
 - (void)stopAnimating;
 
 @end

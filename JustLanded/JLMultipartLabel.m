@@ -11,9 +11,9 @@
 
 @implementation JLMultipartLabel
 
-@synthesize parts;
-@synthesize styles;
-@synthesize offsets;
+@synthesize parts = parts_;
+@synthesize styles = styles_;
+@synthesize offsets = offsets_;
 
 - (id)initWithLabelStyles:(NSArray *)someStyles frame:(CGRect)aFrame {
     self = [super initWithFrame:aFrame];
@@ -31,21 +31,27 @@
         }
         
         self.parts = labelParts;
-        self.offsets = offsets;
+        self.offsets = labelOffsets;
     }
     
     return self;
 }
 
 
+- (void)setStyles:(NSArray *)someStyles {
+    styles_ = [someStyles copy];
+    [self setNeedsDisplay];
+}
+
+
 - (void)setParts:(NSArray *)newParts {
-    parts = newParts;
+    parts_ = [newParts copy];
     [self setNeedsDisplay];
 }
 
 
 - (void)setOffsets:(NSArray *)newOffsets {
-    offsets = newOffsets;
+    offsets_ = [newOffsets copy];
     [self setNeedsDisplay];
 }
 
@@ -58,36 +64,36 @@
     
     CGRect remainingRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
-    for (NSUInteger i = 0; i < [parts count]; i++) {
-        NSString *nextPart = [parts objectAtIndex:i];
+    for (NSUInteger i = 0; i < [self.parts count]; i++) {
+        NSString *nextPart = [self.parts objectAtIndex:i];
         
         CGContextSaveGState(context);
         
         // Get the next offset, guard against programmer error
         CGSize nextOffset = CGSizeZero;
-        if (offsets) {
-            nextOffset = ([offsets count] > i) ? [[offsets objectAtIndex:i] CGSizeValue] : [[offsets lastObject] CGSizeValue];
+        if (self.offsets) {
+            nextOffset = ([self.offsets count] > i) ? [[self.offsets objectAtIndex:i] CGSizeValue] : [[self.offsets lastObject] CGSizeValue];
         }
         
         LabelStyle *nextStyle;
         
         // Get the next style, guard against programmer error
-        if (styles) {
-            nextStyle = ([styles count] > i) ? [styles objectAtIndex:i] : [styles lastObject];
+        if (self.styles) {
+            nextStyle = ([self.styles count] > i) ? [self.styles objectAtIndex:i] : [self.styles lastObject];
         }
         else {
             break; // Unrecoverable, we need at least one text style
         }
         
         // Background color
-        [[nextStyle backgroundColor] set];    
+        [nextStyle.backgroundColor set];
         CGContextFillRect(context, rect);
         
-        TextStyle *textStyle = [nextStyle textStyle];
+        TextStyle *textStyle = nextStyle.textStyle;
         
         // Shadow
-        if ([textStyle shadowColor]) {
-            CGContextSetShadowWithColor(context, [textStyle shadowOffset], [textStyle shadowBlur], [[textStyle shadowColor] CGColor]);
+        if (textStyle.shadowColor) {
+            CGContextSetShadowWithColor(context, textStyle.shadowOffset, textStyle.shadowBlur, [textStyle.shadowColor CGColor]);
         }
         
         // Calculate the rectangle to draw in
@@ -97,16 +103,16 @@
                                                 remainingRect.size.height - nextOffset.height);
         
         // Draw the next piece of text
-        [[textStyle color] set];
+        [textStyle.color set];
         [nextPart drawInRect:offsetRemainingRect 
-                    withFont:[textStyle font] 
-               lineBreakMode:[nextStyle lineBreakMode] 
-                   alignment:[nextStyle alignment]];
+                    withFont:textStyle.font
+               lineBreakMode:nextStyle.lineBreakMode
+                   alignment:nextStyle.alignment];
         
         // Calculate the size of the remaining rectangle for the next part of the label
-        CGSize textSize = [nextPart sizeWithFont:[textStyle font] 
+        CGSize textSize = [nextPart sizeWithFont:textStyle.font
                                constrainedToSize:offsetRemainingRect.size 
-                                   lineBreakMode:[nextStyle lineBreakMode]];
+                                   lineBreakMode:nextStyle.lineBreakMode];
         
         remainingRect = CGRectMake(remainingRect.origin.x + textSize.width + nextOffset.width,
                                    remainingRect.origin.y,

@@ -10,9 +10,6 @@
 
 @implementation JLMultipartOverUnderLabel
 
-@synthesize labelSeparation;
-
-
 - (void)setParts:(NSArray *)parts {
     NSAssert([parts count] % 2 == 0, @"Odd number of label parts!");
     [super setParts:parts];
@@ -22,14 +19,13 @@
 - (void)drawRect:(CGRect)rect {
     // Custom drawing
     CGContextRef context = UIGraphicsGetCurrentContext();
-    
     CGContextClearRect(context, rect);
     
     // Calculate the offsets of each part
     CGFloat midpoint = rect.size.width / 2.0f;
     CGFloat totalWidth = 0.0f;
     
-    for (NSUInteger i = 0; i < [self.parts count]; i=i+2) {
+    for (NSUInteger i = 0; i < [self.parts count]; i = i + 2) {
         NSString *nextPart = [self.parts objectAtIndex:i];
         LabelStyle *nextStyle;
         
@@ -40,15 +36,15 @@
             break; // Unrecoverable, we need at least one text style
         }
         
-        CGSize nextPartSize = [nextPart sizeWithFont:[[nextStyle textStyle] font]];
+        CGSize nextPartSize = [nextPart sizeWithFont:nextStyle.textStyle.font];
         totalWidth += nextPartSize.width;
     }
     
     NSUInteger numSeparators = ([self.parts count]/2 - 1) > 0 ? [self.parts count]/2 - 1 : 0;
-    totalWidth = totalWidth + numSeparators * labelSeparation;
+    totalWidth = totalWidth + numSeparators * self.labelSeparation;
     CGPoint startPoint = CGPointMake(midpoint - (totalWidth / 2.0f), 0.0f);
  
-    for (NSUInteger i = 0; i < [self.parts count]; i=i+2) {
+    for (NSUInteger i = 0; i < [self.parts count]; i = i + 2) {
         NSString *nextUpperPart = [self.parts objectAtIndex:i];
         NSString *nextUnderPart = [self.parts objectAtIndex:i+1];
         
@@ -72,40 +68,40 @@
             break; // Unrecoverable, we need at least one text style
         }
             
-        TextStyle *upperTextStyle = [nextUpperStyle textStyle];
-        TextStyle *lowerTextStyle = [nextLowerStyle textStyle];
+        TextStyle *upperTextStyle = nextUpperStyle.textStyle;
+        TextStyle *lowerTextStyle = nextLowerStyle.textStyle;
         
         // Draw the upper part
         CGContextSaveGState(context);
         
         // Shadow
-        if ([upperTextStyle shadowColor]) {
-            CGContextSetShadowWithColor(context, [upperTextStyle shadowOffset], [upperTextStyle shadowBlur], [[upperTextStyle shadowColor] CGColor]);
+        if (upperTextStyle.shadowColor) {
+            CGContextSetShadowWithColor(context, upperTextStyle.shadowOffset, upperTextStyle.shadowBlur, [upperTextStyle.shadowColor CGColor]);
         }
         
-        [[upperTextStyle color] set];
+        [upperTextStyle.color set];
         CGSize snippetSize = [nextUpperPart drawAtPoint:CGPointMake(startPoint.x + nextUpperOffset.width,
                                                                     startPoint.y + nextUpperOffset.height) 
-                                               withFont:[upperTextStyle font]];
+                                               withFont:upperTextStyle.font];
         
         CGContextRestoreGState(context);
         
         // Draw the under part
         CGContextSaveGState(context);
-        CGSize underSize = [nextUnderPart sizeWithFont:[lowerTextStyle font]];
+        CGSize underSize = [nextUnderPart sizeWithFont:lowerTextStyle.font];
         CGPoint underStartPoint = CGPointMake(roundf(startPoint.x + (snippetSize.width / 2.0f) - underSize.width/2.0f + nextLowerOffset.width),
                                               nextLowerOffset.height);
         
         // Shadow
-        if ([lowerTextStyle shadowColor]) {
-            CGContextSetShadowWithColor(context, [lowerTextStyle shadowOffset], [lowerTextStyle shadowBlur], [[lowerTextStyle shadowColor] CGColor]);
+        if (lowerTextStyle.shadowColor) {
+            CGContextSetShadowWithColor(context, lowerTextStyle.shadowOffset, lowerTextStyle.shadowBlur, [lowerTextStyle.shadowColor CGColor]);
         }
         
-        [[lowerTextStyle color] set];
-        [nextUnderPart drawAtPoint:underStartPoint withFont:[lowerTextStyle font]];
+        [lowerTextStyle.color set];
+        [nextUnderPart drawAtPoint:underStartPoint withFont:lowerTextStyle.font];
         CGContextRestoreGState(context);
         
-        startPoint = CGPointMake(startPoint.x + snippetSize.width + labelSeparation,
+        startPoint = CGPointMake(startPoint.x + snippetSize.width + self.labelSeparation,
                                  startPoint.y);
     }
 }

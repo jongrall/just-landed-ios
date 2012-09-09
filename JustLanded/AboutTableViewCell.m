@@ -10,82 +10,83 @@
 
 CGFloat const AboutTableViewCellWidth = 306.0f;
 CGFloat const AboutTableViewCellHeight = 60.0f;
+CGRect const titleRect_ = {{75.0f, (AboutTableViewCellHeight / 2.0f) - 7.0f}, {AboutTableViewCellWidth - 84.0f, 20.0f}};
+CGSize const highlightedShadowOffset_ = {0.0f, 0.0f};
+CGPoint const iconCenter_ = {46.0f, 30.0f};
 
 @implementation AboutTableViewCell
 
-@synthesize title;
-@synthesize icon;
-@synthesize downIcon;
-@synthesize cellType;
-@synthesize hasDisclosureArrow;
+@synthesize title = title_;
+@synthesize icon = icon_;
+@synthesize downIcon = downIcon_;
+@synthesize cellType = cellType_;
+@synthesize hasDisclosureArrow = hasDisclosureArrow_;
 
-static UIFont *_titleFont;
-static UIColor *_titleColor;
-static UIColor *_highlightedTitleColor;
-static UIColor *_highlightedShadowColor;
-static UIImage *_disclosureArrow;
-static UIImage *_highlightedDisclosureArrow;
-static UIImage *_divider;
-static CGRect _titleRect;
-static CGRect _dividerRect;
-static CGSize _highlightedShadowOffset;
-static CGPoint _iconCenter;
+static UIFont *sTitleFont_;
+static UIColor *sTitleColor_;
+static UIColor *sHighlightedTitleColor_;
+static UIColor *sHighlightedShadowColor_;
+static UIImage *sDisclosureArrow_;
+static UIImage *sHighlightedDisclosureArrow_;
+static UIImage *sDivider_;
+static CGRect sDividerRect_;
 
 + (void)initialize {
-    if (self == [AboutTableViewCell class]) {
-        _titleFont = [JLStyles sansSerifLightOfSize:18.0f];
-        _titleColor = [UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f];
-        _highlightedTitleColor = [UIColor whiteColor];
-        _highlightedShadowColor = [UIColor whiteColor];
-        _disclosureArrow = [UIImage imageNamed:@"disclosure_arrow_up"];
-        _highlightedDisclosureArrow = [UIImage imageNamed:@"disclosure_arrow_down"];
-        _divider = [UIImage imageNamed:@"about_divider"];
-        _titleRect = CGRectMake(75.0f, (AboutTableViewCellHeight / 2.0f) - 7.0f, AboutTableViewCellWidth - 84.0f, 20.0f);
-        _dividerRect = CGRectMake((AboutTableViewCellWidth - _divider.size.width) / 2.0f,
-                                  AboutTableViewCellHeight - _divider.size.height,
-                                  _divider.size.width,
-                                  _divider.size.height);
-        _highlightedShadowOffset = CGSizeZero;
-        _iconCenter = CGPointMake(46.0f, 30.0f);
-    }
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        if (self == [AboutTableViewCell class]) {
+            sTitleFont_ = [JLStyles sansSerifLightOfSize:18.0f];
+            sTitleColor_ = [UIColor colorWithRed:255.0f/255.0f green:255.0f/255.0f blue:255.0f/255.0f alpha:0.8f];
+            sHighlightedTitleColor_ = [UIColor whiteColor];
+            sHighlightedShadowColor_ = [UIColor whiteColor];
+            sDisclosureArrow_ = [UIImage imageNamed:@"disclosure_arrow_up"];
+            sHighlightedDisclosureArrow_ = [UIImage imageNamed:@"disclosure_arrow_down"];
+            sDivider_ = [UIImage imageNamed:@"about_divider"];
+            sDividerRect_ = CGRectMake((AboutTableViewCellWidth - sDivider_.size.width) / 2.0f,
+                                      AboutTableViewCellHeight - sDivider_.size.height,
+                                      sDivider_.size.width,
+                                      sDivider_.size.height);
+        }
+    });
 }
 
 
 - (void)setTitle:(NSString *)aTitle {
-    if (title != aTitle) {
-        title = [aTitle copy];
+    if (title_ != aTitle) {
+        title_ = [aTitle copy];
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setIcon:(UIImage *)anIcon {
-    if (icon != anIcon) {
-        icon = anIcon;
+    if (icon_ != anIcon) {
+        icon_ = anIcon;
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setDownIcon:(UIImage *)anIcon {
-    if (downIcon != anIcon) {
-        downIcon = anIcon;
+    if (downIcon_ != anIcon) {
+        downIcon_ = anIcon;
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setCellType:(AboutCellType)aType {
-    if (cellType != aType) {
-        cellType = aType;
+    if (cellType_ != aType) {
+        cellType_ = aType;
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setHasDisclosureArrow:(BOOL)flag {
-    if (hasDisclosureArrow != flag) {
-        hasDisclosureArrow = flag;
+    if (hasDisclosureArrow_ != flag) {
+        hasDisclosureArrow_ = flag;
         [self setNeedsDisplay];
     }
 }
@@ -103,36 +104,36 @@ static CGPoint _iconCenter;
         self.selectedBackgroundView.hidden = NO;
     
         // Icons have highlight shadow built in
-        [downIcon drawAtPoint:CGPointMake(roundf(_iconCenter.x - downIcon.size.width/2.0f), roundf(_iconCenter.y - downIcon.size.height/2.0f))
+        [self.downIcon drawAtPoint:CGPointMake(roundf(iconCenter_.x - self.downIcon.size.width/2.0f), roundf(iconCenter_.y - self.downIcon.size.height/2.0f))
                     blendMode:kCGBlendModeNormal
                         alpha:0.87f];
         
-        CGContextSetShadowWithColor(context, _highlightedShadowOffset, 4.0f, [_highlightedShadowColor CGColor]);
+        CGContextSetShadowWithColor(context, highlightedShadowOffset_, 4.0f, [sHighlightedShadowColor_ CGColor]);
     }
     else {
         self.backgroundView.hidden = NO;
         self.selectedBackgroundView.hidden = YES;
         
         // Icons have highlight shadow built in
-        [icon drawAtPoint:CGPointMake(roundf(_iconCenter.x - icon.size.width/2.0f), roundf(_iconCenter.y - icon.size.height/2.0f))
+        [self.icon drawAtPoint:CGPointMake(roundf(iconCenter_.x - self.icon.size.width/2.0f), roundf(iconCenter_.y - self.icon.size.height/2.0f))
                     blendMode:kCGBlendModeNormal
                         alpha:0.8f];
     }
     
     // Draw the text
-    [_titleColor set];
+    [sTitleColor_ set];
     
-    [title drawInRect:_titleRect
-             withFont:_titleFont
-        lineBreakMode:UILineBreakModeTailTruncation
-            alignment:UITextAlignmentLeft];
+    [self.title drawInRect:titleRect_
+                  withFont:sTitleFont_
+             lineBreakMode:UILineBreakModeTailTruncation
+                 alignment:UITextAlignmentLeft];
 
     // Stop drawing shadows
     CGContextRestoreGState(context);
     
     // Draw the disclosure arrow if needed
-    if (hasDisclosureArrow) {
-        UIImage *disclosureArrowToDraw = (isHighlighted) ? _highlightedDisclosureArrow : _disclosureArrow;
+    if (self.hasDisclosureArrow) {
+        UIImage *disclosureArrowToDraw = (isHighlighted) ? sHighlightedDisclosureArrow_ : sDisclosureArrow_;
         [disclosureArrowToDraw drawInRect:CGRectMake(contentView.frame.size.width - 47.0f,
                                                      (AboutTableViewCellHeight - disclosureArrowToDraw.size.height) / 2.0f,
                                                      disclosureArrowToDraw.size.width,
@@ -140,8 +141,8 @@ static CGPoint _iconCenter;
     }
     
     // Draw the divider below if necessary
-    if (cellType != BOTTOM) {
-        [_divider drawInRect:_dividerRect];
+    if (self.cellType != BOTTOM) {
+        [sDivider_ drawInRect:sDividerRect_];
     }
 }
 

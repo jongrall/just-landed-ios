@@ -10,6 +10,9 @@
 
 @implementation DestinationAirport
 
+@synthesize bagClaim;
+@synthesize gate;
+
 - (id)initWithAirportInfo:(NSDictionary *)airportInfo {
     self = [super initWithAirportInfo:airportInfo];
     
@@ -39,21 +42,21 @@
 
 
 - (NSString *)bagClaim {
-    if (self.bagClaim == nil || [self.bagClaim isKindOfClass:[NSNull class]]) {
+    if (bagClaim == nil || [bagClaim isKindOfClass:[NSNull class]]) {
         return @"";
     }
     else {
-        return self.bagClaim;
+        return bagClaim;
     }
 }
 
 
 - (NSString *)gate {
-    if (self.gate == nil || [self.gate isKindOfClass:[NSNull class]]) {
+    if (gate == nil || [gate isKindOfClass:[NSNull class]]) {
         return @"";
     }
     else {
-        return self.gate;
+        return gate;
     }
 }
 

@@ -8,13 +8,13 @@
 
 #import "ABTableViewCell.h"
 
-@interface AirlineResultTableViewCell : ABTableViewCell
-
 extern CGFloat const AirlineResultCellHeight;
 
-@property (nonatomic, copy) NSString *airlineName;
-@property (nonatomic, copy) NSString *code;
-@property (nonatomic, copy) NSString *clearText;
+@interface AirlineResultTableViewCell : ABTableViewCell
+
+@property (copy, nonatomic) NSString *airlineName;
+@property (copy, nonatomic) NSString *airlineCode;
+@property (copy, nonatomic) NSString *clearText;
 @property (nonatomic) BOOL clearCell;
 
 @end

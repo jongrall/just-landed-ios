@@ -10,11 +10,16 @@
 
 CGFloat const FlightResultTableViewCellWidth = 288.0f;
 CGFloat const FlightResultTableViewCellHeight = 60.0f;
+CGRect const toFromAirportRect_ = {{13.5f, 14.0f}, {FlightResultTableViewCellWidth - 27.0f, 30.0f}};
+CGRect const landingTimeRect_ = {{38.0f, 35.0f}, {FlightResultTableViewCellWidth - 51.5f - 60.0f, 30.0f}};
+CGRect const statusRect_ = {{38.0f + FlightResultTableViewCellWidth - 51.5f - 60.0f, 31.0f}, {60.0f, 30.0f}};
+CGSize const shadowOffset_ = {0.0f, -1.0f};
+CGPoint const flightIconOrigin_ = {13.5f, 34.0f};
 
-@interface FlightResultTableViewCell () 
+@interface FlightResultTableViewCell ()
 
-@property (strong, nonatomic) UIImage *_flightIcon;
-@property (strong, nonatomic) UIImage *_arrowIcon;
+@property (strong, nonatomic) UIImage *flightIcon_;
+@property (strong, nonatomic) UIImage *arrowIcon_;
 
 @end
 
@@ -22,97 +27,89 @@ CGFloat const FlightResultTableViewCellHeight = 60.0f;
 
 @implementation FlightResultTableViewCell
 
-@synthesize toAirport;
-@synthesize fromAirport;
-@synthesize status;
-@synthesize statusColor;
-@synthesize statusShadowColor;
-@synthesize landingTime;
-@synthesize cellType;
-@synthesize inFlight;
-@synthesize _flightIcon;
-@synthesize _arrowIcon;
+@synthesize toAirport = toAirport_;
+@synthesize fromAirport = fromAirport_;
+@synthesize status = status_;
+@synthesize statusColor = statusColor_;
+@synthesize statusShadowColor = statusShadowColor_;
+@synthesize landingTime = landingTime_;
+@synthesize cellType = cellType_;
+@synthesize inFlight = inFlight_;
 
-static UIFont *_toFromAirportFont;
-static UIFont *_statusFont;
-static UIFont *_landingTimeFont;
-static UIColor *_textColor;
-static UIImage *_topBg;
-static UIImage *_topBgSelected;
-static UIImage *_middleBg;
-static UIImage *_middleBgSelected;
-static UIImage *_bottomBg;
-static UIImage *_bottomBgSelected;
-static CGRect _toFromAirportRect;
-static CGRect _landingTimeRect;
-static CGRect _statusRect;
-static CGSize _shadowOffset;
-static CGPoint _flightIconOrigin;
+static UIFont *sToFromAirportFont_;
+static UIFont *sStatusFont_;
+static UIFont *sLandingTimeFont_;
+static UIColor *sTextColor_;
+static UIImage *sTopBackground_;
+static UIImage *sTopBackgroundSelected_;
+static UIImage *sMiddleBackground_;
+static UIImage *sMiddleBackgroundSelected_;
+static UIImage *sBottomBackground_;
+static UIImage *sBottomBackgroundSelected_;
 
 + (void)initialize {
-    if (self == [FlightResultTableViewCell class]) {
-        _toFromAirportFont = [JLStyles sansSerifLightBoldOfSize:13.5f];
-        _statusFont = [JLStyles regularScriptOfSize:19.0f];
-        _landingTimeFont = [JLStyles sansSerifLightOfSize:13.5f];
-        _textColor = [UIColor whiteColor];
-        _topBg = [[UIImage imageNamed:@"table_cell_top"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
-        _topBgSelected = [[UIImage imageNamed:@"table_cell_top_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
-        _middleBg = [[UIImage imageNamed:@"table_cell_middle"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
-        _middleBgSelected = [[UIImage imageNamed:@"table_cell_middle_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
-        _bottomBg = [[UIImage imageNamed:@"table_cell_bottom"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
-        _bottomBgSelected = [[UIImage imageNamed:@"table_cell_bottom_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
-        _toFromAirportRect = CGRectMake(13.5f, 14.0f, FlightResultTableViewCellWidth - 27.0f, 30.0f);
-        _landingTimeRect = CGRectMake(38.0f, 35.0f, FlightResultTableViewCellWidth - 51.5f - 60.0f, 30.0f);
-        _statusRect = CGRectMake(_landingTimeRect.origin.x + _landingTimeRect.size.width, 31.0f, 60.0f, 30.0f);
-        _shadowOffset = CGSizeMake(0.0f, 1.0f);
-        _flightIconOrigin = CGPointMake(13.5f, 34.0f);
-    }
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        if (self == [FlightResultTableViewCell class]) {
+            sToFromAirportFont_ = [JLStyles sansSerifLightBoldOfSize:13.5f];
+            sStatusFont_ = [JLStyles regularScriptOfSize:19.0f];
+            sLandingTimeFont_ = [JLStyles sansSerifLightOfSize:13.5f];
+            sTextColor_ = [UIColor whiteColor];
+            sTopBackground_ = [[UIImage imageNamed:@"table_cell_top"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+            sTopBackgroundSelected_ = [[UIImage imageNamed:@"table_cell_top_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+            sMiddleBackground_ = [[UIImage imageNamed:@"table_cell_middle"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+            sMiddleBackgroundSelected_ = [[UIImage imageNamed:@"table_cell_middle_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+            sBottomBackground_ = [[UIImage imageNamed:@"table_cell_bottom"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+            sBottomBackgroundSelected_ = [[UIImage imageNamed:@"table_cell_bottom_selected"] stretchableImageWithLeftCapWidth:11 topCapHeight:0];
+        }
+    });
 }
 
 - (void)setToAirport:(NSString *)anAirport {
-    if (toAirport != anAirport) {
-        toAirport = [anAirport uppercaseString];
+    if (toAirport_ != anAirport) {
+        toAirport_ = [anAirport uppercaseString];
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setFromAirport:(NSString *)anAirport {
-    if (fromAirport != anAirport) {
-        fromAirport = [anAirport uppercaseString];
+    if (fromAirport_ != anAirport) {
+        fromAirport_ = [anAirport uppercaseString];
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setStatus:(NSString *)aStatus {
-    if (status != aStatus) {
-        status = [aStatus lowercaseString];
+    if (status_ != aStatus) {
+        status_ = [aStatus lowercaseString];
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setStatusColor:(UIColor *)aStatusColor {
-    if (statusColor != aStatusColor) {
-        statusColor = aStatusColor;
+    if (statusColor_ != aStatusColor) {
+        statusColor_ = aStatusColor;
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setStatusShadowColor:(UIColor *)aColor {
-    if (statusShadowColor != aColor) {
-        statusShadowColor = aColor;
-        self._flightIcon = [UIImage imageNamed:@"plane_landing" 
-                                     withColor:_textColor 
-                                   shadowColor:statusShadowColor 
-                                  shadowOffset:CGSizeMake(0.0f, -1.0f) 
+    if (statusShadowColor_ != aColor) {
+        statusShadowColor_ = aColor;
+        self.flightIcon_ = [UIImage imageNamed:@"plane_landing" 
+                                     withColor:sTextColor_ 
+                                   shadowColor:statusShadowColor_
+                                  shadowOffset:shadowOffset_
                                     shadowBlur:0.0f];
-        self._arrowIcon = [UIImage imageNamed:@"table_arrow" 
-                                    withColor:_textColor 
-                                  shadowColor:statusShadowColor 
-                                 shadowOffset:CGSizeMake(0.0f, -1.0f)
+        self.arrowIcon_ = [UIImage imageNamed:@"table_arrow" 
+                                    withColor:sTextColor_ 
+                                  shadowColor:statusShadowColor_
+                                 shadowOffset:shadowOffset_
                                    shadowBlur:0.0f];
         
         [self setNeedsDisplay];
@@ -120,18 +117,18 @@ static CGPoint _flightIconOrigin;
 }
 
 - (void)setLandingTime:(NSString *)aLandingTime {
-    if (landingTime != aLandingTime) {
-        landingTime = [aLandingTime copy];
+    if (landingTime_ != aLandingTime) {
+        landingTime_ = [aLandingTime copy];
         [self setNeedsDisplay];
     }
 }
 
 
 - (void)setCellType:(FlightResultCellType)aType {
-    if (cellType != aType) {
-        cellType = aType;
+    if (cellType_ != aType) {
+        cellType_ = aType;
         
-        if (cellType == BOTTOM) {
+        if (cellType_ == BOTTOM) {
             CGRect bounds = CGRectMake(0.0f, 0.0f, FlightResultTableViewCellWidth, FlightResultTableViewCellHeight + 2.0f);
             [self setBounds:bounds];
             [self.contentView setBounds:bounds];
@@ -148,8 +145,8 @@ static CGPoint _flightIconOrigin;
 
 
 - (void)setInFlight:(BOOL)flag {
-    if (inFlight != flag) {
-        inFlight = flag;
+    if (inFlight_ != flag) {
+        inFlight_ = flag;
         [self setNeedsDisplay];
     }
 }
@@ -167,36 +164,36 @@ static CGPoint _flightIconOrigin;
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    if (cellType == BOTTOM) {
+    if (self.cellType == BOTTOM) {
         CGContextSaveGState(context);
     }
         
-    CGRect bgBounds = CGRectMake(0.0f, 0.0f, FlightResultTableViewCellWidth, FlightResultTableViewCellHeight);
+    CGRect backgroundBounds = CGRectMake(0.0f, 0.0f, FlightResultTableViewCellWidth, FlightResultTableViewCellHeight);
     
-    if (cellType == TOP) {
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:bgBounds
+    if (self.cellType == TOP) {
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:backgroundBounds
                                                 byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight
                                                            cornerRadii:CGSizeMake(6.0f, 6.0f)];
         [path addClip];
     }
-    else if (cellType == BOTTOM) {
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:bgBounds
+    else if (self.cellType == BOTTOM) {
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:backgroundBounds
                                                    byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight
                                                          cornerRadii:CGSizeMake(6.0f, 6.0f)];
         [path addClip];
     }
     
     //Draw the background status color
-	[statusColor set]; 
+	[self.statusColor set];
     
-    CGContextFillRect(context, bgBounds);
+    CGContextFillRect(context, backgroundBounds);
     
-    if (cellType == BOTTOM) {
+    if (self.cellType == BOTTOM) {
         CGContextRestoreGState(context);
     }
     
     // Draw the text
-    [_textColor set];
+    [sTextColor_ set];
     
     CGContextSaveGState(context);
     if (isHighlighted) {
@@ -205,63 +202,63 @@ static CGPoint _flightIconOrigin;
     
     // Save the graphics state before we draw shadowed elements
     CGContextSaveGState(context);
-    CGContextSetShadowWithColor(context, CGSizeMake(0.0f, -1.0f), 0.0f, [statusShadowColor CGColor]);
+    CGContextSetShadowWithColor(context, shadowOffset_, 0.0f, [self.statusShadowColor CGColor]);
     
     // Draw the to - from airport text
-    CGSize fromAirportSize = [fromAirport drawAtPoint:_toFromAirportRect.origin
-                                             forWidth:_toFromAirportRect.size.width / 2.0f 
-                                             withFont:_toFromAirportFont 
-                                        lineBreakMode:UILineBreakModeTailTruncation];
+    CGSize fromAirportSize = [self.fromAirport drawAtPoint:toFromAirportRect_.origin
+                                                  forWidth:toFromAirportRect_.size.width / 2.0f 
+                                                  withFont:sToFromAirportFont_ 
+                                             lineBreakMode:UILineBreakModeTailTruncation];
     
-    [toAirport drawAtPoint:CGPointMake(_toFromAirportRect.origin.x + fromAirportSize.width + _arrowIcon.size.width + 8.0f,
-                                       _toFromAirportRect.origin.y) 
-                  forWidth:_toFromAirportRect.size.width / 2.0f
-                  withFont:_toFromAirportFont
-             lineBreakMode:UILineBreakModeTailTruncation];
+    [self.toAirport drawAtPoint:CGPointMake(toFromAirportRect_.origin.x + fromAirportSize.width + self.arrowIcon_.size.width + 8.0f,
+                                            toFromAirportRect_.origin.y) 
+                       forWidth:toFromAirportRect_.size.width / 2.0f
+                       withFont:sToFromAirportFont_
+                  lineBreakMode:UILineBreakModeTailTruncation];
     
     
     // Stop drawing shadows
     CGContextRestoreGState(context);
     
     // Draw the plane icon
-    [_flightIcon drawInRect:CGRectMake(_flightIconOrigin.x, 
-                                       _flightIconOrigin.y,
-                                       _flightIcon.size.width, 
-                                       _flightIcon.size.height)];
+    [self.flightIcon_ drawInRect:CGRectMake(flightIconOrigin_.x,
+                                            flightIconOrigin_.y,
+                                            self.flightIcon_.size.width,
+                                            self.flightIcon_.size.height)];
     
     // Draw the arrow between the locations
-    [_arrowIcon drawInRect:CGRectMake(_toFromAirportRect.origin.x + fromAirportSize.width + 3.0f,
-                                      _toFromAirportRect.origin.y - 1.0f,
-                                      _arrowIcon.size.width,
-                                      _arrowIcon.size.height)];
+    [self.arrowIcon_ drawInRect:CGRectMake(toFromAirportRect_.origin.x + fromAirportSize.width + 3.0f,
+                                           toFromAirportRect_.origin.y - 1.0f,
+                                           self.arrowIcon_.size.width,
+                                           self.arrowIcon_.size.height)];
     
     // Draw the landing time text
-    [landingTime drawInRect:_landingTimeRect 
-                   withFont:_landingTimeFont 
-              lineBreakMode:UILineBreakModeTailTruncation 
-                  alignment:UITextAlignmentLeft];
+    [self.landingTime drawInRect:landingTimeRect_
+                        withFont:sLandingTimeFont_ 
+                   lineBreakMode:UILineBreakModeTailTruncation 
+                       alignment:UITextAlignmentLeft];
     
     // Draw the status text
-    [status drawInRect:_statusRect
-              withFont:_statusFont
-         lineBreakMode:UILineBreakModeTailTruncation 
-             alignment:UITextAlignmentRight];
+    [self.status drawInRect:statusRect_
+                   withFont:sStatusFont_
+              lineBreakMode:UILineBreakModeTailTruncation 
+                  alignment:UITextAlignmentRight];
     
     CGContextRestoreGState(context);
     
     // Draw the border on top
     if (!isHighlighted) {
-        switch (cellType) {
+        switch (self.cellType) {
             case TOP: {
-                [_topBg drawInRect:rect];
+                [sTopBackground_ drawInRect:rect];
                 break;
             }
             case MIDDLE: {
-                [_middleBg drawInRect:rect];
+                [sMiddleBackground_ drawInRect:rect];
                 break;
             }
             case BOTTOM: {
-                [_bottomBg drawInRect:rect];
+                [sBottomBackground_ drawInRect:rect];
                 break;
             }
             default:
@@ -269,17 +266,17 @@ static CGPoint _flightIconOrigin;
         }
     }
     else {
-        switch (cellType) {
+        switch (self.cellType) {
             case TOP: {
-                [_topBgSelected drawInRect:rect];
+                [sTopBackgroundSelected_ drawInRect:rect];
                 break;
             }
             case MIDDLE: {
-                [_middleBgSelected drawInRect:rect];
+                [sMiddleBackgroundSelected_ drawInRect:rect];
                 break;
             }
             case BOTTOM: {
-                [_bottomBgSelected drawInRect:rect];
+                [sBottomBackgroundSelected_ drawInRect:rect];
                 break;
             }
             default:

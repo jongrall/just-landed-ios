@@ -9,66 +9,67 @@
 #import "AirlineResultTableViewCell.h"
 
 CGFloat const AirlineResultCellHeight = 44.0f;
+CGRect const textRect_ = {{14.0f, 14.0f}, {292.0f, 22.0f}};
 
 @implementation AirlineResultTableViewCell
 
-@synthesize airlineName;
-@synthesize code;
-@synthesize clearText;
-@synthesize clearCell;
+@synthesize airlineName = airlineName_;
+@synthesize airlineCode = airlineCode_;
+@synthesize clearText = clearText_;
+@synthesize clearCell = clearCell_;
 
-static UIFont *_nameFont;
-static UIFont *_codeFont;
-static UIFont *_clearFont;
-static UIColor *_selectedCellBgColor;
-static UIColor *_cellBgColor;
-static UIColor *_textColor;
-static UIColor *_clearTextColor;
-static UIColor *_selectedTextColor;
-static CGRect _textRect;
-
-
+static UIFont *sNameFont_;
+static UIFont *sCodeFont_;
+static UIFont *sClearFont_;
+static UIColor *sSelectedCellBackgroundColor_;
+static UIColor *sCellBackgroundColor_;
+static UIColor *sTextColor_;
+static UIColor *sClearTextColor_;
+static UIColor *sSelectedTextColor_;
 
 + (void)initialize {
-    if (self == [AirlineResultTableViewCell class]) {
-        _nameFont = [JLStyles sansSerifLightOfSize:18.0f];
-        _codeFont = [JLStyles sansSerifLightBoldOfSize:18.0f];
-        _clearFont = [JLStyles sansSerifLightBoldOfSize:18.0f];
-        _selectedCellBgColor = [UIColor colorWithRed:107.0f/255.0f green:157.0f/255.0f blue:178.0f/255.0f alpha:1.0f];
-        _cellBgColor = [UIColor whiteColor];
-        _textColor = [UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0 blue:51.0f/255.0f alpha:1.0f];
-        _selectedTextColor = [UIColor whiteColor];
-        _clearTextColor = [UIColor colorWithRed:107.0f/255.0f green:157.0f/255.0f blue:178.0f/255.0f alpha:1.0f];
-        _textRect = CGRectMake(14.0f, 14.0f, 292.0f, 22.0f);
-    }
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        if (self == [AirlineResultTableViewCell class]) {
+            sNameFont_ = [JLStyles sansSerifLightOfSize:18.0f];
+            sCodeFont_ = [JLStyles sansSerifLightBoldOfSize:18.0f];
+            sClearFont_ = [JLStyles sansSerifLightBoldOfSize:18.0f];
+            sSelectedCellBackgroundColor_ = [UIColor colorWithRed:107.0f/255.0f green:157.0f/255.0f blue:178.0f/255.0f alpha:1.0f];
+            sCellBackgroundColor_ = [UIColor whiteColor];
+            sTextColor_ = [UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0 blue:51.0f/255.0f alpha:1.0f];
+            sSelectedTextColor_ = [UIColor whiteColor];
+            sClearTextColor_ = [UIColor colorWithRed:107.0f/255.0f green:157.0f/255.0f blue:178.0f/255.0f alpha:1.0f];
+        }
+    });
 }
 
 
 - (void)setAirlineName:(NSString *)aName {
-    if (aName != airlineName) {
-        airlineName = [aName stringByAppendingString:@" "];
+    if (airlineName_ != aName) {
+        airlineName_ = [aName stringByAppendingString:@" "];
         [self setNeedsDisplay];
     }
 }
 
 
-- (void)setCode:(NSString *)aCode {
-    if (aCode != code) {
-        code = [NSString stringWithFormat:@"(%@)", aCode];
+- (void)setAirlineCode:(NSString *)anAirlineCode {
+    if (airlineCode_ != anAirlineCode) {
+        airlineCode_ = [NSString stringWithFormat:@"(%@)", anAirlineCode];
         [self setNeedsDisplay];
     }
 }
 
-- (void)setClearText:(NSString *)text {
-    if (text != clearText) {
-        clearText = [text copy];
+- (void)setClearText:(NSString *)someText {
+    if (clearText_ != someText) {
+        clearText_ = [someText copy];
         [self setNeedsDisplay];
     }
 }
 
 - (void)setClearCell:(BOOL)flag {
-    if (flag != clearCell) {
-        clearCell = flag;
+    if (clearCell_ != flag) {
+        clearCell_ = flag;
         [self setNeedsDisplay];
     }
 }
@@ -79,42 +80,42 @@ static CGRect _textRect;
     
     // Draw the bg
     if (isHighlighted) {
-        [_selectedCellBgColor set];
+        [sSelectedCellBackgroundColor_ set];
     }
     else {
-        [_cellBgColor set];
+        [sCellBackgroundColor_ set];
     }
     
     CGContextFillRect(context, rect);
     
     if (isHighlighted) {
-        [_selectedTextColor set];
+        [sSelectedTextColor_ set];
     }
     else {
-        if (clearCell) {
-            [_clearTextColor set];
+        if (self.clearCell) {
+            [sClearTextColor_ set];
         }
         else {
-            [_textColor set];
+            [sTextColor_ set];
         }
     }
     
-    if (!clearCell) {
+    if (!self.clearCell) {
         // Draw the text
-        CGSize nameSize = [airlineName drawInRect:_textRect 
-                                         withFont:_nameFont 
-                                    lineBreakMode:UILineBreakModeMiddleTruncation 
-                                        alignment:UITextAlignmentLeft];
-        [code drawInRect:CGRectMake(_textRect.origin.x + nameSize.width, _textRect.origin.y, _textRect.size.width - nameSize.width, _textRect.size.height) 
-                    withFont:_codeFont
-               lineBreakMode:UILineBreakModeTailTruncation
-                   alignment:UITextAlignmentLeft];
+        CGSize nameSize = [self.airlineName drawInRect:textRect_
+                                              withFont:sNameFont_ 
+                                         lineBreakMode:UILineBreakModeMiddleTruncation 
+                                             alignment:UITextAlignmentLeft];
+        [self.airlineCode drawInRect:CGRectMake(textRect_.origin.x + nameSize.width, textRect_.origin.y, textRect_.size.width - nameSize.width, textRect_.size.height)
+                            withFont:sCodeFont_
+                       lineBreakMode:UILineBreakModeTailTruncation
+                           alignment:UITextAlignmentLeft];
     }
     else {
-        [clearText drawInRect:_textRect 
-                     withFont:_clearFont 
-                lineBreakMode:UILineBreakModeTailTruncation 
-                    alignment:UITextAlignmentCenter];
+        [self.clearText drawInRect:textRect_
+                          withFont:sClearFont_ 
+                     lineBreakMode:UILineBreakModeTailTruncation 
+                         alignment:UITextAlignmentCenter];
     }
 }
 

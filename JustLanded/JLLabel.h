@@ -11,8 +11,8 @@
 
 @interface JLLabel : UIView
 
-@property (nonatomic, copy) NSString *text;
-@property (nonatomic, readonly) LabelStyle *style;
+@property (copy, nonatomic) NSString *text;
+@property (strong, readonly, nonatomic) LabelStyle *style;
 
 - (id)initWithLabelStyle:(LabelStyle *)aStyle frame:(CGRect)aFrame;
 

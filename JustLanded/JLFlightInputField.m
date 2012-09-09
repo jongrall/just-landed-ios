@@ -10,7 +10,7 @@
 
 @implementation JLFlightInputField
 
-@synthesize errorState;
+@synthesize errorState = errorState_;
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -54,11 +54,11 @@
 
 
 - (void)setErrorState:(FlightInputErrorState)aState {
-        errorState = aState;
+        errorState_ = aState;
         LabelStyle *labelStyle = nil;
             
         // Change the text style based on the error state
-        switch (errorState) {
+        switch (errorState_) {
             case FlightInputError: {
                 labelStyle = [JLLookupStyles flightFieldErrorTextStyle];
                 break;
@@ -69,10 +69,10 @@
             }
         }
         
-        TextStyle *textStyle = [labelStyle textStyle];
-        self.textAlignment = [labelStyle alignment];
-        self.font = [textStyle font];
-        self.textColor = [textStyle color];
+        TextStyle *textStyle = labelStyle.textStyle;
+        self.textAlignment = labelStyle.alignment;
+        self.font = textStyle.font;
+        self.textColor = textStyle.color;
 }
 
 

@@ -9,16 +9,16 @@
 #import "JLStatusLabel.h"
 #import "JLStyles.h"
 
-@interface JLStatusLabel () {
-    __strong UIColor *_shadowColor;
-}
+@interface JLStatusLabel ()
+
+@property (strong, nonatomic) UIColor *shadowColor_;
 
 @end
 
 
 @implementation JLStatusLabel
 
-@synthesize status;
+@synthesize status = status_;
 
 - (id)initWithLabelStyle:(LabelStyle *)aStyle frame:(CGRect)aFrame status:(FlightStatus)aStatus {
     self = [super initWithLabelStyle:aStyle frame:aFrame];
@@ -32,7 +32,8 @@
 
 
 - (void)setStatus:(FlightStatus)newStatus {
-    _shadowColor = [JLStyles labelShadowColorForStatus:newStatus];
+    status_ = newStatus;
+    self.shadowColor_ = [JLStyles labelShadowColorForStatus:newStatus];
     [self setNeedsDisplay];
 }
 
@@ -44,22 +45,22 @@
     CGContextClearRect(context, rect);
     
     // Background color
-    [[self.style backgroundColor] set];
+    [self.style.backgroundColor set];
     CGContextFillRect(context, rect);
     
-    TextStyle *textStyle = [self.style textStyle];
+    TextStyle *textStyle = self.style.textStyle;
     
     // Shadow
-    if (_shadowColor) {
-        CGContextSetShadowWithColor(context, [textStyle shadowOffset], [textStyle shadowBlur], [_shadowColor CGColor]);
+    if (self.shadowColor_) {
+        CGContextSetShadowWithColor(context, textStyle.shadowOffset, textStyle.shadowBlur, [self.shadowColor_ CGColor]);
     }
     
     // Draw the text
-    [[textStyle color] set];
+    [textStyle.color set];
     [self.text drawInRect:rect 
-            withFont:[textStyle font] 
-       lineBreakMode:[self.style lineBreakMode] 
-           alignment:[self.style alignment]];
+            withFont:textStyle.font
+       lineBreakMode:self.style.lineBreakMode
+           alignment:self.style.alignment];
 }
 
 @end

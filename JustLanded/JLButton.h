@@ -12,8 +12,7 @@
 @interface JLButton : UIButton
 
 // Note JLButton ignores shadow blur!
-
-@property (nonatomic, readonly) ButtonStyle *style;
+@property (strong, readonly, nonatomic) ButtonStyle *style;
 
 - (id)initWithButtonStyle:(ButtonStyle *)aStyle frame:(CGRect)aFrame;
 
