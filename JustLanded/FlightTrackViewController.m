@@ -835,6 +835,7 @@
                                             afterDelay:4.0];
     
     if (!self.updateTimer_ || ![self.updateTimer_ isValid]) {
+        [self.updateTimer_ invalidate];
         self.updateTimer_ = [NSTimer timerWithTimeInterval:1.0
                                                     target:self
                                                   selector:@selector(updateDisplayedData)
@@ -844,6 +845,7 @@
     }
     
     if (!self.alternatingLabelTimer_ || ![self.alternatingLabelTimer_ isValid]) {
+        [self.alternatingLabelTimer_ invalidate];
         self.alternatingLabelTimer_ = [NSTimer timerWithTimeInterval:4.0
                                                               target:self
                                                             selector:@selector(alternateData)

@@ -140,6 +140,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     
         // Start the timer if necessary
         if (!self.animationTimer_ || ![self.animationTimer_ isValid]) {
+            [self.animationTimer_ invalidate];
             self.animationTimer_ = [NSTimer timerWithTimeInterval:0.025 
                                                            target:self
                                                          selector:@selector(animateProgressBackgrounds)

@@ -45,7 +45,6 @@
 
 
 - (void)startAnimating {
-    
     if (!self.animationStartTimer_ || ![self.animationStartTimer_ isValid]) {
         // Reset
         [self.airplane_ setFrame:CGRectMake(-self.airplane_.frame.size.width,
@@ -53,6 +52,7 @@
                                             self.airplane_.frame.size.width,
                                             self.airplane_.frame.size.height)];
         
+        [self.animationStartTimer_ invalidate];
         self.animationStartTimer_ = [NSTimer timerWithTimeInterval:(arc4random() % 30)
                                                  target:self
                                                selector:@selector(startAnimatingPlane)
@@ -71,8 +71,9 @@
 
 - (void)startAnimatingPlane {
     // Start the animation over only if the plane is in the reset position
-    if (self.airplane_.frame.origin.x <= -self.airplane_.frame.size.width) {
+    if (self.airplane_.frame.origin.x <= -self.airplane_.frame.size.width && (!self.airplaneTimer_ || ![self.airplaneTimer_ isValid])) {
         //Reset
+        [self.airplaneTimer_ invalidate];
         self.airplaneTimer_ = [NSTimer timerWithTimeInterval:0.025
                                                       target:self
                                                     selector:@selector(animationTick)

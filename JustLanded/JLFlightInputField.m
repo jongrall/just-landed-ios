@@ -22,7 +22,14 @@
         self.backgroundColor = [UIColor clearColor];
         self.leftViewMode = UITextFieldViewModeAlways;
         self.borderStyle = UITextBorderStyleNone;
-        self.errorState = FlightInputNoError;
+        
+        errorState_ = FlightInputNoError;
+        LabelStyle *labelStyle = [JLLookupStyles flightFieldTextStyle];
+        TextStyle *textStyle = labelStyle.textStyle;
+        self.textAlignment = labelStyle.alignment;
+        self.font = textStyle.font;
+        self.textColor = textStyle.color;
+        
         self.clearsOnBeginEditing = NO;
         self.clearButtonMode = UITextFieldViewModeWhileEditing;
         self.autocapitalizationType = UITextAutocapitalizationTypeAllCharacters;
