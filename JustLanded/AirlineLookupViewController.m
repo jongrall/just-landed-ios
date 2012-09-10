@@ -31,15 +31,12 @@ static NSArray *sAllAirlines_;
 
 + (void)initialize {
     static dispatch_once_t sOncePredicate;
-        
-    if (self == [AirlineLookupViewController class]) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSArray *allAirlines = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"airlines" ofType:@"plist"]];
-            dispatch_once(&sOncePredicate, ^{    
-                sAllAirlines_ = allAirlines;
-            });
-        });
-    }
+    
+    dispatch_once(&sOncePredicate, ^{ 
+        if (self == [AirlineLookupViewController class]) {
+                sAllAirlines_ = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"airlines" ofType:@"plist"]];
+        }
+    });
 }
 
 

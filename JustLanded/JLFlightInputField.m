@@ -22,7 +22,7 @@
         self.backgroundColor = [UIColor clearColor];
         self.leftViewMode = UITextFieldViewModeAlways;
         self.borderStyle = UITextBorderStyleNone;
-        errorState_ = FlightInputNoError;
+        self.errorState = FlightInputNoError;
         self.clearsOnBeginEditing = NO;
         self.clearButtonMode = UITextFieldViewModeWhileEditing;
         self.autocapitalizationType = UITextAutocapitalizationTypeAllCharacters;
