@@ -19,6 +19,6 @@
 @property (strong, nonatomic) UIImageView *noConnectionImageView;
 @property (strong, nonatomic) UIImageView *divider;
 @property (strong, readonly, nonatomic) JLLabel *noConnectionLabel;
-@property (strong, readonly, nonatomic) JLButton *tryAgainbutton;
+@property (strong, readonly, nonatomic) JLButton *tryAgainButton;
 
 @end

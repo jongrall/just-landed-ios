@@ -19,52 +19,54 @@
 
 @implementation JLButton
 
+@synthesize style = style_;
+
 - (id)initWithButtonStyle:(ButtonStyle *)aStyle frame:(CGRect)aFrame {
     self = [super initWithFrame:aFrame];
     
     if (self) {
-        self.style = aStyle;
+        style_ = aStyle;
         
-        [self setBackgroundColor:self.style.backgroundColor];
+        [self setBackgroundColor:style_.backgroundColor];
         
-        if (self.style.upImage) {
-            [self setBackgroundImage:self.style.upImage forState:UIControlStateNormal];
+        if (style_.upImage) {
+            [self setBackgroundImage:style_.upImage forState:UIControlStateNormal];
         }
         
-        if (self.style.downImage) {
-            [self setBackgroundImage:self.style.downImage forState:UIControlStateHighlighted];
-            [self setBackgroundImage:self.style.downImage forState:UIControlStateSelected];
+        if (style_.downImage) {
+            [self setBackgroundImage:style_.downImage forState:UIControlStateHighlighted];
+            [self setBackgroundImage:style_.downImage forState:UIControlStateSelected];
         }
         
-        if (self.style.disabledImage) {
-            [self setBackgroundImage:self.style.disabledImage forState:UIControlStateDisabled];
+        if (style_.disabledImage) {
+            [self setBackgroundImage:style_.disabledImage forState:UIControlStateDisabled];
         }
         
-        if (self.style.icon) {
-            [self setImage:self.style.icon forState:UIControlStateNormal];
+        if (style_.icon) {
+            [self setImage:style_.icon forState:UIControlStateNormal];
         }
         
-        if (self.style.disabledIcon) {
-            [self setImage:self.style.disabledIcon forState:UIControlStateDisabled];
+        if (style_.disabledIcon) {
+            [self setImage:style_.disabledIcon forState:UIControlStateDisabled];
         }
         
-        LabelStyle *labelStyle = self.style.labelStyle;
+        LabelStyle *labelStyle = style_.labelStyle;
         
         if (labelStyle) {
             TextStyle *textStyle = labelStyle.textStyle;
             self.titleLabel.font = textStyle.font;
-            self.titleLabel.textAlignment = self.style.labelStyle.alignment;
+            self.titleLabel.textAlignment = style_.labelStyle.alignment;
             self.titleLabel.shadowOffset = textStyle.shadowOffset;
             [self setTitleColor:textStyle.color forState:UIControlStateNormal];
             [self setTitleShadowColor:textStyle.shadowColor forState:UIControlStateNormal];
         }
         
-        LabelStyle *disabledStyle = self.style.disabledLabelStyle;
+        LabelStyle *disabledStyle = style_.disabledLabelStyle;
         
         if (disabledStyle) {
             TextStyle *textStyle = disabledStyle.textStyle;
             self.titleLabel.font = textStyle.font;
-            self.titleLabel.textAlignment = self.style.labelStyle.alignment;
+            self.titleLabel.textAlignment = style_.labelStyle.alignment;
             self.titleLabel.shadowOffset = textStyle.shadowOffset;
             [self setTitleColor:textStyle.color forState:UIControlStateDisabled];
             [self setTitleShadowColor:textStyle.shadowColor forState:UIControlStateDisabled];

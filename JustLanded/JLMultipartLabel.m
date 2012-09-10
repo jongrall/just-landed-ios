@@ -19,7 +19,7 @@
     self = [super initWithFrame:aFrame];
     
     if (self) {
-        self.styles = someStyles;
+        styles_ = someStyles;
         self.opaque = NO;
         
         NSMutableArray *labelParts = [NSMutableArray array];
@@ -30,8 +30,8 @@
             [labelOffsets addObject:[NSValue valueWithCGSize:CGSizeZero]];
         }
         
-        self.parts = labelParts;
-        self.offsets = labelOffsets;
+        parts_ = labelParts;
+        offsets_ = labelOffsets;
     }
     
     return self;
@@ -64,22 +64,22 @@
     
     CGRect remainingRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
-    for (NSUInteger i = 0; i < [self.parts count]; i++) {
-        NSString *nextPart = [self.parts objectAtIndex:i];
+    for (NSUInteger i = 0; i < [parts_ count]; i++) {
+        NSString *nextPart = [parts_ objectAtIndex:i];
         
         CGContextSaveGState(context);
         
         // Get the next offset, guard against programmer error
         CGSize nextOffset = CGSizeZero;
-        if (self.offsets) {
-            nextOffset = ([self.offsets count] > i) ? [[self.offsets objectAtIndex:i] CGSizeValue] : [[self.offsets lastObject] CGSizeValue];
+        if (offsets_) {
+            nextOffset = ([offsets_ count] > i) ? [[offsets_ objectAtIndex:i] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
         }
         
         LabelStyle *nextStyle;
         
         // Get the next style, guard against programmer error
-        if (self.styles) {
-            nextStyle = ([self.styles count] > i) ? [self.styles objectAtIndex:i] : [self.styles lastObject];
+        if (styles_) {
+            nextStyle = ([styles_ count] > i) ? [styles_ objectAtIndex:i] : [styles_ lastObject];
         }
         else {
             break; // Unrecoverable, we need at least one text style

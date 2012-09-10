@@ -15,6 +15,7 @@
 
 
 @interface AirlineLookupViewController : UIViewController <UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
+
 @property (weak, nonatomic) id <AirlineLookupDelegate> delegate;
 
 + (BOOL)airlineCodeExists:(NSString *)aCode;

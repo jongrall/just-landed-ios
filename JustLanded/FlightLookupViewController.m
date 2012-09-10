@@ -30,16 +30,18 @@ typedef enum {
 
 @interface FlightLookupViewController ()
 
-@property (strong, nonatomic) JLButton *_lookupButton;
-@property (strong, nonatomic) JLButton *_airportCodesButton;
-@property (strong, nonatomic) JLButton *_airportCodesLabelButton;
-@property (strong, nonatomic) JLFlightInputField *_flightNumberField;
-@property (strong, nonatomic) UITableView *_flightResultsTable;
-@property (strong, nonatomic) JLAirplaneView *_airplane;
-@property (strong, nonatomic) UIImageView *_flightResultsTableFrame;
-@property (strong, nonatomic) JLSpinner *_lookupSpinner;
-@property (strong, nonatomic) NSArray *_flightResults;
-@property (strong, nonatomic) JLCloudLayer *_cloudLayer;
+// Redefine as readwrite
+@property (strong, readwrite, nonatomic) JLFlightInputField *flightNumberField;
+
+@property (strong, nonatomic) JLButton *lookupButton_;
+@property (strong, nonatomic) JLButton *airportCodesButton_;
+@property (strong, nonatomic) JLButton *airportCodesLabelButton_;
+@property (strong, nonatomic) UITableView *flightResultsTable_;
+@property (strong, nonatomic) JLAirplaneView *airplane_;
+@property (strong, nonatomic) UIImageView *flightResultsTableFrame_;
+@property (strong, nonatomic) JLSpinner *lookupSpinner_;
+@property (strong, nonatomic) NSArray *flightResults_;
+@property (strong, nonatomic) JLCloudLayer *cloudLayer_;
 
 + (NSString *)sanitizedFlightNum:(NSString *)flightNum;
 + (BOOL)isFlightNumValid:(NSString *)flightNum;
@@ -71,30 +73,28 @@ typedef enum {
 
 @implementation FlightLookupViewController
 
-@synthesize _lookupButton;
-@synthesize _airportCodesButton;
-@synthesize _airportCodesLabelButton;
-@synthesize _flightNumberField;
-@synthesize _flightResultsTable;
-@synthesize _airplane;
-@synthesize _flightResultsTableFrame;
-@synthesize _lookupSpinner;
-@synthesize _flightResults;
-@synthesize _cloudLayer;
+@synthesize flightNumberField = flightNumberField_;
+@synthesize flightResultsTable_;
+@synthesize airplane_;
+@synthesize cloudLayer_;
 
-static NSRegularExpression *_flightNumberRegex;
-static NSRegularExpression *_airlineCodeRegex;
+static NSRegularExpression *sFlightNumberRegex_;
+static NSRegularExpression *sAirlineCodeRegex_;
 
 
 + (void)initialize {
+    static dispatch_once_t sOncePredicate;
+    
     if (self == [FlightLookupViewController class]) {
+        dispatch_once(&sOncePredicate, ^{
         NSError *error = NULL;
-        _flightNumberRegex = [NSRegularExpression regularExpressionWithPattern:@"\\A[A-Z0-9]{2}[A-Z]{0,1}[0-9]{1,4}[A-Z]{0,1}\\Z"
-                                                                       options:NSRegularExpressionCaseInsensitive
-                                                                         error:&error];
-        _airlineCodeRegex = [NSRegularExpression regularExpressionWithPattern:@"\\A[A-Z][0-9][A-Z]{0,1}|\\A[0-9][A-Z]{1,2}|\\A[A-Z]{2,3}"
-                                                                      options:NSRegularExpressionCaseInsensitive
-                                                                        error:&error];
+            sFlightNumberRegex_ = [NSRegularExpression regularExpressionWithPattern:@"\\A[A-Z0-9]{2}[A-Z]{0,1}[0-9]{1,4}[A-Z]{0,1}\\Z"
+                                                                            options:NSRegularExpressionCaseInsensitive
+                                                                              error:&error];
+            sAirlineCodeRegex_ = [NSRegularExpression regularExpressionWithPattern:@"\\A[A-Z][0-9][A-Z]{0,1}|\\A[0-9][A-Z]{1,2}|\\A[A-Z]{2,3}"
+                                                                           options:NSRegularExpressionCaseInsensitive
+                                                                             error:&error];
+        });
     }
 }
 
@@ -135,7 +135,7 @@ static NSRegularExpression *_airlineCodeRegex;
     }
     
     NSString *sanitizedNum = [self sanitizedFlightNum:flightNum];
-    NSUInteger numMatches = [_flightNumberRegex numberOfMatchesInString:sanitizedNum
+    NSUInteger numMatches = [sFlightNumberRegex_ numberOfMatchesInString:sanitizedNum
                                                                 options:NSMatchingAnchored
                                                                   range:NSMakeRange(0, [sanitizedNum length])];
     return (numMatches == 1) ? YES : NO;
@@ -152,7 +152,7 @@ static NSRegularExpression *_airlineCodeRegex;
 + (NSArray *)splitFlightNumber:(NSString *)flightNumber {
     if ([self isFlightNumValid:flightNumber]) {
         NSString *sanitizedNum = [self sanitizedFlightNum:flightNumber];
-        NSTextCheckingResult *result = [_airlineCodeRegex firstMatchInString:sanitizedNum
+        NSTextCheckingResult *result = [sAirlineCodeRegex_ firstMatchInString:sanitizedNum
                                                                      options:NSMatchingAnchored
                                                                        range:NSMakeRange(0, [sanitizedNum length])];
         if (result.range.location != NSNotFound) {
@@ -212,8 +212,8 @@ static NSRegularExpression *_airlineCodeRegex;
     FlightTrackViewController *controller = [[FlightTrackViewController alloc] initWithFlight:aFlight];
     controller.delegate = self;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    [_cloudLayer stopAnimating]; // Stop animating the clouds
-    [_airplane stopAnimating];
+    [self.cloudLayer_ stopAnimating]; // Stop animating the clouds
+    [self.airplane_ stopAnimating];
     [self presentModalViewController:controller animated:animateFlip];
     
     // If animated, was user-initiated, record the track
@@ -229,23 +229,23 @@ static NSRegularExpression *_airlineCodeRegex;
 
 
 - (void)indicateLookingUp {
-    self._flightNumberField.enabled = NO;
-    self._lookupButton.hidden = YES;
-    self._airportCodesButton.hidden = YES;
-    self._airportCodesLabelButton.hidden = YES;
-    [_lookupSpinner startAnimating];
+    self.flightNumberField.enabled = NO;
+    self.lookupButton_.hidden = YES;
+    self.airportCodesButton_.hidden = YES;
+    self.airportCodesLabelButton_.hidden = YES;
+    [self.lookupSpinner_ startAnimating];
 }
 
 
 - (void)indicateStoppedLookingUp {
-    [_lookupSpinner stopAnimating];
-    self._flightNumberField.enabled = YES;
+    [self.lookupSpinner_ stopAnimating];
+    self.flightNumberField.enabled = YES;
     
-    self._lookupButton.hidden = NO;
-    self._airportCodesButton.hidden = NO;
-    self._airportCodesLabelButton.hidden = NO;
+    self.lookupButton_.hidden = NO;
+    self.airportCodesButton_.hidden = NO;
+    self.airportCodesLabelButton_.hidden = NO;
     
-    if ([[self class] isFlightNumValid:_flightNumberField.text]) {
+    if ([[self class] isFlightNumValid:self.flightNumberField.text]) {
         [self allowLookup];
     }
     else {
@@ -259,8 +259,8 @@ static NSRegularExpression *_airlineCodeRegex;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)doLookup {
-    [_flightNumberField resignFirstResponder];
-    [Flight lookupFlights:[[self class] sanitizedFlightNum:_flightNumberField.text]];
+    [self.flightNumberField resignFirstResponder];
+    [Flight lookupFlights:[[self class] sanitizedFlightNum:self.flightNumberField.text]];
 }
 
 
@@ -278,8 +278,8 @@ static NSRegularExpression *_airlineCodeRegex;
     AboutViewController *aboutController = [[AboutViewController alloc] init];
     aboutController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     // HACK: Causes loadview to fire, which causes offsetting clouds before animation to work, and adds airplane to aboutController view
-    aboutController.airplane = _airplane;
-    aboutController.cloudLayer.currentCloudOffsets = _cloudLayer.currentCloudOffsets;
+    aboutController.airplane = self.airplane_;
+    aboutController.cloudLayer.currentCloudOffsets = self.cloudLayer_.currentCloudOffsets;
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:aboutController];
     navController.navigationBarHidden = YES;
@@ -313,11 +313,11 @@ static NSRegularExpression *_airlineCodeRegex;
             break;
         }
         case LookupFailureFlightNotFound: {
-            if ([[self class] isFlightNumInteger:_flightNumberField.text]) {
+            if ([[self class] isFlightNumInteger:self.flightNumberField.text]) {
                 // They've entered all numbers - not understanding desired input
                 [self alertWithError:LookupErrorFlightNumberMissingAirlineCode];
             }
-            else if (![[self class] flightNumContainsValidAirlineCode:_flightNumberField.text]) {
+            else if (![[self class] flightNumContainsValidAirlineCode:self.flightNumberField.text]) {
                 // They've entered an invalid airline code
                 [self alertWithError:LookupErrorNonexistentAirline];
             }
@@ -355,7 +355,7 @@ static NSRegularExpression *_airlineCodeRegex;
     [self indicateStoppedLookingUp];
     
     if (flights) {
-        self._flightResults = flights;
+        self.flightResults_ = flights;
     
         if ([flights count] == 0) {
             [self alertWithError:LookupErrorFlightNotFound];
@@ -364,24 +364,19 @@ static NSRegularExpression *_airlineCodeRegex;
             [self beginTrackingFlight:[flights objectAtIndex:0] animated:YES];
         }
         else {
-            [self._flightResultsTable reloadData];
-            [self._flightResultsTable setContentOffset:CGPointZero];
-            self._lookupButton.hidden = YES;
-            self._airportCodesButton.hidden = YES;
-            self._airportCodesLabelButton.hidden = YES;
-            self._flightResultsTable.hidden = NO;
-            self._flightResultsTableFrame.hidden = NO;
+            [self.flightResultsTable_ reloadData];
+            [self.flightResultsTable_ setContentOffset:CGPointZero];
+            self.lookupButton_.hidden = YES;
+            self.airportCodesButton_.hidden = YES;
+            self.airportCodesLabelButton_.hidden = YES;
+            self.flightResultsTable_.hidden = NO;
+            self.flightResultsTableFrame_.hidden = NO;
         }
     
         [FlurryAnalytics logEvent:FY_LOOKED_UP_FLIGHT 
                    withParameters:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%d", [flights count]] 
                                                                                          forKey:@"Number Of Results"]];
     }
-}
-
-
-- (UITextField *)flightNumberField {
-    return _flightNumberField;
 }
 
 
@@ -400,17 +395,18 @@ static NSRegularExpression *_airlineCodeRegex;
             break;
         }
         case LookupErrorFlightNotFound: {
-            alertTitle = [NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"), _flightNumberField.text];
+            alertTitle = [NSString stringWithFormat:NSLocalizedString(@"Flight %@ Not Found", @"Flight XYZ Not Found"),
+                          self.flightNumberField.text];
             alertMessage = [NSString stringWithFormat:NSLocalizedString(@"Unfortunately we don't have information for flight %@. We've recorded this missing flight and will try to add it in the future.",
-                                                                        @"Flight not found."), _flightNumberField.text];
+                                                                        @"Flight not found."), self.flightNumberField.text];
             // Reversed intentionally
             otherButtonTitle = NSLocalizedString(@"OK", @"OK");
             cancelButtonTitle = NSLocalizedString(@"More Info", @"More Info");
             break;
         }
         case LookupErrorNonexistentAirline: {
-            NSArray *flightNumParts = [[self class] splitFlightNumber:_flightNumberField.text];
-            NSString *airlineCode = ([flightNumParts count] == 2) ? [flightNumParts objectAtIndex:0] : _flightNumberField.text;
+            NSArray *flightNumParts = [[self class] splitFlightNumber:self.flightNumberField.text];
+            NSString *airlineCode = ([flightNumParts count] == 2) ? [flightNumParts objectAtIndex:0] : self.flightNumberField.text;
             alertTitle = NSLocalizedString(@"Unknown Airline Code", @"Unknown Airline Code");
             alertMessage = [NSString stringWithFormat:NSLocalizedString(@"We don't recognize airline code %@. Don't know the airline code? We can look it up for you!",
                                                                         @"Unknown Airline Code Explanation"), airlineCode];
@@ -420,7 +416,7 @@ static NSRegularExpression *_airlineCodeRegex;
         case LookupErrorNoCurrentFlight: {
             alertTitle = NSLocalizedString(@"Can't Track Flight Yet", @"No Current Flight");
             alertMessage = [NSString stringWithFormat:NSLocalizedString(@"Flight %@ is not arriving in the next 48 hours. Please try again closer to the arrival date.",
-                                                                        @"No Current Flight Explanantion"), _flightNumberField.text];
+                                                                        @"No Current Flight Explanantion"), self.flightNumberField.text];
             // Reversed intentionally
             otherButtonTitle = NSLocalizedString(@"OK", @"OK");
             cancelButtonTitle = NSLocalizedString(@"More Info", @"More Info");
@@ -483,9 +479,9 @@ static NSRegularExpression *_airlineCodeRegex;
     self.view = mainView;
     
     // Add the cloud layer
-    self._cloudLayer = [[JLCloudLayer alloc] initWithFrame:CLOUD_LAYER_FRAME];
-    self._cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:_cloudLayer];
+    self.cloudLayer_ = [[JLCloudLayer alloc] initWithFrame:CLOUD_LAYER_FRAME];
+    self.cloudLayer_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.cloudLayer_];
     
     // Add the cloud footer
     UIImageView *cloudFooter = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
@@ -508,7 +504,7 @@ static NSRegularExpression *_airlineCodeRegex;
     JLFlightInputField *flightNumField = [[JLFlightInputField alloc] initWithFrame:LOOKUP_TEXTFIELD_FRAME];
     flightNumField.delegate = self;
     flightNumField.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    self._flightNumberField = flightNumField;
+    self.flightNumberField = flightNumField;
     
     UIImageView *lookupInputContainer = [[UIImageView alloc] initWithFrame:LOOKUP_INPUT_FRAME];
     lookupInputContainer.image = [[UIImage imageNamed:@"lookup_input_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 8.0f, 0.0f, 8.0f)];
@@ -518,27 +514,27 @@ static NSRegularExpression *_airlineCodeRegex;
     [self.view addSubview:lookupInputContainer];
     
     // Add the airport codes button and the airport codes label
-    self._airportCodesLabelButton = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles airportCodesLabelButtonStyle] frame:AIRPORT_CODES_LABEL_FRAME];
-    [_airportCodesLabelButton setTitle:NSLocalizedString(@"Don't know the airline code?", @"Airline Lookup Prompt")
+    self.airportCodesLabelButton_ = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles airportCodesLabelButtonStyle] frame:AIRPORT_CODES_LABEL_FRAME];
+    [self.airportCodesLabelButton_ setTitle:NSLocalizedString(@"Don't know the airline code?", @"Airline Lookup Prompt")
                               forState:UIControlStateNormal];
-    self._airportCodesLabelButton.alpha = [[self class] isFlightNumValid:_flightNumberField.text] ? 0.0f : 1.0f;
-    [_airportCodesLabelButton addTarget:self action:@selector(lookupCodes) forControlEvents:UIControlEventTouchUpInside];
-    _airportCodesLabelButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:_airportCodesLabelButton];
+    self.airportCodesLabelButton_.alpha = [[self class] isFlightNumValid:self.flightNumberField.text] ? 0.0f : 1.0f;
+    [self.airportCodesLabelButton_ addTarget:self action:@selector(lookupCodes) forControlEvents:UIControlEventTouchUpInside];
+    self.airportCodesLabelButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.airportCodesLabelButton_];
     
-    self._airportCodesButton = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles airportCodesButtonStyle] frame:AIRPORT_CODES_BUTTON_FRAME];
-    self._airportCodesButton.alpha = [[self class] isFlightNumValid:_flightNumberField.text] ? 0.0f : 1.0f;
-    [_airportCodesButton addTarget:self action:@selector(lookupCodes) forControlEvents:UIControlEventTouchUpInside];
-    _airportCodesButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:_airportCodesButton];
+    self.airportCodesButton_ = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles airportCodesButtonStyle] frame:AIRPORT_CODES_BUTTON_FRAME];
+    self.airportCodesButton_.alpha = [[self class] isFlightNumValid:self.flightNumberField.text] ? 0.0f : 1.0f;
+    [self.airportCodesButton_ addTarget:self action:@selector(lookupCodes) forControlEvents:UIControlEventTouchUpInside];
+    self.airportCodesButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.airportCodesButton_];
     
     // Add the lookup button
     JLButton *lookupButton = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles lookupButtonStyle] frame:LOOKUP_BUTTON_FRAME];
     [lookupButton setTitle:NSLocalizedString(@"Find Flight", @"Find Flight") forState:UIControlStateNormal];
-    lookupButton.alpha = [[self class] isFlightNumValid:_flightNumberField.text] ? 1.0f : 0.0f;
+    lookupButton.alpha = [[self class] isFlightNumValid:self.flightNumberField.text] ? 1.0f : 0.0f;
     [lookupButton addTarget:self action:@selector(doLookup) forControlEvents:UIControlEventTouchUpInside];
     lookupButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    self._lookupButton = lookupButton;
+    self.lookupButton_ = lookupButton;
     [self.view addSubview:lookupButton];
     
     // Add the results table
@@ -553,30 +549,30 @@ static NSRegularExpression *_airlineCodeRegex;
     resultsTable.indicatorStyle = UIScrollViewIndicatorStyleWhite;
     resultsTable.scrollIndicatorInsets = UIEdgeInsetsMake(2.0f, 0.0f, 2.0f, 2.0f);
     resultsTable.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    self._flightResultsTable = resultsTable;
+    self.flightResultsTable_ = resultsTable;
     [self.view addSubview:resultsTable];
     
     // Add the airplane
-    self._airplane = [[JLAirplaneView alloc] initWithFrame:AIRPLANE_FRAME];
-    [self.view addSubview:_airplane];
+    self.airplane_ = [[JLAirplaneView alloc] initWithFrame:AIRPLANE_FRAME];
+    [self.view addSubview:self.airplane_];
     
     // Add the table frame
     UIImage *tableFrame = [[UIImage imageNamed:@"table_frame"] resizableImageWithCapInsets:UIEdgeInsetsMake(11.0f, 11.0f, 11.0f, 11.0f)];
-    self._flightResultsTableFrame = [[UIImageView alloc] initWithImage:tableFrame];
-    self._flightResultsTableFrame.frame = RESULTS_TABLE_CONTAINER_FRAME;
-    self._flightResultsTableFrame.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:_flightResultsTableFrame];
+    self.flightResultsTableFrame_ = [[UIImageView alloc] initWithImage:tableFrame];
+    self.flightResultsTableFrame_.frame = RESULTS_TABLE_CONTAINER_FRAME;
+    self.flightResultsTableFrame_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.flightResultsTableFrame_];
     
     // Add the lookup spinner
-    _lookupSpinner = [[JLSpinner alloc] initWithFrame:CGRectMake(103.0f, 278.0f, 114.0f, 115.0f)];
-    _lookupSpinner.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:_lookupSpinner];
+    self.lookupSpinner_ = [[JLSpinner alloc] initWithFrame:CGRectMake(103.0f, 278.0f, 114.0f, 115.0f)];
+    self.lookupSpinner_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.lookupSpinner_];
 }
 
 
 - (void)viewDidLoad {
-    [_cloudLayer startAnimating];
-    [_airplane startAnimating];
+    [self.cloudLayer_ startAnimating];
+    [self.airplane_ startAnimating];
 }
 
 
@@ -584,15 +580,15 @@ static NSRegularExpression *_airlineCodeRegex;
     [super viewDidUnload];
     
     // Release any retained subviews of the main view.
-    self._lookupButton = nil;
-    self._airportCodesButton = nil;
-    self._airportCodesLabelButton = nil;
-    self._flightNumberField = nil;
-    self._flightResultsTable = nil;
-    self._flightResultsTableFrame = nil;
-    self._lookupSpinner = nil;
-    self._airplane = nil;
-    self._cloudLayer = nil;
+    self.lookupButton_ = nil;
+    self.airportCodesButton_ = nil;
+    self.airportCodesLabelButton_ = nil;
+    self.flightNumberField = nil;
+    self.flightResultsTable_ = nil;
+    self.flightResultsTableFrame_ = nil;
+    self.lookupSpinner_ = nil;
+    self.airplane_ = nil;
+    self.cloudLayer_ = nil;
 }
 
 
@@ -603,23 +599,23 @@ static NSRegularExpression *_airlineCodeRegex;
 
 
 - (void)allowLookup {
-    self._lookupButton.enabled = YES;
-    self._airportCodesButton.enabled = NO;
-    self._airportCodesLabelButton.enabled = NO;
+    self.lookupButton_.enabled = YES;
+    self.airportCodesButton_.enabled = NO;
+    self.airportCodesLabelButton_.enabled = NO;
     
     [UIView animateWithDuration:0.125
                           delay:0.0 
                         options:UIViewAnimationOptionBeginFromCurrentState 
                      animations:^{
-                         _airportCodesButton.alpha = 0.0f;
-                         _airportCodesLabelButton.alpha = 0.0f;
+                         self.airportCodesButton_.alpha = 0.0f;
+                         self.airportCodesLabelButton_.alpha = 0.0f;
                      }
                      completion:^(BOOL finished) {
                          [UIView animateWithDuration:0.125 
                                                delay:0.0 
                                              options:UIViewAnimationOptionBeginFromCurrentState 
                                           animations:^{
-                                              _lookupButton.alpha = 1.0f;
+                                              self.lookupButton_.alpha = 1.0f;
                                           }
                                           completion:NULL];
                      }];
@@ -627,23 +623,23 @@ static NSRegularExpression *_airlineCodeRegex;
 
 
 - (void)disallowLookup {
-    self._lookupButton.enabled = NO;
-    self._airportCodesButton.enabled = YES;
-    self._airportCodesLabelButton.enabled = YES;
+    self.lookupButton_.enabled = NO;
+    self.airportCodesButton_.enabled = YES;
+    self.airportCodesLabelButton_.enabled = YES;
     
     [UIView animateWithDuration:0.125 
                           delay:0.0 
                         options:UIViewAnimationOptionBeginFromCurrentState 
                      animations:^{
-                         _lookupButton.alpha = 0.0f;
+                         self.lookupButton_.alpha = 0.0f;
                      }
                      completion:^(BOOL finished) {
                          [UIView animateWithDuration:0.125 
                                                delay:0.0 
                                              options:UIViewAnimationOptionBeginFromCurrentState 
                                           animations:^{
-                                              _airportCodesButton.alpha = 1.0f;
-                                              _airportCodesLabelButton.alpha = 1.0f;
+                                              self.airportCodesButton_.alpha = 1.0f;
+                                              self.airportCodesLabelButton_.alpha = 1.0f;
                                           }
                                           completion:NULL];
                      }];
@@ -660,24 +656,24 @@ static NSRegularExpression *_airlineCodeRegex;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)clearFlightNumberField {
-    self._flightNumberField.text = @"";
+    self.flightNumberField.text = @"";
     [self resetFlightInputKeyboard];
     [self disallowLookup];
 }
 
 
 - (void)resetFlightInputKeyboard {
-    self._flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
-    [self._flightNumberField.textInputView reloadInputViews];
+    self.flightNumberField.keyboardType = UIKeyboardTypeNamePhonePad;
+    [self.flightNumberField.textInputView reloadInputViews];
 }
 
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
-    self._flightResultsTable.hidden = YES;
-    self._flightResultsTableFrame.hidden = YES;
-    self._lookupButton.hidden = NO;
-    self._airportCodesButton.hidden = NO;
-    self._airportCodesLabelButton.hidden = NO;
+    self.flightResultsTable_.hidden = YES;
+    self.flightResultsTableFrame_.hidden = YES;
+    self.lookupButton_.hidden = NO;
+    self.airportCodesButton_.hidden = NO;
+    self.airportCodesLabelButton_.hidden = NO;
 }
 
 
@@ -748,7 +744,7 @@ static NSRegularExpression *_airlineCodeRegex;
     }
     
     // Color the text red or normal
-    self._flightNumberField.errorState = colorTextAsError ? FlightInputError : FlightInputNoError;
+    self.flightNumberField.errorState = colorTextAsError ? FlightInputError : FlightInputNoError;
 
     return NO;
 }
@@ -764,14 +760,14 @@ static NSRegularExpression *_airlineCodeRegex;
         case LookupErrorNonexistentAirline:
         case LookupErrorFlightNumberMissingAirlineCode: {
             [self clearFlightNumberField];
-            [_flightNumberField becomeFirstResponder];
+            [self.flightNumberField becomeFirstResponder];
             [self lookupCodes];
             break;
         }
         case LookupErrorFlightNotFound:
         case LookupErrorNoCurrentFlight: {
             // Keep their input
-            [_flightNumberField becomeFirstResponder];
+            [self.flightNumberField becomeFirstResponder];
             
             if ([alertView cancelButtonIndex] == buttonIndex) {
                 // TODO: They want to see more info... (we're using cancel as more info)
@@ -821,7 +817,7 @@ static NSRegularExpression *_airlineCodeRegex;
         case LookupErrorServerError:
         default: {
             // Keep their input
-            [_flightNumberField becomeFirstResponder];
+            [self.flightNumberField becomeFirstResponder];
             break;
         }
     }
@@ -832,7 +828,7 @@ static NSRegularExpression *_airlineCodeRegex;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    Flight *chosenFlight = [self._flightResults objectAtIndex:[indexPath row]];
+    Flight *chosenFlight = [self.flightResults_ objectAtIndex:[indexPath row]];
     [self beginTrackingFlight:chosenFlight animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -849,7 +845,7 @@ static NSRegularExpression *_airlineCodeRegex;
         cell.selectedBackgroundView.opaque = NO;
     }
     
-    Flight *aFlight = [self._flightResults objectAtIndex:[indexPath row]];
+    Flight *aFlight = [self.flightResults_ objectAtIndex:[indexPath row]];
     
     // Figure out the cell type
     if (indexPath.row == 0) {
@@ -890,12 +886,12 @@ static NSRegularExpression *_airlineCodeRegex;
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self._flightResults count];
+    return [self.flightResults_ count];
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == (NSInteger)[self._flightResults count] - 1) {
+    if (indexPath.row == (NSInteger)[self.flightResults_ count] - 1) {
         return FlightResultTableViewCellHeight + 2.0f;
     }
     else {
@@ -908,17 +904,17 @@ static NSRegularExpression *_airlineCodeRegex;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)didFinishTrackingFlight:(Flight *)aFlight userInitiated:(BOOL)userFlag {
-    self._flightResultsTable.hidden = YES;
-    self._flightResultsTableFrame.hidden = YES;
-    self._lookupButton.hidden = NO;
-    self._airportCodesButton.hidden = NO;
-    self._airportCodesLabelButton.hidden = NO;
-    [_cloudLayer startAnimating]; // Begin animating the cloud layer
-    [_airplane startAnimating];
+    self.flightResultsTable_.hidden = YES;
+    self.flightResultsTableFrame_.hidden = YES;
+    self.lookupButton_.hidden = NO;
+    self.airportCodesButton_.hidden = NO;
+    self.airportCodesLabelButton_.hidden = NO;
+    [self.cloudLayer_ startAnimating]; // Begin animating the cloud layer
+    [self.airplane_ startAnimating];
     
     // If the user stopped tracking, pre-fill the field with the flight they were tracking
     if (userFlag) {
-        self._flightNumberField.text = aFlight.flightNumber;
+        self.flightNumberField.text = aFlight.flightNumber;
         [FlurryAnalytics logEvent:FY_STOPPED_TRACKING_FLIGHT 
                    withParameters:[NSDictionary dictionaryWithObject:(aFlight.status == LANDED) ? @"YES" : @"NO"
                                                               forKey:@"Flight Landed"]];
@@ -929,7 +925,7 @@ static NSRegularExpression *_airlineCodeRegex;
     }
     
     // Enable / disable lookup as appropriate
-    if ([[self class] isFlightNumValid:_flightNumberField.text]) {
+    if ([[self class] isFlightNumValid:self.flightNumberField.text]) {
         [self allowLookup];
     }
     else {
@@ -938,7 +934,7 @@ static NSRegularExpression *_airlineCodeRegex;
         
     [[JustLandedSession sharedSession] removeTrackedFlight:aFlight];
     [aFlight stopTracking];
-    [self._flightNumberField becomeFirstResponder];
+    [self.flightNumberField becomeFirstResponder];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -947,10 +943,10 @@ static NSRegularExpression *_airlineCodeRegex;
 
 - (void)didChooseAirlineCode:(NSString *)airlineCode {
     [self disallowLookup];
-    self._flightNumberField.text = airlineCode;
-    self._flightNumberField.errorState = FlightInputNoError;
+    self.flightNumberField.text = airlineCode;
+    self.flightNumberField.errorState = FlightInputNoError;
     [self resetFlightInputKeyboard];
-    [self._flightNumberField becomeFirstResponder];
+    [self.flightNumberField becomeFirstResponder];
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -966,10 +962,10 @@ static NSRegularExpression *_airlineCodeRegex;
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    _flightNumberField.delegate = nil;
-    _flightResultsTable.delegate = nil;
-    [_cloudLayer stopAnimating];
-    [_airplane stopAnimating];
+    flightNumberField_.delegate = nil;
+    flightResultsTable_.delegate = nil;
+    [cloudLayer_ stopAnimating];
+    [airplane_ stopAnimating];
 }
 
 @end

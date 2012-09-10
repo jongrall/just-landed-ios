@@ -10,34 +10,41 @@
 #import "AirlineResultTableViewCell.h"
 #import <QuartzCore/QuartzCore.h>
 
-@interface AirlineLookupViewController () {
-    __strong NSArray *_airlines;
-    __strong JLLabel *_noResultsLabel;
-    __strong UISearchBar *_searchBar;
-    __strong UITableView *_resultsTable;
-}
+@interface AirlineLookupViewController ()
+
+@property (strong, nonatomic) NSArray *airlines_;
+@property (strong, nonatomic) JLLabel *noResultsLabel_;
+@property (strong, nonatomic) UISearchBar *searchBar_;
+@property (strong, nonatomic) UITableView *resultsTable_;
 
 - (void)keyboardWasShown:(NSNotification *)notification;
 - (NSString *)airlineCode:(NSDictionary *)airlineInfo;
 
 @end
 
+
 @implementation AirlineLookupViewController
 
-@synthesize delegate;
+@synthesize airlines_;
 
-static NSArray *_allAirlines;
-
+static NSArray *sAllAirlines_;
 
 + (void)initialize {
+    static dispatch_once_t sOncePredicate;
+        
     if (self == [AirlineLookupViewController class]) {
-        _allAirlines = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"airlines" ofType:@"plist"]];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSArray *allAirlines = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"airlines" ofType:@"plist"]];
+            dispatch_once(&sOncePredicate, ^{    
+                sAllAirlines_ = allAirlines;
+            });
+        });
     }
 }
 
 
 + (BOOL)airlineCodeExists:(NSString *)aCode {
-    for (id airline in _allAirlines) {
+    for (id airline in sAllAirlines_) {
         if ([airline isKindOfClass:[NSDictionary class]]) {
             NSString *iataCode = [airline objectForKeyOrNil:@"iata"];
             NSString *icaoCode = [airline objectForKeyOrNil:@"icao"];
@@ -59,12 +66,12 @@ static NSArray *_allAirlines;
     self = [super init];
     
     if (self) {
-        _airlines = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
+        airlines_ = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
         
-        if ([_airlines count] > 0) {
-            NSMutableArray *airlinesWithClear = [[NSMutableArray alloc] initWithArray:_airlines];
+        if ([airlines_ count] > 0) {
+            NSMutableArray *airlinesWithClear = [[NSMutableArray alloc] initWithArray:airlines_];
             [airlinesWithClear addObject:@"Clear Recent"];
-            _airlines = airlinesWithClear;
+            airlines_ = airlinesWithClear;
         }
     }
     
@@ -101,23 +108,23 @@ static NSArray *_allAirlines;
         }
     }
     
-    _searchBar = searchBar;
-    [self.view addSubview:_searchBar];
+    self.searchBar_ = searchBar;
+    [self.view addSubview:searchBar];
     
-    _resultsTable = [[UITableView alloc] initWithFrame:CGRectMake(0.0f, 44.0f, 320.0f, self.view.frame.size.height - _searchBar.frame.size.height) 
-                                                 style:UITableViewStylePlain];
-    _resultsTable.delegate = self;
-    _resultsTable.dataSource = self;
-    _resultsTable.rowHeight = AirlineResultCellHeight;
-    _resultsTable.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    _resultsTable.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    self.resultsTable_ = [[UITableView alloc] initWithFrame:CGRectMake(0.0f, 44.0f, 320.0f, self.view.frame.size.height - self.searchBar_.frame.size.height)
+                                                      style:UITableViewStylePlain];
+    self.resultsTable_.delegate = self;
+    self.resultsTable_.dataSource = self;
+    self.resultsTable_.rowHeight = AirlineResultCellHeight;
+    self.resultsTable_.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    self.resultsTable_.autoresizingMask = UIViewAutoresizingFlexibleHeight;
 
-    [self.view addSubview:_resultsTable];
+    [self.view addSubview:self.resultsTable_];
     
-    _noResultsLabel = [[JLLabel alloc] initWithLabelStyle:[JLLookupStyles noAirlineResultsLabel] frame:AIRLINE_NO_RESULTS_LABEL_FRAME];
-    _noResultsLabel.text = NSLocalizedString(@"No Matching Airlines :(", @"No Matching Airlines");
-    [_resultsTable addSubview:_noResultsLabel];
-    _noResultsLabel.hidden = YES;
+    self.noResultsLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLLookupStyles noAirlineResultsLabel] frame:AIRLINE_NO_RESULTS_LABEL_FRAME];
+    self.noResultsLabel_.text = NSLocalizedString(@"No Matching Airlines :(", @"No Matching Airlines");
+    [self.resultsTable_ addSubview:self.noResultsLabel_];
+    self.noResultsLabel_.hidden = YES;
 }
 
 
@@ -135,7 +142,7 @@ static NSArray *_allAirlines;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"Cancel") 
                                                                               style:UIBarButtonItemStylePlain
-                                                                             target:delegate
+                                                                             target:self.delegate
                                                                              action:@selector(cancelledAirlineLookup)];
     
     [[NSNotificationCenter defaultCenter] addObserver:self 
@@ -143,7 +150,7 @@ static NSArray *_allAirlines;
                                                  name:UIKeyboardDidShowNotification 
                                                object:nil];
     
-    [_searchBar becomeFirstResponder];
+    [self.searchBar_ becomeFirstResponder];
 }
 
 
@@ -164,7 +171,7 @@ static NSArray *_allAirlines;
                          stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
     if ([newTerm length] < [oldTerm length] || ([newTerm length] == 1 && [oldTerm length] == 0)) {
-        _airlines = [_allAirlines mutableCopy];
+        self.airlines_ = [sAllAirlines_ mutableCopy];
     }
     
     return YES;
@@ -177,7 +184,7 @@ static NSArray *_allAirlines;
     if ([searchTerm length] > 0) {
         NSMutableArray *matchingAirlines = [[NSMutableArray alloc] init];
         
-        for (id airline in _airlines) {
+        for (id airline in self.airlines_) {
             if ([airline isKindOfClass:[NSDictionary class]]) {
                 NSString *airlineNameNoSpaces = [[airline objectForKeyOrNil:@"name"] stringByReplacingOccurrencesOfString:@" " withString:@""];
                 if ([airlineNameNoSpaces rangeOfString:searchTermNoSpaces options:(NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch)].location != NSNotFound) {
@@ -186,27 +193,27 @@ static NSArray *_allAirlines;
             }
         }
         
-        _airlines = matchingAirlines;
+        self.airlines_ = matchingAirlines;
     }
     else {
-        _airlines = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
+        self.airlines_ = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
         
-        if ([_airlines count] > 0) {
-            NSMutableArray *airlinesWithClear = [[NSMutableArray alloc] initWithArray:_airlines];
+        if ([self.airlines_ count] > 0) {
+            NSMutableArray *airlinesWithClear = [[NSMutableArray alloc] initWithArray:self.airlines_];
             [airlinesWithClear addObject:@"Clear Recent"];
-            _airlines = airlinesWithClear;
+            self.airlines_ = airlinesWithClear;
         }
     }
     
-    if ([_airlines count] == 0 && [searchTerm length] > 0) {
-        _noResultsLabel.hidden = NO;
+    if ([self.airlines_ count] == 0 && [searchTerm length] > 0) {
+        self.noResultsLabel_.hidden = NO;
     }
     else {
-        _noResultsLabel.hidden = YES;
+        self.noResultsLabel_.hidden = YES;
     }
         
-    [_resultsTable reloadData];
-    [_resultsTable setContentOffset:CGPointZero animated:NO];
+    [self.resultsTable_ reloadData];
+    [self.resultsTable_ setContentOffset:CGPointZero animated:NO];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +246,7 @@ static NSArray *_allAirlines;
                                                  reuseIdentifier:@"AirlineResultCell"];
     }
     
-    id tableRowObj = [_airlines objectAtIndex:indexPath.row];
+    id tableRowObj = [self.airlines_ objectAtIndex:indexPath.row];
     
     if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
         NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
@@ -258,11 +265,11 @@ static NSArray *_allAirlines;
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row < (NSInteger)[_airlines count]) {
-        id tableRowObj = [_airlines objectAtIndex:indexPath.row];
+    if (indexPath.row < (NSInteger)[self.airlines_ count]) {
+        id tableRowObj = [self.airlines_ objectAtIndex:indexPath.row];
         
         if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *airlineInfo = [_airlines objectAtIndex:indexPath.row];
+            NSDictionary *airlineInfo = [self.airlines_ objectAtIndex:indexPath.row];
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
             NSString *code = [self airlineCode:airlineInfo];
             [[JustLandedSession sharedSession] addToRecentlyLookedUpAirlines:airlineInfo];
@@ -271,8 +278,8 @@ static NSArray *_allAirlines;
         }
         else {
             [[JustLandedSession sharedSession] clearRecentlyLookedUpAirlines];
-            _airlines = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
-            [_resultsTable reloadData];
+            self.airlines_ = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
+            [self.resultsTable_ reloadData];
             [FlurryAnalytics logEvent:FY_CLEARED_RECENT];
         }
     }
@@ -280,12 +287,12 @@ static NSArray *_allAirlines;
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [_airlines count];
+    return [self.airlines_ count];
 }
 
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if ([[[_searchBar text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0 && [_airlines count] > 0) {
+    if ([[[self.searchBar_ text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0 && [self.airlines_ count] > 0) {
         return NSLocalizedString(@"Recent Airlines", @"Recent Airlines");
     }
     else {
@@ -302,7 +309,7 @@ static NSArray *_allAirlines;
     NSDictionary* info = [notification userInfo];
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
     
-    _resultsTable.frame = CGRectMake(0.0f, 44.0f, 320.0f, self.view.frame.size.height - _searchBar.frame.size.height - kbSize.height);
+    self.resultsTable_.frame = CGRectMake(0.0f, 44.0f, 320.0f, self.view.frame.size.height - self.searchBar_.frame.size.height - kbSize.height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

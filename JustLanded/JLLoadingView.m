@@ -19,6 +19,9 @@
 
 @implementation JLLoadingView
 
+@synthesize loadingSpinner_;
+@synthesize loadingLabel_;
+
 - (id)initWithFrame:(CGRect)aFrame {
     self = [super initWithFrame:aFrame];
     if (self) {
@@ -29,24 +32,24 @@
         bgView.frame = aFrame;
         
         // Add the label
-        self.loadingLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles loadingLabelStyle]
-                                                           frame:CGRectMake(10.0f,
-                                                                            294.0f,
-                                                                            aFrame.size.width - 20.0f,
-                                                                            30.0f)];
-        self.loadingLabel_.text = NSLocalizedString(@"Loading...", @"Loading...");
+        loadingLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles loadingLabelStyle]
+                                                      frame:CGRectMake(10.0f,
+                                                                       294.0f,
+                                                                       aFrame.size.width - 20.0f,
+                                                                       30.0f)];
+        loadingLabel_.text = NSLocalizedString(@"Loading...", @"Loading...");
         
         
         // Configure the loading spinner;
-        self.loadingSpinner_ = [[JLSpinner alloc] initWithFrame:CGRectZero];
-        self.loadingSpinner_.frame = CGRectMake((aFrame.size.width - self.loadingSpinner_.frame.size.width) / 2.0f,
-                                                130.0f,
-                                                self.loadingSpinner_.frame.size.width,
-                                                self.loadingSpinner_.frame.size.height);
+        loadingSpinner_ = [[JLSpinner alloc] initWithFrame:CGRectZero];
+        loadingSpinner_.frame = CGRectMake((aFrame.size.width - loadingSpinner_.frame.size.width) / 2.0f,
+                                           130.0f,
+                                           loadingSpinner_.frame.size.width,
+                                           loadingSpinner_.frame.size.height);
         
         [self addSubview:bgView];
-        [self addSubview:self.loadingSpinner_];
-        [self addSubview:self.loadingLabel_];
+        [self addSubview:loadingSpinner_];
+        [self addSubview:loadingLabel_];
     }
     return self;
 }

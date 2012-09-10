@@ -14,20 +14,27 @@
 
 @implementation Airport
 
+@synthesize iataCode = iataCode_;
+@synthesize icaoCode = icaoCode_;
+@synthesize city = city_;
+@synthesize location = location_;
+@synthesize terminal = terminal_;
+@synthesize timezone = timezone_;
+
 - (id)initWithAirportInfo:(NSDictionary *)airportInfo {
     self = [super init];
     
     if (self) {
-        self.iataCode = [airportInfo valueForKeyOrNil:@"iataCode"];
-        self.icaoCode = [airportInfo valueForKeyOrNil:@"icaoCode"];
-        self.city = [airportInfo valueForKeyOrNil:@"city"];
-        self.location = [[CLLocation alloc] initWithLatitude:[[airportInfo valueForKeyOrNil:@"latitude"] doubleValue]
+        iataCode_ = [airportInfo valueForKeyOrNil:@"iataCode"];
+        icaoCode_ = [airportInfo valueForKeyOrNil:@"icaoCode"];
+        city_ = [airportInfo valueForKeyOrNil:@"city"];
+        location_ = [[CLLocation alloc] initWithLatitude:[[airportInfo valueForKeyOrNil:@"latitude"] doubleValue]
                                                    longitude:[[airportInfo valueForKeyOrNil:@"longitude"] doubleValue]];
-        self.terminal = [airportInfo valueForKeyOrNil:@"terminal"];
+        terminal_ = [airportInfo valueForKeyOrNil:@"terminal"];
         
         NSString *tzName = [airportInfo valueForKeyOrNil:@"timezone"];
         if (tzName && [tzName length] > 0) {
-            self.timezone = [NSTimeZone timeZoneWithName:tzName];
+            timezone_ = [NSTimeZone timeZoneWithName:tzName];
         }
     }
     

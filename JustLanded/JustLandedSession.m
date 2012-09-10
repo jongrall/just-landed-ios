@@ -33,6 +33,8 @@
 
 @implementation JustLandedSession
 
+@synthesize currentlyTrackedFlights_;
+
 + (JustLandedSession *)sharedSession {
     static JustLandedSession *sSharedSession_ = nil;
     static dispatch_once_t sOncePredicate;
@@ -50,10 +52,10 @@
     
     if (self) {
         // Checks file archive to recover any flights we were tracking on a previous run
-        self.currentlyTrackedFlights_ = [self unarchiveTrackedFlights];
+        currentlyTrackedFlights_ = [self unarchiveTrackedFlights];
  
-        if (self.currentlyTrackedFlights_ == nil) {
-            self.currentlyTrackedFlights_ = [[NSMutableArray alloc] init];
+        if (currentlyTrackedFlights_ == nil) {
+            currentlyTrackedFlights_ = [[NSMutableArray alloc] init];
         }
         
         // Register default preferences (not automatically pulled in from Settings.bundle defaults

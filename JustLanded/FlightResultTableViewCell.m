@@ -35,6 +35,8 @@ CGPoint const flightIconOrigin_ = {13.5f, 34.0f};
 @synthesize landingTime = landingTime_;
 @synthesize cellType = cellType_;
 @synthesize inFlight = inFlight_;
+@synthesize flightIcon_;
+@synthesize arrowIcon_;
 
 static UIFont *sToFromAirportFont_;
 static UIFont *sStatusFont_;
@@ -164,19 +166,19 @@ static UIImage *sBottomBackgroundSelected_;
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    if (self.cellType == BOTTOM) {
+    if (cellType_ == BOTTOM) {
         CGContextSaveGState(context);
     }
         
     CGRect backgroundBounds = CGRectMake(0.0f, 0.0f, FlightResultTableViewCellWidth, FlightResultTableViewCellHeight);
     
-    if (self.cellType == TOP) {
+    if (cellType_ == TOP) {
         UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:backgroundBounds
                                                 byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight
                                                            cornerRadii:CGSizeMake(6.0f, 6.0f)];
         [path addClip];
     }
-    else if (self.cellType == BOTTOM) {
+    else if (cellType_ == BOTTOM) {
         UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:backgroundBounds
                                                    byRoundingCorners:UIRectCornerBottomLeft | UIRectCornerBottomRight
                                                          cornerRadii:CGSizeMake(6.0f, 6.0f)];
@@ -184,11 +186,11 @@ static UIImage *sBottomBackgroundSelected_;
     }
     
     //Draw the background status color
-	[self.statusColor set];
+	[statusColor_ set];
     
     CGContextFillRect(context, backgroundBounds);
     
-    if (self.cellType == BOTTOM) {
+    if (cellType_ == BOTTOM) {
         CGContextRestoreGState(context);
     }
     
@@ -202,53 +204,53 @@ static UIImage *sBottomBackgroundSelected_;
     
     // Save the graphics state before we draw shadowed elements
     CGContextSaveGState(context);
-    CGContextSetShadowWithColor(context, shadowOffset_, 0.0f, [self.statusShadowColor CGColor]);
+    CGContextSetShadowWithColor(context, shadowOffset_, 0.0f, [statusShadowColor_ CGColor]);
     
     // Draw the to - from airport text
-    CGSize fromAirportSize = [self.fromAirport drawAtPoint:toFromAirportRect_.origin
-                                                  forWidth:toFromAirportRect_.size.width / 2.0f 
-                                                  withFont:sToFromAirportFont_ 
-                                             lineBreakMode:UILineBreakModeTailTruncation];
+    CGSize fromAirportSize = [fromAirport_ drawAtPoint:toFromAirportRect_.origin
+                                              forWidth:toFromAirportRect_.size.width / 2.0f
+                                              withFont:sToFromAirportFont_
+                                         lineBreakMode:UILineBreakModeTailTruncation];
     
-    [self.toAirport drawAtPoint:CGPointMake(toFromAirportRect_.origin.x + fromAirportSize.width + self.arrowIcon_.size.width + 8.0f,
-                                            toFromAirportRect_.origin.y) 
-                       forWidth:toFromAirportRect_.size.width / 2.0f
-                       withFont:sToFromAirportFont_
-                  lineBreakMode:UILineBreakModeTailTruncation];
+    [toAirport_ drawAtPoint:CGPointMake(toFromAirportRect_.origin.x + fromAirportSize.width + arrowIcon_.size.width + 8.0f,
+                                        toFromAirportRect_.origin.y)
+                   forWidth:toFromAirportRect_.size.width / 2.0f
+                   withFont:sToFromAirportFont_
+              lineBreakMode:UILineBreakModeTailTruncation];
     
     
     // Stop drawing shadows
     CGContextRestoreGState(context);
     
     // Draw the plane icon
-    [self.flightIcon_ drawInRect:CGRectMake(flightIconOrigin_.x,
-                                            flightIconOrigin_.y,
-                                            self.flightIcon_.size.width,
-                                            self.flightIcon_.size.height)];
+    [flightIcon_ drawInRect:CGRectMake(flightIconOrigin_.x,
+                                       flightIconOrigin_.y,
+                                       flightIcon_.size.width,
+                                       flightIcon_.size.height)];
     
     // Draw the arrow between the locations
-    [self.arrowIcon_ drawInRect:CGRectMake(toFromAirportRect_.origin.x + fromAirportSize.width + 3.0f,
-                                           toFromAirportRect_.origin.y - 1.0f,
-                                           self.arrowIcon_.size.width,
-                                           self.arrowIcon_.size.height)];
+    [arrowIcon_ drawInRect:CGRectMake(toFromAirportRect_.origin.x + fromAirportSize.width + 3.0f,
+                                      toFromAirportRect_.origin.y - 1.0f,
+                                      arrowIcon_.size.width,
+                                      arrowIcon_.size.height)];
     
     // Draw the landing time text
-    [self.landingTime drawInRect:landingTimeRect_
-                        withFont:sLandingTimeFont_ 
-                   lineBreakMode:UILineBreakModeTailTruncation 
-                       alignment:UITextAlignmentLeft];
+    [landingTime_ drawInRect:landingTimeRect_
+                    withFont:sLandingTimeFont_
+               lineBreakMode:UILineBreakModeTailTruncation
+                   alignment:UITextAlignmentLeft];
     
     // Draw the status text
-    [self.status drawInRect:statusRect_
-                   withFont:sStatusFont_
-              lineBreakMode:UILineBreakModeTailTruncation 
-                  alignment:UITextAlignmentRight];
+    [status_ drawInRect:statusRect_
+               withFont:sStatusFont_
+          lineBreakMode:UILineBreakModeTailTruncation
+              alignment:UITextAlignmentRight];
     
     CGContextRestoreGState(context);
     
     // Draw the border on top
     if (!isHighlighted) {
-        switch (self.cellType) {
+        switch (cellType_) {
             case TOP: {
                 [sTopBackground_ drawInRect:rect];
                 break;
@@ -266,7 +268,7 @@ static UIImage *sBottomBackgroundSelected_;
         }
     }
     else {
-        switch (self.cellType) {
+        switch (cellType_) {
             case TOP: {
                 [sTopBackgroundSelected_ drawInRect:rect];
                 break;

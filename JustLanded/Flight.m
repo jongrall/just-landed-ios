@@ -46,6 +46,24 @@ NSString * const StopTrackingFailedReasonKey = @"StopTrackingFailedReasonKey";
 
 @implementation Flight
 
+@synthesize flightID = flightID_;
+@synthesize flightNumber = flightNumber_;
+@synthesize aircraftType = aircraftType_;
+@synthesize timeOfDay = timeOfDay_;
+@synthesize actualArrivalTime = actualArrivalTime_;
+@synthesize actualDepartureTime = actualDepartureTime_;
+@synthesize estimatedArrivalTime = estimatedArrivalTime_;
+@synthesize scheduledDepartureTime = scheduledDepartureTime_;
+@synthesize lastUpdated = lastUpdated_;
+@synthesize leaveForAirportTime = leaveForAirportTime_;
+@synthesize drivingTime = drivingTime_;
+@synthesize scheduledFlightDuration = scheduledFlightDuration_;
+@synthesize scheduledArrivalTime = scheduledArrivalTime_;
+@synthesize origin = origin_;
+@synthesize destination = destination_;
+@synthesize status = status_;
+@synthesize detailedStatus = detailedStatus_;
+
 static NSArray *sStatuses_;
 static NSArray *sPushTypes_;
 static NSArray *sAircraftTypes_;
@@ -97,7 +115,32 @@ static NSArray *sAircraftTypes_;
     self = [super init];
     
     if (self) {
-        [self updateWithFlightInfo:someFlightInfo];
+        // Process flight ID and number
+        flightID_ = [someFlightInfo valueForKeyOrNil:@"flightID"];
+        flightNumber_ = [someFlightInfo valueForKeyOrNil:@"flightNumber"];
+        NSUInteger parsed_aircraft_type = [sAircraftTypes_ indexOfObject:[someFlightInfo valueForKeyOrNil:@"aircraftType"]];
+        aircraftType_ = (parsed_aircraft_type == NSNotFound) ? JET2 : parsed_aircraft_type;
+        timeOfDay_ = ([[someFlightInfo valueForKey:@"isNight"] boolValue]) ? NIGHT : DAY;
+        
+        // Process and set all the flight date and time information
+        actualArrivalTime_ = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"actualArrivalTime"] returnNilForZero:YES];
+        actualDepartureTime_ = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"actualDepartureTime"] returnNilForZero:YES];
+        estimatedArrivalTime_ = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"estimatedArrivalTime"] returnNilForZero:YES];
+        scheduledDepartureTime_ = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"scheduledDepartureTime"] returnNilForZero:YES];
+        lastUpdated_ = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"lastUpdated"] returnNilForZero:YES];
+        leaveForAirportTime_ = [NSDate dateWithTimestamp:[someFlightInfo valueForKeyOrNil:@"leaveForAirportTime"] returnNilForZero:YES];
+        drivingTime_ = [someFlightInfo valueForKeyOrNil:@"drivingTime"] ? [[someFlightInfo valueForKeyOrNil:@"drivingTime"] doubleValue] : -1.0; // -1.0 means we have no driving time
+        scheduledFlightDuration_ = [[someFlightInfo valueForKeyOrNil:@"scheduledFlightDuration"] doubleValue];
+        scheduledArrivalTime_ = [NSDate dateWithTimeInterval:scheduledFlightDuration_ sinceDate:scheduledDepartureTime_];
+        
+        // Process origin and destination
+        origin_ = [[OriginAirport alloc] initWithAirportInfo:[someFlightInfo valueForKeyOrNil:@"origin"]];
+        destination_ = [[DestinationAirport alloc] initWithAirportInfo:[someFlightInfo valueForKeyOrNil:@"destination"]];
+        
+        // Process status
+        NSUInteger parsed_status = [sStatuses_ indexOfObject:[someFlightInfo valueForKeyOrNil:@"status"]];
+        status_ = (parsed_status == NSNotFound) ? UNKNOWN : parsed_status;
+        detailedStatus_ = [someFlightInfo valueForKeyOrNil:@"detailedStatus"];
     }
     return self;
 }

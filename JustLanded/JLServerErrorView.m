@@ -22,27 +22,29 @@
 @implementation JLServerErrorView
 
 @synthesize errorType = errorType_;
+@synthesize errorDescriptionLabel_;
+@synthesize moreInfoButton_;
 
-- (id)initWithFrame:(CGRect)frame errorType:(ErrorType)type {
-    self = [super initWithFrame:frame];
+- (id)initWithFrame:(CGRect)aFrame errorType:(ErrorType)type {
+    self = [super initWithFrame:aFrame];
     if (self) {
-        self.errorDescriptionLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles errorDescriptionLabelStyle]
-                                                                    frame:CGRectMake(10.0f,
-                                                                                     321.0f,
-                                                                                     frame.size.width - 20.0f,
-                                                                                     50.0f)];
-        
-        self.moreInfoButton_ = [[JLButton alloc] initWithButtonStyle:[JLStyles defaultButtonStyle]
+        errorDescriptionLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles errorDescriptionLabelStyle]
                                                                frame:CGRectMake(10.0f,
-                                                                                313.0f,
-                                                                                frame.size.width - 20.0f,
-                                                                                56.0f)];
-        self.moreInfoButton_.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
-        [self.moreInfoButton_ setTitle:NSLocalizedString(@"More Info", @"More Info") forState:UIControlStateNormal];
-        [self.moreInfoButton_ addTarget:self action:@selector(moreInfo) forControlEvents:UIControlEventTouchUpInside];
+                                                                                321.0f,
+                                                                                aFrame.size.width - 20.0f,
+                                                                                50.0f)];
+        
+        moreInfoButton_ = [[JLButton alloc] initWithButtonStyle:[JLStyles defaultButtonStyle]
+                                                          frame:CGRectMake(10.0f,
+                                                                           313.0f,
+                                                                           aFrame.size.width - 20.0f,
+                                                                           56.0f)];
+        moreInfoButton_.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
+        [moreInfoButton_ setTitle:NSLocalizedString(@"More Info", @"More Info") forState:UIControlStateNormal];
+        [moreInfoButton_ addTarget:self action:@selector(moreInfo) forControlEvents:UIControlEventTouchUpInside];
         
         [self setErrorType:type];
-        [self addSubview:self.errorDescriptionLabel_];
+        [self addSubview:errorDescriptionLabel_];
     }
     return self;
 }

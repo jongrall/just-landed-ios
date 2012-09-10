@@ -19,6 +19,7 @@
 @implementation JLStatusLabel
 
 @synthesize status = status_;
+@synthesize shadowColor_;
 
 - (id)initWithLabelStyle:(LabelStyle *)aStyle frame:(CGRect)aFrame status:(FlightStatus)aStatus {
     self = [super initWithLabelStyle:aStyle frame:aFrame];
@@ -39,28 +40,30 @@
 
 
 - (void)drawRect:(CGRect)rect {
+    LabelStyle *style_ = self.style;
+    
     // Custom drawing
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     CGContextClearRect(context, rect);
     
     // Background color
-    [self.style.backgroundColor set];
+    [style_.backgroundColor set];
     CGContextFillRect(context, rect);
     
-    TextStyle *textStyle = self.style.textStyle;
+    TextStyle *textStyle = style_.textStyle;
     
     // Shadow
-    if (self.shadowColor_) {
-        CGContextSetShadowWithColor(context, textStyle.shadowOffset, textStyle.shadowBlur, [self.shadowColor_ CGColor]);
+    if (shadowColor_) {
+        CGContextSetShadowWithColor(context, textStyle.shadowOffset, textStyle.shadowBlur, [shadowColor_ CGColor]);
     }
     
     // Draw the text
     [textStyle.color set];
-    [self.text drawInRect:rect 
-            withFont:textStyle.font
-       lineBreakMode:self.style.lineBreakMode
-           alignment:self.style.alignment];
+    [self.text drawInRect:rect
+                 withFont:textStyle.font
+            lineBreakMode:style_.lineBreakMode
+                alignment:style_.alignment];
 }
 
 @end

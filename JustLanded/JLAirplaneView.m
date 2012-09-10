@@ -22,18 +22,22 @@
 
 @implementation JLAirplaneView
 
+@synthesize animationStartTimer_;
+@synthesize airplaneTimer_;
+@synthesize airplane_;
+
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         
-        self.airplane_ = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plane_contrail"]];
-        self.airplane_.frame = CGRectMake(-self.airplane_.image.size.width, // Place offscreen
-                                0.0f,
-                                self.airplane_.image.size.width, // Fixed width
-                                self.airplane_.image.size.height); // Fixed height
+        airplane_ = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plane_contrail"]];
+        airplane_.frame = CGRectMake(-airplane_.image.size.width, // Place offscreen
+                                     0.0f,
+                                     airplane_.image.size.width, // Fixed width
+                                     airplane_.image.size.height); // Fixed height
         self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-        [self addSubview:self.airplane_];
+        [self addSubview:airplane_];
     }
     
     return self;
@@ -80,27 +84,27 @@
 
 
 - (void)animationTick {
-    CGFloat newOffset = self.airplane_.frame.origin.x + 0.3f;
+    CGFloat newOffset = airplane_.frame.origin.x + 0.3f;
     
-    if (newOffset <= self.airplane_.frame.size.width) {
-        [self.airplane_ setFrame:CGRectMake(newOffset,
-                                            self.airplane_.frame.origin.y,
-                                            self.airplane_.frame.size.width,
-                                            self.airplane_.frame.size.height)];
+    if (newOffset <= airplane_.frame.size.width) {
+        [airplane_ setFrame:CGRectMake(newOffset,
+                                            airplane_.frame.origin.y,
+                                            airplane_.frame.size.width,
+                                            airplane_.frame.size.height)];
     }
     else {
-        [self.airplaneTimer_ invalidate];
-        [self.airplane_ setFrame:CGRectMake(-self.airplane_.frame.size.width,
-                                            self.airplane_.frame.origin.y,
-                                            self.airplane_.frame.size.width,
-                                            self.airplane_.frame.size.height)];
+        [airplaneTimer_ invalidate];
+        [airplane_ setFrame:CGRectMake(-airplane_.frame.size.width,
+                                       airplane_.frame.origin.y,
+                                       airplane_.frame.size.width,
+                                       airplane_.frame.size.height)];
     }
 }
 
 
 - (void)dealloc {
-    [self.animationStartTimer_ invalidate];
-    [self.airplaneTimer_ invalidate];
+    [animationStartTimer_ invalidate];
+    [airplaneTimer_ invalidate];
 }
 
 

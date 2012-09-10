@@ -12,7 +12,7 @@
 
 @interface FlightLookupViewController : UIViewController <FlightTrackViewControllerDelegate, AirlineLookupDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
-@property (nonatomic, readonly) UITextField *flightNumberField;
+@property (strong, readonly, nonatomic) JLFlightInputField *flightNumberField;
 
 - (void)beginTrackingFlight:(Flight *)aFlight animated:(BOOL)animateFlip;
 

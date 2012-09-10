@@ -19,11 +19,11 @@
 
 @interface WebContentViewController () <NoConnectionDelegate, UIWebViewDelegate>
 
-@property (strong, nonatomic) NSString *_contentTitle;
-@property (strong, nonatomic) NSURL *_contentURL;
-@property (strong, nonatomic) JLLoadingView *_loadingOverlay;
-@property (strong, nonatomic) JLNoConnectionView *_noConnectionOverlay;
-@property (strong, nonatomic) JLServerErrorView *_serverErrorOverlay;
+@property (strong, nonatomic) NSString *contentTitle_;
+@property (strong, nonatomic) NSURL *contentURL_;
+@property (strong, nonatomic) JLLoadingView *loadingOverlay_;
+@property (strong, nonatomic) JLNoConnectionView *noConnectionOverlay_;
+@property (strong, nonatomic) JLServerErrorView *serverErrorOverlay_;
 
 - (void)indicateLoading;
 - (void)indicateStoppedLoading;
@@ -40,105 +40,105 @@
 
 @implementation WebContentViewController
 
-@synthesize webView;
-@synthesize _contentTitle;
-@synthesize _contentURL;
-@synthesize _loadingOverlay;
-@synthesize _noConnectionOverlay;
-@synthesize _serverErrorOverlay;
+@synthesize webView = webView_;
+@synthesize contentTitle_;
+@synthesize contentURL_;
+@synthesize loadingOverlay_;
+@synthesize noConnectionOverlay_;
+@synthesize serverErrorOverlay_;
 
 
 - (id)initWithContentTitle:(NSString *)aTitle URL:(NSURL *)aContentURL {
     self = [super init];
     
     if (self) {
-        self._contentTitle = (aTitle) ? aTitle : @"Untitled";
-        self._contentURL = (aContentURL) ? aContentURL : [NSURL URLWithString:@"about:blank"];
+        contentTitle_ = (aTitle) ? aTitle : @"Untitled";
+        contentURL_ = (aContentURL) ? aContentURL : [NSURL URLWithString:@"about:blank"];
     }
     
     return self;
 }
 
 - (void)loadContent {
-    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:_contentURL];
+    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:self.contentURL_];
     [req setTimeoutInterval:15.0];
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:req];
     
     // Compute base URL
-    NSURL *baseURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", [_contentURL scheme], [_contentURL host]]];
+    NSURL *baseURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", [self.contentURL_ scheme], [self.contentURL_ host]]];
     AFHTTPClient *client = [AFHTTPClient clientWithBaseURL:baseURL];
     
     // Use iOS user agent string
-    NSString *userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+    NSString *userAgent = [self.webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
     [client setDefaultHeader:@"User-Agent" value:userAgent];
     
     operation.acceptableStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(200, 4)];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *theOperation, id responseObject) {
         [self performSelector:@selector(indicateStoppedLoading) withObject:nil afterDelay:1.0]; // Delay prevents white flash as webview loads content
         NSString *responseString = [theOperation responseString];
-        [webView setHidden:NO];
-        [webView loadHTMLString:responseString baseURL:[NSURL URLWithString:WEB_HOST]];
+        [self.webView setHidden:NO];
+        [self.webView loadHTMLString:responseString baseURL:[NSURL URLWithString:WEB_HOST]];
     }
                                      failure:^(AFHTTPRequestOperation *theOperation, NSError *failure) {
                                          [self indicateStoppedLoading];
                                          NSHTTPURLResponse *response = [theOperation response];
                                          
-                                         if (!_serverErrorOverlay) {
-                                             self._serverErrorOverlay = [[JLServerErrorView alloc] initWithFrame:CGRectMake(0.0f,
+                                         if (!self.serverErrorOverlay_) {
+                                             self.serverErrorOverlay_ = [[JLServerErrorView alloc] initWithFrame:CGRectMake(0.0f,
                                                                                                                        0.0f,
                                                                                                                        320.0f,
                                                                                                                        460.0f) 
                                                                                                        errorType:ERROR_500];
-                                             self._serverErrorOverlay.frame = CGRectMake(0.0f,
+                                             self.serverErrorOverlay_.frame = CGRectMake(0.0f,
                                                                                          -44.0f,
                                                                                          320.0f,
                                                                                          460.0f);
-                                             self._serverErrorOverlay.delegate = self;
+                                             self.serverErrorOverlay_.delegate = self;
                                          }
                                          
                                          if (response) {
                                              switch ([response statusCode]) {
                                                  case 503: {
-                                                     self._serverErrorOverlay.errorType = ERROR_503;
+                                                     self.serverErrorOverlay_.errorType = ERROR_503;
                                                      break;
                                                  }
                                                  default: {
-                                                     self._serverErrorOverlay.errorType = ERROR_500;
+                                                     self.serverErrorOverlay_.errorType = ERROR_500;
                                                      break;
                                                  }
                                              }
                                              
-                                             self._serverErrorOverlay.tryAgainbutton.enabled = YES;
-                                             [self.view addSubview:_serverErrorOverlay];
+                                             self.serverErrorOverlay_.tryAgainButton.enabled = YES;
+                                             [self.view addSubview:self.serverErrorOverlay_];
                                          }
                                          else {
                                              // Handle possible no connection
                                              if ([[JustLandedSession sharedSession] isJustLandedReachable]) {
                                                  // JL is reachable, we must be having an outage
-                                                 self._serverErrorOverlay.errorType = ERROR_503;
-                                                 self._serverErrorOverlay.tryAgainbutton.enabled = YES;
-                                                 [self.view addSubview:_serverErrorOverlay];
+                                                 self.serverErrorOverlay_.errorType = ERROR_503;
+                                                 self.serverErrorOverlay_.tryAgainButton.enabled = YES;
+                                                 [self.view addSubview:self.serverErrorOverlay_];
                                              }
                                              else {
                                                  // JL is not reachable - no connection
-                                                 if (!_noConnectionOverlay) {
-                                                     self._noConnectionOverlay = [[JLNoConnectionView alloc] initWithFrame:CGRectMake(0.0f,
+                                                 if (!self.noConnectionOverlay_) {
+                                                     self.noConnectionOverlay_ = [[JLNoConnectionView alloc] initWithFrame:CGRectMake(0.0f,
                                                                                                                                       0.0f,
                                                                                                                                       320.0f,
                                                                                                                                       460.0f)];
-                                                     self._noConnectionOverlay.frame = CGRectMake(0.0f,
+                                                     self.noConnectionOverlay_.frame = CGRectMake(0.0f,
                                                                                                   -44.0f,
                                                                                                   320.0f,
                                                                                                   460.0f);
-                                                     self._noConnectionOverlay.noConnectionImageView.frame = CGRectMake(_noConnectionOverlay.noConnectionImageView.frame.origin.x,
+                                                     self.noConnectionOverlay_.noConnectionImageView.frame = CGRectMake(self.noConnectionOverlay_.noConnectionImageView.frame.origin.x,
                                                                                                                         70.0f,
-                                                                                                                        _noConnectionOverlay.noConnectionImageView.frame.size.width,
-                                                                                                                        _noConnectionOverlay.noConnectionImageView.frame.size.height);
-                                                     self._noConnectionOverlay.delegate = self;
+                                                                                                                        self.noConnectionOverlay_.noConnectionImageView.frame.size.width,
+                                                                                                                        self.noConnectionOverlay_.noConnectionImageView.frame.size.height);
+                                                     self.noConnectionOverlay_.delegate = self;
                                                  }
                                                  
-                                                 self._noConnectionOverlay.tryAgainbutton.enabled = YES;
-                                                 [self.view addSubview:_noConnectionOverlay];
+                                                 self.noConnectionOverlay_.tryAgainButton.enabled = YES;
+                                                 [self.view addSubview:self.noConnectionOverlay_];
                                             }
                                          }
                                      }];
@@ -149,29 +149,29 @@
 
 
 - (void)indicateLoading {
-    [_noConnectionOverlay removeFromSuperview];
-    [_serverErrorOverlay removeFromSuperview];
-    [webView setHidden:YES];
+    [self.noConnectionOverlay_ removeFromSuperview];
+    [self.serverErrorOverlay_ removeFromSuperview];
+    [self.webView setHidden:YES];
     
-    if (!_loadingOverlay) {
-        self._loadingOverlay = [[JLLoadingView alloc] initWithFrame:CGRectMake(0.0f,
+    if (!self.loadingOverlay_) {
+        self.loadingOverlay_ = [[JLLoadingView alloc] initWithFrame:CGRectMake(0.0f,
                                                                                0.0f,
                                                                                320.0f,
                                                                                460.0f)];
-        self._loadingOverlay.frame = CGRectMake(0.0f,
+        self.loadingOverlay_.frame = CGRectMake(0.0f,
                                                 -44.0f,
                                                 320.0f,
                                                 460.0f);
     }
     
-    [self.view addSubview:_loadingOverlay];
-    [_loadingOverlay startLoading];
+    [self.view addSubview:self.loadingOverlay_];
+    [self.loadingOverlay_ startLoading];
 }
 
 
 - (void)indicateStoppedLoading {
-    [_loadingOverlay stopLoading];
-    [_loadingOverlay removeFromSuperview];
+    [self.loadingOverlay_ stopLoading];
+    [self.loadingOverlay_ removeFromSuperview];
 }
 
 
@@ -182,8 +182,8 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)aWebView {
     //Process anchor links
-    if ([_contentURL fragment]) {
-        [aWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"window.location.hash='%@';", [_contentURL fragment]]];
+    if ([self.contentURL_ fragment]) {
+        [aWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"window.location.hash='%@';", [self.contentURL_ fragment]]];
     }
 }
 
@@ -213,13 +213,13 @@
     self.webView.hidden = YES;
     self.webView.delegate = self;
     [self.view addSubview:blackBG];
-	[self.view addSubview:webView];
+	[self.view addSubview:self.webView];
 }
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-	self.navigationItem.title = _contentTitle;
+	self.navigationItem.title = self.contentTitle_;
     
     // Customize the navbar
     self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);
@@ -235,15 +235,15 @@
 - (void)viewDidUnload {
     [super viewDidUnload];
 	self.webView = nil;
-    self._noConnectionOverlay = nil;
-    self._serverErrorOverlay = nil;
+    self.noConnectionOverlay_ = nil;
+    self.serverErrorOverlay_ = nil;
 }
 
 
 - (void)dealloc {
-    self.webView.delegate = nil;
-    self._noConnectionOverlay.delegate = nil;
-    self._serverErrorOverlay.delegate = nil;
+    webView_.delegate = nil;
+    noConnectionOverlay_.delegate = nil;
+    serverErrorOverlay_.delegate = nil;
 }
 
 @end

@@ -92,7 +92,7 @@ static UIColor *sSelectedTextColor_;
         [sSelectedTextColor_ set];
     }
     else {
-        if (self.clearCell) {
+        if (clearCell_) {
             [sClearTextColor_ set];
         }
         else {
@@ -100,22 +100,22 @@ static UIColor *sSelectedTextColor_;
         }
     }
     
-    if (!self.clearCell) {
+    if (!clearCell_) {
         // Draw the text
-        CGSize nameSize = [self.airlineName drawInRect:textRect_
-                                              withFont:sNameFont_ 
-                                         lineBreakMode:UILineBreakModeMiddleTruncation 
-                                             alignment:UITextAlignmentLeft];
-        [self.airlineCode drawInRect:CGRectMake(textRect_.origin.x + nameSize.width, textRect_.origin.y, textRect_.size.width - nameSize.width, textRect_.size.height)
-                            withFont:sCodeFont_
-                       lineBreakMode:UILineBreakModeTailTruncation
-                           alignment:UITextAlignmentLeft];
+        CGSize nameSize = [airlineName_ drawInRect:textRect_
+                                          withFont:sNameFont_
+                                     lineBreakMode:UILineBreakModeMiddleTruncation
+                                         alignment:UITextAlignmentLeft];
+        [airlineCode_ drawInRect:CGRectMake(textRect_.origin.x + nameSize.width, textRect_.origin.y, textRect_.size.width - nameSize.width, textRect_.size.height)
+                        withFont:sCodeFont_
+                   lineBreakMode:UILineBreakModeTailTruncation
+                       alignment:UITextAlignmentLeft];
     }
     else {
-        [self.clearText drawInRect:textRect_
-                          withFont:sClearFont_ 
-                     lineBreakMode:UILineBreakModeTailTruncation 
-                         alignment:UITextAlignmentCenter];
+        [clearText_ drawInRect:textRect_
+                      withFont:sClearFont_
+                 lineBreakMode:UILineBreakModeTailTruncation
+                     alignment:UITextAlignmentCenter];
     }
 }
 

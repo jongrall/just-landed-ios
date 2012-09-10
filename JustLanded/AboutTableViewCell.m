@@ -104,9 +104,9 @@ static CGRect sDividerRect_;
         self.selectedBackgroundView.hidden = NO;
     
         // Icons have highlight shadow built in
-        [self.downIcon drawAtPoint:CGPointMake(roundf(iconCenter_.x - self.downIcon.size.width/2.0f), roundf(iconCenter_.y - self.downIcon.size.height/2.0f))
-                    blendMode:kCGBlendModeNormal
-                        alpha:0.87f];
+        [downIcon_ drawAtPoint:CGPointMake(roundf(iconCenter_.x - downIcon_.size.width/2.0f), roundf(iconCenter_.y - downIcon_.size.height/2.0f))
+                     blendMode:kCGBlendModeNormal
+                         alpha:0.87f];
         
         CGContextSetShadowWithColor(context, highlightedShadowOffset_, 4.0f, [sHighlightedShadowColor_ CGColor]);
     }
@@ -115,24 +115,24 @@ static CGRect sDividerRect_;
         self.selectedBackgroundView.hidden = YES;
         
         // Icons have highlight shadow built in
-        [self.icon drawAtPoint:CGPointMake(roundf(iconCenter_.x - self.icon.size.width/2.0f), roundf(iconCenter_.y - self.icon.size.height/2.0f))
-                    blendMode:kCGBlendModeNormal
-                        alpha:0.8f];
+        [icon_ drawAtPoint:CGPointMake(roundf(iconCenter_.x - icon_.size.width/2.0f), roundf(iconCenter_.y - icon_.size.height/2.0f))
+                 blendMode:kCGBlendModeNormal
+                     alpha:0.8f];
     }
     
     // Draw the text
     [sTitleColor_ set];
     
-    [self.title drawInRect:titleRect_
-                  withFont:sTitleFont_
-             lineBreakMode:UILineBreakModeTailTruncation
-                 alignment:UITextAlignmentLeft];
+    [title_ drawInRect:titleRect_
+              withFont:sTitleFont_
+         lineBreakMode:UILineBreakModeTailTruncation
+             alignment:UITextAlignmentLeft];
 
     // Stop drawing shadows
     CGContextRestoreGState(context);
     
     // Draw the disclosure arrow if needed
-    if (self.hasDisclosureArrow) {
+    if (hasDisclosureArrow_) {
         UIImage *disclosureArrowToDraw = (isHighlighted) ? sHighlightedDisclosureArrow_ : sDisclosureArrow_;
         [disclosureArrowToDraw drawInRect:CGRectMake(contentView.frame.size.width - 47.0f,
                                                      (AboutTableViewCellHeight - disclosureArrowToDraw.size.height) / 2.0f,
@@ -141,7 +141,7 @@ static CGRect sDividerRect_;
     }
     
     // Draw the divider below if necessary
-    if (self.cellType != BOTTOM) {
+    if (cellType_ != BOTTOM) {
         [sDivider_ drawInRect:sDividerRect_];
     }
 }

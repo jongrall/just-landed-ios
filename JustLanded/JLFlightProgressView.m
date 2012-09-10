@@ -33,6 +33,13 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 
 @implementation JLFlightProgressView
 
+@synthesize onGroundBackground_;
+@synthesize groundLayer_;
+@synthesize cloudLayer_;
+@synthesize airplaneIcon_;
+@synthesize animationTimer_;
+@synthesize currentGroundOffset_;
+@synthesize currentCloudOffset_;
 @synthesize progress = progress_;
 @synthesize timeOfDay = timeOfDay_;
 @synthesize aircraftType = aircraftType_;
@@ -54,34 +61,34 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
                                     FLIGHT_PROGRESS_VIEW_SIZE.width, 
                                     FLIGHT_PROGRESS_VIEW_SIZE.height);
         
-        self.onGroundBackground_ = [[UIImageView alloc] initWithFrame:bgFrame];
+        onGroundBackground_ = [[UIImageView alloc] initWithFrame:bgFrame];
         
-        self.groundLayer_ = [[UIScrollView alloc] initWithFrame:bgFrame];
-        self.groundLayer_.userInteractionEnabled = NO;
-        self.groundLayer_.opaque = NO;
-        self.groundLayer_.scrollEnabled = NO;
-        self.groundLayer_.showsHorizontalScrollIndicator = NO;
-        self.groundLayer_.showsVerticalScrollIndicator = NO;
-        self.groundLayer_.bounces = NO;
+        groundLayer_ = [[UIScrollView alloc] initWithFrame:bgFrame];
+        groundLayer_.userInteractionEnabled = NO;
+        groundLayer_.opaque = NO;
+        groundLayer_.scrollEnabled = NO;
+        groundLayer_.showsHorizontalScrollIndicator = NO;
+        groundLayer_.showsVerticalScrollIndicator = NO;
+        groundLayer_.bounces = NO;
         
-        self.cloudLayer_ = [[UIScrollView alloc] initWithFrame:bgFrame];
-        self.cloudLayer_.userInteractionEnabled = NO;
-        self.cloudLayer_.opaque = NO;
-        self.cloudLayer_.scrollEnabled = NO;
-        self.cloudLayer_.showsHorizontalScrollIndicator = NO;
-        self.cloudLayer_.showsVerticalScrollIndicator = NO;
-        self.cloudLayer_.bounces = NO;
+        cloudLayer_ = [[UIScrollView alloc] initWithFrame:bgFrame];
+        cloudLayer_.userInteractionEnabled = NO;
+        cloudLayer_.opaque = NO;
+        cloudLayer_.scrollEnabled = NO;
+        cloudLayer_.showsHorizontalScrollIndicator = NO;
+        cloudLayer_.showsVerticalScrollIndicator = NO;
+        cloudLayer_.bounces = NO;
         
-        self.airplaneIcon_ = [[UIImageView alloc] initWithFrame:CGRectZero];
+        airplaneIcon_ = [[UIImageView alloc] initWithFrame:CGRectZero];
         
-        [self addSubview:self.onGroundBackground_];
-        [self addSubview:self.groundLayer_];
-        [self addSubview:self.cloudLayer_];
-        [self addSubview:self.airplaneIcon_];
+        [self addSubview:onGroundBackground_];
+        [self addSubview:groundLayer_];
+        [self addSubview:cloudLayer_];
+        [self addSubview:airplaneIcon_];
         
-        self.timeOfDay = aTimeOfDay;
-        self.aircraftType = aType;
-        self.progress = someProgress;
+        timeOfDay_ = aTimeOfDay;
+        aircraftType_ = aType;
+        progress_ = someProgress;
     }
     return self;
 }
@@ -221,18 +228,18 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     CGFloat newGroundOffset;
     CGFloat newCloudOffset;
         
-    if (self.currentGroundOffset_ >= self.groundLayer_.contentSize.width - 320.0f) {
-        newGroundOffset = (self.currentGroundOffset_ - (self.groundLayer_.contentSize.width - 320.0f)) + (GROUND_LAYER_POINTS_PER_SEC * self.animationTimer_.timeInterval);
+    if (currentGroundOffset_ >= groundLayer_.contentSize.width - 320.0f) {
+        newGroundOffset = (currentGroundOffset_ - (groundLayer_.contentSize.width - 320.0f)) + (GROUND_LAYER_POINTS_PER_SEC * animationTimer_.timeInterval);
     }
     else {
-        newGroundOffset = self.currentGroundOffset_ + (GROUND_LAYER_POINTS_PER_SEC * self.animationTimer_.timeInterval);
+        newGroundOffset = currentGroundOffset_ + (GROUND_LAYER_POINTS_PER_SEC * animationTimer_.timeInterval);
     }
 
-    if (self.currentCloudOffset_ >= self.cloudLayer_.contentSize.width - 320.0f) {
-        newCloudOffset = (self.currentCloudOffset_ - (self.cloudLayer_.contentSize.width - 320.0f)) + (CLOUD_LAYER_POINTS_PER_SEC * self.animationTimer_.timeInterval);
+    if (self.currentCloudOffset_ >= cloudLayer_.contentSize.width - 320.0f) {
+        newCloudOffset = (currentCloudOffset_ - (cloudLayer_.contentSize.width - 320.0f)) + (CLOUD_LAYER_POINTS_PER_SEC * animationTimer_.timeInterval);
     }
     else {
-        newCloudOffset = self.currentCloudOffset_ + (CLOUD_LAYER_POINTS_PER_SEC * self.animationTimer_.timeInterval);
+        newCloudOffset = currentCloudOffset_ + (CLOUD_LAYER_POINTS_PER_SEC * animationTimer_.timeInterval);
     }
     
     self.currentGroundOffset_ = newGroundOffset;
@@ -286,7 +293,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 
 
 - (void)dealloc {
-    [self stopAnimating];
+    [animationTimer_ invalidate];
 }
 
 @end

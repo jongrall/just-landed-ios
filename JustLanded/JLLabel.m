@@ -19,14 +19,15 @@
 @implementation JLLabel
 
 @synthesize text = text_;
+@synthesize style = style_;
 
 - (id)initWithLabelStyle:(LabelStyle *)aStyle frame:(CGRect)aFrame {
     self = [super initWithFrame:aFrame];
     
     if (self) {
-        self.style = aStyle;
+        style_ = aStyle;
         self.opaque = NO;
-        self.text = @"";
+        text_ = @"";
     }
 
     return self;
@@ -40,12 +41,12 @@
     CGContextClearRect(context, rect);
     
     // Background color
-    if (self.style.backgroundColor) {
-        [self.style.backgroundColor set];
+    if (style_.backgroundColor) {
+        [style_.backgroundColor set];
         CGContextFillRect(context, rect);
     }
     
-    TextStyle *textStyle = self.style.textStyle;
+    TextStyle *textStyle = style_.textStyle;
     
     // Shadow
     if (textStyle.shadowColor) {
@@ -54,10 +55,10 @@
     
     // Draw the text
     [textStyle.color set];
-    [self.text drawInRect:rect
+    [text_ drawInRect:rect
             withFont:textStyle.font
-       lineBreakMode:self.style.lineBreakMode
-           alignment:self.style.alignment];
+       lineBreakMode:style_.lineBreakMode
+           alignment:style_.alignment];
     
     [super drawRect:rect];
 }

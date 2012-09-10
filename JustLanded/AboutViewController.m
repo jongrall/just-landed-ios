@@ -31,10 +31,10 @@ typedef enum {
 
 @interface AboutViewController () <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate>
 
-@property (strong, nonatomic) JLButton *_aboutButton;
-@property (strong, nonatomic) JLLabel *_aboutTitle;
-@property (strong, nonatomic) UITableView *_aboutTable;
-@property (strong, nonatomic) JLLabel *_copyrightLabel;
+@property (strong, nonatomic) JLButton *aboutButton_;
+@property (strong, nonatomic) JLLabel *aboutTitle_;
+@property (strong, nonatomic) UITableView *aboutTable_;
+@property (strong, nonatomic) JLLabel *copyrightLabel_;
 
 - (void)dismiss;
 - (BOOL)setMFMailFieldAsFirstResponder:(UIView *)view mfMailField:(NSString *)field;
@@ -47,17 +47,12 @@ typedef enum {
 
 @implementation AboutViewController
 
-@synthesize cloudLayer;
-@synthesize airplane;
-@synthesize _aboutButton;
-@synthesize _aboutTitle;
-@synthesize _aboutTable;
-@synthesize _copyrightLabel;
+@synthesize airplane = airplane_;
+@synthesize aboutTable_;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - View lifecycle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 - (void)loadView {    
     UIImageView *mainView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sky_bg"]];
@@ -66,21 +61,21 @@ typedef enum {
     self.view = mainView;
     
     // Add the about button
-    self._aboutButton = [[JLButton alloc] initWithButtonStyle:[JLAboutStyles aboutCloseButtonStyle] frame:ABOUT_BUTTON_FRAME]; // Frame matches lookup
-    [_aboutButton addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
-    _aboutButton.enabled = NO;
-    [self.view addSubview:_aboutButton];
+    self.aboutButton_ = [[JLButton alloc] initWithButtonStyle:[JLAboutStyles aboutCloseButtonStyle] frame:ABOUT_BUTTON_FRAME]; // Frame matches lookup
+    [self.aboutButton_ addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
+    self.aboutButton_.enabled = NO;
+    [self.view addSubview:self.aboutButton_];
     
     // Add the title
-    self._aboutTitle = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles aboutTitleLabelStyle] frame:ABOUT_TITLE_FRAME];
-    _aboutTitle.text = NSLocalizedString(@"about", @"About Screen Title");
-    _aboutTitle.hidden = YES; // Hidden at first
-    [self.view addSubview:_aboutTitle];
+    self.aboutTitle_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles aboutTitleLabelStyle] frame:ABOUT_TITLE_FRAME];
+    self.aboutTitle_.text = NSLocalizedString(@"about", @"About Screen Title");
+    self.aboutTitle_.hidden = YES; // Hidden at first
+    [self.view addSubview:self.aboutTitle_];
     
     // Add the cloud layer
     self.cloudLayer = [[JLCloudLayer alloc] initWithFrame:CLOUD_LAYER_FRAME]; // Frame matches lookup
-    cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:cloudLayer];
+    self.cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.cloudLayer];
     
     // Add the cloud foreground
     UIImageView *cloudFooter = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
@@ -99,17 +94,17 @@ typedef enum {
     [table setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [table setHidden:YES]; // Hidden at first
     [table setRowHeight:AboutTableViewCellHeight];
-    self._aboutTable = table;
+    self.aboutTable_ = table;
     [self.view addSubview:table];
     
     // Add the credits
-    self._copyrightLabel = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle] frame:COPYRIGHT_NOTICE_FRAME];
-    _copyrightLabel.text = [NSString stringWithFormat:NSLocalizedString(@"©2012 Little Details LLC. Just Landed %@", @"Copyright Notice"),
+    self.copyrightLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle] frame:COPYRIGHT_NOTICE_FRAME];
+    self.copyrightLabel_.text = [NSString stringWithFormat:NSLocalizedString(@"©2012 Little Details LLC. Just Landed %@", @"Copyright Notice"),
                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-    _copyrightLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    _copyrightLabel.hidden = YES; // Hidden at first
+    self.copyrightLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    self.copyrightLabel_.hidden = YES; // Hidden at first
     
-    [self.view addSubview:_copyrightLabel];
+    [self.view addSubview:self.copyrightLabel_];
 }
 
 
@@ -117,7 +112,7 @@ typedef enum {
     [super viewDidLoad];
     
     // Start animating the clouds
-    [cloudLayer startAnimating];
+    [self.cloudLayer startAnimating];
     
     // Override back button
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Back", @"Back")
@@ -132,10 +127,10 @@ typedef enum {
     // Release any retained subviews of the main view
     self.cloudLayer = nil;
     self.airplane = nil;
-    self._aboutButton = nil;
-    self._aboutTitle = nil;
-    self._aboutTable = nil;
-    self._copyrightLabel = nil;
+    self.aboutButton_ = nil;
+    self.aboutTitle_ = nil;
+    self.aboutTable_ = nil;
+    self.copyrightLabel_ = nil;
 }
 
 
@@ -165,27 +160,27 @@ typedef enum {
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         cloudLayer.frame = CLOUD_LAYER_LOWER_FRAME;
-                         airplane.frame = AIRPLANE_LOWER_FRAME;
+                         self.cloudLayer.frame = CLOUD_LAYER_LOWER_FRAME;
+                         self.airplane.frame = AIRPLANE_LOWER_FRAME;
                      }
                      completion:^(BOOL finished) {
-                         _aboutTitle.alpha = 0.0f;
-                         _aboutTitle.hidden = NO;
-                         _aboutTable.alpha = 0.0f;
-                         _aboutTable.hidden = NO;
-                         _copyrightLabel.alpha = 0.0f;
-                         _copyrightLabel.hidden = NO;
+                         self.aboutTitle_.alpha = 0.0f;
+                         self.aboutTitle_.hidden = NO;
+                         self.aboutTable_.alpha = 0.0f;
+                         self.aboutTable_.hidden = NO;
+                         self.copyrightLabel_.alpha = 0.0f;
+                         self.copyrightLabel_.hidden = NO;
                          
                          [UIView animateWithDuration:FADE_ANIMATION_DURATION
                                                delay:0.0
                                              options:UIViewAnimationOptionCurveLinear
                                           animations:^{
-                                              _aboutTitle.alpha = 1.0f;
-                                              _aboutTable.alpha = 1.0f;
-                                              _copyrightLabel.alpha = 1.0f;
+                                              self.aboutTitle_.alpha = 1.0f;
+                                              self.aboutTable_.alpha = 1.0f;
+                                              self.copyrightLabel_.alpha = 1.0f;
                                           }
                                           completion:^(BOOL finishedAlso) {
-                                              _aboutButton.enabled = YES;
+                                              self.aboutButton_.enabled = YES;
                                           }];
                      }];
 }
@@ -195,11 +190,11 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)setAirplane:(JLAirplaneView *)anAirplane {
-    if (anAirplane != airplane) {
-        airplane = anAirplane;
+    if (airplane_ != anAirplane) {
+        airplane_ = anAirplane;
     
         // Side effect - adds the plane to the view
-        [[self view] insertSubview:airplane belowSubview:_aboutTable];
+        [[self view] insertSubview:airplane_ belowSubview:self.aboutTable_];
     }
 }
 
@@ -209,25 +204,25 @@ typedef enum {
 
 - (void)dismiss {
     // Fade the table, and the clouds back into view, then dismiss the about screen
-    self._aboutButton.enabled = NO;
+    self.aboutButton_.enabled = NO;
     [UIView animateWithDuration:FADE_ANIMATION_DURATION
                           delay:0.0
                         options:UIViewAnimationOptionCurveLinear
                      animations:^{
-                         _aboutTitle.alpha = 0.0f;
-                         _aboutTable.alpha = 0.0f;
-                         _copyrightLabel.alpha = 0.0f;
+                         self.aboutTitle_.alpha = 0.0f;
+                         self.aboutTable_.alpha = 0.0f;
+                         self.copyrightLabel_.alpha = 0.0f;
                      }
                      completion:^(BOOL finished) {
                          [UIView animateWithDuration:CLOUD_REVEAL_ANIMATION_DURATION
                                                delay:0.0
                                              options:UIViewAnimationOptionCurveEaseInOut
                                           animations:^{
-                                              cloudLayer.frame = CLOUD_LAYER_FRAME;
-                                              airplane.frame = AIRPLANE_FRAME;
+                                              self.cloudLayer.frame = CLOUD_LAYER_FRAME;
+                                              self.airplane.frame = AIRPLANE_FRAME;
                                           }
                                           completion:^(BOOL finishedAlso) {
-                                              [[self.presentingViewController view] addSubview:airplane]; // Give the airplane back :)
+                                              [[self.presentingViewController view] addSubview:self.airplane]; // Give the airplane back :)
                                               [self dismissModalViewControllerAnimated:NO]; // Instant transition
                                           }];
                      }];
@@ -525,7 +520,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)dealloc {
-    _aboutTable.delegate = nil;
+    aboutTable_.delegate = nil;
 }
 
 @end

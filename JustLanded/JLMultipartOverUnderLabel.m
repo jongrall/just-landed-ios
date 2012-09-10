@@ -10,6 +10,8 @@
 
 @implementation JLMultipartOverUnderLabel
 
+@synthesize labelSeparation = labelSeparation_;
+
 - (void)setParts:(NSArray *)parts {
     NSAssert([parts count] % 2 == 0, @"Odd number of label parts!");
     [super setParts:parts];
@@ -17,6 +19,10 @@
 
 
 - (void)drawRect:(CGRect)rect {
+    NSArray *offsets_ = self.offsets;
+    NSArray *parts_ = self.parts;
+    NSArray *styles_ = self.styles;
+    
     // Custom drawing
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextClearRect(context, rect);
@@ -25,12 +31,12 @@
     CGFloat midpoint = rect.size.width / 2.0f;
     CGFloat totalWidth = 0.0f;
     
-    for (NSUInteger i = 0; i < [self.parts count]; i = i + 2) {
-        NSString *nextPart = [self.parts objectAtIndex:i];
+    for (NSUInteger i = 0; i < [parts_ count]; i = i + 2) {
+        NSString *nextPart = [parts_ objectAtIndex:i];
         LabelStyle *nextStyle;
         
-        if (self.styles) {
-            nextStyle = ([self.styles count] > i) ? [self.styles objectAtIndex:i] : [self.styles lastObject];
+        if (styles_) {
+            nextStyle = ([styles_ count] > i) ? [styles_ objectAtIndex:i] : [styles_ lastObject];
         }
         else {
             break; // Unrecoverable, we need at least one text style
@@ -40,29 +46,29 @@
         totalWidth += nextPartSize.width;
     }
     
-    NSUInteger numSeparators = ([self.parts count]/2 - 1) > 0 ? [self.parts count]/2 - 1 : 0;
-    totalWidth = totalWidth + numSeparators * self.labelSeparation;
+    NSUInteger numSeparators = ([parts_ count]/2 - 1) > 0 ? [parts_ count]/2 - 1 : 0;
+    totalWidth = totalWidth + numSeparators * labelSeparation_;
     CGPoint startPoint = CGPointMake(midpoint - (totalWidth / 2.0f), 0.0f);
  
-    for (NSUInteger i = 0; i < [self.parts count]; i = i + 2) {
-        NSString *nextUpperPart = [self.parts objectAtIndex:i];
-        NSString *nextUnderPart = [self.parts objectAtIndex:i+1];
+    for (NSUInteger i = 0; i < [parts_ count]; i = i + 2) {
+        NSString *nextUpperPart = [parts_ objectAtIndex:i];
+        NSString *nextUnderPart = [parts_ objectAtIndex:i+1];
         
         // Get the next offset, guard against programmer error
         CGSize nextUpperOffset = CGSizeZero;
         CGSize nextLowerOffset = CGSizeZero;
-        if (self.offsets) {
-            nextUpperOffset = ([self.offsets count] > i) ? [[self.offsets objectAtIndex:i] CGSizeValue] : [[self.offsets lastObject] CGSizeValue];
-            nextLowerOffset = ([self.offsets count] > i+1) ? [[self.offsets objectAtIndex:i+1] CGSizeValue] : [[self.offsets lastObject] CGSizeValue];
+        if (offsets_) {
+            nextUpperOffset = ([offsets_ count] > i) ? [[offsets_ objectAtIndex:i] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
+            nextLowerOffset = ([offsets_ count] > i+1) ? [[offsets_ objectAtIndex:i+1] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
         }
         
         LabelStyle *nextUpperStyle;
         LabelStyle *nextLowerStyle;
         
         // Get the next style, guard against programmer error
-        if (self.styles) {
-            nextUpperStyle = ([self.styles count] > i) ? [self.styles objectAtIndex:i] : [self.styles lastObject];
-            nextLowerStyle = ([self.styles count] > i+1) ? [self.styles objectAtIndex:i+1] : [self.styles lastObject];
+        if (styles_) {
+            nextUpperStyle = ([styles_ count] > i) ? [styles_ objectAtIndex:i] : [styles_ lastObject];
+            nextLowerStyle = ([styles_ count] > i+1) ? [styles_ objectAtIndex:i+1] : [styles_ lastObject];
         }
         else {
             break; // Unrecoverable, we need at least one text style
@@ -101,7 +107,7 @@
         [nextUnderPart drawAtPoint:underStartPoint withFont:lowerTextStyle.font];
         CGContextRestoreGState(context);
         
-        startPoint = CGPointMake(startPoint.x + snippetSize.width + self.labelSeparation,
+        startPoint = CGPointMake(startPoint.x + snippetSize.width + labelSeparation_,
                                  startPoint.y);
     }
 }
