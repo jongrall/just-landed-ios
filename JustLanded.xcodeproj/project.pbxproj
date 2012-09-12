@@ -318,6 +318,8 @@
 		11E1AD371554D3520021EE16 /* landing.wav in Resources */ = {isa = PBXBuildFile; fileRef = 11E1AD341554D3520021EE16 /* landing.wav */; };
 		11E1AD381554D3520021EE16 /* takeoff.wav in Resources */ = {isa = PBXBuildFile; fileRef = 11E1AD351554D3520021EE16 /* takeoff.wav */; };
 		11E1AD3B1554FFB20021EE16 /* JLAboutStyles.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E1AD3A1554FFB20021EE16 /* JLAboutStyles.m */; };
+		11E7EF5B16002AF70055C0F2 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11E7EF5816002AEE0055C0F2 /* MapKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		11E7EF5E16003FA30055C0F2 /* NSString+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E7EF5D16003FA30055C0F2 /* NSString+JLExtensions.m */; };
 		11F0E97C1555D82E0044B50C /* nav_button_back_down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */; };
 		11F0E97D1555D82E0044B50C /* nav_button_back_up@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */; };
 		11F112EC15117A170008D301 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F112E915117A0A0008D301 /* Twitter.framework */; };
@@ -788,6 +790,9 @@
 		11E1AD351554D3520021EE16 /* takeoff.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = takeoff.wav; sourceTree = "<group>"; };
 		11E1AD391554FFB20021EE16 /* JLAboutStyles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLAboutStyles.h; sourceTree = "<group>"; };
 		11E1AD3A1554FFB20021EE16 /* JLAboutStyles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLAboutStyles.m; sourceTree = "<group>"; };
+		11E7EF5816002AEE0055C0F2 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		11E7EF5C16003FA30055C0F2 /* NSString+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+JLExtensions.h"; sourceTree = "<group>"; };
+		11E7EF5D16003FA30055C0F2 /* NSString+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+JLExtensions.m"; sourceTree = "<group>"; };
 		11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_down@2x.png"; sourceTree = "<group>"; };
 		11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_up@2x.png"; sourceTree = "<group>"; };
 		11F112E915117A0A0008D301 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
@@ -865,6 +870,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11E7EF5B16002AF70055C0F2 /* MapKit.framework in Frameworks */,
 				111A6F9315F014A70006FB37 /* libReachability.a in Frameworks */,
 				11F7DC8B1511873A00DFA5AF /* libQuincyKit.a in Frameworks */,
 				11019B4215194F1B00F7F0F2 /* MessageUI.framework in Frameworks */,
@@ -1168,14 +1174,16 @@
 				116CB9DC14F058EE003AB446 /* NSDate+JLExtensions.m */,
 				116CB9DD14F058EE003AB446 /* NSDictionary+JLExtensions.h */,
 				116CB9DE14F058EE003AB446 /* NSDictionary+JLExtensions.m */,
+				1100A1E91594C96100058EC2 /* NSNotificationCenter+JLExtensions.h */,
+				1100A1EA1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m */,
+				11E7EF5C16003FA30055C0F2 /* NSString+JLExtensions.h */,
+				11E7EF5D16003FA30055C0F2 /* NSString+JLExtensions.m */,
 				11B5001C155505FE00923FFE /* UIBarButtonItem+JLExtensions.h */,
 				11B5001D155505FE00923FFE /* UIBarButtonItem+JLExtensions.m */,
 				11F96E56153ABF20003E4B1D /* UIImage+JLExtensions.h */,
 				11F96E57153ABF20003E4B1D /* UIImage+JLExtensions.m */,
 				1159C9F6155659C60086F04F /* UINavigationBar+JLExtensions.h */,
 				1159C9F7155659C70086F04F /* UINavigationBar+JLExtensions.m */,
-				1100A1E91594C96100058EC2 /* NSNotificationCenter+JLExtensions.h */,
-				1100A1EA1594C96100058EC2 /* NSNotificationCenter+JLExtensions.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -1213,6 +1221,7 @@
 		11C5DFAA14DCCDDF006D1DB4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				11E7EF5816002AEE0055C0F2 /* MapKit.framework */,
 				11AE97F414EB5FAA00F7ED46 /* AudioToolbox.framework */,
 				11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */,
 				11C5DFAF14DCCDDF006D1DB4 /* CoreGraphics.framework */,
@@ -2121,6 +2130,7 @@
 				11A64F9315F6A80B008ED7E6 /* WebContentViewController.m in Sources */,
 				1142AC0515F6FC0E00DD264D /* JLMessageComposeViewController.m in Sources */,
 				1106407915F8244F009584B7 /* JLAirplaneView.m in Sources */,
+				11E7EF5E16003FA30055C0F2 /* NSString+JLExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

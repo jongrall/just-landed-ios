@@ -14,6 +14,7 @@
 @property (copy, nonatomic) NSString *iataCode;
 @property (copy, nonatomic) NSString *icaoCode;
 @property (copy, nonatomic) NSString *city;
+@property (copy, nonatomic) NSString *name;
 @property (strong, nonatomic) CLLocation *location;
 @property (copy, nonatomic) NSString *terminal;
 @property (strong, nonatomic) NSTimeZone *timezone;

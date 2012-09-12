@@ -13,6 +13,8 @@
 #import "FlurryAnalytics.h"
 #import "AppDelegate.h"
 #import <CoreLocation/CoreLocation.h>
+#import <MapKit/MapKit.h>
+#import <Availability.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
@@ -1002,22 +1004,42 @@
 }
 
 - (void)showMap {
-    // Trigger getting the location
-    NSString *mapURL = nil;
-    NSString *destName = (self.trackedFlight_.destination.iataCode) ? self.trackedFlight_.destination.iataCode : 
-                                                                    self.trackedFlight_.destination.icaoCode;
-    destName = [destName stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
-    
-    NSString *origLoc = @"Current+Location";
-    NSString *destLoc = [NSString stringWithFormat:@"%f,%f", 
-                         self.trackedFlight_.destination.location.coordinate.latitude,
-                         self.trackedFlight_.destination.location.coordinate.longitude];
-    
-    mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%@&daddr=%@&layer=t&t=m",
-              origLoc, [NSString stringWithFormat:@"%@@%@", destName, destLoc]];
+    if ([MKMapItem class] && [MKMapItem respondsToSelector:@selector(openMapsWithItems:launchOptions:)]) {
+        // iOS6 and later uses native Apple Maps with MKMapItems
+        MKPlacemark *airportMark = [[MKPlacemark alloc] initWithCoordinate:self.trackedFlight_.destination.location.coordinate
+                                                         addressDictionary:nil];
+        
+        MKMapItem *destItem = [[MKMapItem alloc] initWithPlacemark:airportMark];
+        destItem.name = (self.trackedFlight_.destination.name) ? [NSString stringWithFormat:@"%@ (%@)",
+                                                                  self.trackedFlight_.destination.name,
+                                                                  [self.trackedFlight_.destination bestAirportCode]]:
+                                                                  [self.trackedFlight_.destination bestAirportCode];
+        
+        [MKMapItem openMapsWithItems:[NSArray arrayWithObject:destItem]
+                       launchOptions:[NSDictionary dictionaryWithObjectsAndKeys:MKLaunchOptionsDirectionsModeDriving, MKLaunchOptionsDirectionsModeKey,
+                                      [NSNumber numberWithInt:MKMapTypeStandard], MKLaunchOptionsMapTypeKey,
+                                      [NSNumber numberWithBool:YES], MKLaunchOptionsShowsTrafficKey, nil]];
+    }
+    else {
+        // Pre-iOS6 uses Google maps URLs with native Maps application
+        // Trigger getting the location
+        NSString *mapURL = nil;
+        NSString *destName = [(self.trackedFlight_.destination.name) ? [NSString stringWithFormat:@"%@ [%@]",
+                                                                        self.trackedFlight_.destination.name,
+                                                                        [self.trackedFlight_.destination bestAirportCode]]:
+                              [self.trackedFlight_.destination bestAirportCode] urlEncoded];
+        NSString *origLoc = @"Current+Location";
+        NSString *destLoc = [NSString stringWithFormat:@"%f,%f", 
+                             self.trackedFlight_.destination.location.coordinate.latitude,
+                             self.trackedFlight_.destination.location.coordinate.longitude];
+        
+        mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%@&daddr=%@@%@&layer=t&t=m",
+                  origLoc, destName, destLoc];
 
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];
+    }
+    
     [FlurryAnalytics logEvent:FY_GOT_DIRECTIONS];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];
 }
 
 

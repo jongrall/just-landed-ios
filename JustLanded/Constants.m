@@ -26,14 +26,14 @@ NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Development";
 #elif defined(CONFIGURATION_Adhoc)
 NSString * const UUIDKey = @"UUIDKeyStaging";
 NSString * const BeganUsingDate = @"BeganUsingKeyStaging";
-NSString * const ARCHIVED_FLIGHTS_FILE = @"FlightsStaging.data";
+NSString * const ArchivedFlightsFile = @"FlightsStaging.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKeyStaging";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKeyStaging";
 NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Adhoc";
 #else
 NSString * const UUIDKey = @"UUIDKey";
 NSString * const BeganUsingDate = @"BeganUsingKey";
-NSString * const ARCHIVED_FLIGHTS_FILE = @"Flights.data";
+NSString * const ArchivedFlightsFile = @"Flights.data";
 NSString * const HasBeenAskedToRateKey = @"HasBeenAskedToRateKey";
 NSString * const FlightsTrackedCountKey = @"FlightsTrackedCountKey";
 NSString * const RecentAirlineLookupsKey = @"RecentLookupsKey-Production";

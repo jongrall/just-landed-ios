@@ -17,6 +17,7 @@
 @synthesize iataCode = iataCode_;
 @synthesize icaoCode = icaoCode_;
 @synthesize city = city_;
+@synthesize name = name_;
 @synthesize location = location_;
 @synthesize terminal = terminal_;
 @synthesize timezone = timezone_;
@@ -28,6 +29,7 @@
         iataCode_ = [airportInfo valueForKeyOrNil:@"iataCode"];
         icaoCode_ = [airportInfo valueForKeyOrNil:@"icaoCode"];
         city_ = [airportInfo valueForKeyOrNil:@"city"];
+        name_ = [airportInfo valueForKeyOrNil:@"name"];
         location_ = [[CLLocation alloc] initWithLatitude:[[airportInfo valueForKeyOrNil:@"latitude"] doubleValue]
                                                    longitude:[[airportInfo valueForKeyOrNil:@"longitude"] doubleValue]];
         terminal_ = [airportInfo valueForKeyOrNil:@"terminal"];
@@ -53,6 +55,7 @@
             self.iataCode ? self.iataCode : [NSNull null], @"iataCode",
             self.icaoCode ? self.icaoCode : [NSNull null], @"icaoCode",
             self.city ? self.city : [NSNull null], @"city",
+            self.name ? self.name : [NSNull null], @"name",
             self.location ? self.location : [NSNull null], @"location",
             self.terminal ? self.terminal : [NSNull null], @"terminal",
             self.timezone ? self.timezone : [NSNull null], @"timezone", nil];
@@ -64,6 +67,7 @@
             self.iataCode ? self.iataCode : [NSNull null], @"iataCode",
             self.icaoCode ? self.icaoCode : [NSNull null], @"icaoCode",
             self.city ? self.city : [NSNull null], @"city",
+            self.name ? self.name : [NSNull null], @"name",
             self.location ? [NSNumber numberWithDouble:self.location.coordinate.latitude] : [NSNull null], @"latitude",
             self.location ? [NSNumber numberWithDouble:self.location.coordinate.longitude] : [NSNull null], @"longitude",
             self.terminal ? self.terminal : [NSNull null], @"terminal",
@@ -81,6 +85,7 @@
         self.iataCode = [aDecoder decodeObjectForKey:@"iataCode"];
         self.icaoCode = [aDecoder decodeObjectForKey:@"icaoCode"];
         self.city = [aDecoder decodeObjectForKey:@"city"];
+        self.name = [aDecoder decodeObjectForKey:@"name"];
         self.location = [aDecoder decodeObjectForKey:@"location"];
         self.terminal = [aDecoder decodeObjectForKey:@"terminal"];
         self.timezone = [aDecoder decodeObjectForKey:@"timezone"];
@@ -95,6 +100,7 @@
     [aCoder encodeObject:self.iataCode forKey:@"iataCode"];
     [aCoder encodeObject:self.icaoCode forKey:@"icaoCode"];
     [aCoder encodeObject:self.city forKey:@"city"];
+    [aCoder encodeObject:self.name forKey:@"name"];
     [aCoder encodeObject:self.location forKey:@"location"];
     [aCoder encodeObject:self.terminal forKey:@"terminal"];
     [aCoder encodeObject:self.timezone forKey:@"timezone"];
