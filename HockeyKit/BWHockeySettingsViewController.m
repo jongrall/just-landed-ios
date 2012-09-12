@@ -17,7 +17,7 @@
 @synthesize hockeyManager = hockeyManager_;
 
 - (void)dismissSettings {
-  [self.navigationController dismissModalViewControllerAnimated:YES];
+    [self.navigationController dismissViewControllerAnimated:YES completion:NULL];
 }
 
 #pragma mark -

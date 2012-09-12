@@ -141,7 +141,7 @@ typedef enum {
 
 
 - (void)viewWillDisappear:(BOOL)animated {
-    if (!self.modalViewController) { // Don't show the navbar again for modal view controllers covering
+    if (!self.presentedViewController) { // Don't show the navbar again for modal view controllers covering
         [self.navigationController setNavigationBarHidden:NO animated:YES];
     }
     [super viewWillDisappear:animated];
@@ -223,7 +223,7 @@ typedef enum {
                                           }
                                           completion:^(BOOL finishedAlso) {
                                               [[self.presentingViewController view] addSubview:self.airplane]; // Give the airplane back :)
-                                              [self dismissModalViewControllerAnimated:NO]; // Instant transition
+                                              [self dismissViewControllerAnimated:NO completion:NULL]; // Instant transition
                                           }];
                      }];
 }
@@ -337,7 +337,7 @@ typedef enum {
                                       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
             [mailComposer setMailComposeDelegate:self];
             mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            [self presentModalViewController:mailComposer animated:YES];
+            [self presentViewController:mailComposer animated:YES completion:NULL];
             
             // WARN: Make the body first responder - this could get us rejected
             [self setMFMailFieldAsFirstResponder:mailComposer.view mfMailField:@"MFComposeTextContentView"];
@@ -357,7 +357,7 @@ typedef enum {
             NSUInteger randomIndex = arc4random() % [possibleMessages count];
             [smsComposer setBody:[possibleMessages objectAtIndex:randomIndex]];
             smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            [self presentModalViewController:smsComposer animated:YES];
+            [self presentViewController:smsComposer animated:YESTERDAY completion:NULL];
             // Hack to fix MFMMessageCompose changing status bar type
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
             [FlurryAnalytics logEvent:FY_STARTED_SENDING_SMS];
@@ -390,10 +390,10 @@ typedef enum {
                         [FlurryAnalytics logEvent:FY_ABANDONED_TWEETING];
                     }
                     
-                    [self dismissModalViewControllerAnimated:NO];
+                    [self dismissViewControllerAnimated:NO completion:NULL];
                 });
             }];
-            [self presentModalViewController:tweetComposer animated:YES];
+            [self presentViewController:tweetComposer animated:YES completion:NULL];
             [FlurryAnalytics logEvent:FY_STARTED_TWEETING];
             break;
         }
@@ -465,7 +465,7 @@ typedef enum {
         [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_FEEDBACK];
     }
     
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 //Returns true if the ToAddress field was found any of the sub views and made first responder
@@ -512,7 +512,7 @@ typedef enum {
         [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_SMS];
     }
     
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

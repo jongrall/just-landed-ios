@@ -214,7 +214,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self.cloudLayer_ stopAnimating]; // Stop animating the clouds
     [self.airplane_ stopAnimating];
-    [self presentModalViewController:controller animated:animateFlip];
+    [self presentViewController:controller animated:animateFlip completion:NULL];
     
     // If animated, was user-initiated, record the track
     if (animateFlip) {
@@ -269,7 +269,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     airlineLookupVC.delegate = self;
     UINavigationController *airlineLookupNavVC = [[UINavigationController alloc] initWithRootViewController:airlineLookupVC];
     airlineLookupNavVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self presentModalViewController:airlineLookupNavVC animated:YES];
+    [self presentViewController:airlineLookupNavVC animated:YES completion:NULL];
     [FlurryAnalytics logEvent:FY_BEGAN_AIRLINE_LOOKUP];
 }
 
@@ -796,7 +796,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
                                                                                                   style:UIBarButtonItemStylePlain
                                                                                                  target:self
                                                                                                  action:@selector(dismissVC)];
-                [self presentModalViewController:navController animated:YES];
+                [self presentViewController:navController animated:YES completion:NULL];
             }
             break;
         }
@@ -947,12 +947,12 @@ static NSRegularExpression *sAirlineCodeRegex_;
     self.flightNumberField.errorState = FlightInputNoError;
     [self resetFlightInputKeyboard];
     [self.flightNumberField becomeFirstResponder];
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 
 - (void)cancelledAirlineLookup {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:NULL];
     [FlurryAnalytics logEvent:FY_CANCELED_AIRLINE_LOOKUP];
 }
 

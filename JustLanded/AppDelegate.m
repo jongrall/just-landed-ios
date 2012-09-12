@@ -65,8 +65,11 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     self.locationManager_.delegate = self;
     self.locationManager_.desiredAccuracy = kCLLocationAccuracyBest;
     self.locationManager_.distanceFilter = LOCATION_DISTANCE_FILTER;
-    self.locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
-                                                 @"Location Purpose");
+    if ([self.locationManager_ respondsToSelector:@selector(setPurpose:)]) {
+        // Deprecated but desired API
+        self.locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
+                                                          @"Location Purpose");
+    }
     // Stop monitoring significant location changes in case they just upgraded from previous version (otherwise could get stuck on)
     [self.locationManager_ stopMonitoringSignificantLocationChanges];
     
@@ -215,7 +218,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
         CLRegion *newRegion = [[CLRegion alloc] initCircularRegionWithCenter:aLocation.coordinate
                                                                       radius:regionRadius
                                                                   identifier:JustLandedCurrentRegionIdentifier];
-        [self.locationManager_ startMonitoringForRegion:newRegion desiredAccuracy:kCLLocationAccuracyBest];
+        [self.locationManager_ startMonitoringForRegion:newRegion];
     }
 }
 
@@ -236,7 +239,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     
     if (isTrackingFlights) {
         if (self.mainViewController_) {
-            UIViewController *possibleTrackVC = self.mainViewController_.modalViewController;
+            UIViewController *possibleTrackVC = self.mainViewController_.presentedViewController;
             if (possibleTrackVC && [possibleTrackVC isKindOfClass:[FlightTrackViewController class]]) {
                 [(FlightTrackViewController *)possibleTrackVC track];
             }

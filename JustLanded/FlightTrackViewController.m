@@ -133,8 +133,11 @@
 		locationManager_.delegate = self;
 		locationManager_.desiredAccuracy = kCLLocationAccuracyBest;
         locationManager_.distanceFilter = LOCATION_DISTANCE_FILTER;
-		locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
-                                                     @"Location Purpose");
+        if ([locationManager_ respondsToSelector:@selector(setPurpose:)]) {
+            // Deprecated but desired API
+            locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
+                                                              @"Location Purpose");
+        }
         
         // Listen for update notifications for the Flight to trigger UI indicators
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -785,7 +788,7 @@
     [self.flightProgressView_ stopAnimating];
     [self.delegate didFinishTrackingFlight:self.trackedFlight_ userInitiated:userInitiated];
     self.delegate = nil;
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 

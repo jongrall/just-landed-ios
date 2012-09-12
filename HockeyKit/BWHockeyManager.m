@@ -511,8 +511,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
   }
   
   // use topmost modal view
-  while (parentViewController.modalViewController) {
-    parentViewController = parentViewController.modalViewController;
+  while (parentViewController.presentedViewController) {
+    parentViewController = parentViewController.presentedViewController;
   }
   
   // special addition to get rootViewController from three20 which has it's own controller handling
@@ -536,7 +536,7 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     }
     hockeyViewController.modalAnimated = YES;
     
-    [parentViewController presentModalViewController:navController_ animated:YES];
+    [parentViewController presentViewController:navController_ animated:YES completion:NULL];
   } else {
 		// if not, we add a subview to the window. A bit hacky but should work in most circumstances.
 		// Also, we don't get a nice animation for free, but hey, this is for beta not production users ;)

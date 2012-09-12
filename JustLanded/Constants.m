@@ -97,7 +97,7 @@ NSString * const UNTRACK_URL_FORMAT = @"untrack/%@";
 
 NSString * JustLandedCurrentRegionIdentifier = @"JustLandedCurrentRegionIdentifier";
 double const LOCATION_DISTANCE_FILTER = 100.0; // Must move 100m for location event to be delivered
-double const SIGNIFICANT_LOCATION_CHANGE_DISTANCE = 804.67; // 0.5mi Distance that we consider a significant location change
+double const SIGNIFICANT_LOCATION_CHANGE_DISTANCE = 400.0; // 0.25mi Distance that we consider a significant location change
 double const LOCATION_MAXIMUM_ACCEPTABLE_ERROR = 100.0; // Horizontal accuracy we're looking for
 double const LOCATION_MAXIMUM_ACCEPTABLE_AGE = 60.0; // When fetching fresh location, 1 min old is max acceptable amount
 NSTimeInterval const TRACK_FRESHNESS_THRESHOLD = 900.0;

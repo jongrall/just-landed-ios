@@ -112,12 +112,12 @@
     
     BW_IF_3_2_OR_GREATER(
                          settings.modalTransitionStyle = UIModalTransitionStylePartialCurl;
-                         [self presentModalViewController:settings animated:YES];
+                         [self presentViewController:settings animated:YES completion:NULL];
                          )
     BW_IF_PRE_3_2(
                   UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:settings] autorelease];
                   navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-                  [self presentModalViewController:navController animated:YES];
+                  [self presentViewController:navController animated:YES completion:NULL];
                   )
   }
 }
@@ -282,7 +282,7 @@
     
     // if there is no presenting view controller just remove view.
     if (presentingViewController && self.modalAnimated)
-      [presentingViewController dismissModalViewControllerAnimated:YES];
+        [presentingViewController dismissViewControllerAnimated:YES completion:NULL];
     else
       [self.navigationController.view removeFromSuperview];
     
