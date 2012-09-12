@@ -88,17 +88,27 @@
 
 - (NSString *)UUID {
     NSString *currentUUID = [[NSUserDefaults standardUserDefaults] objectForKey:UUIDKey];
-    
+
     if (!currentUUID) {
         //Should only be run once for a single install unless NSUserDefaults gets cleared or corrupted
         //Create the UUID to use for the app (persists across sessions) and persist to NSUserDefaults
-        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-        NSString *uuid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+        NSString *uuid = nil;
+        
+        if ([UIDevice instancesRespondToSelector:@selector(identifierForVendor)]) {
+            // iOS6 version persists across installs
+            uuid = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+        }
+        else {
+            // Pre-iOS6 UUID generation method
+            CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+            uuid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+            CFRelease(uuidRef);
+        }
+        
         currentUUID = [NSString stringWithString:uuid];
         [[NSUserDefaults standardUserDefaults] setObject:uuid forKey:UUIDKey];
         [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:BeganUsingDate];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        CFRelease(uuidRef);
     }
     
     return currentUUID;

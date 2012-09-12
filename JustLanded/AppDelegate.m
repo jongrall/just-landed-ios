@@ -37,7 +37,6 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
     // Initialization
     self.pushToken = nil;
     self.wakeupTrackTask = UIBackgroundTaskInvalid;
