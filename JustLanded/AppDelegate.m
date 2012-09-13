@@ -88,9 +88,6 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    // Show the status bar
-    [[UIApplication sharedApplication] setStatusBarHidden:NO];
-    
     // Show the flight lookup UI
     self.mainViewController_ = [[FlightLookupViewController alloc] init];
     self.window.rootViewController = self.mainViewController_;
