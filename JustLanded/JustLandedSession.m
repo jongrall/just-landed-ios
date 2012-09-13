@@ -9,7 +9,7 @@
 #import "JustLandedSession.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import "Flight.h"
-#import "BWQuincyManager.h"
+#import <HockeySDK/HockeySDK.h>
 #import "Reachability.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@
     if (trackCount && !hasBeenAsked && oldEnoughUser && appInForeground) {
         NSUInteger currentCount = [trackCount integerValue];
         
-        if (currentCount >= RATINGS_USAGE_THRESHOLD && ![[BWQuincyManager sharedQuincyManager] didCrashInLastSession]) {
+        if (currentCount >= RATINGS_USAGE_THRESHOLD && ![[[BITHockeyManager sharedHockeyManager] crashManager] didCrashInLastSession]) {
             return YES;
         }
     }

@@ -117,14 +117,14 @@ NSUInteger const RATINGS_USAGE_THRESHOLD = 3;
 
 #if defined(CONFIGURATION_Debug)
 NSString * const FLURRY_APPLICATION_KEY = @"LH6F2XN2C6HAX4NIB3QS";
-NSString * const HOCKEY_APP_ID = @"NOT_USED"; //Not used in dev
 #elif defined(CONFIGURATION_Adhoc)
 NSString * const FLURRY_APPLICATION_KEY = @"JICB45DI2N7ZE2B4FR5E";
-NSString * const HOCKEY_APP_ID = @"26ac1cc044e6688556dfc9d99492ea46";
 #else
 NSString * const FLURRY_APPLICATION_KEY = @"2TZMR1NGCSTZ395GHUZS";
-NSString * const HOCKEY_APP_ID = @"9f84215688008ed9d76a6ace2d8eccd3";
 #endif
+
+NSString * const HOCKEY_APP_ID_PRODUCTION = @"9f84215688008ed9d76a6ace2d8eccd3";
+NSString * const HOCKEY_APP_ID_ADHOC = @"26ac1cc044e6688556dfc9d99492ea46";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

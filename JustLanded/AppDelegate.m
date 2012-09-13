@@ -7,16 +7,15 @@
 //
 
 #import "AppDelegate.h"
-#import "BWQuincyManager.h"
-#import "BWHockeyManager.h"
 #import "FlightLookupViewController.h"
 #import "Flight.h"
+#import <HockeySDK/HockeySDK.h>
 #include "Math.h"
 
 NSString * const DidUpdatePushTokenNotification = @"DidUpdatePushTokenNotification";
 NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTokenNotification";
 
-@interface AppDelegate () <BWQuincyManagerDelegate, BWHockeyManagerDelegate, CLLocationManagerDelegate>
+@interface AppDelegate () <BITHockeyManagerDelegate, BITUpdateManagerDelegate, BITCrashManagerDelegate, CLLocationManagerDelegate>
 
 // Redefine as readwrite
 @property (copy, readwrite, nonatomic) NSString *pushToken;
@@ -41,18 +40,13 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     self.pushToken = nil;
     self.wakeupTrackTask = UIBackgroundTaskInvalid;
     
-    // App distribution
-    #ifdef CONFIGURATION_Adhoc
-    [[BWHockeyManager sharedHockeyManager] setAppIdentifier:HOCKEY_APP_ID];
-    [[BWHockeyManager sharedHockeyManager] setAlwaysShowUpdateReminder:YES];
-    [[BWHockeyManager sharedHockeyManager] setDelegate:self];
-    #endif
-    
-    // Crash reporting
+    // App Development and Crash reporting
     #ifndef CONFIGURATION_Debug
-    [[BWQuincyManager sharedQuincyManager] setAppIdentifier:HOCKEY_APP_ID];
-    [[BWQuincyManager sharedQuincyManager] setAutoSubmitCrashReport:YES];
-    [[BWQuincyManager sharedQuincyManager] setDelegate:self];
+    [[BITHockeyManager sharedHockeyManager] configureWithBetaIdentifier:HOCKEY_APP_ID_ADHOC
+                                                         liveIdentifier:HOCKEY_APP_ID_PRODUCTION
+                                                               delegate:self];
+    [[BITHockeyManager sharedHockeyManager] startManager];
+    [[[BITHockeyManager sharedHockeyManager] crashManager] setCrashManagerStatus:BITCrashManagerStatusAutoSend]; // Auto send crashes
     #endif
     
     // Configure Flurry
@@ -161,14 +155,18 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Custom Device Identifier Required by BWHockerManagerDelegate
+#pragma mark - Custom Device Identifier Required by BITUpdateManagerDelegate
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (NSString *)customDeviceIdentifier {
+- (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager {
     #ifdef CONFIGURATION_Adhoc
     return [[JustLandedSession sharedSession] UUID];
     #endif
     return nil;
+}
+
+- (NSString *)userNameForCrashManager:(BITCrashManager *)crashManager {
+    return [[JustLandedSession sharedSession] UUID];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
