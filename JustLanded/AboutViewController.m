@@ -357,7 +357,7 @@ typedef enum {
             NSUInteger randomIndex = arc4random() % [possibleMessages count];
             [smsComposer setBody:[possibleMessages objectAtIndex:randomIndex]];
             smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            [self presentViewController:smsComposer animated:YESTERDAY completion:NULL];
+            [self presentViewController:smsComposer animated:YES completion:NULL];
             // Hack to fix MFMMessageCompose changing status bar type
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
             [FlurryAnalytics logEvent:FY_STARTED_SENDING_SMS];

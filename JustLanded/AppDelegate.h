@@ -18,6 +18,7 @@ extern NSString * const DidFailToUpdatePushTokenNotification;
 @property (strong, nonatomic) UIWindow *window;
 @property (copy, readonly, nonatomic) NSString *pushToken;
 @property (readonly, nonatomic) BOOL triedToRegisterForRemoteNotifications;
+@property (nonatomic) BOOL respondedToTextOnArrivalNotification;
 @property (atomic) UIBackgroundTaskIdentifier wakeupTrackTask;
 
 - (void)startMonitoringMovementFromLocation:(CLLocation *)aLocation;

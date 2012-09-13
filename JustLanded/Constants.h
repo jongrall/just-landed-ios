@@ -6,6 +6,10 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+typedef enum {
+    JLLocalNotificationTypeTextOnArrival = 137,
+} JLLocalNotificationTypes;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSUserDefaults & Other Keys
@@ -27,6 +31,8 @@ extern NSString * const ReminderLeadTimePreferenceKey;
 extern NSString * const PlayFlightSoundsPreferenceKey;
 extern NSString * const MonitorLocationPreferenceKey;
 
+// Local Notification Types
+extern NSString *const LocalNotificationTypeKey;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -90,6 +96,9 @@ extern NSString * const FY_SENT_FEEDBACK;
 extern NSString * const FY_STARTED_SENDING_SMS;
 extern NSString * const FY_ABANDONED_SENDING_SMS;
 extern NSString * const FY_SENT_SMS;
+extern NSString * const FY_STARTED_SENDING_ARRIVED_SMS;
+extern NSString * const FY_ABANDONED_SENDING_ARRIVED_SMS;
+extern NSString * const FY_SENT_ARRIVED_SMS;
 extern NSString * const FY_STARTED_TWEETING;
 extern NSString * const FY_ABANDONED_TWEETING;
 extern NSString * const FY_POSTED_TWEET;

@@ -46,6 +46,9 @@ NSString * const ReminderLeadTimePreferenceKey = @"reminder_lead_time";
 NSString * const PlayFlightSoundsPreferenceKey = @"play_flight_sounds";
 NSString * const MonitorLocationPreferenceKey = @"monitor_location";
 
+// Local Notification Types
+NSString *const LocalNotificationTypeKey = @"local_notification_type";
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Server Constants
@@ -139,6 +142,9 @@ NSString * const FY_SENT_FEEDBACK = @"Sent Feedback";
 NSString * const FY_STARTED_SENDING_SMS = @"Started Sending SMS";
 NSString * const FY_ABANDONED_SENDING_SMS = @"Abandoned Sending SMS";
 NSString * const FY_SENT_SMS = @"Sent SMS";
+NSString * const FY_STARTED_SENDING_ARRIVED_SMS = @"Started Sending Arrival SMS";
+NSString * const FY_ABANDONED_SENDING_ARRIVED_SMS = @"Abandoned Sending Arrival SMS";
+NSString * const FY_SENT_ARRIVED_SMS = @"Sent Arrival SMS";
 NSString * const FY_STARTED_TWEETING = @"Started Tweeting"; 
 NSString * const FY_ABANDONED_TWEETING = @"Abandoned Tweeting";
 NSString * const FY_POSTED_TWEET = @"Posted Tweet";

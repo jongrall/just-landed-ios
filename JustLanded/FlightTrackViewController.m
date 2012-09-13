@@ -13,6 +13,7 @@
 #import "Flight.h"
 #import "FlurryAnalytics.h"
 #import "AppDelegate.h"
+#import "JLMessageComposeViewController.h"
 #import <CoreLocation/CoreLocation.h>
 #import <MapKit/MapKit.h>
 #import <Availability.h>
@@ -30,7 +31,9 @@ typedef enum {
     WarningTypeTooFarFromDestination,
 } LeaveForAirportWarningType;
 
-@interface FlightTrackViewController() <NoConnectionDelegate, CLLocationManagerDelegate, UIAlertViewDelegate>
+NSUInteger const TextUponArrivalAlertTag = 65009;
+
+@interface FlightTrackViewController() <NoConnectionDelegate, CLLocationManagerDelegate, UIAlertViewDelegate, MFMessageComposeViewControllerDelegate>
 
 @property (strong, nonatomic) Flight *trackedFlight_;
 @property (strong, nonatomic) CLLocationManager *locationManager_;
@@ -38,6 +41,8 @@ typedef enum {
 @property (strong, nonatomic) NSTimer *alternatingLabelTimer_;
 @property (strong, nonatomic) NSMutableArray *ignoredWarnings_;
 @property (nonatomic) BOOL showingValidData_;
+@property (nonatomic) BOOL hasBeenToAirport_;
+@property (nonatomic) BOOL hasBeenNotifiedToText_;
 
 // UI Properties
 @property (strong, nonatomic) JLStatusLabel *statusLabel_;
@@ -97,6 +102,8 @@ typedef enum {
 - (void)showDrivingTimeOrBagClaim;
 - (void)alternateData;
 - (void)fadeOut:(UIView *)aView fadeIn:(UIView *)anotherView;
+- (BOOL)isAtAirport;
+- (void)composeTextOnAirportArrival;
 
 // Update methods
 - (void)stopTrackingUserInitiated:(BOOL)userInitiated;
@@ -128,6 +135,8 @@ typedef enum {
 @synthesize updateTimer_;
 @synthesize alternatingLabelTimer_;
 @synthesize ignoredWarnings_;
+@synthesize hasBeenToAirport_;
+@synthesize hasBeenNotifiedToText_;
 @synthesize noConnectionOverlay_;
 @synthesize serverErrorOverlay_;
 
@@ -155,6 +164,8 @@ typedef enum {
         }
         
         ignoredWarnings_ = [[NSMutableArray alloc] init];
+        hasBeenToAirport_ = NO;
+        hasBeenNotifiedToText_ = NO;
         
         // Listen for update notifications for the Flight to trigger UI indicators
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -727,8 +738,13 @@ typedef enum {
 }
 
 
+- (BOOL)isAtAirport {
+    return self.trackedFlight_.drivingTime == 0.0;
+}
+
+
 - (void)showDrivingTimeOrBagClaim {
-    if (self.trackedFlight_.drivingTime > 0.0 && self.trackedFlight_.leaveForAirportTime) {
+    if (![self isAtAirport] && self.trackedFlight_.leaveForAirportTime) {
         self.drivingTimeValueLabel_.parts = [self drivingTimeParts];
         self.drivingTimeLabel_.hidden = NO;
         self.drivingTimeValueLabel_.hidden = NO;
@@ -747,7 +763,7 @@ typedef enum {
         self.drivingTimeValueLabel_.hidden = YES;
         self.directionsButton_.hidden = YES;
         
-        if (self.trackedFlight_.drivingTime == 0.0 && self.trackedFlight_.destination.bagClaim && [self.trackedFlight_.destination.bagClaim length] > 0) {
+        if ([self isAtAirport] && self.trackedFlight_.destination.bagClaim && [self.trackedFlight_.destination.bagClaim length] > 0) {
             self.bagClaimLabel_.hidden = NO;
             self.bagClaimValueLabel_.hidden = NO;
         }
@@ -887,10 +903,52 @@ typedef enum {
     // Show the warning button if appropriate
     self.warningButton_.hidden = (warningType == WarningTypeNone || ignoreWarning) ? YES : NO;
     
-    // Ask them to rate after a few seconds, if eligible
-    [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible)
-                                            withObject:nil
-                                            afterDelay:4.0];
+    // Figure out whether to offer to text their guest if they've arrived at the airport
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    
+    if (!self.hasBeenToAirport_ && [self isAtAirport] && [JLMessageComposeViewController canSendText]) {
+        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+            if (appDelegate.respondedToTextOnArrivalNotification) {
+                [self composeTextOnAirportArrival];
+                appDelegate.respondedToTextOnArrivalNotification = NO; // Reset this flag now that we've handled it
+            }
+            else {
+                // The app is in the foreground, notify them right away
+                self.hasBeenToAirport_ = YES;
+                NSString *alertMsg = (self.trackedFlight_.status == LANDED) ? NSLocalizedString(@"We can text the person you're picking up to let them know you've arrived.",
+                                                                                                @"Text To Pickup Prompt - Flight Landed") :
+                NSLocalizedString(@"We can text the person you're picking up to let them know you've arrived. They'll get your message once they land.", @"Text To Pickup Prompt - Flight Landed");
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Picking Someone Up?", @"Picking Someone Up?")
+                                                                message:alertMsg
+                                                               delegate:self
+                                                      cancelButtonTitle:NSLocalizedString(@"Ignore", @"Ignore")
+                                                      otherButtonTitles:NSLocalizedString(@"Send Text", @"Yes"), nil];
+                alert.tag = TextUponArrivalAlertTag;
+                [alert show];
+                
+                // Clear local notifications so they can't respond to prompt to pick somene up again
+                [[UIApplication sharedApplication] cancelAllLocalNotifications];
+            }
+        }
+        else if (!self.hasBeenNotifiedToText_) {
+            // The app is in the background, send them a local notification
+            UILocalNotification *textNotification = [[UILocalNotification alloc] init];
+            textNotification.alertAction = NSLocalizedString(@"Send Text", @"Send Text");
+            textNotification.alertBody = NSLocalizedString(@"Picking someone up? Just Landed can text them that you've arrived.", @"Text Notification");
+            textNotification.soundName = UILocalNotificationDefaultSoundName;
+            textNotification.userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInteger:JLLocalNotificationTypeTextOnArrival]
+                                                                    forKey:LocalNotificationTypeKey];
+            [[UIApplication sharedApplication] presentLocalNotificationNow:textNotification];
+            self.hasBeenNotifiedToText_ = YES;
+        }
+    }
+    else {
+        // Ask them to rate after a few seconds, if eligible
+        [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible)
+                                                withObject:nil
+                                                afterDelay:3.0];
+    }
     
     if (!self.updateTimer_ || ![self.updateTimer_ isValid]) {
         [self.updateTimer_ invalidate];
@@ -1139,61 +1197,136 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    NSString *title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
-    NSURL *fixURL = nil;
-    
-    if ([alertView cancelButtonIndex] != buttonIndex) {
-        switch (alertView.tag) {
-            case WarningTypeDisabledLocationServices: {
-                fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_DISABLED_ANCHOR]];;
-                break;
-            }
-            case WarningTypeDeniedLocationServices: {
-                fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_DENIED_ANCHOR]];;
-                break;
-            }
-            case WarningTypeRestrictedLocationServices: {
-                fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_RESTRICTED_ANCHOR]];;
-                break;
-            }
-            case WarningTypeDisallowedNotifications: {
-                fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, PUSH_DISALLOWED_ANCHOR]];;
-                break;
-            }
-            case WarningTypeTooFarFromDestination: {
-                break;
-            }
-            default:
-                break;
-        }
+    if (alertView.tag == TextUponArrivalAlertTag && [alertView cancelButtonIndex] != buttonIndex) {
+        // Show the message composer to text their guest
+        [self composeTextOnAirportArrival];
     }
-    else if (alertView.tag > WarningTypeNone && alertView.tag <= WarningTypeTooFarFromDestination){
-        // They want to ignore the warning
-        if (![ignoredWarnings_ containsObject:[NSNumber numberWithInteger:alertView.tag]]) {
-            [ignoredWarnings_ addObject:[NSNumber numberWithInteger:alertView.tag]];
+    else {
+        NSString *title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
+        NSURL *fixURL = nil;
+        
+        if ([alertView cancelButtonIndex] != buttonIndex) {
+            switch (alertView.tag) {
+                case WarningTypeDisabledLocationServices: {
+                    fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_DISABLED_ANCHOR]];;
+                    break;
+                }
+                case WarningTypeDeniedLocationServices: {
+                    fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_DENIED_ANCHOR]];;
+                    break;
+                }
+                case WarningTypeRestrictedLocationServices: {
+                    fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_RESTRICTED_ANCHOR]];;
+                    break;
+                }
+                case WarningTypeDisallowedNotifications: {
+                    fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, PUSH_DISALLOWED_ANCHOR]];;
+                    break;
+                }
+                case WarningTypeTooFarFromDestination: {
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        else if (alertView.tag > WarningTypeNone && alertView.tag <= WarningTypeTooFarFromDestination){
+            // They want to ignore the warning
+            if (![ignoredWarnings_ containsObject:[NSNumber numberWithInteger:alertView.tag]]) {
+                [ignoredWarnings_ addObject:[NSNumber numberWithInteger:alertView.tag]];
+            }
+            
+            // They want to ignore the warning
+            self.warningButton_.hidden = YES;
+        
+            // Redisplay leave time if appropriate
+            if (self.trackedFlight_.leaveForAirportTime && self.trackedFlight_.drivingTime > 0.0) {
+                self.leaveMeter_.showEmptyMeter = NO;
+                self.leaveMeter_.timeRemaining = [self.trackedFlight_.leaveForAirportTime timeIntervalSinceNow];
+            }
+            else {
+                self.leaveMeter_.showEmptyMeter = YES;
+            }
         }
         
-        // They want to ignore the warning
-        self.warningButton_.hidden = YES;
-    
-        // Redisplay leave time if appropriate
-        if (self.trackedFlight_.leaveForAirportTime && self.trackedFlight_.drivingTime > 0.0) {
-            self.leaveMeter_.showEmptyMeter = NO;
-            self.leaveMeter_.timeRemaining = [self.trackedFlight_.leaveForAirportTime timeIntervalSinceNow];
-        }
-        else {
-            self.leaveMeter_.showEmptyMeter = YES;
+        if (fixURL) {
+            WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:fixURL];
+            UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webContentVC];
+            navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            [self presentViewController:navController animated:YES completion:^{
+                [FlurryAnalytics logEvent:FY_READ_FAQ];
+            }];
         }
     }
+}
+
+
+- (void)composeTextOnAirportArrival {
+    NSString *terminalName = nil;
+    NSString *bagClaim = nil;
+    NSString *smsMessage = nil;
     
-    if (fixURL) {
-        WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:fixURL];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webContentVC];
-        navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-        [self presentViewController:navController animated:YES completion:^{
-            [FlurryAnalytics logEvent:FY_READ_FAQ];
-        }];
+    if (self.trackedFlight_.destination.terminal && [self.trackedFlight_.destination.terminal length] > 0) {
+        terminalName = [self.trackedFlight_.destination.terminal isEqualToString:@"I"] ? NSLocalizedString(@"international terminal",
+                                                                                                           @"International Terminal") :
+        [NSString stringWithFormat:NSLocalizedString(@"terminal %@", @"terminal Y"), self.trackedFlight_.destination.terminal];
     }
+    
+    if (self.trackedFlight_.destination.bagClaim && [self.trackedFlight_.destination.bagClaim length] > 0) {
+        bagClaim = self.trackedFlight_.destination.bagClaim;
+    }
+    
+    
+    if (terminalName && bagClaim) {
+        smsMessage = [NSString stringWithFormat:NSLocalizedString(@"Hey, I'm at %@! I'm waiting for you in the %@ arrivals area. Bags are at claim %@. Sent using Just Landed http://bit.ly/QSXHN9",
+                                                                  @"I've Arrived Message - Terminal & Bag Claim"),
+                      [self.trackedFlight_.destination bestAirportCode],
+                      terminalName,
+                      bagClaim];
+    }
+    else if (terminalName) {
+        smsMessage = [NSString stringWithFormat:NSLocalizedString(@"Hey, I'm at %@! I'm waiting for you in the %@ arrivals area. Sent using Just Landed http://bit.ly/ShKsQO",
+                                                                  @"I've Arrived Message - Terminal Only"),
+                      [self.trackedFlight_.destination bestAirportCode],
+                      terminalName];
+    }
+    else if (bagClaim) {
+        smsMessage = [NSString stringWithFormat:NSLocalizedString(@"Hey, I'm at %@! I'm waiting for you in the arrivals area. Bags are at claim %@. Sent using Just Landed http://bit.ly/QZt3fB",
+                                                                  @"I've Arrived Message - Bag Claim Only"),
+                      [self.trackedFlight_.destination bestAirportCode],
+                      bagClaim];
+    }
+    else {
+        smsMessage = [NSString stringWithFormat:NSLocalizedString(@"Hey, I'm at %@! I'm waiting for you in the arrivals area. Sent using Just Landed http://bit.ly/PexNjg",
+                                                                  @"Basic I've Arrived Message"),
+                      [self.trackedFlight_.destination bestAirportCode]];
+    }
+    
+    NSLog(@"%@", smsMessage);
+    
+    JLMessageComposeViewController *smsComposer = [[JLMessageComposeViewController alloc] init];
+    [smsComposer setMessageComposeDelegate:self];
+    [smsComposer setBody:smsMessage];
+    smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentViewController:smsComposer animated:YES completion:NULL];
+    // Hack to fix MFMMessageCompose changing status bar type
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    [FlurryAnalytics logEvent:FY_STARTED_SENDING_ARRIVED_SMS];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - MFMessageComposeViewControllerDelegate Methods
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
+    if (result == MessageComposeResultSent) {
+        [FlurryAnalytics logEvent:FY_SENT_ARRIVED_SMS];
+    }
+    else if (result == MessageComposeResultCancelled) {
+        [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_ARRIVED_SMS];
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

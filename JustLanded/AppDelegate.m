@@ -85,6 +85,13 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey] && isTrackingFlights) {        
         [self beginWakeupTask];
     }
+    // The app was launched because of a local notification
+    else if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey]) {
+        NSDictionary *notificationInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+        if (notificationInfo && [[notificationInfo objectForKeyOrNil:LocalNotificationTypeKey] integerValue] == JLLocalNotificationTypeTextOnArrival) {
+            self.respondedToTextOnArrivalNotification = YES;
+        }
+    }
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
@@ -283,7 +290,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Push Notifications
+#pragma mark - Notifications
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -341,6 +348,16 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
         
         // Track the active flight (if there is one)
         [self trackFlightsIfNeeded];
+    }
+}
+
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    if (application.applicationState == UIApplicationStateInactive) {
+        // App posted local notification, user acted on it
+        if ([[[notification userInfo] valueForKeyOrNil:LocalNotificationTypeKey] integerValue] == JLLocalNotificationTypeTextOnArrival) {
+            self.respondedToTextOnArrivalNotification = YES;
+        }
     }
 }
 
