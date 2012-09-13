@@ -61,7 +61,6 @@ typedef enum {
 - (void)disallowLookup;
 - (void)clearFlightNumberField;
 - (void)resetFlightInputKeyboard;
-- (void)dismissVC;
 
 @end
 
@@ -645,12 +644,6 @@ static NSRegularExpression *sAirlineCodeRegex_;
                      }];
 }
 
-
-- (void)dismissVC {
-    [self dismissViewControllerAnimated:YES completion:^{}];
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - UITextFieldDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -792,10 +785,6 @@ static NSRegularExpression *sAirlineCodeRegex_;
                 WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:url];
                 UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webContentVC];
                 navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-                webContentVC.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"Done")
-                                                                                                  style:UIBarButtonItemStylePlain
-                                                                                                 target:self
-                                                                                                 action:@selector(dismissVC)];
                 [self presentViewController:navController animated:YES completion:NULL];
             }
             break;

@@ -34,6 +34,7 @@ CGRect const TERMINAL_LABEL_FRAME = {{19.0f, 317.0f}, {120.0f, 20.0f}};
 CGRect const TERMINAL_VALUE_FRAME = {{19.0f, 326.0f}, {160.0f, 40.0f}};
 CGRect const DRIVING_TIME_LABEL_FRAME = {{19.0f, 392.0f}, {120.0f, 20.0f}};
 CGRect const DRIVING_TIME_VALUE_FRAME = {{19.0f, 400.0f}, {200.0f, 40.0f}};
+CGRect const WARNING_BUTTON_FRAME = {{167.0f, 280.0f},{86.0f, 86.0f}};
 CGRect const DIRECTIONS_BUTTON_FRAME = {{267.0f, 412.0f}, {38.0f, 34.0f}};
 CGRect const LEAVE_IN_GAUGE_FRAME = {{115.0f, 236.0f}, {190.0f, 190.0f}};
 CGPoint const LEAVE_IN_VALUE_ORIGIN = {0.0f, 62.0f};
@@ -75,6 +76,29 @@ CGPoint const LEAVE_NOW_ORIGIN = {0.0f, 65.0f};
     });
     
     return sLookupButtonStyle;
+}
+
+
++ (ButtonStyle *)warningButtonStyle {
+    static ButtonStyle *sWarningButtonStyle;
+    static dispatch_once_t sOncePredicate;
+    
+    dispatch_once(&sOncePredicate, ^{
+        sWarningButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:nil
+                                                   disabledLabelStyle:nil
+                                                      backgroundColor:nil
+                                                              upImage:[UIImage imageNamed:@"button_notification_up"]
+                                                            downImage:[UIImage imageNamed:@"button_notification_down"]
+                                                        disabledImage:nil
+                                                            iconImage:nil
+                                                    iconDisabledImage:nil
+                                                           iconOrigin:CGPointZero
+                                                          labelInsets:UIEdgeInsetsZero
+                                                      downLabelOffset:CGSizeZero
+                                                  disabledLabelOffset:CGSizeZero];
+    });
+    
+    return sWarningButtonStyle;
 }
 
 

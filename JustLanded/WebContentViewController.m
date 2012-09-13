@@ -28,6 +28,7 @@
 - (void)indicateLoading;
 - (void)indicateStoppedLoading;
 - (void)loadContent;
+- (void)dismiss;
 
 @end
 
@@ -62,6 +63,7 @@
 - (void)loadContent {
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:self.contentURL_];
     [req setTimeoutInterval:15.0];
+    [req setCachePolicy:NSURLRequestReloadRevalidatingCacheData];
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:req];
     
     // Compute base URL
@@ -228,7 +230,18 @@
     self.navigationController.navigationBar.layer.shadowRadius = 0.25f;
     self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
     
+    // Customize the right bar button item
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"Done")
+                                                          style:UIBarButtonItemStylePlain
+                                                         target:self
+                                                         action:@selector(dismiss)];
+    
 	[self loadContent];
+}
+
+
+- (void)dismiss {
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 

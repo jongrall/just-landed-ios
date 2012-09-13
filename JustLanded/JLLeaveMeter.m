@@ -115,30 +115,30 @@
         parts = [parts subarrayWithRange:NSMakeRange(0, 4)]; 
     }
     
-    if (newTime >= 1.0 && [parts count] == 2) {
-        // When showing 2 parts, no leading zeros
-        parts = [[NSDate timeIntervalToShortUnitString:newTime leadingZeros:NO] componentsSeparatedByString:@" "];
-        self.largeTimeLabel_.parts = parts;
-        self.largeTimeLabel_.hidden = NO;
-        self.smallTimeLabel_.hidden = YES;
-        self.leaveInstructionsLabel_.hidden = NO;
-        self.leaveNowLabel_.hidden = YES;
+    if (!showEmptyMeter_) {
+        if (newTime >= 1.0 && [parts count] == 2) {
+            // When showing 2 parts, no leading zeros
+            parts = [[NSDate timeIntervalToShortUnitString:newTime leadingZeros:NO] componentsSeparatedByString:@" "];
+            self.largeTimeLabel_.parts = parts;
+            self.largeTimeLabel_.hidden = NO;
+            self.smallTimeLabel_.hidden = YES;
+            self.leaveInstructionsLabel_.hidden = NO;
+            self.leaveNowLabel_.hidden = YES;
+        }
+        else if (newTime >= 1.0 && [parts count] == 4) {
+            self.smallTimeLabel_.parts = parts;
+            self.smallTimeLabel_.hidden = NO;
+            self.largeTimeLabel_.hidden = YES;
+            self.leaveInstructionsLabel_.hidden = NO;
+            self.leaveNowLabel_.hidden = YES;
+        }
+        else {
+            self.leaveNowLabel_.hidden = NO;
+            self.smallTimeLabel_.hidden = YES;
+            self.largeTimeLabel_.hidden = YES;
+            self.leaveInstructionsLabel_.hidden = YES;
+        }
     }
-    else if (newTime >= 1.0 && [parts count] == 4) {
-        self.smallTimeLabel_.parts = parts;
-        self.smallTimeLabel_.hidden = NO;
-        self.largeTimeLabel_.hidden = YES;
-        self.leaveInstructionsLabel_.hidden = NO;
-        self.leaveNowLabel_.hidden = YES;
-    }
-    else {
-        self.leaveNowLabel_.hidden = NO;
-        self.smallTimeLabel_.hidden = YES;
-        self.largeTimeLabel_.hidden = YES;
-        self.leaveInstructionsLabel_.hidden = YES;
-    }
-
-    self.leaveInstructionsLabel_.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
     
     if (needsRedraw) {
         [self setNeedsDisplay];
@@ -162,10 +162,10 @@
         self.smallTimeLabel_.hidden = YES;
     }
     else {
-        // Redraw
         [self setTimeRemaining:self.timeRemaining];
     }
     
+    // Redraw
     [self setNeedsDisplay];
 }
 

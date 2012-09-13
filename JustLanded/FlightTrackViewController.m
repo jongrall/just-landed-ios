@@ -8,6 +8,7 @@
 
 #import "FlightTrackViewController.h"
 #import "AboutViewController.h"
+#import "WebContentViewController.h"
 #import "JustLandedSession.h"
 #import "Flight.h"
 #import "FlurryAnalytics.h"
@@ -20,12 +21,22 @@
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface FlightTrackViewController() <NoConnectionDelegate, CLLocationManagerDelegate>
+typedef enum {
+    WarningTypeNone = 8008,
+    WarningTypeDisabledLocationServices,
+    WarningTypeDeniedLocationServices,
+    WarningTypeRestrictedLocationServices,
+    WarningTypeDisallowedNotifications,
+    WarningTypeTooFarFromDestination,
+} LeaveForAirportWarningType;
+
+@interface FlightTrackViewController() <NoConnectionDelegate, CLLocationManagerDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) Flight *trackedFlight_;
 @property (strong, nonatomic) CLLocationManager *locationManager_;
 @property (strong, nonatomic) NSTimer *updateTimer_;
 @property (strong, nonatomic) NSTimer *alternatingLabelTimer_;
+@property (strong, nonatomic) NSMutableArray *ignoredWarnings_;
 @property (nonatomic) BOOL showingValidData_;
 
 // UI Properties
@@ -51,6 +62,7 @@
 @property (strong, nonatomic) UIImageView *headerBackground_;
 @property (strong, nonatomic) UIImageView *footerBackground_;
 @property (strong, nonatomic) JLLookupButton *lookupButton_;
+@property (strong, nonatomic) JLButton *warningButton_;
 @property (strong, nonatomic) JLButton *directionsButton_;
 @property (strong, nonatomic) JLLeaveMeter *leaveMeter_;
 @property (strong, nonatomic) JLNoConnectionView *noConnectionOverlay_;
@@ -81,6 +93,7 @@
 - (void)indicateUpdating;
 - (void)indicateFinishedUpdating;
 - (void)updateDisplayedData;
+- (LeaveForAirportWarningType)warningToDisplay;
 - (void)showDrivingTimeOrBagClaim;
 - (void)alternateData;
 - (void)fadeOut:(UIView *)aView fadeIn:(UIView *)anotherView;
@@ -97,6 +110,7 @@
 // Button Actions
 - (void)backToLookup;
 - (void)showMap;
+- (void)showWarning;
 
 // Bg task cleanup
 - (void)finishWakeupTrackTask;
@@ -113,6 +127,7 @@
 @synthesize locationManager_;
 @synthesize updateTimer_;
 @synthesize alternatingLabelTimer_;
+@synthesize ignoredWarnings_;
 @synthesize noConnectionOverlay_;
 @synthesize serverErrorOverlay_;
 
@@ -138,6 +153,8 @@
             locationManager_.purpose = NSLocalizedString(@"This lets us estimate your driving time to the airport.",
                                                               @"Location Purpose");
         }
+        
+        ignoredWarnings_ = [[NSMutableArray alloc] init];
         
         // Listen for update notifications for the Flight to trigger UI indicators
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -321,6 +338,12 @@
         self.leaveMeter_.timeRemaining = [self.trackedFlight_.leaveForAirportTime timeIntervalSinceNow];
     }
     
+    // Create the warning button
+    self.warningButton_ = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles warningButtonStyle] frame:WARNING_BUTTON_FRAME];
+    [self.warningButton_ addTarget:self action:@selector(showWarning) forControlEvents:UIControlEventTouchUpInside];
+    self.warningButton_.hidden = YES;
+    self.warningButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    
     [self showDrivingTimeOrBagClaim];
     [self setStatus:self.trackedFlight_.status];
     
@@ -348,6 +371,7 @@
     [self.view addSubview:self.bagClaimLabel_];
     [self.view addSubview:self.bagClaimValueLabel_];
     [self.view addSubview:self.leaveMeter_];
+    [self.view addSubview:self.warningButton_];
     [self.view addSubview:self.directionsButton_];
 }
 
@@ -378,6 +402,7 @@
     self.headerBackground_ = nil;
     self.footerBackground_ = nil;
     self.lookupButton_ = nil;
+    self.warningButton_ = nil;
     self.directionsButton_ = nil;
     self.leaveMeter_ = nil;
 }
@@ -680,6 +705,28 @@
 }
 
 
+- (LeaveForAirportWarningType)warningToDisplay {
+    if (![CLLocationManager locationServicesEnabled]) {
+        return WarningTypeDisabledLocationServices;
+    }
+    else if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied) {
+        return WarningTypeDeniedLocationServices;
+    }
+    else if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusRestricted) {
+        return WarningTypeRestrictedLocationServices;
+    }
+    else if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
+        return WarningTypeDisallowedNotifications;
+    }
+    else if (self.locationManager_.location && self.trackedFlight_.destination.location && self.trackedFlight_.drivingTime == -1.0) {
+        return WarningTypeTooFarFromDestination;
+    }
+    else {
+        return WarningTypeNone;
+    }
+}
+
+
 - (void)showDrivingTimeOrBagClaim {
     if (self.trackedFlight_.drivingTime > 0.0 && self.trackedFlight_.leaveForAirportTime) {
         self.drivingTimeValueLabel_.parts = [self drivingTimeParts];
@@ -823,7 +870,10 @@
     self.gateValueLabel_.text = [self gateValue];
     self.bagClaimValueLabel_.text = [self bagClaimValue];
     
-    if (self.trackedFlight_.leaveForAirportTime && self.trackedFlight_.drivingTime > 0.0) {
+    LeaveForAirportWarningType warningType = [self warningToDisplay];
+    BOOL ignoreWarning = [ignoredWarnings_ containsObject:[NSNumber numberWithInteger:warningType]];
+    
+    if (self.trackedFlight_.leaveForAirportTime && self.trackedFlight_.drivingTime > 0.0 && (warningType == WarningTypeNone || ignoreWarning)) {
         self.leaveMeter_.showEmptyMeter = NO;
         self.leaveMeter_.timeRemaining = [self.trackedFlight_.leaveForAirportTime timeIntervalSinceNow];
     }
@@ -833,6 +883,9 @@
     
     // Hide the directions button and driving time if appropriate
     [self showDrivingTimeOrBagClaim];
+    
+    // Show the warning button if appropriate
+    self.warningButton_.hidden = (warningType == WarningTypeNone || ignoreWarning) ? YES : NO;
     
     // Ask them to rate after a few seconds, if eligible
     [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible)
@@ -933,26 +986,6 @@
 }
 
 
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    switch (status) {
-        case kCLAuthorizationStatusDenied: {
-            if ([CLLocationManager locationServicesEnabled]) {
-                // They just disallowed access, notify them of the consequences
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Location Not Allowed", @"Not Allowed to Get Location")
-                                                                message:NSLocalizedString(@"Without your location Just Landed cannot give estimates of when you should leave for the airport. Please enable location updates via the system Settings app.", @"Location disallowed warning.")
-                                                               delegate:nil
-                                                      cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                      otherButtonTitles:nil];
-                [alert show];
-                break;
-            }
-        }
-        default:
-            break;
-    }
-}
-
-
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     // Only update if the new location is acceptable
     if ([self isLocationAcceptable:newLocation]) {
@@ -979,12 +1012,6 @@
     switch ([error code]) {
         case kCLErrorLocationUnknown: {
             // Indicate that we don't have location even though we were supposed to be able to use it
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Your Location Unknown", @"Your Location Unknown")
-                                                            message:NSLocalizedString(@"Without your location Just Landed cannot give estimates of when you should leave for the airport. Please check your device's reception and try again.", @"Location unavailable warning.")
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                  otherButtonTitles:nil];
-            [alert show];
             [FlurryAnalytics logEvent:FY_UNABLE_TO_GET_LOCATION];
             break;
         }
@@ -1046,8 +1073,127 @@
 }
 
 
+- (void)showWarning {
+    LeaveForAirportWarningType warningType = [self warningToDisplay];
+    NSString *alertTitle = nil;
+    NSString *alertMessage = nil;
+    NSString *cancelButtonTitle = NSLocalizedString(@"Ignore", @"Ignore");
+    NSString *otherButtonTitle = NSLocalizedString(@"Fix", @"Fix");
+    
+    switch (warningType) {
+        case WarningTypeDisabledLocationServices: {
+            alertTitle = NSLocalizedString(@"Location Services Disabled", @"Location Services Disabled");
+            alertMessage = NSLocalizedString(@"Without your location we can't estimate when you should leave for the airport to pick someone up.",
+                                             @"Location Services Disabled Explanation");
+            break;
+        }
+        case WarningTypeDeniedLocationServices: {
+            alertTitle = NSLocalizedString(@"Location Services Denied", @"Location Services Denied");
+            alertMessage = NSLocalizedString(@"You have chosen to not allow Just Landed to get your location. Without this information we can't estimate when you should leave for the airport to pick someone up.",
+                                             @"Location Services Denied Explanation");
+            break;
+        }
+        case WarningTypeRestrictedLocationServices: {
+            alertTitle = NSLocalizedString(@"Location Services Restricted", @"Location Services Restricted");
+            alertMessage = NSLocalizedString(@"Location Services are restricted on your device. Without this information we can't estimate when you should leave for the airport to pick someone up.",
+                                             @"Location Services Restricted Explanation");
+            break;
+        }
+        case WarningTypeDisallowedNotifications: {
+            alertTitle = NSLocalizedString(@"Notifications Disabled", @"Notifications Disabled");
+            alertMessage = NSLocalizedString(@"Because notifications are disabled, you will not receive alerts when it is time to go to the airport to pick someone up.",
+                                             @"Notifications Disabled Explanation");
+            break;
+        }
+        case WarningTypeTooFarFromDestination: {
+            alertTitle = NSLocalizedString(@"Too Far From Destination", @"Too Far From Destination");
+            alertMessage = NSLocalizedString(@"You are too far away from the destination to pick someone up from the airport.",
+                                             @"Too Far From Destination Explanation");
+            otherButtonTitle = nil;
+            cancelButtonTitle = NSLocalizedString(@"OK", @"OK");
+            break;
+        }
+        default:
+            break;
+    }
+    
+    if (warningType != WarningTypeNone) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:alertTitle
+                                                        message:alertMessage
+                                                       delegate:self
+                                              cancelButtonTitle:cancelButtonTitle
+                                              otherButtonTitles:otherButtonTitle, nil];
+        alert.tag = warningType;
+        [alert show];
+    }
+}
+
+
 - (void)backToLookup {
     [self stopTrackingUserInitiated:YES];
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Handling Alerts
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    NSString *title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
+    NSURL *fixURL = nil;
+    
+    if ([alertView cancelButtonIndex] != buttonIndex) {
+        switch (alertView.tag) {
+            case WarningTypeDisabledLocationServices: {
+                fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_DISABLED_ANCHOR]];;
+                break;
+            }
+            case WarningTypeDeniedLocationServices: {
+                fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_DENIED_ANCHOR]];;
+                break;
+            }
+            case WarningTypeRestrictedLocationServices: {
+                fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, LOCATION_RESTRICTED_ANCHOR]];;
+                break;
+            }
+            case WarningTypeDisallowedNotifications: {
+                fixURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, PUSH_DISALLOWED_ANCHOR]];;
+                break;
+            }
+            case WarningTypeTooFarFromDestination: {
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    else if (alertView.tag > WarningTypeNone && alertView.tag <= WarningTypeTooFarFromDestination){
+        // They want to ignore the warning
+        if (![ignoredWarnings_ containsObject:[NSNumber numberWithInteger:alertView.tag]]) {
+            [ignoredWarnings_ addObject:[NSNumber numberWithInteger:alertView.tag]];
+        }
+        
+        // They want to ignore the warning
+        self.warningButton_.hidden = YES;
+    
+        // Redisplay leave time if appropriate
+        if (self.trackedFlight_.leaveForAirportTime && self.trackedFlight_.drivingTime > 0.0) {
+            self.leaveMeter_.showEmptyMeter = NO;
+            self.leaveMeter_.timeRemaining = [self.trackedFlight_.leaveForAirportTime timeIntervalSinceNow];
+        }
+        else {
+            self.leaveMeter_.showEmptyMeter = YES;
+        }
+    }
+    
+    if (fixURL) {
+        WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:fixURL];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webContentVC];
+        navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        [self presentViewController:navController animated:YES completion:^{
+            [FlurryAnalytics logEvent:FY_READ_FAQ];
+        }];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

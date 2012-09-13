@@ -34,6 +34,7 @@ extern CGRect const TERMINAL_LABEL_FRAME;
 extern CGRect const TERMINAL_VALUE_FRAME;
 extern CGRect const DRIVING_TIME_LABEL_FRAME;
 extern CGRect const DRIVING_TIME_VALUE_FRAME;
+extern CGRect const WARNING_BUTTON_FRAME;
 extern CGRect const DIRECTIONS_BUTTON_FRAME;
 extern CGRect const LEAVE_IN_GAUGE_FRAME;
 extern CGPoint const LEAVE_IN_VALUE_ORIGIN;
@@ -49,6 +50,7 @@ extern CGPoint const LEAVE_NOW_ORIGIN;
 @interface JLTrackStyles : NSObject
 
 + (ButtonStyle *)lookupButtonStyle;
++ (ButtonStyle *)warningButtonStyle;
 + (ButtonStyle *)directionsButtonStyle;
 + (LabelStyle *)statusLabelStyle;
 + (LabelStyle *)airportCodeStyle;
