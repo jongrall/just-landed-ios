@@ -782,7 +782,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
                     }
                 }
                 
-                WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:url];
+                WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:url showDoneButton:YES];
                 UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webContentVC];
                 navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
                 [self presentViewController:navController animated:YES completion:NULL];

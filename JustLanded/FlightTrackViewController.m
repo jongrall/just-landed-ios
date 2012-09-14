@@ -1250,7 +1250,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         }
         
         if (fixURL) {
-            WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:fixURL];
+            WebContentViewController *webContentVC = [[WebContentViewController alloc] initWithContentTitle:title URL:fixURL showDoneButton:YES];
             UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webContentVC];
             navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             [self presentViewController:navController animated:YES completion:^{

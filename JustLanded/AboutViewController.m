@@ -399,14 +399,16 @@ typedef enum {
         }
         case AboutCellTagTerms: {
             WebContentViewController *tosVC = [[WebContentViewController alloc] initWithContentTitle:NSLocalizedString(@"Terms of Service", @"Terms of Service.")
-                                                                                                 URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:TOS_PATH]]];
+                                                                                                 URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:TOS_PATH]]
+                                                                                      showDoneButton:NO];
             [self.navigationController pushViewController:tosVC animated:YES];
             [FlurryAnalytics logEvent:FY_READ_TERMS];
             break;
         }
         case AboutCellTagFAQ: {
             WebContentViewController *faqVC = [[WebContentViewController alloc] initWithContentTitle:NSLocalizedString(@"F.A.Q.", @"F.A.Q.")
-                                                                                                 URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:FAQ_PATH]]];
+                                                                                                 URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:FAQ_PATH]]
+                                                                                      showDoneButton:NO];
             [self.navigationController pushViewController:faqVC animated:YES];
             [FlurryAnalytics logEvent:FY_READ_FAQ];
             break;

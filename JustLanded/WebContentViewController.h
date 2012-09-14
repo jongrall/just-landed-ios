@@ -21,6 +21,6 @@
 
 @property (strong, nonatomic) UIWebView *webView;
 
-- (id)initWithContentTitle:(NSString *)aTitle URL:(NSURL *)aContentURL;
+- (id)initWithContentTitle:(NSString *)aTitle URL:(NSURL *)aContentURL showDoneButton:(BOOL)flag;
 
 @end

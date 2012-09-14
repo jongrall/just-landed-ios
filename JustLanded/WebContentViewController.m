@@ -24,6 +24,7 @@
 @property (strong, nonatomic) JLLoadingView *loadingOverlay_;
 @property (strong, nonatomic) JLNoConnectionView *noConnectionOverlay_;
 @property (strong, nonatomic) JLServerErrorView *serverErrorOverlay_;
+@property (nonatomic) BOOL showDoneButton_;
 
 - (void)indicateLoading;
 - (void)indicateStoppedLoading;
@@ -47,14 +48,16 @@
 @synthesize loadingOverlay_;
 @synthesize noConnectionOverlay_;
 @synthesize serverErrorOverlay_;
+@synthesize showDoneButton_;
 
 
-- (id)initWithContentTitle:(NSString *)aTitle URL:(NSURL *)aContentURL {
+- (id)initWithContentTitle:(NSString *)aTitle URL:(NSURL *)aContentURL showDoneButton:(BOOL)flag {
     self = [super init];
     
     if (self) {
         contentTitle_ = (aTitle) ? aTitle : @"Untitled";
         contentURL_ = (aContentURL) ? aContentURL : [NSURL URLWithString:@"about:blank"];
+        showDoneButton_ = flag;
     }
     
     return self;
@@ -231,11 +234,13 @@
     self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
     
     // Customize the right bar button item
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"Done")
-                                                          style:UIBarButtonItemStylePlain
-                                                         target:self
-                                                         action:@selector(dismiss)];
-    
+    if (self.showDoneButton_) {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"Done")
+                                                                                  style:UIBarButtonItemStylePlain
+                                                                                 target:self
+                                                                                 action:@selector(dismiss)];
+    }
+
 	[self loadContent];
 }
 
