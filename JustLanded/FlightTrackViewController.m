@@ -914,7 +914,6 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             }
             else {
                 // The app is in the foreground, notify them right away
-                self.hasBeenToAirport_ = YES;
                 NSString *alertMsg = (self.trackedFlight_.status == LANDED) ? NSLocalizedString(@"We can text the person you're picking up to let them know you've arrived.",
                                                                                                 @"Text To Pickup Prompt - Flight Landed") :
                 NSLocalizedString(@"We can text the person you're picking up to let them know you've arrived. They'll get your message once they land.", @"Text To Pickup Prompt - Flight Landed");
@@ -930,6 +929,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                 // Clear local notifications so they can't respond to prompt to pick somene up again
                 [[UIApplication sharedApplication] cancelAllLocalNotifications];
             }
+            self.hasBeenToAirport_ = YES;
         }
         else if (!self.hasBeenNotifiedToText_) {
             // The app is in the background, send them a local notification
@@ -1301,8 +1301,6 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                                                                   @"Basic I've Arrived Message"),
                       [self.trackedFlight_.destination bestAirportCode]];
     }
-    
-    NSLog(@"%@", smsMessage);
     
     JLMessageComposeViewController *smsComposer = [[JLMessageComposeViewController alloc] init];
     [smsComposer setMessageComposeDelegate:self];
