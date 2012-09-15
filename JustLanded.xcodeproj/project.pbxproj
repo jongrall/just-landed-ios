@@ -209,6 +209,7 @@
 		119EA21215393EE900BBFD5E /* JLTrackStyles.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA21115393EE800BBFD5E /* JLTrackStyles.m */; };
 		119EA22A153A3ECB00BBFD5E /* JLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA229153A3ECB00BBFD5E /* JLButton.m */; };
 		119EA22D153A3EE700BBFD5E /* JLLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 119EA22C153A3EE700BBFD5E /* JLLabel.m */; };
+		11A2EBE61604189100BEA6EB /* alert.wav in Resources */ = {isa = PBXBuildFile; fileRef = 11A2EBE51604189100BEA6EB /* alert.wav */; };
 		11A64F9315F6A80B008ED7E6 /* WebContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11A64F9215F6A80B008ED7E6 /* WebContentViewController.m */; };
 		11AE979E14EB5A4100F7ED46 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */; };
 		11AE97A814EB5AD600F7ED46 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A714EB5AD600F7ED46 /* MobileCoreServices.framework */; };
@@ -619,6 +620,7 @@
 		119EA229153A3ECB00BBFD5E /* JLButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLButton.m; sourceTree = "<group>"; };
 		119EA22B153A3EE700BBFD5E /* JLLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLLabel.h; sourceTree = "<group>"; };
 		119EA22C153A3EE700BBFD5E /* JLLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLLabel.m; sourceTree = "<group>"; };
+		11A2EBE51604189100BEA6EB /* alert.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = alert.wav; sourceTree = "<group>"; };
 		11A64F9015F6A7F4008ED7E6 /* WebContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContentViewController.h; sourceTree = "<group>"; };
 		11A64F9215F6A80B008ED7E6 /* WebContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebContentViewController.m; sourceTree = "<group>"; };
 		11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -1337,6 +1339,7 @@
 		11E1AD321554D3520021EE16 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				11A2EBE51604189100BEA6EB /* alert.wav */,
 				11E1AD331554D3520021EE16 /* announcement.wav */,
 				11E1AD341554D3520021EE16 /* landing.wav */,
 				11E1AD351554D3520021EE16 /* takeoff.wav */,
@@ -1808,6 +1811,7 @@
 				11C6279B15FA6F0C00E2D27C /* disclosure_arrow_down.png in Resources */,
 				11C6279C15FA6F0C00E2D27C /* disclosure_arrow_up.png in Resources */,
 				117592F71602909E00CE4B6F /* HockeySDKResources.bundle in Resources */,
+				11A2EBE61604189100BEA6EB /* alert.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

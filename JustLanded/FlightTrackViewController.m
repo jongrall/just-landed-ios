@@ -925,6 +925,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                                                       otherButtonTitles:NSLocalizedString(@"Send Text", @"Yes"), nil];
                 alert.tag = TextUponArrivalAlertTag;
                 [alert show];
+                [FlurryAnalytics logEvent:FY_PROMPTED_TO_SEND_ARRIVAL_SMS];
                 
                 // Clear local notifications so they can't respond to prompt to pick somene up again
                 [[UIApplication sharedApplication] cancelAllLocalNotifications];
@@ -936,11 +937,12 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             UILocalNotification *textNotification = [[UILocalNotification alloc] init];
             textNotification.alertAction = NSLocalizedString(@"Send Text", @"Send Text");
             textNotification.alertBody = NSLocalizedString(@"Picking someone up? Just Landed can text them that you've arrived.", @"Text Notification");
-            textNotification.soundName = UILocalNotificationDefaultSoundName;
+            textNotification.soundName = @"alert.wav";
             textNotification.userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInteger:JLLocalNotificationTypeTextOnArrival]
                                                                     forKey:LocalNotificationTypeKey];
             [[UIApplication sharedApplication] presentLocalNotificationNow:textNotification];
             self.hasBeenNotifiedToText_ = YES;
+            [FlurryAnalytics logEvent:FY_NOTIFIED_TO_SEND_ARRIVAL_SMS];
         }
     }
     else {
@@ -1197,9 +1199,14 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (alertView.tag == TextUponArrivalAlertTag && [alertView cancelButtonIndex] != buttonIndex) {
-        // Show the message composer to text their guest
-        [self composeTextOnAirportArrival];
+    if (alertView.tag == TextUponArrivalAlertTag) {
+        if ([alertView cancelButtonIndex] != buttonIndex) {
+            // Show the message composer to text their guest
+            [self composeTextOnAirportArrival];
+        }
+        else {
+            [FlurryAnalytics logEvent:FY_IGNORED_ARRIVAL_SMS_PROMPT];
+        }
     }
     else {
         NSString *title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
