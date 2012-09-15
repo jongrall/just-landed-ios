@@ -750,8 +750,6 @@
 		11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_down@2x.png"; sourceTree = "<group>"; };
 		11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_up@2x.png"; sourceTree = "<group>"; };
 		11F112E915117A0A0008D301 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
-		11F7DC91151198F700DFA5AF /* Hockey.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Hockey.bundle; path = ../HockeyKit/Hockey.bundle; sourceTree = "<group>"; };
-		11F7DC931511991D00DFA5AF /* Quincy.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Quincy.bundle; path = ../QuincyKit/Quincy.bundle; sourceTree = "<group>"; };
 		11F96E56153ABF20003E4B1D /* UIImage+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+JLExtensions.h"; sourceTree = "<group>"; };
 		11F96E57153ABF20003E4B1D /* UIImage+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+JLExtensions.m"; sourceTree = "<group>"; };
 		11F96E5E153AC342003E4B1D /* arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow@2x.png"; sourceTree = "<group>"; };
@@ -1159,9 +1157,7 @@
 		11C5DFB214DCCDDF006D1DB4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				11F7DC931511991D00DFA5AF /* Quincy.bundle */,
 				11C5DFB314DCCDDF006D1DB4 /* JustLanded-Info.plist */,
-				11F7DC91151198F700DFA5AF /* Hockey.bundle */,
 				11C5DFB414DCCDDF006D1DB4 /* InfoPlist.strings */,
 				11C5DFB714DCCDDF006D1DB4 /* main.m */,
 				11C5DFB914DCCDDF006D1DB4 /* JustLanded-Prefix.pch */,
