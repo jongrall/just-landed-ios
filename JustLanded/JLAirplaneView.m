@@ -53,7 +53,7 @@
                                             self.airplane_.frame.size.height)];
         
         [self.animationStartTimer_ invalidate];
-        self.animationStartTimer_ = [NSTimer timerWithTimeInterval:(arc4random() % 30)
+        self.animationStartTimer_ = [NSTimer timerWithTimeInterval:(arc4random() % 15)
                                                  target:self
                                                selector:@selector(startAnimatingPlane)
                                                userInfo:nil
