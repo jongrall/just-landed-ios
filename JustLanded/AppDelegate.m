@@ -81,8 +81,9 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     }
     // The app was launched because of a local notification
     else if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey]) {
-        NSDictionary *notificationInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
-        if (notificationInfo && [[notificationInfo objectForKeyOrNil:LocalNotificationTypeKey] integerValue] == JLLocalNotificationTypeTextOnArrival) {
+        UILocalNotification *notification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+        if (notification && [[[notification userInfo] objectForKey:LocalNotificationTypeKey] integerValue] == JLLocalNotificationTypeTextOnArrival) {
+            [[JustLandedSession sharedSession] playSound:LandingSound];
             self.respondedToTextOnArrivalNotification = YES;
         }
     }

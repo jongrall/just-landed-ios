@@ -34,10 +34,10 @@
         // Add the label
         loadingLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles loadingLabelStyle]
                                                       frame:CGRectMake(10.0f,
-                                                                       294.0f,
+                                                                       274.0f,
                                                                        aFrame.size.width - 20.0f,
-                                                                       30.0f)];
-        loadingLabel_.text = NSLocalizedString(@"Loading...", @"Loading...");
+                                                                       50.0f)];
+        loadingLabel_.text = NSLocalizedString(@"Loading", @"Loading");
         
         
         // Configure the loading spinner;
