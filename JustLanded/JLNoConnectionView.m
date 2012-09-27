@@ -45,21 +45,21 @@
                                       shadowBlur:0.0f];
         noConnectionImageView_ = [[UIImageView alloc] initWithImage:noConnImg];
         noConnectionImageView_.frame = CGRectMake((aFrame.size.width - noConnImg.size.width) / 2.0f,
-                                                 50.0f,
+                                                 50.0f, // FIXME: iPhone 5 screen
                                                  noConnImg.size.width,
                                                  noConnImg.size.height);
         
         // Add divider
         divider_ = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"divider"]];
         divider_.frame = CGRectMake((320.0f - divider_.frame.size.width) / 2.0f,
-                                    343.0f,
+                                    343.0f, // FIXME: iPhone 5 screen
                                     divider_.frame.size.width,
                                     divider_.frame.size.height);
         
         // Add label
         noConnectionLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles noConnectionLabelStyle]
                                                            frame:CGRectMake((aFrame.size.width - 300.0f) / 2.0f,
-                                                                            294.0f,
+                                                                            294.0f, // FIXME: iPhone 5 screen
                                                                             300.0f,
                                                                             30.0f)];
         noConnectionLabel_.text = NSLocalizedString(@"No Internet Connection", @"No Internet Connection");
@@ -67,7 +67,7 @@
         // Add retry button
         tryAgainButton_ = [[JLButton alloc] initWithButtonStyle:[JLStyles defaultButtonStyle]
                                                           frame:CGRectMake(10.0f,
-                                                                           373.0f,
+                                                                           373.0f, // FIXME: iPhone 5 screen
                                                                            aFrame.size.width - 20.0f,
                                                                            56.0f)];
         [tryAgainButton_ addTarget:self

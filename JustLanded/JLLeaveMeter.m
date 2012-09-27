@@ -40,10 +40,11 @@
         backgroundShadow_ = [UIImage imageNamed:@"gauge_inset"];
         meterGradient_ = [UIImage imageNamed:@"gauge_gradient"];
         
+        CGPoint leaveInValueOrigin = [JLTrackStyles leaveInValueOrigin];
         largeTimeLabel_ = [[JLMultipartOverUnderLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles leaveTimeLargeLabelStyle],
                                                                                        [JLTrackStyles leaveTimeLargeUnitStyle], nil]
-                                                                           frame:CGRectMake(LEAVE_IN_VALUE_ORIGIN.x,
-                                                                                            LEAVE_IN_VALUE_ORIGIN.y,
+                                                                           frame:CGRectMake(leaveInValueOrigin.x,
+                                                                                            leaveInValueOrigin.y,
                                                                                             aFrame.size.width,
                                                                                             100.0f)];
         largeTimeLabel_.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeMake(0.0f, -14.0f)],
@@ -54,8 +55,8 @@
                                                                                        [JLTrackStyles leaveTimeSmallUnitStyle],
                                                                                        [JLTrackStyles leaveTimeSmallLabelStyle],
                                                                                        [JLTrackStyles leaveTimeSmallUnitStyle], nil]
-                                                                           frame:CGRectMake(LEAVE_IN_VALUE_ORIGIN.x,
-                                                                                            LEAVE_IN_VALUE_ORIGIN.y,
+                                                                           frame:CGRectMake(leaveInValueOrigin.x,
+                                                                                            leaveInValueOrigin.y,
                                                                                             aFrame.size.width,
                                                                                             120.0f)];
         smallTimeLabel_.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeMake(0.0f, 8.0f)],
@@ -65,19 +66,21 @@
         smallTimeLabel_.labelSeparation = 12.0f;
         smallTimeLabel_.hidden = YES;
         
+        CGPoint leaveInInstructionsOrigin = [JLTrackStyles leaveInInstructionsOrigin];
         leaveInstructionsLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles leaveInstructionsLabelStyle] 
-                                                                     frame:CGRectMake(LEAVE_IN_INSTRUCTIONS_ORIGIN.x,
-                                                                                      LEAVE_IN_INSTRUCTIONS_ORIGIN.y,
+                                                                     frame:CGRectMake(leaveInInstructionsOrigin.x,
+                                                                                      leaveInInstructionsOrigin.y,
                                                                                       aFrame.size.width,
                                                                                       80.0f)];
         
         leaveInstructionsLabel_.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
         leaveInstructionsLabel_.hidden = YES;
         
+        CGPoint leaveNowOrigin = [JLTrackStyles leaveNowOrigin];
         leaveNowLabel_ = [[JLMultipartOverUnderLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles leaveNowStyle],
                                                                                       [JLTrackStyles leaveNowStyle], nil] 
-                                                                               frame:CGRectMake(LEAVE_NOW_ORIGIN.x,
-                                                                                                LEAVE_NOW_ORIGIN.y,
+                                                                               frame:CGRectMake(leaveNowOrigin.x,
+                                                                                                leaveNowOrigin.y,
                                                                                                 aFrame.size.width,
                                                                                                 200.0f)];
         

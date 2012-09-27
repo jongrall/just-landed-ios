@@ -37,7 +37,6 @@ typedef enum {
 @property (strong, nonatomic) JLLabel *copyrightLabel_;
 
 - (void)dismiss;
-- (BOOL)setMFMailFieldAsFirstResponder:(UIView *)view mfMailField:(NSString *)field;
 
 @end
 
@@ -56,36 +55,42 @@ typedef enum {
 
 - (void)loadView {    
     UIImageView *mainView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sky_bg"]];
-    mainView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 460.0f);
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    mainView.frame = CGRectMake(0.0f,
+                                0.0f,
+                                screenBounds.size.width,
+                                screenBounds.size.height - 20.0f); // Status bar
     mainView.userInteractionEnabled = YES;
     self.view = mainView;
     
     // Add the about button
-    self.aboutButton_ = [[JLButton alloc] initWithButtonStyle:[JLAboutStyles aboutCloseButtonStyle] frame:ABOUT_BUTTON_FRAME]; // Frame matches lookup
+    self.aboutButton_ = [[JLButton alloc] initWithButtonStyle:[JLAboutStyles aboutCloseButtonStyle]
+                                                        frame:[JLLookupStyles aboutButtonFrame]]; // Frame matches lookup
     [self.aboutButton_ addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
     self.aboutButton_.enabled = NO;
     [self.view addSubview:self.aboutButton_];
     
     // Add the title
-    self.aboutTitle_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles aboutTitleLabelStyle] frame:ABOUT_TITLE_FRAME];
+    self.aboutTitle_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles aboutTitleLabelStyle]
+                                                     frame:[JLAboutStyles aboutTitleFrame]];
     self.aboutTitle_.text = NSLocalizedString(@"about", @"About Screen Title");
     self.aboutTitle_.hidden = YES; // Hidden at first
     [self.view addSubview:self.aboutTitle_];
     
     // Add the cloud layer
-    self.cloudLayer = [[JLCloudLayer alloc] initWithFrame:CLOUD_LAYER_FRAME]; // Frame matches lookup
+    self.cloudLayer = [[JLCloudLayer alloc] initWithFrame:[JLLookupStyles cloudLayerFrame]]; // Frame matches lookup
     self.cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:self.cloudLayer];
     
     // Add the cloud foreground
     UIImageView *cloudFooter = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
                                                                resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
-    cloudFooter.frame = CLOUD_FOOTER_FRAME; // Frame matches lookup
+    cloudFooter.frame = [JLLookupStyles cloudFooterFrame]; // Frame matches lookup
     cloudFooter.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:cloudFooter];
     
     // Add the table
-    UITableView *table = [[UITableView alloc] initWithFrame:TABLE_FRAME 
+    UITableView *table = [[UITableView alloc] initWithFrame:[JLAboutStyles tableFrame]
                                                       style:UITableViewStylePlain];
     [table setBackgroundColor:[UIColor clearColor]];
     [table setDelegate:self];
@@ -98,7 +103,8 @@ typedef enum {
     [self.view addSubview:table];
     
     // Add the credits
-    self.copyrightLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle] frame:COPYRIGHT_NOTICE_FRAME];
+    self.copyrightLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle]
+                                                         frame:[JLAboutStyles copyrightNoticeFrame]];
     self.copyrightLabel_.text = [NSString stringWithFormat:NSLocalizedString(@"©2012 Little Details LLC. Just Landed %@", @"Copyright Notice"),
                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     self.copyrightLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
@@ -160,8 +166,8 @@ typedef enum {
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         self.cloudLayer.frame = CLOUD_LAYER_LOWER_FRAME;
-                         self.airplane.frame = AIRPLANE_LOWER_FRAME;
+                         self.cloudLayer.frame = [JLAboutStyles cloudLayerLowerFrame];
+                         self.airplane.frame = [JLAboutStyles airplaneLowerFrame];
                      }
                      completion:^(BOOL finished) {
                          self.aboutTitle_.alpha = 0.0f;
@@ -218,8 +224,8 @@ typedef enum {
                                                delay:0.0
                                              options:UIViewAnimationOptionCurveEaseInOut
                                           animations:^{
-                                              self.cloudLayer.frame = CLOUD_LAYER_FRAME;
-                                              self.airplane.frame = AIRPLANE_FRAME;
+                                              self.cloudLayer.frame = [JLLookupStyles cloudLayerFrame];
+                                              self.airplane.frame = [JLLookupStyles airplaneFrame];
                                           }
                                           completion:^(BOOL finishedAlso) {
                                               [[self.presentingViewController view] addSubview:self.airplane]; // Give the airplane back :)
@@ -340,7 +346,7 @@ typedef enum {
             [self presentViewController:mailComposer animated:YES completion:NULL];
             
             // WARN: Make the body first responder - this could get us rejected
-            [self setMFMailFieldAsFirstResponder:mailComposer.view mfMailField:@"MFComposeTextContentView"];
+            [mailComposer setMFMailFieldAsFirstResponder];
             
             [FlurryAnalytics logEvent:FY_STARTED_SENDING_FEEDBACK];
             break;
@@ -450,7 +456,6 @@ typedef enum {
 #pragma mark - MFMailComposeViewControllerDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 - (void)mailComposeController:(MFMailComposeViewController *)controller 
           didFinishWithResult:(MFMailComposeResult)result 
                         error:(NSError *)error {
@@ -468,32 +473,6 @@ typedef enum {
     }
     
     [self dismissViewControllerAnimated:YES completion:NULL];
-}
-
-//Returns true if the ToAddress field was found any of the sub views and made first responder
-//passing in @"MFComposeSubjectView"     as the value for field makes the subject become first responder 
-//passing in @"MFComposeTextContentView" as the value for field makes the body become first responder 
-//passing in @"RecipientTextField"       as the value for field makes the to address field become first responder 
-- (BOOL)setMFMailFieldAsFirstResponder:(UIView *)view mfMailField:(NSString *)field {
-    for (UIView *subview in view.subviews) {
-        
-        NSString *className = [NSString stringWithFormat:@"%@", [subview class]];
-        if ([className isEqualToString:field]) {
-            //Found the sub view we need to set as first responder
-            [subview becomeFirstResponder];
-            return YES;
-        }
-        
-        if ([subview.subviews count] > 0) {
-            if ([self setMFMailFieldAsFirstResponder:subview mfMailField:field]){
-                //Field was found and made first responder in a subview
-                return YES;
-            }
-        }
-    }
-    
-    //field not found in this view.
-    return NO;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -38,16 +38,18 @@
         self.keyboardType = UIKeyboardTypeNamePhonePad;
         self.adjustsFontSizeToFitWidth = NO;
         
-        JLLabel *leftLabel = [[JLLabel alloc] initWithLabelStyle:leftViewStyle frame:LOOKUP_LABEL_TEXT_FRAME];
+        JLLabel *leftLabel = [[JLLabel alloc] initWithLabelStyle:leftViewStyle
+                                                           frame:[JLLookupStyles lookupLabelTextFrame]];
         leftLabel.text = NSLocalizedString(@"FLIGHT #", @"FLIGHT #");
         
         UIImageView *separator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"lookup_input_divider"]];
-        separator.frame = CGRectMake(LOOKUP_SEPARATOR_ORIGIN.x, 
-                                     LOOKUP_SEPARATOR_ORIGIN.y,
+        CGPoint separatorOrigin = [JLLookupStyles lookupSeparatorOrigin];
+        separator.frame = CGRectMake(separatorOrigin.x,
+                                     separatorOrigin.y,
                                      separator.frame.size.width,
                                      separator.frame.size.height);
         
-        UIView *container = [[UIView alloc] initWithFrame:LOOKUP_LABEL_FRAME];
+        UIView *container = [[UIView alloc] initWithFrame:[JLLookupStyles lookupLabelFrame]];
         
         [container addSubview:leftLabel];
         [container addSubview:separator];

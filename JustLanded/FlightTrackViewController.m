@@ -222,17 +222,21 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 - (void)loadView {
     // Set up the main view
-    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 460.0f)];
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                0.0f,
+                                                                screenBounds.size.width,
+                                                                screenBounds.size.height - 20.0f)]; // Status bar
     [mainView setBackgroundColor:[UIColor blackColor]];
     self.view = mainView;
     
     // Create the footer background
     self.footerBackground_ = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tracking_footer_bg"]];
-    [self.footerBackground_ setFrame:TRACK_FOOTER_FRAME];
+    [self.footerBackground_ setFrame:[JLTrackStyles trackFooterFrame]];
     self.footerBackground_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Create the header background
-    self.headerBackground_ = [[UIImageView alloc] initWithFrame:TRACK_HEADER_FRAME];
+    self.headerBackground_ = [[UIImageView alloc] initWithFrame:[JLTrackStyles trackHeaderFrame]];
     
     // Create the lookup button
     self.lookupButton_ = [[JLLookupButton alloc] initWithButtonStyle:[JLTrackStyles lookupButtonStyle] frame:CGRectZero status:self.trackedFlight_.status];
@@ -240,72 +244,99 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     [self setFlightNumber:self.trackedFlight_.flightNumber];
     
     // Create the status label
-    self.statusLabel_ = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles statusLabelStyle] frame:STATUS_LABEL_FRAME status:self.trackedFlight_.status];
+    self.statusLabel_ = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles statusLabelStyle]
+                                                            frame:[JLTrackStyles statusLabelFrame]
+                                                           status:self.trackedFlight_.status];
     
     //Create the arrow view
     UIImage *arrowImage = [[self class] arrowImageForStatus:self.trackedFlight_.status];
-    self.arrowView_ = [[UIImageView alloc] initWithFrame:CGRectMake(ARROW_ORIGIN.x, ARROW_ORIGIN.y, arrowImage.size.width, arrowImage.size.height)];
+    CGPoint arrowOrigin = [JLTrackStyles arrowOrigin];
+    self.arrowView_ = [[UIImageView alloc] initWithFrame:CGRectMake(arrowOrigin.x,
+                                                                    arrowOrigin.y,
+                                                                    arrowImage.size.width,
+                                                                    arrowImage.size.height)];
     [self.arrowView_ setImage:arrowImage];
     
     // Create the airport code labels
-    self.originCodeLabel_ = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles airportCodeStyle] frame:ORIGIN_CODE_LABEL_FRAME status:self.trackedFlight_.status];
+    self.originCodeLabel_ = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles airportCodeStyle]
+                                                                frame:[JLTrackStyles originCodeLabelFrame]
+                                                               status:self.trackedFlight_.status];
     self.originCodeLabel_.text = [self.trackedFlight_.origin bestAirportCode];
-    self.destinationCodeLabel_ = [[JLStatusLabel alloc]  initWithLabelStyle:[JLTrackStyles airportCodeStyle] frame:DESTINATION_CODE_LABEL_FRAME status:self.trackedFlight_.status];
+    
+    self.destinationCodeLabel_ = [[JLStatusLabel alloc]  initWithLabelStyle:[JLTrackStyles airportCodeStyle]
+                                                                      frame:[JLTrackStyles destinationCodeLabelFrame]
+                                                                     status:self.trackedFlight_.status];
+    
     self.destinationCodeLabel_.text = [self.trackedFlight_.destination bestAirportCode];
     
     // Create the city labels
-    self.originCityLabel_ = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles cityNameStyle] frame:ORIGIN_CITY_LABEL_FRAME status:self.trackedFlight_.status];
+    self.originCityLabel_ = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles cityNameStyle]
+                                                                frame:[JLTrackStyles originCityLabelFrame]
+                                                               status:self.trackedFlight_.status];
+    
     self.originCityLabel_.text = [self.trackedFlight_.origin.city uppercaseString];
-    self.destinationCityLabel_ = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles cityNameStyle] frame:DESTINATION_CITY_LABEL_FRAME status:self.trackedFlight_.status];
+    self.destinationCityLabel_ = [[JLStatusLabel alloc] initWithLabelStyle:[JLTrackStyles cityNameStyle]
+                                                                     frame:[JLTrackStyles destinationCityLabelFrame]
+                                                                    status:self.trackedFlight_.status];
+    
     self.destinationCityLabel_.text = [self.trackedFlight_.destination.city uppercaseString];
     
     // Add the flight progress view
-    self.flightProgressView_ = [[JLFlightProgressView alloc] initWithFrame:FLIGHT_PROGRESS_FRAME
+    self.flightProgressView_ = [[JLFlightProgressView alloc] initWithFrame:[JLTrackStyles flightProgressFrame]
                                                                   progress:[self.trackedFlight_ currentProgress]
                                                                  timeOfDay:self.trackedFlight_.timeOfDay
                                                               aircraftType:self.trackedFlight_.aircraftType];
     self.flightProgressView_.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
     
     // Add the lands at labels
-    self.landsAtLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:LANDS_AT_LABEL_FRAME];
+    self.landsAtLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
+                                                       frame:[JLTrackStyles landsAtLabelFrame]];
     self.landsAtLabel_.text = [self landsAtLabelText];
-    self.landsAtTimeLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle], [JLTrackStyles timeUnitLabelStyle], [JLTrackStyles timezoneLabelStyle], nil]
-                                                                frame:LANDS_AT_TIME_FRAME];
+    self.landsAtTimeLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle],
+                                                                            [JLTrackStyles timeUnitLabelStyle],
+                                                                            [JLTrackStyles timezoneLabelStyle], nil]
+                                                                frame:[JLTrackStyles landsAtTimeFrame]];
     self.landsAtTimeLabel_.parts = [self landsAtTimeParts];
     self.landsAtTimeLabel_.offsets = [self landsAtTimeOffsets];
     self.landsAtLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.landsAtTimeLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the lands in labels
-    self.landsInLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:LANDS_AT_LABEL_FRAME];
+    self.landsInLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
+                                                       frame:[JLTrackStyles landsAtLabelFrame]];
     self.landsInLabel_.text = [self landsInLabelText];
     self.landsInTimeLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle],
                                                                             [JLTrackStyles timeUnitLabelStyle],
                                                                             [JLTrackStyles flightDataValueStyle],
                                                                             [JLTrackStyles timeUnitLabelStyle], nil]
-                                                                     frame:LANDS_AT_TIME_FRAME];
+                                                                     frame:[JLTrackStyles landsAtTimeFrame]];
     self.landsInTimeLabel_.parts = [self landsInTimeParts];
+    CGSize timeUnitOffset = [JLTrackStyles timeUnitOffset];
     self.landsInTimeLabel_.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero],
-                                      [NSValue valueWithCGSize:TIME_UNIT_OFFSET],
+                                      [NSValue valueWithCGSize:timeUnitOffset],
                                       [NSValue valueWithCGSize:CGSizeMake(6.0f, 0.0f)],
-                                      [NSValue valueWithCGSize:TIME_UNIT_OFFSET],nil];
+                                      [NSValue valueWithCGSize:timeUnitOffset],nil];
     self.landsInLabel_.alpha = 0.0f;
     self.landsInTimeLabel_.alpha = 0.0f;
     self.landsInLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.landsInTimeLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the terminal info
-    self.terminalLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:TERMINAL_LABEL_FRAME];
+    self.terminalLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
+                                                        frame:[JLTrackStyles terminalLabelFrame]];
     self.terminalLabel_.text = [self terminalLabelText];
-    self.terminalValueLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:TERMINAL_VALUE_FRAME];
+    self.terminalValueLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle]
+                                                             frame:[JLTrackStyles terminalValueFrame]];
     self.terminalValueLabel_.text = [self terminalValue];
     self.terminalLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.terminalValueLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the gate info
-    self.gateLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:TERMINAL_LABEL_FRAME];
+    self.gateLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
+                                                    frame:[JLTrackStyles terminalLabelFrame]];
     self.gateLabel_.text = [self gateLabelText];
-    self.gateValueLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:TERMINAL_VALUE_FRAME];
+    self.gateValueLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle]
+                                                         frame:[JLTrackStyles terminalValueFrame]];
     self.gateValueLabel_.text = [self gateValue];
     self.gateLabel_.alpha = 0.0f;
     self.gateValueLabel_.alpha = 0.0f;
@@ -313,36 +344,40 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     self.gateValueLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the driving time info
-    self.drivingTimeLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:DRIVING_TIME_LABEL_FRAME];
+    self.drivingTimeLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
+                                                           frame:[JLTrackStyles drivingTimeLabelFrame]];
     self.drivingTimeLabel_.text = NSLocalizedString(@"DRIVING TIME", @"DRIVING TIME");
     self.drivingTimeValueLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle],
                                                                                  [JLTrackStyles timeUnitLabelStyle],
                                                                                  [JLTrackStyles flightDataValueStyle],
                                                                                  [JLTrackStyles timeUnitLabelStyle], nil]
-                                                                          frame:DRIVING_TIME_VALUE_FRAME];
+                                                                          frame:[JLTrackStyles drivingTimeValueFrame]];
     self.drivingTimeValueLabel_.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero],
-                                           [NSValue valueWithCGSize:TIME_UNIT_OFFSET],
+                                           [NSValue valueWithCGSize:timeUnitOffset],
                                            [NSValue valueWithCGSize:CGSizeMake(6.0f, 0.0f)],
-                                           [NSValue valueWithCGSize:TIME_UNIT_OFFSET], nil];
+                                           [NSValue valueWithCGSize:timeUnitOffset], nil];
     self.drivingTimeLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.drivingTimeValueLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Add the bag claim label
-    self.bagClaimLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle] frame:DRIVING_TIME_LABEL_FRAME];
+    self.bagClaimLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
+                                                        frame:[JLTrackStyles drivingTimeLabelFrame]];
     self.bagClaimLabel_.text = NSLocalizedString(@"BAG CLAIM", @"BAG CLAIM");
-    self.bagClaimValueLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle] frame:DRIVING_TIME_VALUE_FRAME];
+    self.bagClaimValueLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataValueStyle]
+                                                             frame:[JLTrackStyles drivingTimeValueFrame]];
     self.bagClaimValueLabel_.text = [self bagClaimValue];
     self.bagClaimLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.bagClaimValueLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Create the directions button
-    self.directionsButton_ = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles directionsButtonStyle] frame:DIRECTIONS_BUTTON_FRAME];
+    self.directionsButton_ = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles directionsButtonStyle]
+                                                             frame:[JLTrackStyles directionsButtonFrame]];
     [self.directionsButton_ addTarget:self action:@selector(showMap) forControlEvents:UIControlEventTouchUpInside];
     self.directionsButton_.hidden = YES;
     self.directionsButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     // Create the gauge
-    self.leaveMeter_ = [[JLLeaveMeter alloc] initWithFrame:LEAVE_IN_GAUGE_FRAME];
+    self.leaveMeter_ = [[JLLeaveMeter alloc] initWithFrame:[JLTrackStyles leaveInGaugeFrame]];
     self.leaveMeter_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
     if (self.trackedFlight_.leaveForAirportTime) {
@@ -350,7 +385,8 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     }
     
     // Create the warning button
-    self.warningButton_ = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles warningButtonStyle] frame:WARNING_BUTTON_FRAME];
+    self.warningButton_ = [[JLButton alloc] initWithButtonStyle:[JLTrackStyles warningButtonStyle]
+                                                          frame:[JLTrackStyles warningButtonFrame]];
     [self.warningButton_ addTarget:self action:@selector(showWarning) forControlEvents:UIControlEventTouchUpInside];
     self.warningButton_.hidden = YES;
     self.warningButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
@@ -527,8 +563,9 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     // Update the button size
     CGSize labelSize = [fnum sizeWithFont:[[[[JLTrackStyles lookupButtonStyle] labelStyle] textStyle] font]];
     UIEdgeInsets labelInsets = [[JLTrackStyles lookupButtonStyle] labelInsets];
-    [self.lookupButton_ setFrame:CGRectMake(LOOKUP_BUTTON_ORIGIN.x,
-                                            LOOKUP_BUTTON_ORIGIN.y,
+    CGPoint lookupButtonOrigin = [JLTrackStyles lookupButtonOrigin];
+    [self.lookupButton_ setFrame:CGRectMake(lookupButtonOrigin.x,
+                                            lookupButtonOrigin.y,
                                             labelSize.width + labelInsets.left + labelInsets.right,
                                             34.0f)];
 }
@@ -577,7 +614,10 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     NSArray *parts = [self landsAtTimeParts];
     NSString *amOrPm = [parts objectAtIndex:1]; // Reliable harcoded index for PM/AM
     CGSize amPmSize = [amOrPm sizeWithFont:[[[JLTrackStyles timeUnitLabelStyle] textStyle] font]];
-    return [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero], [NSValue valueWithCGSize:TIME_UNIT_OFFSET_ALT], [NSValue valueWithCGSize:CGSizeMake(TIMEZONE_OFFSET.width - amPmSize.width, TIMEZONE_OFFSET.height)], nil];
+    CGSize timezoneOffset = [JLTrackStyles timezoneOffset];
+    return [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero],
+            [NSValue valueWithCGSize:[JLTrackStyles timeUnitOffsetAlt]],
+            [NSValue valueWithCGSize:CGSizeMake(timezoneOffset.width - amPmSize.width, timezoneOffset.height)], nil];
 }
 
 

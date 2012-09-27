@@ -106,7 +106,10 @@ static UIColor *sSelectedTextColor_;
                                           withFont:sNameFont_
                                      lineBreakMode:UILineBreakModeMiddleTruncation
                                          alignment:UITextAlignmentLeft];
-        [airlineCode_ drawInRect:CGRectMake(textRect_.origin.x + nameSize.width, textRect_.origin.y, textRect_.size.width - nameSize.width, textRect_.size.height)
+        [airlineCode_ drawInRect:CGRectMake(textRect_.origin.x + nameSize.width,
+                                            textRect_.origin.y,
+                                            textRect_.size.width - nameSize.width,
+                                            textRect_.size.height)
                         withFont:sCodeFont_
                    lineBreakMode:UILineBreakModeTailTruncation
                        alignment:UITextAlignmentLeft];

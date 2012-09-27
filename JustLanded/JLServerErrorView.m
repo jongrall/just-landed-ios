@@ -30,13 +30,13 @@
     if (self) {
         errorDescriptionLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles errorDescriptionLabelStyle]
                                                                frame:CGRectMake(10.0f,
-                                                                                321.0f,
+                                                                                321.0f, // FIXME: iPhone 5 screen
                                                                                 aFrame.size.width - 20.0f,
                                                                                 50.0f)];
         
         moreInfoButton_ = [[JLButton alloc] initWithButtonStyle:[JLStyles defaultButtonStyle]
                                                           frame:CGRectMake(10.0f,
-                                                                           313.0f,
+                                                                           313.0f, // FIXME: iPhone 5 screen
                                                                            aFrame.size.width - 20.0f,
                                                                            56.0f)];
         moreInfoButton_.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
@@ -68,12 +68,12 @@
             self.errorDescriptionLabel_.text = NSLocalizedString(@"Just Landed is currently unavailable.", @"503 description");
             
             self.noConnectionLabel.frame = CGRectMake((self.frame.size.width - 300.0f) / 2.0f,
-                                                      234.0f,
+                                                      234.0f, // FIXME: iPhone 5 screen
                                                       300.0f,
                                                       30.0f);
             
             self.errorDescriptionLabel_.frame = CGRectMake(10.0f,
-                                                      261.0f,
+                                                      261.0f, // FIXME: iPhone 5 screen
                                                       self.frame.size.width - 20.0f,
                                                       50.0f);
             
@@ -83,11 +83,11 @@
                                                       shadowOffset:CGSizeMake(0.0f, 1.0f)
                                                         shadowBlur:0.0f];
             self.noConnectionImageView.frame = CGRectMake((320.0f - self.noConnectionImageView.image.size.width) / 2.0f,
-                                                          80.0f,
+                                                          80.0f, // FIXME: iPhone 5 screen
                                                           self.noConnectionImageView.image.size.width,
                                                           self.noConnectionImageView.image.size.height);
             self.divider.frame = CGRectMake(self.divider.frame.origin.x,
-                                            293.0f,
+                                            293.0f, // FIXME: iPhone 5 screen
                                             self.divider.frame.size.width,
                                             self.divider.frame.size.height);
             
@@ -100,12 +100,12 @@
             self.errorDescriptionLabel_.text = NSLocalizedString(@"Our engineers have been notified.", @"500 description");
             
             self.noConnectionLabel.frame = CGRectMake((self.frame.size.width - 300.0f) / 2.0f,
-                                                      294.0f,
+                                                      294.0f, // FIXME: iPhone 5 screen
                                                       300.0f,
                                                       30.0f);
             
             self.errorDescriptionLabel_.frame = CGRectMake(10.0f,
-                                                      321.0f,
+                                                      321.0f, // FIXME: iPhone 5 screen
                                                       self.frame.size.width - 20.0f,
                                                       50.0f);
             
@@ -115,11 +115,11 @@
                                                       shadowOffset:CGSizeMake(0.0f, 1.0f)
                                                         shadowBlur:0.0f];
             self.noConnectionImageView.frame = CGRectMake((320.0f - self.noConnectionImageView.image.size.width) / 2.0f,
-                                                          100.0f,
+                                                          100.0f, // FIXME: iPhone 5 screen
                                                           self.noConnectionImageView.image.size.width,
                                                           self.noConnectionImageView.image.size.height);
             self.divider.frame = CGRectMake(self.divider.frame.origin.x,
-                                            353.0f,
+                                            353.0f, // FIXME: iPhone 5 screen
                                             self.divider.frame.size.width,
                                             self.divider.frame.size.height);
             

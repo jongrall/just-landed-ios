@@ -34,7 +34,7 @@
         // Add the label
         loadingLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles loadingLabelStyle]
                                                       frame:CGRectMake(10.0f,
-                                                                       274.0f,
+                                                                       274.0f, // FIXME: iPhone 5 screen
                                                                        aFrame.size.width - 20.0f,
                                                                        50.0f)];
         loadingLabel_.text = NSLocalizedString(@"Loading", @"Loading");
@@ -43,7 +43,7 @@
         // Configure the loading spinner;
         loadingSpinner_ = [[JLSpinner alloc] initWithFrame:CGRectZero];
         loadingSpinner_.frame = CGRectMake((aFrame.size.width - loadingSpinner_.frame.size.width) / 2.0f,
-                                           130.0f,
+                                           130.0f, // FIXME: iPhone 5 screen
                                            loadingSpinner_.frame.size.width,
                                            loadingSpinner_.frame.size.height);
         

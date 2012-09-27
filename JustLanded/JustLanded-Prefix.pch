@@ -13,7 +13,17 @@
     #import <Foundation/Foundation.h>
     #import <UIKit/UIKit.h>
     #import "Constants.h"
-    
+
+    // Categories
+    #import "UIScreen+JLExtensions.h"
+    #import "NSDate+JLExtensions.h"
+    #import "NSDictionary+JLExtensions.h"
+    #import "NSData+JLExtensions.h"
+    #import "NSString+JLExtensions.h"
+    #import "UIImage+JLExtensions.h"
+    #import "UIBarButtonItem+JLExtensions.h"
+    #import "NSNotificationCenter+JLExtensions.h"
+
     // Styles
     #import "JLStyles.h"
     #import "JLTrackStyles.h"
@@ -45,13 +55,4 @@
     // Helpers
     #import "JustLandedSession.h"
     #import "JustLandedAPIClient.h"
-
-    // Categories
-    #import "NSDate+JLExtensions.h"
-    #import "NSDictionary+JLExtensions.h"
-    #import "NSData+JLExtensions.h"
-    #import "NSString+JLExtensions.h"
-    #import "UIImage+JLExtensions.h"
-    #import "UIBarButtonItem+JLExtensions.h"
-    #import "NSNotificationCenter+JLExtensions.h"
 #endif
