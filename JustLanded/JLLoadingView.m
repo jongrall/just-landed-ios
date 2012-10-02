@@ -28,22 +28,24 @@
         self.backgroundColor = [UIColor clearColor];
         self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         
-        UIImageView *bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"overlay_screens_bg"]];
+        NSString *bgName = [UIScreen isMainScreenWide] ? @"overlay_screens_bg-568h" : @"overlay_screens_bg";
+        UIImageView *bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:bgName]];
         bgView.frame = aFrame;
         
         // Add the label
-        loadingLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles loadingLabelStyle]
-                                                      frame:CGRectMake(10.0f,
-                                                                       274.0f, // FIXME: iPhone 5 screen
-                                                                       aFrame.size.width - 20.0f,
-                                                                       50.0f)];
+        CGFloat loadingLabelOriginY = [UIScreen isMainScreenWide] ? 326.0f : 274.0f;
+        loadingLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles loadingLabelStyle] frame:CGRectMake(10.0f,
+                                                                                                          loadingLabelOriginY,
+                                                                                                          aFrame.size.width - 20.0f,
+                                                                                                          50.0f)];
         loadingLabel_.text = NSLocalizedString(@"Loading", @"Loading");
         
         
         // Configure the loading spinner;
         loadingSpinner_ = [[JLSpinner alloc] initWithFrame:CGRectZero];
+        CGFloat spinnerOriginY = [UIScreen isMainScreenWide] ? 182.0f : 130.0f;
         loadingSpinner_.frame = CGRectMake((aFrame.size.width - loadingSpinner_.frame.size.width) / 2.0f,
-                                           130.0f, // FIXME: iPhone 5 screen
+                                           spinnerOriginY,
                                            loadingSpinner_.frame.size.width,
                                            loadingSpinner_.frame.size.height);
         

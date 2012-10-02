@@ -138,8 +138,9 @@
                                                                                                   -44.0f, // Navbar height
                                                                                                   screenBounds.size.width,
                                                                                                   screenBounds.size.height - 20.0f); // Status bar
+                                                     CGFloat noConnectionImageViewOriginY = [UIScreen isMainScreenWide] ? 110.0f : 70.0f;
                                                      self.noConnectionOverlay_.noConnectionImageView.frame = CGRectMake(self.noConnectionOverlay_.noConnectionImageView.frame.origin.x,
-                                                                                                                        70.0f, // FIXME: iPhone 5 screen
+                                                                                                                        noConnectionImageViewOriginY,
                                                                                                                         self.noConnectionOverlay_.noConnectionImageView.frame.size.width,
                                                                                                                         self.noConnectionOverlay_.noConnectionImageView.frame.size.height);
                                                      self.noConnectionOverlay_.delegate = self;
@@ -213,7 +214,7 @@
     
     // Add a black BG
     UIView *blackBG = [[UIView alloc] initWithFrame:CGRectMake(0.0f,
-                                                               200.0f, // FIXME: iPhone 5 screen
+                                                               200.0f,
                                                                screenBounds.size.width,
                                                                mainView.frame.size.height - 200.0f)];
     blackBG.backgroundColor = [UIColor blackColor];

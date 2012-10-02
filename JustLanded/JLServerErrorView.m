@@ -28,15 +28,17 @@
 - (id)initWithFrame:(CGRect)aFrame errorType:(ErrorType)type {
     self = [super initWithFrame:aFrame];
     if (self) {
+        CGFloat errorDescriptionLabelOriginY = [UIScreen isMainScreenWide] ? 361.0f : 321.0f;
         errorDescriptionLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLStyles errorDescriptionLabelStyle]
                                                                frame:CGRectMake(10.0f,
-                                                                                321.0f, // FIXME: iPhone 5 screen
+                                                                                errorDescriptionLabelOriginY,
                                                                                 aFrame.size.width - 20.0f,
                                                                                 50.0f)];
         
+        CGFloat moreInfoButtonOriginY = [UIScreen isMainScreenWide] ? 401.0f : 313.0f;
         moreInfoButton_ = [[JLButton alloc] initWithButtonStyle:[JLStyles defaultButtonStyle]
                                                           frame:CGRectMake(10.0f,
-                                                                           313.0f, // FIXME: iPhone 5 screen
+                                                                           moreInfoButtonOriginY,
                                                                            aFrame.size.width - 20.0f,
                                                                            56.0f)];
         moreInfoButton_.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
@@ -62,35 +64,30 @@
 
 - (void)setErrorType:(ErrorType)aType {
     errorType_ = aType;
+    CGFloat noConnectionLabelOriginY;
+    CGFloat errorDescriptionLabelOriginY;
+    CGFloat noConnectionImageViewOriginY;
+    CGFloat dividerOriginY;
+    
+    
     switch (aType) {
         case ERROR_503: {
             self.noConnectionLabel.text = NSLocalizedString(@"Service Outage", @"Service Outage");
             self.errorDescriptionLabel_.text = NSLocalizedString(@"Just Landed is currently unavailable.", @"503 description");
             
-            self.noConnectionLabel.frame = CGRectMake((self.frame.size.width - 300.0f) / 2.0f,
-                                                      234.0f, // FIXME: iPhone 5 screen
-                                                      300.0f,
-                                                      30.0f);
-            
-            self.errorDescriptionLabel_.frame = CGRectMake(10.0f,
-                                                      261.0f, // FIXME: iPhone 5 screen
-                                                      self.frame.size.width - 20.0f,
-                                                      50.0f);
-            
-            self.noConnectionImageView.image = [UIImage imageNamed:@"server_down"
-                                                         withColor:nil
-                                                       shadowColor:[UIColor whiteColor] 
-                                                      shadowOffset:CGSizeMake(0.0f, 1.0f)
-                                                        shadowBlur:0.0f];
-            self.noConnectionImageView.frame = CGRectMake((320.0f - self.noConnectionImageView.image.size.width) / 2.0f,
-                                                          80.0f, // FIXME: iPhone 5 screen
-                                                          self.noConnectionImageView.image.size.width,
-                                                          self.noConnectionImageView.image.size.height);
-            self.divider.frame = CGRectMake(self.divider.frame.origin.x,
-                                            293.0f, // FIXME: iPhone 5 screen
-                                            self.divider.frame.size.width,
-                                            self.divider.frame.size.height);
-            
+            if ([UIScreen isMainScreenWide]) {
+                noConnectionLabelOriginY = 274.0f;
+                errorDescriptionLabelOriginY = 301.0f;
+                noConnectionImageViewOriginY = 120.0f;
+                dividerOriginY = 381.0f;
+            }
+            else {
+                noConnectionLabelOriginY = 234.0f;
+                errorDescriptionLabelOriginY = 261.0f;
+                noConnectionImageViewOriginY = 80.0f;
+                dividerOriginY = 293.0f;
+            }
+
             [self addSubview:self.moreInfoButton_];
             
             break;
@@ -99,35 +96,50 @@
             self.noConnectionLabel.text = NSLocalizedString(@"Server Error", @"Server Error");
             self.errorDescriptionLabel_.text = NSLocalizedString(@"Our engineers have been notified.", @"500 description");
             
-            self.noConnectionLabel.frame = CGRectMake((self.frame.size.width - 300.0f) / 2.0f,
-                                                      294.0f, // FIXME: iPhone 5 screen
-                                                      300.0f,
-                                                      30.0f);
-            
-            self.errorDescriptionLabel_.frame = CGRectMake(10.0f,
-                                                      321.0f, // FIXME: iPhone 5 screen
-                                                      self.frame.size.width - 20.0f,
-                                                      50.0f);
-            
-            self.noConnectionImageView.image = [UIImage imageNamed:@"server_down" 
-                                                         withColor:nil
-                                                       shadowColor:[UIColor whiteColor] 
-                                                      shadowOffset:CGSizeMake(0.0f, 1.0f)
-                                                        shadowBlur:0.0f];
-            self.noConnectionImageView.frame = CGRectMake((320.0f - self.noConnectionImageView.image.size.width) / 2.0f,
-                                                          100.0f, // FIXME: iPhone 5 screen
-                                                          self.noConnectionImageView.image.size.width,
-                                                          self.noConnectionImageView.image.size.height);
-            self.divider.frame = CGRectMake(self.divider.frame.origin.x,
-                                            353.0f, // FIXME: iPhone 5 screen
-                                            self.divider.frame.size.width,
-                                            self.divider.frame.size.height);
+            if ([UIScreen isMainScreenWide]) {
+                noConnectionLabelOriginY = 294.0f;
+                errorDescriptionLabelOriginY = 321.0f;
+                noConnectionImageViewOriginY = 140.0f;
+                dividerOriginY = 441.0f;
+            }
+            else {
+                noConnectionLabelOriginY = 254.0f;
+                errorDescriptionLabelOriginY = 281.0f;
+                noConnectionImageViewOriginY = 100.0f;
+                dividerOriginY = 353.0f;
+            }
             
             [self.moreInfoButton_ removeFromSuperview];
             
             break;
         }
     }
+    
+    self.noConnectionLabel.frame = CGRectMake((self.frame.size.width - 300.0f) / 2.0f,
+                                              noConnectionLabelOriginY,
+                                              300.0f,
+                                              30.0f);
+    
+    self.errorDescriptionLabel_.frame = CGRectMake(10.0f,
+                                                   errorDescriptionLabelOriginY,
+                                                   self.frame.size.width - 20.0f,
+                                                   50.0f);
+    
+    self.noConnectionImageView.image = [UIImage imageNamed:@"server_down"
+                                                 withColor:nil
+                                               shadowColor:[UIColor whiteColor]
+                                              shadowOffset:CGSizeMake(0.0f, 1.0f)
+                                                shadowBlur:0.0f];
+    
+    self.noConnectionImageView.frame = CGRectMake((320.0f - self.noConnectionImageView.image.size.width) / 2.0f,
+                                                  noConnectionImageViewOriginY,
+                                                  self.noConnectionImageView.image.size.width,
+                                                  self.noConnectionImageView.image.size.height);
+    
+    self.divider.frame = CGRectMake(self.divider.frame.origin.x,
+                                    dividerOriginY,
+                                    self.divider.frame.size.width,
+                                    self.divider.frame.size.height);
 }
 
 

@@ -56,14 +56,9 @@ typedef enum {
 
 - (void)loadView {    
     UIImageView *mainView = [[UIImageView alloc] initWithFrame:CGRectZero];
-    
-    if ([UIScreen isMainScreenWide]) {
-        mainView.image = [UIImage imageNamed:@"sky_bg-568h"];
-    }
-    else {
-        mainView.image = [UIImage imageNamed:@"sky_bg"];
-    }
-    
+
+    NSString *bgName = [UIScreen isMainScreenWide] ? @"sky_bg-568h" : @"sky_bg";
+    mainView.image = [UIImage imageNamed:bgName];
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     mainView.frame = CGRectMake(0.0f,
                                 0.0f,
