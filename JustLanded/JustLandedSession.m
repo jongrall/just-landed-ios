@@ -191,7 +191,7 @@
 // Handle ratings alert
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if ([alertView cancelButtonIndex] != buttonIndex) {
-        NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", APP_ID]];
+        NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@&mt=8", APP_ID]];
         [[UIApplication sharedApplication] openURL:ratingURL];
         [FlurryAnalytics logEvent:FY_RATED];
     }
