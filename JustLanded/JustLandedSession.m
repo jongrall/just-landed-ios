@@ -156,7 +156,7 @@
     NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
     BOOL hasBeenAsked = [[[NSUserDefaults standardUserDefaults] objectForKey:HasBeenAskedToRateKey] boolValue];
     NSDate *beganUsing = [[NSUserDefaults standardUserDefaults] objectForKey:BeganUsingDate];
-    BOOL oldEnoughUser = beganUsing && [[NSDate date] timeIntervalSinceDate:beganUsing] > (3.0 * 86400.0);
+    BOOL oldEnoughUser = beganUsing && [[NSDate date] timeIntervalSinceDate:beganUsing] > (3.0 * 86400.0); // 3 days of use
     BOOL appInForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
     
     if (trackCount && !hasBeenAsked && oldEnoughUser && appInForeground) {

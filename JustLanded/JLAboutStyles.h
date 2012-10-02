@@ -19,6 +19,7 @@ extern NSTimeInterval const FADE_ANIMATION_DURATION;
 + (CGRect)tableFrame;
 + (CGRect)copyrightNoticeFrame;
 + (CGRect)cloudLayerLowerFrame;
++ (CGRect)cloudFooterLowerFrame;
 + (CGRect)airplaneLowerFrame;
 + (LabelStyle *)aboutTitleLabelStyle;
 + (LabelStyle *)copyrightLabelStyle;

@@ -477,7 +477,14 @@ static NSRegularExpression *sAirlineCodeRegex_;
                                                                           screenBounds.size.width,
                                                                           screenBounds.size.height - 20.0f)]; // Status bar
     mainView.backgroundColor = [UIColor blackColor];
-    mainView.image = [UIImage imageNamed:@"sky_bg"];
+    
+    if ([UIScreen isMainScreenWide]) {
+        mainView.image = [UIImage imageNamed:@"sky_bg-568h"];
+    }
+    else {
+        mainView.image = [UIImage imageNamed:@"sky_bg"];
+    }
+    
     mainView.userInteractionEnabled = YES;
     self.view = mainView;
     

@@ -34,6 +34,7 @@ typedef enum {
 @property (strong, nonatomic) JLButton *aboutButton_;
 @property (strong, nonatomic) JLLabel *aboutTitle_;
 @property (strong, nonatomic) UITableView *aboutTable_;
+@property (strong, nonatomic) UIImageView *cloudFooter_;
 @property (strong, nonatomic) JLLabel *copyrightLabel_;
 
 - (void)dismiss;
@@ -54,7 +55,15 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)loadView {    
-    UIImageView *mainView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sky_bg"]];
+    UIImageView *mainView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    
+    if ([UIScreen isMainScreenWide]) {
+        mainView.image = [UIImage imageNamed:@"sky_bg-568h"];
+    }
+    else {
+        mainView.image = [UIImage imageNamed:@"sky_bg"];
+    }
+    
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     mainView.frame = CGRectMake(0.0f,
                                 0.0f,
@@ -83,11 +92,11 @@ typedef enum {
     [self.view addSubview:self.cloudLayer];
     
     // Add the cloud foreground
-    UIImageView *cloudFooter = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
-                                                               resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
-    cloudFooter.frame = [JLLookupStyles cloudFooterFrame]; // Frame matches lookup
-    cloudFooter.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:cloudFooter];
+    self.cloudFooter_ = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
+                                                            resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
+    self.cloudFooter_.frame = [JLLookupStyles cloudFooterFrame]; // Frame matches lookup
+    self.cloudFooter_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.cloudFooter_];
     
     // Add the table
     UITableView *table = [[UITableView alloc] initWithFrame:[JLAboutStyles tableFrame]
@@ -134,6 +143,7 @@ typedef enum {
     self.cloudLayer = nil;
     self.airplane = nil;
     self.aboutButton_ = nil;
+    self.cloudFooter_ = nil;
     self.aboutTitle_ = nil;
     self.aboutTable_ = nil;
     self.copyrightLabel_ = nil;
@@ -167,6 +177,7 @@ typedef enum {
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
                          self.cloudLayer.frame = [JLAboutStyles cloudLayerLowerFrame];
+                         self.cloudFooter_.frame = [JLAboutStyles cloudFooterLowerFrame];
                          self.airplane.frame = [JLAboutStyles airplaneLowerFrame];
                      }
                      completion:^(BOOL finished) {
@@ -225,6 +236,7 @@ typedef enum {
                                              options:UIViewAnimationOptionCurveEaseInOut
                                           animations:^{
                                               self.cloudLayer.frame = [JLLookupStyles cloudLayerFrame];
+                                              self.cloudFooter_.frame = [JLLookupStyles cloudFooterFrame];
                                               self.airplane.frame = [JLLookupStyles airplaneFrame];
                                           }
                                           completion:^(BOOL finishedAlso) {

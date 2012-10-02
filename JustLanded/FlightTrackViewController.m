@@ -41,7 +41,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 @property (strong, nonatomic) NSTimer *alternatingLabelTimer_;
 @property (strong, nonatomic) NSMutableArray *ignoredWarnings_;
 @property (nonatomic) BOOL showingValidData_;
-@property (nonatomic) BOOL hasBeenToAirport_;
+@property (nonatomic) BOOL hasBeenAskedToText_;
 @property (nonatomic) BOOL hasBeenNotifiedToText_;
 
 // UI Properties
@@ -135,7 +135,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 @synthesize updateTimer_;
 @synthesize alternatingLabelTimer_;
 @synthesize ignoredWarnings_;
-@synthesize hasBeenToAirport_;
+@synthesize hasBeenAskedToText_;
 @synthesize hasBeenNotifiedToText_;
 @synthesize noConnectionOverlay_;
 @synthesize serverErrorOverlay_;
@@ -164,7 +164,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         }
         
         ignoredWarnings_ = [[NSMutableArray alloc] init];
-        hasBeenToAirport_ = NO;
+        hasBeenAskedToText_ = NO;
         hasBeenNotifiedToText_ = NO;
         
         // Listen for update notifications for the Flight to trigger UI indicators
@@ -946,14 +946,16 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     // Figure out whether to offer to text their guest if they've arrived at the airport
     AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
     
-    if (!self.hasBeenToAirport_ && [self isAtAirport] && [JLMessageComposeViewController canSendText]) {
-        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+    // Behave differently depending on whether the app is in the foreground or not
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        if (!self.hasBeenAskedToText_ && [self isAtAirport] && [JLMessageComposeViewController canSendText]) {
+            // They responded to the notification, skip right to composing the arrival text
             if (appDelegate.respondedToTextOnArrivalNotification) {
                 [self composeTextOnAirportArrival];
-                appDelegate.respondedToTextOnArrivalNotification = NO; // Reset this flag now that we've handled it
+                appDelegate.respondedToTextOnArrivalNotification = NO; // Reset this flag
             }
             else {
-                // The app is in the foreground, notify them right away
+                // Ask them whether they'd like to text
                 NSString *alertMsg = (self.trackedFlight_.status == LANDED) ? NSLocalizedString(@"We can text the person you're picking up to let them know you've arrived.",
                                                                                                 @"Text To Pickup Prompt - Flight Landed") :
                 NSLocalizedString(@"We can text the person you're picking up to let them know you've arrived. They'll get your message once they land.", @"Text To Pickup Prompt - Flight Landed");
@@ -970,10 +972,19 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                 // Clear local notifications so they can't respond to prompt to pick somene up again
                 [[UIApplication sharedApplication] cancelAllLocalNotifications];
             }
-            self.hasBeenToAirport_ = YES;
+            self.hasBeenAskedToText_ = YES;
         }
-        else if (!self.hasBeenNotifiedToText_) {
-            // The app is in the background, send them a local notification
+        else {
+            // They're not in a situation where we should prompt them to send a text on arrival
+            // Ask them to rate after a few seconds, if eligible
+            [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible)
+                                                    withObject:nil
+                                                    afterDelay:3.0];
+        }
+    }
+    else { // The app is not in the foreground
+        // Notify them to text if appropriate
+        if (!self.hasBeenNotifiedToText_ && !hasBeenAskedToText_ && [self isAtAirport] && [JLMessageComposeViewController canSendText]) {
             UILocalNotification *textNotification = [[UILocalNotification alloc] init];
             textNotification.alertAction = NSLocalizedString(@"Send Text", @"Send Text");
             textNotification.alertBody = NSLocalizedString(@"Picking someone up? Just Landed can text them that you've arrived.", @"Text Notification");
@@ -984,12 +995,6 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             self.hasBeenNotifiedToText_ = YES;
             [FlurryAnalytics logEvent:FY_NOTIFIED_TO_SEND_ARRIVAL_SMS];
         }
-    }
-    else {
-        // Ask them to rate after a few seconds, if eligible
-        [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible)
-                                                withObject:nil
-                                                afterDelay:3.0];
     }
     
     if (!self.updateTimer_ || ![self.updateTimer_ isValid]) {

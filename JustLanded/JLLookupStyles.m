@@ -12,27 +12,52 @@
 @implementation JLLookupStyles
 
 + (CGRect)logoFrame {
-    return (CGRect) {{38.0f, 32.0f}, {255.0f, 43.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{38.0f, 52.0f}, {255.0f, 43.0f}};
+    }
+    else {
+        return (CGRect) {{38.0f, 32.0f}, {255.0f, 43.0f}};
+    }
 }
 
 
 + (CGRect)lookupButtonFrame {
-    return (CGRect) {{12.0f, 179.0f}, {296.0f, 56.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{12.0f, 199.0f}, {296.0f, 56.0f}};
+    }
+    else {
+        return (CGRect) {{12.0f, 179.0f}, {296.0f, 56.0f}};
+    }
 }
 
 
 + (CGRect)airportCodesLabelFrame {
-    return (CGRect) {{20.0f, 204.0f}, {280.0f, 30.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{20.0f, 272.0f}, {280.0f, 30.0f}};
+    }
+    else {
+        return (CGRect) {{20.0f, 204.0f}, {280.0f, 30.0f}};
+    }
 }
 
 
 + (CGRect)airportCodesButtonFrame {
-    return (CGRect) {{229.0f, 201.0f}, {33.0f, 34.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{229.0f, 269.0f}, {33.0f, 34.0f}};
+    }
+    else {
+        return (CGRect) {{229.0f, 201.0f}, {33.0f, 34.0f}};
+    }
 }
 
 
 + (CGRect)airlineNoResultsLabelFrame {
-    return (CGRect) {{20.0f, 57.0f}, {280.0f, 40.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{20.0f, 101.0f}, {280.0f, 40.0f}};
+    }
+    else {
+        return (CGRect) {{20.0f, 57.0f}, {280.0f, 40.0f}};
+    }
 }
 
 
@@ -42,7 +67,12 @@
 
 
 + (CGRect)lookupInputFrame {
-    return (CGRect) {{14.0f, 117.0f}, {292.0f, 49.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{14.0f, 137.0f}, {292.0f, 49.0f}};
+    }
+    else {
+        return (CGRect) {{14.0f, 117.0f}, {292.0f, 49.0f}};
+    }
 }
 
 
@@ -72,32 +102,63 @@
 
 
 + (CGRect)lookupSpinnerFrame {
-    return (CGRect) {{103.0f, 278.0f}, {114.0f, 115.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{103.0f, 318.0f}, {114.0f, 115.0f}};
+    }
+    else {
+        return (CGRect) {{103.0f, 278.0f}, {114.0f, 115.0f}};
+    }
 }
 
 
 + (CGRect)cloudLayerFrame {
-    return (CGRect) {{0.0f, 98.0f}, {320.0f, 340.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 150.0f}, {320.0f, 340.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 98.0f}, {320.0f, 340.0f}};
+    }
+    
 }
 
 
 + (CGRect)cloudFooterFrame {
-    return (CGRect) {{0.0f, 438.0f}, {320.0f, 22.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 490.0f}, {320.0f, 58.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 438.0f}, {320.0f, 22.0f}};
+    }
 }
 
 
 + (CGRect)airplaneFrame {
-    return (CGRect) {{0.0f, 85.0f}, {320.0f, 22.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 105.0f}, {320.0f, 22.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 85.0f}, {320.0f, 22.0f}};
+    }
 }
 
 
 + (CGRect)resultsTableFrame {
-    return (CGRect) {{16.0f, 187.0f}, {288.0f, 257.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{16.0f, 207.0f}, {288.0f, 324.0f}};
+    }
+    else {
+        return (CGRect) {{16.0f, 187.0f}, {288.0f, 257.0f}};
+    }
 }
 
 
 + (CGRect)resultsTableContainerFrame {
-    return (CGRect) {{15.0f, 185.0f}, {290.0f, 261.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{15.0f, 205.0f}, {290.0f, 328.0f}};
+    }
+    else {
+       return (CGRect) {{15.0f, 185.0f}, {290.0f, 261.0f}}; 
+    }
 }
 
 
