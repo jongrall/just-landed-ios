@@ -85,6 +85,12 @@
 		116BE6A6161A5227004207FD /* tracking_header_bg_gray-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69E161A5227004207FD /* tracking_header_bg_gray-568h@2x.png */; };
 		116BE6A7161A5227004207FD /* tracking_header_bg_green-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69F161A5227004207FD /* tracking_header_bg_green-568h@2x.png */; };
 		116BE6A8161A5227004207FD /* tracking_header_bg_red-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6A0161A5227004207FD /* tracking_header_bg_red-568h@2x.png */; };
+		116BE6CF161BD17C004207FD /* flight_on_ground_day-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6C9161BD17C004207FD /* flight_on_ground_day-568h@2x.png */; };
+		116BE6D0161BD17C004207FD /* flight_on_ground_night-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CA161BD17C004207FD /* flight_on_ground_night-568h@2x.png */; };
+		116BE6D1161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CB161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png */; };
+		116BE6D2161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CC161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png */; };
+		116BE6D3161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CD161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png */; };
+		116BE6D4161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CE161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png */; };
 		116CB8E914EF4E67003AB446 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
 		116CB90914EF4E9F003AB446 /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8F414EF4E9F003AB446 /* AFHTTPClient.h */; };
 		116CB90A14EF4E9F003AB446 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8F514EF4E9F003AB446 /* AFHTTPClient.m */; };
@@ -488,6 +494,12 @@
 		116BE69E161A5227004207FD /* tracking_header_bg_gray-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_header_bg_gray-568h@2x.png"; sourceTree = "<group>"; };
 		116BE69F161A5227004207FD /* tracking_header_bg_green-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_header_bg_green-568h@2x.png"; sourceTree = "<group>"; };
 		116BE6A0161A5227004207FD /* tracking_header_bg_red-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_header_bg_red-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6C9161BD17C004207FD /* flight_on_ground_day-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flight_on_ground_day-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CA161BD17C004207FD /* flight_on_ground_night-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flight_on_ground_night-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CB161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_animation_ground_night-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CC161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_animation_clouds_night-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CD161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_animation_clouds_day-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CE161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_animation_ground_day-568h@2x.png"; sourceTree = "<group>"; };
 		116CB8E814EF4E67003AB446 /* libAFNetworking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAFNetworking.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		116CB8F414EF4E9F003AB446 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
 		116CB8F514EF4E9F003AB446 /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
@@ -1214,8 +1226,10 @@
 				116BE696161A5200004207FD /* Default-568h@2x.png */,
 				11B6D5B41544DE9F006912E2 /* Default.png */,
 				11B6D5B51544DE9F006912E2 /* Default@2x.png */,
+				116BE6C9161BD17C004207FD /* flight_on_ground_day-568h@2x.png */,
 				11963664158290350081AA63 /* flight_on_ground_day.png */,
 				1154E876153D0A98005BFF2B /* flight_on_ground_day@2x.png */,
+				116BE6CA161BD17C004207FD /* flight_on_ground_night-568h@2x.png */,
 				11963665158290350081AA63 /* flight_on_ground_night.png */,
 				1154E877153D0A98005BFF2B /* flight_on_ground_night@2x.png */,
 				1196365F158290350081AA63 /* lookup_cloud_fg.png */,
@@ -1260,12 +1274,16 @@
 				1108D274154C8D91007844D8 /* table_cell_top_selected@2x.png */,
 				1196364E158290350081AA63 /* table_frame.png */,
 				1108D262154C7550007844D8 /* table_frame@2x.png */,
+				116BE6CD161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png */,
 				1196365B158290350081AA63 /* tracking_animation_clouds_day.png */,
 				1154E869153CF7E2005BFF2B /* tracking_animation_clouds_day@2x.png */,
+				116BE6CC161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png */,
 				1196365C158290350081AA63 /* tracking_animation_clouds_night.png */,
 				1154E86A153CF7E2005BFF2B /* tracking_animation_clouds_night@2x.png */,
+				116BE6CE161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png */,
 				1196365D158290350081AA63 /* tracking_animation_ground_day.png */,
 				1154E86B153CF7E2005BFF2B /* tracking_animation_ground_day@2x.png */,
+				116BE6CB161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png */,
 				1196365E158290350081AA63 /* tracking_animation_ground_night.png */,
 				1154E86C153CF7E2005BFF2B /* tracking_animation_ground_night@2x.png */,
 				116BE69B161A5227004207FD /* tracking_footer_bg-568h@2x.png */,
@@ -1849,6 +1867,12 @@
 				116BE6A6161A5227004207FD /* tracking_header_bg_gray-568h@2x.png in Resources */,
 				116BE6A7161A5227004207FD /* tracking_header_bg_green-568h@2x.png in Resources */,
 				116BE6A8161A5227004207FD /* tracking_header_bg_red-568h@2x.png in Resources */,
+				116BE6CF161BD17C004207FD /* flight_on_ground_day-568h@2x.png in Resources */,
+				116BE6D0161BD17C004207FD /* flight_on_ground_night-568h@2x.png in Resources */,
+				116BE6D1161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png in Resources */,
+				116BE6D2161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png in Resources */,
+				116BE6D3161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png in Resources */,
+				116BE6D4161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

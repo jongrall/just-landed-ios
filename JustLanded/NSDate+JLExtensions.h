@@ -20,6 +20,7 @@ typedef enum {
 + (NSDate *)dateWithTimestamp:(NSNumber *)timestamp;
 + (NSDate *)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag;
 + (RelativeDateKind)currentDateRelativeToDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
++ (NSString *)sanitizeTimeZoneString:(NSString *)tzString;
 + (NSString *)naturalDateStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
 + (NSString *)naturalDayStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
 + (NSString *)naturalTimeStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;

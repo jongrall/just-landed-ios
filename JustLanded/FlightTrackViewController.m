@@ -231,7 +231,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     self.view = mainView;
     
     // Create the footer background
-    self.footerBackground_ = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tracking_footer_bg"]];
+    self.footerBackground_ = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[@"tracking_footer_bg" imageName]]];
     [self.footerBackground_ setFrame:[JLTrackStyles trackFooterFrame]];
     self.footerBackground_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
@@ -474,8 +474,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 
 + (UIImage *)headerBackgroundImageForStatus:(FlightStatus)status {
-    NSString *fileName = [NSString stringWithFormat:@"tracking_header_bg_%@", [JLStyles colorNameForStatus:status]];
-    return [UIImage imageNamed:fileName];
+    return [UIImage imageNamed:[[NSString stringWithFormat:@"tracking_header_bg_%@", [JLStyles colorNameForStatus:status]] imageName]];
 }
 
 
@@ -590,10 +589,10 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 - (NSString *)landsAtLabelText {
     if ([self.trackedFlight_ actualArrivalTime]) {
-        return [[NSString stringWithFormat:@"LANDED %@ AT", [NSDate naturalDayStringFromDate:self.trackedFlight_.actualArrivalTime withTimezone:[self displayTimezone]]] uppercaseString];
+        return [[NSString stringWithFormat:@"LANDED %@", [NSDate naturalDayStringFromDate:self.trackedFlight_.actualArrivalTime withTimezone:[self displayTimezone]]] uppercaseString];
     }
     else {
-        return [[NSString stringWithFormat:@"LANDS %@ AT", [NSDate naturalDayStringFromDate:self.trackedFlight_.estimatedArrivalTime withTimezone:[self displayTimezone]]] uppercaseString];
+        return [[NSString stringWithFormat:@"LANDS %@", [NSDate naturalDayStringFromDate:self.trackedFlight_.estimatedArrivalTime withTimezone:[self displayTimezone]]] uppercaseString];
     }
 }
 
@@ -602,10 +601,6 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     // Prefer actual arrival time over estimated
     NSDate *landsAtDate = self.trackedFlight_.actualArrivalTime ? self.trackedFlight_.actualArrivalTime : self.trackedFlight_.estimatedArrivalTime;
     NSString *timeString = [NSDate naturalTimeStringFromDate:landsAtDate withTimezone:[self displayTimezone]];
-    NSString *tzAbbrev = [[self displayTimezone] abbreviationForDate:landsAtDate];
-    NSUInteger MAX_TIMEZONE_LENGTH = 4;
-    tzAbbrev = [tzAbbrev length] > MAX_TIMEZONE_LENGTH ? [tzAbbrev substringToIndex:4] : tzAbbrev;
-    timeString = [timeString stringByAppendingFormat:@" %@", tzAbbrev];
     return [timeString componentsSeparatedByString:@" "];
 }
 

@@ -477,9 +477,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
                                                                           screenBounds.size.width,
                                                                           screenBounds.size.height - 20.0f)]; // Status bar
     mainView.backgroundColor = [UIColor blackColor];
-    
-    NSString *bgName = [UIScreen isMainScreenWide] ? @"sky_bg-568h" : @"sky_bg";
-    mainView.image = [UIImage imageNamed:bgName];
+    mainView.image = [UIImage imageNamed:[@"sky_bg" imageName]];
     mainView.userInteractionEnabled = YES;
     self.view = mainView;
     
@@ -498,6 +496,9 @@ static NSRegularExpression *sAirlineCodeRegex_;
     // Add the logo
     UIImageView *logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
     logo.frame = [JLLookupStyles logoFrame];
+    if ([UIScreen isMainScreenWide]) {
+        logo.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    }
     [self.view addSubview:logo];
     
     // Add the about button

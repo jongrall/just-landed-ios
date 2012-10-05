@@ -60,58 +60,64 @@
 }
 
 
++ (NSString *)sanitizeTimeZoneString:(NSString *)tzString {
+    tzString = [tzString stringByReplacingOccurrencesOfString:@"-0" withString:@"-"];
+    tzString = [tzString stringByReplacingOccurrencesOfString:@"+0" withString:@"+"];
+    tzString = [tzString stringByReplacingOccurrencesOfString:@":00" withString:@""];
+    return [tzString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+}
+
+
 + (NSString *)naturalDateStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz {
 	
 	if (date) {
 		NSTimeZone *localTimeZone = [NSTimeZone localTimeZone];
         tz = tz ? tz : localTimeZone;
+        NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
+        
         NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
         [calendar setTimeZone:tz];
-        [calendar setLocale:[NSLocale currentLocale]];
+        [calendar setLocale:currentLocale];
         
-		RelativeDateKind relativeKind = [NSDate currentDateRelativeToDate:date withTimezone:tz];
-        NSString *timeString = nil;
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setCalendar:calendar];
+        [formatter setTimeZone:tz];
+        [formatter setLocale:[NSLocale autoupdatingCurrentLocale]];
         
-        if (relativeKind == OTHER_DATE) {
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            [formatter setCalendar:calendar];
-            [formatter setTimeZone:tz];
-            [formatter setLocale:calendar.locale];
-            [formatter setDateFormat:@"EEE, MMMM d"];
-			return [formatter stringFromDate:date];
-        }
-        else {
-            // Only show timezone abbreviation if not the current timezone
-            if ([tz isEqualToTimeZone:localTimeZone]) {
-                timeString = [NSDateFormatter localizedStringFromDate:date
-                                                            dateStyle:NSDateFormatterNoStyle
-                                                            timeStyle:NSDateFormatterShortStyle];
+        // Only show relative dates if same timezone (today, yesterday etc.)
+        if ([tz isEqualToTimeZone:localTimeZone]) {
+            RelativeDateKind relativeKind = [NSDate currentDateRelativeToDate:date withTimezone:tz];
+            
+            if (relativeKind == OTHER_DATE) {
+                NSString *formatString = [NSDateFormatter dateFormatFromTemplate:@"EEE MMM d h:mm"
+                                                                         options:0
+                                                                          locale:currentLocale];
+                [formatter setDateFormat:formatString];
+                return [formatter stringFromDate:date];
             }
             else {
-                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-                [formatter setCalendar:calendar];
-                [formatter setTimeZone:calendar.timeZone];
-                [formatter setLocale:calendar.locale];
-                [formatter setDateFormat:@"h:mm a"];
-                timeString = [formatter stringFromDate:date];
-                // Ensure tz abbreviation not too long, tz for date not now
-                NSUInteger maxAbbrevLen = 4;
-                NSString *tzAbbrev = [tz abbreviationForDate:date];
-                tzAbbrev = [tzAbbrev length] > maxAbbrevLen ? [tzAbbrev substringToIndex:maxAbbrevLen] : tzAbbrev;
-                timeString = [timeString stringByAppendingFormat:@" %@", tzAbbrev];
+                // Get relative date
+                [formatter setDateStyle:NSDateFormatterShortStyle];
+                [formatter setTimeStyle:NSDateFormatterNoStyle];
+                [formatter setDoesRelativeDateFormatting:YES];
+                NSString *dateString = [formatter stringFromDate:date];
+                
+                // Styles don't work reliably with 24hr for some reason
+                NSString *timeFormat = [NSDateFormatter dateFormatFromTemplate:@"h:mm"
+                                                                         options:0
+                                                                          locale:currentLocale];
+                [formatter setDateFormat:timeFormat];
+                NSString *timeString = [formatter stringFromDate:date];
+                return [NSString stringWithFormat:@"%@ %@", dateString, timeString];
             }
-            
-            switch (relativeKind) {
-                case YESTERDAY: {
-                    return [NSString stringWithFormat:NSLocalizedString(@"yesterday %@", @"yesterday at 3:24pm"), timeString];
-                }
-                case TODAY: {
-                    return [NSString stringWithFormat:NSLocalizedString(@"today %@", @"today at 3:24pm"), timeString];
-                }
-                default: {
-                    return [NSString stringWithFormat:NSLocalizedString(@"tomorrow %@", @"tomorrow at 3:24pm"), timeString];
-                }
-            }
+        }
+        else {
+            // Append timezone
+            NSString *formatString = [NSDateFormatter dateFormatFromTemplate:@"MMM d h:mm zzz"
+                                                                     options:0
+                                                                      locale:currentLocale];
+            [formatter setDateFormat:formatString];
+            return [self sanitizeTimeZoneString:[formatter stringFromDate:date]];
         }
 	}
 	else {
@@ -131,25 +137,25 @@
 		[calendar setLocale:currentLocale];
         
         RelativeDateKind relativeKind = [NSDate currentDateRelativeToDate:date withTimezone:tz];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         
-        switch (relativeKind) {
-            case YESTERDAY: {
-                return NSLocalizedString(@"Yesterday", @"Yesterday");
-            }
-            case TODAY: {
-                return NSLocalizedString(@"Today", @"Today");
-            }
-            case TOMORROW: {
-                return NSLocalizedString(@"Tomorrow", @"Tomorrow");
-            }
-            default: {
-                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-                [formatter setCalendar:calendar];
-                [formatter setTimeZone:tz];
-                [formatter setLocale:currentLocale];
-                [formatter setDateFormat:@"M/d"];
-                return [formatter stringFromDate:date];
-            }
+        if (relativeKind == OTHER_DATE) {
+            [formatter setCalendar:calendar];
+            [formatter setTimeZone:tz];
+            [formatter setLocale:currentLocale];
+            
+            NSString *formatString = [NSDateFormatter dateFormatFromTemplate:@"M/d"
+                                                                     options:0
+                                                                      locale:[NSLocale autoupdatingCurrentLocale]];
+            [formatter setDateFormat:formatString];
+            return [formatter stringFromDate:date];
+        }
+        else {
+            // Get relative date
+            [formatter setDateStyle:NSDateFormatterShortStyle];
+            [formatter setTimeStyle:NSDateFormatterNoStyle];
+            [formatter setDoesRelativeDateFormatting:YES];
+            return [formatter stringFromDate:date];
         }
     }
     else {
@@ -162,7 +168,7 @@
     if (date) {
         NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
         NSTimeZone *localTimeZone = [NSTimeZone localTimeZone];
-        NSLocale *currentLocale = [NSLocale currentLocale];
+        NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
         tz = tz ? tz : localTimeZone;
         [calendar setTimeZone:tz];
 		[calendar setLocale:currentLocale];
@@ -171,8 +177,12 @@
         [formatter setCalendar:calendar];
 		[formatter setTimeZone:tz];
 		[formatter setLocale:currentLocale];
-		[formatter setDateFormat:@"h:mm a"];
-        return [formatter stringFromDate:date];
+        
+        NSString *timeFormat = [NSDateFormatter dateFormatFromTemplate:@"h:mm zzz"
+                                                               options:0
+                                                                locale:currentLocale];
+        [formatter setDateFormat:timeFormat];
+        return [self sanitizeTimeZoneString:[formatter stringFromDate:date]];
     }
     else {
         return @"";

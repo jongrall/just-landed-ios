@@ -8,7 +8,6 @@
 
 #import "JLFlightProgressView.h"
 
-const CGSize FLIGHT_PROGRESS_VIEW_SIZE = {320.0f, 70.0f};
 const CGPoint FLIGHT_ICON_CENTER = {31.0f, 30.0f};
 const CGSize FLIGHT_ICON_SIZE = {62.0f, 60.0f};
 const UIEdgeInsets FLIGHT_ICON_INSETS = {0.0f, 38.0f, 0.0f, 34.0f};
@@ -25,6 +24,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 @property (nonatomic) CGFloat currentGroundOffset_;
 @property (nonatomic) CGFloat currentCloudOffset_;
 
++ (CGSize)flightProgressViewSize;
 - (void)animateProgressBackgrounds;
 - (void)updatePlaneIcon;
 
@@ -44,22 +44,26 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 @synthesize timeOfDay = timeOfDay_;
 @synthesize aircraftType = aircraftType_;
 
++ (CGSize)flightProgressViewSize {
+    return [UIScreen isMainScreenWide] ? (CGSize) {320.0f, 104.0f} : (CGSize) {320.0f, 70.0f};
+}
 
 - (id)initWithFrame:(CGRect)aFrame
            progress:(CGFloat)someProgress 
           timeOfDay:(TimeOfDay)aTimeOfDay
        aircraftType:(AircraftType)aType {
-    CGRect fixedSize = CGRectMake(aFrame.origin.x, 
-                                  aFrame.origin.y, 
-                                  FLIGHT_PROGRESS_VIEW_SIZE.width, 
-                                  FLIGHT_PROGRESS_VIEW_SIZE.height);
+    CGSize viewSize = [[self class] flightProgressViewSize];
+    CGRect fixedFrame = CGRectMake(aFrame.origin.x,
+                                   aFrame.origin.y, 
+                                   viewSize.width,
+                                   viewSize.height);
     
-    self = [super initWithFrame:fixedSize];
+    self = [super initWithFrame:fixedFrame];
     if (self) {        
         CGRect bgFrame = CGRectMake(0.0f, 
                                     0.0f, 
-                                    FLIGHT_PROGRESS_VIEW_SIZE.width, 
-                                    FLIGHT_PROGRESS_VIEW_SIZE.height);
+                                    viewSize.width,
+                                    viewSize.height);
         
         onGroundBackground_ = [[UIImageView alloc] initWithFrame:bgFrame];
         
@@ -114,10 +118,10 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
         }
         
         if (self.timeOfDay == DAY) {
-            self.onGroundBackground_.image = [UIImage imageNamed:@"flight_on_ground_day"];
+            self.onGroundBackground_.image = [UIImage imageNamed:[@"flight_on_ground_day" imageName]];
         }
         else {
-            self.onGroundBackground_.image = [UIImage imageNamed:@"flight_on_ground_night"];
+            self.onGroundBackground_.image = [UIImage imageNamed:[@"flight_on_ground_night" imageName]];
         }
         
         self.onGroundBackground_.hidden = NO;
@@ -127,9 +131,10 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     }
     else {
         // Update the flight icon position
+        CGSize viewSize = [[self class] flightProgressViewSize];
         CGFloat horizontalOffset = (FLIGHT_ICON_INSETS.left - FLIGHT_ICON_CENTER.x +
-                                    ((FLIGHT_PROGRESS_VIEW_SIZE.width - FLIGHT_ICON_INSETS.left - FLIGHT_ICON_INSETS.right) * progress_));
-        CGFloat verticalOffset = (FLIGHT_PROGRESS_VIEW_SIZE.height / 2.0f) - FLIGHT_ICON_CENTER.y;
+                                    ((viewSize.width - FLIGHT_ICON_INSETS.left - FLIGHT_ICON_INSETS.right) * progress_));
+        CGFloat verticalOffset = (viewSize.height / 2.0f) - FLIGHT_ICON_CENTER.y;
         
         self.airplaneIcon_.frame = CGRectMake(horizontalOffset, verticalOffset, FLIGHT_ICON_SIZE.width, FLIGHT_ICON_SIZE.height);
         
@@ -170,12 +175,12 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     }
     
     if (timeOfDay_ == DAY) {
-        groundBg = [UIImage imageNamed:@"tracking_animation_ground_day"];
-        cloudBg = [UIImage imageNamed:@"tracking_animation_clouds_day"];
+        groundBg = [UIImage imageNamed:[@"tracking_animation_ground_day" imageName]];
+        cloudBg = [UIImage imageNamed:[@"tracking_animation_clouds_day" imageName]];
     }
     else {
-        groundBg = [UIImage imageNamed:@"tracking_animation_ground_night"];
-        cloudBg = [UIImage imageNamed:@"tracking_animation_clouds_night"];
+        groundBg = [UIImage imageNamed:[@"tracking_animation_ground_night" imageName]];
+        cloudBg = [UIImage imageNamed:[@"tracking_animation_clouds_night" imageName]];
     }
     
     BOOL zeroContentSize = CGSizeEqualToSize(self.groundLayer_.contentSize, CGSizeZero);

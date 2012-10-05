@@ -11,5 +11,6 @@
 @interface NSString (JLExtensions)
 
 - (NSString *)urlEncoded;
+- (NSString *)imageName;
 
 @end

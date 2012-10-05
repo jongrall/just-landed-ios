@@ -28,8 +28,7 @@
         self.backgroundColor = [UIColor clearColor];
         self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         
-        NSString *bgName = [UIScreen isMainScreenWide] ? @"overlay_screens_bg-568h" : @"overlay_screens_bg";
-        UIImageView *bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:bgName]];
+        UIImageView *bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[@"overlay_screens_bg" imageName]]];
         bgView.frame = aFrame;
         
         // Add the label

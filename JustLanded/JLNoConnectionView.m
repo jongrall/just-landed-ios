@@ -34,8 +34,7 @@
         self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         
         // Add background
-        NSString *bgName = [UIScreen isMainScreenWide] ? @"overlay_screens_bg-568h" : @"overlay_screens_bg";
-        UIImageView *backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:bgName]];
+        UIImageView *backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[@"overlay_screens_bg" imageName]]];
         backgroundView.frame = aFrame;
  
         // Add no connection graphic

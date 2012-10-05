@@ -19,62 +19,122 @@
 @implementation JLTrackStyles
 
 + (CGRect)trackHeaderFrame {
-    return (CGRect) {{0.0f, 0.0f}, {320.0f, 150.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 0.0f}, {320.0f, 170.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 0.0f}, {320.0f, 150.0f}};
+    }
 }
 
 
 + (CGRect)trackFooterFrame {
-    return (CGRect) {{0.0f, 220.0f}, {320.0f, 240.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 274.0f}, {320.0f, 274.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 220.0f}, {320.0f, 240.0f}};
+    }
 }
 
 
 + (CGPoint)lookupButtonOrigin {
-    return (CGPoint) {15.0f, 15.0f};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGPoint) {15.0f, 19.0f};
+    }
+    else {
+        return (CGPoint) {15.0f, 15.0f};
+    }
 }
 
 
 + (CGRect)statusLabelFrame {
-    return (CGRect) {{136.0f, 11.0f}, {175.0f, 46.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{136.0f, 15.0f}, {175.0f, 46.0f}};
+    }
+    else {
+        return (CGRect) {{136.0f, 11.0f}, {175.0f, 46.0f}};
+    }
 }
 
 
 + (CGRect)originCodeLabelFrame {
-    return (CGRect) {{8.0f, 58.0f}, {137.0f, 70.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{8.0f, 67.0f}, {137.0f, 70.0f}};
+    }
+    else {
+        return (CGRect) {{8.0f, 58.0f}, {137.0f, 70.0f}};
+    }
 }
 
 
 + (CGRect)originCityLabelFrame {
-    return (CGRect) {{8.0f, 117.0f}, {137.0f, 20.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{8.0f, 126.0f}, {137.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{8.0f, 117.0f}, {137.0f, 20.0f}};
+    }
 }
 
 
 + (CGPoint)arrowOrigin {
-    return (CGPoint) {144.0f, 76.0f};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGPoint) {144.0f, 85.0f};
+    }
+    else {
+        return (CGPoint) {144.0f, 76.0f};
+    }
 }
 
 
 + (CGRect)destinationCodeLabelFrame {
-    return (CGRect) {{175.0f, 58.0f}, {137.0f, 70.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{175.0f, 67.0f}, {137.0f, 70.0f}};
+    }
+    else {
+        return (CGRect) {{175.0f, 58.0f}, {137.0f, 70.0f}};
+    }
 }
 
 
 + (CGRect)destinationCityLabelFrame {
-    return (CGRect) {{175.0f, 117.0f}, {137.0f, 20.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{175.0f, 126.0f}, {137.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{175.0f, 117.0f}, {137.0f, 20.0f}};
+    }
 }
 
 
 + (CGRect)flightProgressFrame {
-    return (CGRect) {{0.0f, 150.0f}, {320.0f, 70.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 170.0f}, {320.0f, 104.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 150.0f}, {320.0f, 70.0f}};
+    }
 }
 
 
 + (CGRect)landsAtLabelFrame {
-    return (CGRect) {{19.0f, 244.0f}, {120.0f, 20.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 296.0f}, {160.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 244.0f}, {160.0f, 20.0f}};
+    }
 }
 
 
 + (CGRect)landsAtTimeFrame {
-    return (CGRect) {{19.0f, 253.0f}, {160.0f, 40.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 308.0f}, {160.0f, 40.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 253.0f}, {160.0f, 40.0f}};
+    }
 }
 
 
@@ -94,37 +154,72 @@
 
 
 + (CGRect)terminalLabelFrame {
-    return (CGRect) {{19.0f, 317.0f}, {120.0f, 20.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 387.0f}, {120.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 317.0f}, {120.0f, 20.0f}};
+    }
 }
 
 
 + (CGRect)terminalValueFrame {
-    return (CGRect) {{19.0f, 326.0f}, {160.0f, 40.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 399.0f}, {160.0f, 40.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 326.0f}, {160.0f, 40.0f}};
+    }
 }
 
 
 + (CGRect)drivingTimeLabelFrame {
-    return (CGRect) {{19.0f, 392.0f}, {120.0f, 20.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 478.0f}, {120.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 392.0f}, {120.0f, 20.0f}};
+    }
 }
 
 
 + (CGRect)drivingTimeValueFrame {
-    return (CGRect) {{19.0f, 400.0f}, {200.0f, 40.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 490.0f}, {200.0f, 40.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 400.0f}, {200.0f, 40.0f}};
+    }
 }
 
 
 + (CGRect)warningButtonFrame {
-    return (CGRect) {{167.0f, 280.0f},{86.0f, 86.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{167.0f, 360.0f},{86.0f, 86.0f}};
+    }
+    else {
+        return (CGRect) {{167.0f, 280.0f},{86.0f, 86.0f}};
+    }
 }
 
 
 + (CGRect)directionsButtonFrame {
-    return (CGRect) {{267.0f, 412.0f}, {38.0f, 34.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{267.0f, 498.0f}, {38.0f, 34.0f}};
+    }
+    else {
+        return (CGRect) {{267.0f, 412.0f}, {38.0f, 34.0f}};
+    }
 }
 
 
 + (CGRect)leaveInGaugeFrame {
-    return (CGRect) {{115.0f, 236.0f}, {190.0f, 190.0f}};
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{115.0f, 316.0f}, {190.0f, 190.0f}};
+    }
+    else {
+        return (CGRect) {{115.0f, 236.0f}, {190.0f, 190.0f}};
+    }
 }
 
 
