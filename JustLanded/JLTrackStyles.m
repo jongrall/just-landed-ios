@@ -50,10 +50,10 @@
 
 + (CGRect)statusLabelFrame {
     if ([UIScreen isMainScreenWide]) {
-        return (CGRect) {{136.0f, 15.0f}, {175.0f, 46.0f}};
+        return (CGRect) {{136.0f, 19.0f}, {175.0f, 46.0f}};
     }
     else {
-        return (CGRect) {{136.0f, 11.0f}, {175.0f, 46.0f}};
+        return (CGRect) {{136.0f, 15.0f}, {175.0f, 46.0f}};
     }
 }
 
