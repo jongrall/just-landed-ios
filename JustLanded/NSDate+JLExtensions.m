@@ -113,11 +113,19 @@
         }
         else {
             // Append timezone
-            NSString *formatString = [NSDateFormatter dateFormatFromTemplate:@"MMM d h:mm zzz"
+            NSString *formatString = [NSDateFormatter dateFormatFromTemplate:@"MMM d h:mm"
                                                                      options:0
                                                                       locale:currentLocale];
             [formatter setDateFormat:formatString];
-            return [self sanitizeTimeZoneString:[formatter stringFromDate:date]];
+            NSString *dateTimeString = [formatter stringFromDate:date];
+            
+            NSString *tzFormatString = [NSDateFormatter dateFormatFromTemplate:@"zzz"
+                                                                       options:0
+                                                                        locale:currentLocale];
+            [formatter setDateFormat:tzFormatString];
+            NSString *tzString = [self sanitizeTimeZoneString:[formatter stringFromDate:date]];
+            
+            return [NSString stringWithFormat:@"%@ %@", dateTimeString, tzString];
         }
 	}
 	else {
@@ -178,11 +186,19 @@
 		[formatter setTimeZone:tz];
 		[formatter setLocale:currentLocale];
         
-        NSString *timeFormat = [NSDateFormatter dateFormatFromTemplate:@"h:mm zzz"
+        NSString *timeFormat = [NSDateFormatter dateFormatFromTemplate:@"h:mm"
                                                                options:0
                                                                 locale:currentLocale];
         [formatter setDateFormat:timeFormat];
-        return [self sanitizeTimeZoneString:[formatter stringFromDate:date]];
+        NSString *timeString = [formatter stringFromDate:date];
+        
+        NSString *timezoneFormat = [NSDateFormatter dateFormatFromTemplate:@"zzz"
+                                                                   options:0
+                                                                    locale:currentLocale];
+        [formatter setDateFormat:timezoneFormat];
+        NSString *timezoneString = [self sanitizeTimeZoneString:[formatter stringFromDate:date]];
+        
+        return [NSString stringWithFormat:@"%@ %@", timeString, timezoneString];
     }
     else {
         return @"";

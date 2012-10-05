@@ -589,10 +589,12 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 - (NSString *)landsAtLabelText {
     if ([self.trackedFlight_ actualArrivalTime]) {
-        return [[NSString stringWithFormat:@"LANDED %@", [NSDate naturalDayStringFromDate:self.trackedFlight_.actualArrivalTime withTimezone:[self displayTimezone]]] uppercaseString];
+        return [[NSString stringWithFormat:NSLocalizedString(@"LANDED %@ AT", @"LANDED TODAY AT"),
+                 [NSDate naturalDayStringFromDate:self.trackedFlight_.actualArrivalTime withTimezone:[self displayTimezone]]] uppercaseString];
     }
     else {
-        return [[NSString stringWithFormat:@"LANDS %@", [NSDate naturalDayStringFromDate:self.trackedFlight_.estimatedArrivalTime withTimezone:[self displayTimezone]]] uppercaseString];
+        return [[NSString stringWithFormat:NSLocalizedString(@"LANDS %@ AT",@"LANDS TODAY AT"),
+                 [NSDate naturalDayStringFromDate:self.trackedFlight_.estimatedArrivalTime withTimezone:[self displayTimezone]]] uppercaseString];
     }
 }
 
