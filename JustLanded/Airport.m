@@ -51,27 +51,25 @@
 
 
 - (NSDictionary *)toDict {
-    return [[NSDictionary alloc] initWithObjectsAndKeys:
-            self.iataCode ? self.iataCode : [NSNull null], @"iataCode",
-            self.icaoCode ? self.icaoCode : [NSNull null], @"icaoCode",
-            self.city ? self.city : [NSNull null], @"city",
-            self.name ? self.name : [NSNull null], @"name",
-            self.location ? self.location : [NSNull null], @"location",
-            self.terminal ? self.terminal : [NSNull null], @"terminal",
-            self.timezone ? self.timezone : [NSNull null], @"timezone", nil];
+    return @{@"iataCode": self.iataCode ? self.iataCode : [NSNull null],
+            @"icaoCode": self.icaoCode ? self.icaoCode : [NSNull null],
+            @"city": self.city ? self.city : [NSNull null],
+            @"name": self.name ? self.name : [NSNull null],
+            @"location": self.location ? self.location : [NSNull null],
+            @"terminal": self.terminal ? self.terminal : [NSNull null],
+            @"timezone": self.timezone ? self.timezone : [NSNull null]};
 }
 
 
 - (NSDictionary *)toJSONFriendlyDict {
-    return [[NSDictionary alloc] initWithObjectsAndKeys:
-            self.iataCode ? self.iataCode : [NSNull null], @"iataCode",
-            self.icaoCode ? self.icaoCode : [NSNull null], @"icaoCode",
-            self.city ? self.city : [NSNull null], @"city",
-            self.name ? self.name : [NSNull null], @"name",
-            self.location ? [NSNumber numberWithDouble:self.location.coordinate.latitude] : [NSNull null], @"latitude",
-            self.location ? [NSNumber numberWithDouble:self.location.coordinate.longitude] : [NSNull null], @"longitude",
-            self.terminal ? self.terminal : [NSNull null], @"terminal",
-            self.timezone ? [self.timezone name] : [NSNull null], @"timezone", nil];
+    return @{@"iataCode": self.iataCode ? self.iataCode : [NSNull null],
+            @"icaoCode": self.icaoCode ? self.icaoCode : [NSNull null],
+            @"city": self.city ? self.city : [NSNull null],
+            @"name": self.name ? self.name : [NSNull null],
+            @"latitude": self.location ? @(self.location.coordinate.latitude) : [NSNull null],
+            @"longitude": self.location ? @(self.location.coordinate.longitude) : [NSNull null],
+            @"terminal": self.terminal ? self.terminal : [NSNull null],
+            @"timezone": self.timezone ? [self.timezone name] : [NSNull null]};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

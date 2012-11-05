@@ -292,9 +292,9 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     self.landsAtLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
                                                        frame:[JLTrackStyles landsAtLabelFrame]];
     self.landsAtLabel_.text = [self landsAtLabelText];
-    self.landsAtTimeLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle],
+    self.landsAtTimeLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:@[[JLTrackStyles flightDataValueStyle],
                                                                             [JLTrackStyles timeUnitLabelStyle],
-                                                                            [JLTrackStyles timezoneLabelStyle], nil]
+                                                                            [JLTrackStyles timezoneLabelStyle]]
                                                                 frame:[JLTrackStyles landsAtTimeFrame]];
     self.landsAtTimeLabel_.parts = [self landsAtTimeParts];
     self.landsAtTimeLabel_.offsets = [self landsAtTimeOffsets];
@@ -305,17 +305,17 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     self.landsInLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
                                                        frame:[JLTrackStyles landsAtLabelFrame]];
     self.landsInLabel_.text = [self landsInLabelText];
-    self.landsInTimeLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle],
+    self.landsInTimeLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:@[[JLTrackStyles flightDataValueStyle],
                                                                             [JLTrackStyles timeUnitLabelStyle],
                                                                             [JLTrackStyles flightDataValueStyle],
-                                                                            [JLTrackStyles timeUnitLabelStyle], nil]
+                                                                            [JLTrackStyles timeUnitLabelStyle]]
                                                                      frame:[JLTrackStyles landsAtTimeFrame]];
     self.landsInTimeLabel_.parts = [self landsInTimeParts];
     CGSize timeUnitOffset = [JLTrackStyles timeUnitOffset];
-    self.landsInTimeLabel_.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero],
+    self.landsInTimeLabel_.offsets = @[[NSValue valueWithCGSize:CGSizeZero],
                                       [NSValue valueWithCGSize:timeUnitOffset],
                                       [NSValue valueWithCGSize:CGSizeMake(6.0f, 0.0f)],
-                                      [NSValue valueWithCGSize:timeUnitOffset],nil];
+                                      [NSValue valueWithCGSize:timeUnitOffset]];
     self.landsInLabel_.alpha = 0.0f;
     self.landsInTimeLabel_.alpha = 0.0f;
     self.landsInLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
@@ -347,15 +347,15 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     self.drivingTimeLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
                                                            frame:[JLTrackStyles drivingTimeLabelFrame]];
     self.drivingTimeLabel_.text = NSLocalizedString(@"DRIVING TIME", @"DRIVING TIME");
-    self.drivingTimeValueLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:[NSArray arrayWithObjects:[JLTrackStyles flightDataValueStyle],
+    self.drivingTimeValueLabel_ = [[JLMultipartLabel alloc] initWithLabelStyles:@[[JLTrackStyles flightDataValueStyle],
                                                                                  [JLTrackStyles timeUnitLabelStyle],
                                                                                  [JLTrackStyles flightDataValueStyle],
-                                                                                 [JLTrackStyles timeUnitLabelStyle], nil]
+                                                                                 [JLTrackStyles timeUnitLabelStyle]]
                                                                           frame:[JLTrackStyles drivingTimeValueFrame]];
-    self.drivingTimeValueLabel_.offsets = [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero],
+    self.drivingTimeValueLabel_.offsets = @[[NSValue valueWithCGSize:CGSizeZero],
                                            [NSValue valueWithCGSize:timeUnitOffset],
                                            [NSValue valueWithCGSize:CGSizeMake(6.0f, 0.0f)],
-                                           [NSValue valueWithCGSize:timeUnitOffset], nil];
+                                           [NSValue valueWithCGSize:timeUnitOffset]];
     self.drivingTimeLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.drivingTimeValueLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     
@@ -609,12 +609,12 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 - (NSArray *)landsAtTimeOffsets {
     NSArray *parts = [self landsAtTimeParts];
-    NSString *amOrPm = [parts objectAtIndex:1]; // Reliable harcoded index for PM/AM
+    NSString *amOrPm = parts[1]; // Reliable harcoded index for PM/AM
     CGSize amPmSize = [amOrPm sizeWithFont:[[[JLTrackStyles timeUnitLabelStyle] textStyle] font]];
     CGSize timezoneOffset = [JLTrackStyles timezoneOffset];
-    return [NSArray arrayWithObjects:[NSValue valueWithCGSize:CGSizeZero],
+    return @[[NSValue valueWithCGSize:CGSizeZero],
             [NSValue valueWithCGSize:[JLTrackStyles timeUnitOffsetAlt]],
-            [NSValue valueWithCGSize:CGSizeMake(timezoneOffset.width - amPmSize.width, timezoneOffset.height)], nil];
+            [NSValue valueWithCGSize:CGSizeMake(timezoneOffset.width - amPmSize.width, timezoneOffset.height)]];
 }
 
 
@@ -632,7 +632,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     NSTimeInterval landsIn = [self.trackedFlight_.estimatedArrivalTime timeIntervalSinceNow];
     
     if (landsIn < 0.0) {
-        return [NSArray arrayWithObjects:NSLocalizedString(@"NOW", @"NOW"), @"", nil];
+        return @[NSLocalizedString(@"NOW", @"NOW"), @""];
     }
     else {
         NSString *landsInString = [NSDate timeIntervalToShortUnitString:landsIn leadingZeros:NO];
@@ -924,7 +924,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     self.bagClaimValueLabel_.text = [self bagClaimValue];
     
     LeaveForAirportWarningType warningType = [self warningToDisplay];
-    BOOL ignoreWarning = [ignoredWarnings_ containsObject:[NSNumber numberWithInteger:warningType]];
+    BOOL ignoreWarning = [ignoredWarnings_ containsObject:@(warningType)];
     
     if (self.trackedFlight_.leaveForAirportTime && self.trackedFlight_.drivingTime > 0.0 && (warningType == WarningTypeNone || ignoreWarning)) {
         self.leaveMeter_.showEmptyMeter = NO;
@@ -986,8 +986,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             textNotification.alertAction = NSLocalizedString(@"Send Text", @"Send Text");
             textNotification.alertBody = NSLocalizedString(@"Picking someone up? Just Landed can text them that you've arrived.", @"Text Notification");
             textNotification.soundName = @"alert.wav";
-            textNotification.userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInteger:JLLocalNotificationTypeTextOnArrival]
-                                                                    forKey:LocalNotificationTypeKey];
+            textNotification.userInfo = @{LocalNotificationTypeKey: @(JLLocalNotificationTypeTextOnArrival)};
             [[UIApplication sharedApplication] presentLocalNotificationNow:textNotification];
             self.hasBeenNotifiedToText_ = YES;
             [FlurryAnalytics logEvent:FY_NOTIFIED_TO_SEND_ARRIVAL_SMS];
@@ -1147,10 +1146,10 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                                                                   [self.trackedFlight_.destination bestAirportCode]]:
                                                                   [self.trackedFlight_.destination bestAirportCode];
         
-        [MKMapItem openMapsWithItems:[NSArray arrayWithObject:destItem]
-                       launchOptions:[NSDictionary dictionaryWithObjectsAndKeys:MKLaunchOptionsDirectionsModeDriving, MKLaunchOptionsDirectionsModeKey,
-                                      [NSNumber numberWithInt:MKMapTypeStandard], MKLaunchOptionsMapTypeKey,
-                                      [NSNumber numberWithBool:YES], MKLaunchOptionsShowsTrafficKey, nil]];
+        [MKMapItem openMapsWithItems:@[destItem]
+                       launchOptions:@{MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving,
+                                      MKLaunchOptionsMapTypeKey: @(MKMapTypeStandard),
+                                      MKLaunchOptionsShowsTrafficKey: @YES}];
     }
     else {
         // Pre-iOS6 uses Google maps URLs with native Maps application
@@ -1281,8 +1280,8 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         }
         else if (alertView.tag > WarningTypeNone && alertView.tag <= WarningTypeTooFarFromDestination){
             // They want to ignore the warning
-            if (![ignoredWarnings_ containsObject:[NSNumber numberWithInteger:alertView.tag]]) {
-                [ignoredWarnings_ addObject:[NSNumber numberWithInteger:alertView.tag]];
+            if (![ignoredWarnings_ containsObject:@(alertView.tag)]) {
+                [ignoredWarnings_ addObject:@(alertView.tag)];
             }
             
             // They want to ignore the warning

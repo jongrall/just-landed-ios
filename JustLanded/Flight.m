@@ -70,33 +70,33 @@ static NSArray *sAircraftTypes_;
 
 + (void)initialize {
 	if (self == [Flight class]) {
-        sStatuses_ = [[NSArray alloc] initWithObjects:@"SCHEDULED",
+        sStatuses_ = @[@"SCHEDULED",
                      @"ON_TIME",
                      @"DELAYED",
                      @"CANCELED",
                      @"DIVERTED",
                      @"LANDED",
                      @"EARLY",
-                     @"UNKNOWN", nil];
-        sPushTypes_ = [[NSArray alloc] initWithObjects:@"FILED",
+                     @"UNKNOWN"];
+        sPushTypes_ = @[@"FILED",
                       @"DIVERTED",
                       @"CANCELED",
                       @"DEPARTED",
                       @"ARRIVED",
                       @"CHANGED", 
                       @"LEAVE_SOON",
-                      @"LEAVE_NOW", nil];
-        sAircraftTypes_ = [[NSArray alloc] initWithObjects:@"JET2",
+                      @"LEAVE_NOW"];
+        sAircraftTypes_ = @[@"JET2",
                       @"JET2REAR",
                       @"JET4",
                       @"PROP2",
-                      @"PROP4", nil];
+                      @"PROP4"];
 	}
 }
 
 
 + (NSString *)aircraftTypeToString:(AircraftType)anAircraftType {
-    return [sAircraftTypes_ objectAtIndex:anAircraftType];
+    return sAircraftTypes_[anAircraftType];
 }
 
 
@@ -199,7 +199,7 @@ static NSArray *sAircraftTypes_;
                             [listOfFlights addObject:[[Flight alloc] initWithFlightInfo:info]];
                         }
                         
-                        flights = [NSDictionary dictionaryWithObjectsAndKeys:listOfFlights, @"flights", nil];
+                        flights = @{@"flights": listOfFlights};
                     }
                     @catch (NSException *exception) {
                         [self failToLookupWithReason:LookupFailureError];
@@ -282,8 +282,7 @@ static NSArray *sAircraftTypes_;
 
 
 + (void)failToLookupWithReason:(FlightLookupFailedReason)aFailureReason {
-    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:aFailureReason] 
-                                                           forKey:FlightLookupFailedReasonKey];
+    NSDictionary *reasonDict = @{FlightLookupFailedReasonKey: [NSNumber numberWithInt:aFailureReason]};
     
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:FlightLookupFailedNotification 
                                                                     object:nil 
@@ -388,8 +387,7 @@ static NSArray *sAircraftTypes_;
 
 
 - (void)failToTrackWithReason:(FlightTrackFailedReason)aFailureReason {
-    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:aFailureReason] 
-                                                           forKey:FlightTrackFailedReasonKey];
+    NSDictionary *reasonDict = @{FlightTrackFailedReasonKey: [NSNumber numberWithInt:aFailureReason]};
     
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:FlightTrackFailedNotification 
                                                                     object:self 
@@ -541,25 +539,24 @@ static NSArray *sAircraftTypes_;
 
 
 - (NSDictionary *)flightData {
-    return [[NSDictionary alloc] initWithObjectsAndKeys:
-            self.flightID ? self.flightID : [NSNull null], @"flightID",
-            self.flightNumber ? self.flightNumber : [NSNull null], @"flightNumber",
-            [sAircraftTypes_ objectAtIndex:self.aircraftType], @"aircraftType",
+    return @{@"flightID": self.flightID ? self.flightID : [NSNull null],
+            @"flightNumber": self.flightNumber ? self.flightNumber : [NSNull null],
+            @"aircraftType": sAircraftTypes_[self.aircraftType],
             
-            self.actualArrivalTime ? [self.actualArrivalTime description] : [NSNull null], @"actualArrivalTime",
-            self.actualDepartureTime ? [self.actualDepartureTime description] : [NSNull null], @"actualDepartureTime",
-            self.estimatedArrivalTime ? [self.estimatedArrivalTime description] : [NSNull null], @"estimatedArrivalTime",
-            self.scheduledDepartureTime ? [self.scheduledDepartureTime description] : [NSNull null], @"scheduledDepartureTime",
-            self.lastUpdated ? [self.lastUpdated description] : [NSNull null], @"lastUpdated",
-            self.leaveForAirportTime ? [self.leaveForAirportTime description] : [NSNull null], @"leaveForAirportTime",
-            self.drivingTime >= 0.0 ? [NSNumber numberWithDouble:self.drivingTime] : [NSNull null], @"drivingTime",
-            [NSNumber numberWithDouble:self.scheduledFlightDuration], @"scheduledFlightDuration",
+            @"actualArrivalTime": self.actualArrivalTime ? [self.actualArrivalTime description] : [NSNull null],
+            @"actualDepartureTime": self.actualDepartureTime ? [self.actualDepartureTime description] : [NSNull null],
+            @"estimatedArrivalTime": self.estimatedArrivalTime ? [self.estimatedArrivalTime description] : [NSNull null],
+            @"scheduledDepartureTime": self.scheduledDepartureTime ? [self.scheduledDepartureTime description] : [NSNull null],
+            @"lastUpdated": self.lastUpdated ? [self.lastUpdated description] : [NSNull null],
+            @"leaveForAirportTime": self.leaveForAirportTime ? [self.leaveForAirportTime description] : [NSNull null],
+            @"drivingTime": self.drivingTime >= 0.0 ? @(self.drivingTime) : [NSNull null],
+            @"scheduledFlightDuration": @(self.scheduledFlightDuration),
             
-            self.origin ? [self.origin toJSONFriendlyDict] : [NSNull null], @"origin",
-            self.destination ? [self.destination toJSONFriendlyDict] : [NSNull null], @"destination",
+            @"origin": self.origin ? [self.origin toJSONFriendlyDict] : [NSNull null],
+            @"destination": self.destination ? [self.destination toJSONFriendlyDict] : [NSNull null],
             
-            [sStatuses_ objectAtIndex:self.status], @"status",
-            self.detailedStatus ? self.detailedStatus : [NSNull null], @"detailedStatus", nil];
+            @"status": sStatuses_[self.status],
+            @"detailedStatus": self.detailedStatus ? self.detailedStatus : [NSNull null]};
 }
 
 

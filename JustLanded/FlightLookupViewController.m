@@ -155,23 +155,23 @@ static NSRegularExpression *sAirlineCodeRegex_;
                                                                      options:NSMatchingAnchored
                                                                        range:NSMakeRange(0, [sanitizedNum length])];
         if (result.range.location != NSNotFound) {
-            return [NSArray arrayWithObjects:[sanitizedNum substringWithRange:result.range],
-                    [sanitizedNum substringFromIndex:result.range.length], nil];
+            return @[[sanitizedNum substringWithRange:result.range],
+                    [sanitizedNum substringFromIndex:result.range.length]];
         }
         else {
             // Unable to split - no valid airline code
-            return [NSArray arrayWithObject:sanitizedNum];
+            return @[sanitizedNum];
         }
     }
     else {
-        return [NSArray array];
+        return @[];
     }
 }
 
 
 + (BOOL)flightNumContainsValidAirlineCode:(NSString *)flightNum {
     NSArray *parts = [[self class] splitFlightNumber:flightNum];
-    if ([parts count] == 2 && [AirlineLookupViewController airlineCodeExists:[parts objectAtIndex:0]]) {
+    if ([parts count] == 2 && [AirlineLookupViewController airlineCodeExists:parts[0]]) {
         return YES;
     }
     else {
@@ -220,8 +220,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
         [[JustLandedSession sharedSession] incrementTrackCount];
         
         [FlurryAnalytics logEvent:FY_BEGAN_TRACKING_FLIGHT 
-                   withParameters:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%d", [aFlight minutesBeforeLanding]]
-                                                              forKey:@"Minutes Before Landing"]];
+                   withParameters:@{@"Minutes Before Landing": [NSString stringWithFormat:@"%d", [aFlight minutesBeforeLanding]]}];
         
     }
 }
@@ -360,7 +359,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
             [self alertWithError:LookupErrorFlightNotFound];
         }
         else if ([flights count] == 1) {
-            [self beginTrackingFlight:[flights objectAtIndex:0] animated:YES];
+            [self beginTrackingFlight:flights[0] animated:YES];
         }
         else {
             [self.flightResultsTable_ reloadData];
@@ -373,8 +372,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
         }
     
         [FlurryAnalytics logEvent:FY_LOOKED_UP_FLIGHT 
-                   withParameters:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%d", [flights count]] 
-                                                                                         forKey:@"Number Of Results"]];
+                   withParameters:@{@"Number Of Results": [NSString stringWithFormat:@"%d", [flights count]]}];
     }
 }
 
@@ -405,7 +403,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
         }
         case LookupErrorNonexistentAirline: {
             NSArray *flightNumParts = [[self class] splitFlightNumber:self.flightNumberField.text];
-            NSString *airlineCode = ([flightNumParts count] == 2) ? [flightNumParts objectAtIndex:0] : self.flightNumberField.text;
+            NSString *airlineCode = ([flightNumParts count] == 2) ? flightNumParts[0] : self.flightNumberField.text;
             alertTitle = NSLocalizedString(@"Unknown Airline Code", @"Unknown Airline Code");
             alertMessage = [NSString stringWithFormat:NSLocalizedString(@"We don't recognize airline code %@. Don't know the airline code? We can look it up for you!",
                                                                         @"Unknown Airline Code Explanation"), airlineCode];
@@ -829,7 +827,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    Flight *chosenFlight = [self.flightResults_ objectAtIndex:[indexPath row]];
+    Flight *chosenFlight = (self.flightResults_)[[indexPath row]];
     [self beginTrackingFlight:chosenFlight animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -846,7 +844,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
         cell.selectedBackgroundView.opaque = NO;
     }
     
-    Flight *aFlight = [self.flightResults_ objectAtIndex:[indexPath row]];
+    Flight *aFlight = (self.flightResults_)[[indexPath row]];
     
     // Figure out the cell type
     if (indexPath.row == 0) {
@@ -917,8 +915,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     if (userFlag) {
         self.flightNumberField.text = aFlight.flightNumber;
         [FlurryAnalytics logEvent:FY_STOPPED_TRACKING_FLIGHT 
-                   withParameters:[NSDictionary dictionaryWithObject:(aFlight.status == LANDED) ? @"YES" : @"NO"
-                                                              forKey:@"Flight Landed"]];
+                   withParameters:@{@"Flight Landed": (aFlight.status == LANDED) ? @"YES" : @"NO"}];
     }
     else {
         // Probably an old flight, clear the field

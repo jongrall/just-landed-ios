@@ -271,7 +271,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
         NSString *airplaneLightsIconName = [NSString stringWithFormat:@"%@_night_lights", [Flight aircraftTypeToString:self.aircraftType]];
         UIImage *planeIcon = [UIImage imageNamed:airplaneIconName];
         UIImage *planeLightsIcon = [UIImage imageNamed:airplaneLightsIconName];
-        self.airplaneIcon_.animationImages = [NSArray arrayWithObjects:planeIcon, 
+        self.airplaneIcon_.animationImages = @[planeIcon, 
                                                                     planeIcon,
                                                                     planeIcon,
                                                                     planeIcon,
@@ -280,7 +280,7 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
                                                                     planeIcon,
                                                                     planeIcon,
                                                                     planeIcon,
-                                                                    planeLightsIcon, nil];
+                                                                    planeLightsIcon];
         self.airplaneIcon_.image = nil;
         self.airplaneIcon_.animationDuration = 2.5;
         [self.airplaneIcon_ startAnimating];

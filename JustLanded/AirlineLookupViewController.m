@@ -251,7 +251,7 @@ static NSArray *sAllAirlines_;
                                                  reuseIdentifier:@"AirlineResultCell"];
     }
     
-    id tableRowObj = [self.airlines_ objectAtIndex:indexPath.row];
+    id tableRowObj = (self.airlines_)[indexPath.row];
     
     if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
         NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
@@ -271,10 +271,10 @@ static NSArray *sAllAirlines_;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row < (NSInteger)[self.airlines_ count]) {
-        id tableRowObj = [self.airlines_ objectAtIndex:indexPath.row];
+        id tableRowObj = (self.airlines_)[indexPath.row];
         
         if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *airlineInfo = [self.airlines_ objectAtIndex:indexPath.row];
+            NSDictionary *airlineInfo = (self.airlines_)[indexPath.row];
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
             NSString *code = [self airlineCode:airlineInfo];
             [[JustLandedSession sharedSession] addToRecentlyLookedUpAirlines:airlineInfo];
@@ -312,7 +312,7 @@ static NSArray *sAllAirlines_;
 - (void)keyboardWasShown:(NSNotification *)notification {
     // Adjust the results table height
     NSDictionary* info = [notification userInfo];
-    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;    
+    CGSize kbSize = [info[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;    
     self.resultsTable_.frame = CGRectMake(self.resultsTable_.frame.origin.x,
                                           self.resultsTable_.frame.origin.y,
                                           self.resultsTable_.frame.size.width,

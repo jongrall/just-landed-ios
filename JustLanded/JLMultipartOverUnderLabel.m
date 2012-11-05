@@ -32,11 +32,11 @@
     CGFloat totalWidth = 0.0f;
     
     for (NSUInteger i = 0; i < [parts_ count]; i = i + 2) {
-        NSString *nextPart = [parts_ objectAtIndex:i];
+        NSString *nextPart = parts_[i];
         LabelStyle *nextStyle;
         
         if (styles_) {
-            nextStyle = ([styles_ count] > i) ? [styles_ objectAtIndex:i] : [styles_ lastObject];
+            nextStyle = ([styles_ count] > i) ? styles_[i] : [styles_ lastObject];
         }
         else {
             break; // Unrecoverable, we need at least one text style
@@ -51,15 +51,15 @@
     CGPoint startPoint = CGPointMake(midpoint - (totalWidth / 2.0f), 0.0f);
  
     for (NSUInteger i = 0; i < [parts_ count]; i = i + 2) {
-        NSString *nextUpperPart = [parts_ objectAtIndex:i];
-        NSString *nextUnderPart = [parts_ objectAtIndex:i+1];
+        NSString *nextUpperPart = parts_[i];
+        NSString *nextUnderPart = parts_[i+1];
         
         // Get the next offset, guard against programmer error
         CGSize nextUpperOffset = CGSizeZero;
         CGSize nextLowerOffset = CGSizeZero;
         if (offsets_) {
-            nextUpperOffset = ([offsets_ count] > i) ? [[offsets_ objectAtIndex:i] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
-            nextLowerOffset = ([offsets_ count] > i+1) ? [[offsets_ objectAtIndex:i+1] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
+            nextUpperOffset = ([offsets_ count] > i) ? [offsets_[i] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
+            nextLowerOffset = ([offsets_ count] > i+1) ? [offsets_[i+1] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
         }
         
         LabelStyle *nextUpperStyle;
@@ -67,8 +67,8 @@
         
         // Get the next style, guard against programmer error
         if (styles_) {
-            nextUpperStyle = ([styles_ count] > i) ? [styles_ objectAtIndex:i] : [styles_ lastObject];
-            nextLowerStyle = ([styles_ count] > i+1) ? [styles_ objectAtIndex:i+1] : [styles_ lastObject];
+            nextUpperStyle = ([styles_ count] > i) ? styles_[i] : [styles_ lastObject];
+            nextLowerStyle = ([styles_ count] > i+1) ? styles_[i+1] : [styles_ lastObject];
         }
         else {
             break; // Unrecoverable, we need at least one text style

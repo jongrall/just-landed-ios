@@ -59,11 +59,11 @@
         }
         
         // Register default preferences (not automatically pulled in from Settings.bundle defaults
-        NSDictionary *defaultPrefs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], SendFlightEventsPreferenceKey,
-                                      [NSNumber numberWithBool:YES], SendRemindersPreferenceKey,
-                                      [NSNumber numberWithInt:300], ReminderLeadTimePreferenceKey,
-                                      [NSNumber numberWithBool:YES], PlayFlightSoundsPreferenceKey,
-                                      [NSNumber numberWithBool:YES], MonitorLocationPreferenceKey, nil];
+        NSDictionary *defaultPrefs = @{SendFlightEventsPreferenceKey: @YES,
+                                      SendRemindersPreferenceKey: @YES,
+                                      ReminderLeadTimePreferenceKey: @300,
+                                      PlayFlightSoundsPreferenceKey: @YES,
+                                      MonitorLocationPreferenceKey: @YES};
         [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPrefs];
         
         // Archive tracked flights whenever any flight is updated
@@ -125,9 +125,9 @@
     BOOL playFlightSounds = [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
     NSUInteger reminderLeadTime = [[NSUserDefaults standardUserDefaults] integerForKey:ReminderLeadTimePreferenceKey];
     
-    return [[NSMutableDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:sendFlightEvents], SendFlightEventsPreferenceKey,
-            [NSNumber numberWithBool:sendReminders], SendRemindersPreferenceKey,
-            [NSNumber numberWithBool:playFlightSounds], PlayFlightSoundsPreferenceKey,
+    return [[NSMutableDictionary alloc] initWithObjectsAndKeys:@(sendFlightEvents), SendFlightEventsPreferenceKey,
+            @(sendReminders), SendRemindersPreferenceKey,
+            @(playFlightSounds), PlayFlightSoundsPreferenceKey,
             [NSNumber numberWithInteger:reminderLeadTime], ReminderLeadTimePreferenceKey, nil];
 }
 
@@ -144,7 +144,7 @@
         trackCount = [NSNumber numberWithInt:newCount];
     }
     else {
-        trackCount = [NSNumber numberWithInt:1];
+        trackCount = @1;
     }
     
     [[NSUserDefaults standardUserDefaults] setObject:trackCount forKey:FlightsTrackedCountKey];
@@ -180,7 +180,7 @@
                                               otherButtonTitles:NSLocalizedString(@"Sure", @"Sure") , nil];
         
         // Mark them as having been asked, prevents multiple alerts
-        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:HasBeenAskedToRateKey];
+        [[NSUserDefaults standardUserDefaults] setObject:@YES forKey:HasBeenAskedToRateKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         [alert show];
@@ -256,7 +256,7 @@
     NSURL *cacheDirURL = nil;
     
     @try {
-        cacheDirURL = [urls objectAtIndex:0];
+        cacheDirURL = urls[0];
     }
     @catch (NSException *exception) {
         return nil;
@@ -319,7 +319,7 @@
         [[NSUserDefaults standardUserDefaults] setObject:newArray forKey:RecentAirlineLookupsKey];
     }
     else {
-        [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithObject:airlineInfo] forKey:RecentAirlineLookupsKey];
+        [[NSUserDefaults standardUserDefaults] setObject:@[airlineInfo] forKey:RecentAirlineLookupsKey];
     }
     
     [[NSUserDefaults standardUserDefaults] synchronize];

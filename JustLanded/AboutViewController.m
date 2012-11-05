@@ -248,22 +248,22 @@ typedef enum {
     NSMutableArray *tableRows = [[NSMutableArray alloc] init];
     
     if ([MFMailComposeViewController canSendMail]) {
-        [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFeedback]];
+        [tableRows addObject:@(AboutCellTagFeedback)];
     }
     
-    [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFAQ]];
+    [tableRows addObject:@(AboutCellTagFAQ)];
     
     if ([MFMessageComposeViewController canSendText]) {
-        [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagSMS]];
+        [tableRows addObject:@(AboutCellTagSMS)];
     }
     if ([TWTweetComposeViewController canSendTweet]) {
-        [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTweet]];
+        [tableRows addObject:@(AboutCellTagTweet)];
     }
 
-    [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTerms]];
+    [tableRows addObject:@(AboutCellTagTerms)];
     
     if (row < [tableRows count]) {
-        return [[tableRows objectAtIndex:row] integerValue];
+        return [tableRows[row] integerValue];
     }
     else {
         return [[tableRows lastObject] integerValue]; // Should never happen
@@ -343,7 +343,7 @@ typedef enum {
     switch (tag) {
         case AboutCellTagFeedback: {
             JLMailComposeViewController *mailComposer = [[JLMailComposeViewController alloc] init];
-            [mailComposer setToRecipients:[NSArray arrayWithObject:@"feedback@getjustlanded.com"]];
+            [mailComposer setToRecipients:@[@"feedback@getjustlanded.com"]];
             [mailComposer setSubject:[NSString stringWithFormat:@"Feedback on JustLanded v%@",
                                       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
             [mailComposer setMailComposeDelegate:self];
@@ -360,13 +360,13 @@ typedef enum {
             JLMessageComposeViewController *smsComposer = [[JLMessageComposeViewController alloc] init];
             [smsComposer setMessageComposeDelegate:self];
             
-            NSArray *possibleMessages = [NSArray arrayWithObjects:@"Check out the Just Landed iPhone app - it makes it easy to pick people up at the airport. http://bit.ly/QkAJfu",
+            NSArray *possibleMessages = @[@"Check out the Just Landed iPhone app - it makes it easy to pick people up at the airport. http://bit.ly/QkAJfu",
                                        @"No more waiting at airport arrivals with Just Landed for iPhone! http://bit.ly/SirUWY",
                                        @"I'm loving the Just Landed iPhone app. It tells you when to leave for the airport to pick someone up! http://bit.ly/NbLqkJ",
                                        @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/TkBoi2",
-                                       @"I've found an iPhone app called Just Landed that is great for tracking arriving flights! http://bit.ly/QkAYqH", nil];
+                                       @"I've found an iPhone app called Just Landed that is great for tracking arriving flights! http://bit.ly/QkAYqH"];
             NSUInteger randomIndex = arc4random() % [possibleMessages count];
-            [smsComposer setBody:[possibleMessages objectAtIndex:randomIndex]];
+            [smsComposer setBody:possibleMessages[randomIndex]];
             smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             [self presentViewController:smsComposer animated:YES completion:NULL];
             // Hack to fix MFMMessageCompose changing status bar type
@@ -376,15 +376,15 @@ typedef enum {
         }
         case AboutCellTagTweet: {
             TWTweetComposeViewController *tweetComposer = [[TWTweetComposeViewController alloc] init];
-            NSArray *possibleTweets = [NSArray arrayWithObjects:@"The @justlanded iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/PHaLQP",
+            NSArray *possibleTweets = @[@"The @justlanded iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/PHaLQP",
                                        @"No more waiting at airport arrivals with @justlanded for iPhone! http://bit.ly/Q4A6mJ",
                                        @"The @justlanded iPhone app tells you when to leave for the airport to pick someone up! http://bit.ly/Ol9RsY",
                                        @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/TWHHpE",
-                                       @"The @justlanded iPhone app is great for tracking arriving flights. http://bit.ly/TksJw3", nil];
+                                       @"The @justlanded iPhone app is great for tracking arriving flights. http://bit.ly/TksJw3"];
             
             // Choose a random tweet for some variety
             NSUInteger randomIndex = arc4random() % [possibleTweets count];
-            [tweetComposer setInitialText:[possibleTweets objectAtIndex:randomIndex]];
+            [tweetComposer setInitialText:possibleTweets[randomIndex]];
             [tweetComposer setCompletionHandler:^(TWTweetComposeViewControllerResult result) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     // Always perform this on the main thread

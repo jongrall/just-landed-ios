@@ -56,8 +56,8 @@
     NSMutableArray *parts = [[NSMutableArray alloc] init];
     
     for (NSUInteger i = 0; i<[sortedKeys count]; i++) {
-        [parts addObject:[NSString stringWithFormat:@"%@=%@", [sortedKeys objectAtIndex:i],
-                          [sortedValues objectAtIndex:i]]];
+        [parts addObject:[NSString stringWithFormat:@"%@=%@", sortedKeys[i],
+                          sortedValues[i]]];
     }
     
     NSString *to_sign;
@@ -118,7 +118,7 @@
     [request setValue:sig forHTTPHeaderField:@"X-Just-Landed-Signature"];
     
     // Set the language (can change between requests)
-    [request setValue:[[NSLocale preferredLanguages] objectAtIndex:0] forHTTPHeaderField:@"X-Just-Landed-User-Language"];
+    [request setValue:[NSLocale preferredLanguages][0] forHTTPHeaderField:@"X-Just-Landed-User-Language"];
     
     // Force gzip encoding from GAE
     [request setValue:@"gzip, deflate" forHTTPHeaderField:@"Accept-Encoding"];

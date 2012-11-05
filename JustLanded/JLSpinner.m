@@ -16,9 +16,9 @@
     self = [super initWithFrame:fixedSizeFrame];
     if (self) {
         self.animationDuration = 0.15;
-        self.animationImages = [NSArray arrayWithObjects:[UIImage imageNamed:@"spinner_1"],
+        self.animationImages = @[[UIImage imageNamed:@"spinner_1"],
                                 [UIImage imageNamed:@"spinner_2"],
-                                [UIImage imageNamed:@"spinner_3"], nil];
+                                [UIImage imageNamed:@"spinner_3"]];
     }
     return self;
 }
