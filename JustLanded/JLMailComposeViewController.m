@@ -52,7 +52,6 @@
 - (BOOL)setMFMailFieldAsFirstResponder:(UIView *)view mfMailField:(NSString *)field {
     for (UIView *subview in view.subviews) {
         NSString *className = [NSString stringWithFormat:@"%@", [subview class]];
-        NSLog(@"%@", subview);
         if ([className isEqualToString:field]) {
             //Found the sub view we need to set as first responder
             [subview becomeFirstResponder];

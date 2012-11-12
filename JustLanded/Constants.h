@@ -17,7 +17,6 @@ typedef enum {
 
 extern NSString * const APP_ID;
 extern NSString * const UUIDKey;
-extern NSString * const UUIDKey;
 extern NSString * const BeganUsingDate;
 extern NSString * const ArchivedFlightsFile;
 extern NSString * const HasBeenAskedToRateKey;
