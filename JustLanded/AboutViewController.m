@@ -353,7 +353,7 @@ typedef enum {
             // WARN: Make the body first responder - this could get us rejected
             [mailComposer setMFMailFieldAsFirstResponder];
             
-            [FlurryAnalytics logEvent:FY_STARTED_SENDING_FEEDBACK];
+            [Flurry logEvent:FY_STARTED_SENDING_FEEDBACK];
             break;
         }
         case AboutCellTagSMS: {
@@ -371,7 +371,7 @@ typedef enum {
             [self presentViewController:smsComposer animated:YES completion:NULL];
             // Hack to fix MFMMessageCompose changing status bar type
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-            [FlurryAnalytics logEvent:FY_STARTED_SENDING_SMS];
+            [Flurry logEvent:FY_STARTED_SENDING_SMS];
             break;
         }
         case AboutCellTagTweet: {
@@ -395,17 +395,17 @@ typedef enum {
                                                               cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
                                                               otherButtonTitles:nil];
                         [alert show];
-                        [FlurryAnalytics logEvent:FY_POSTED_TWEET];
+                        [Flurry logEvent:FY_POSTED_TWEET];
                     }
                     else {
-                        [FlurryAnalytics logEvent:FY_ABANDONED_TWEETING];
+                        [Flurry logEvent:FY_ABANDONED_TWEETING];
                     }
                     
                     [self dismissViewControllerAnimated:NO completion:NULL];
                 });
             }];
             [self presentViewController:tweetComposer animated:YES completion:NULL];
-            [FlurryAnalytics logEvent:FY_STARTED_TWEETING];
+            [Flurry logEvent:FY_STARTED_TWEETING];
             break;
         }
         case AboutCellTagTerms: {
@@ -413,7 +413,7 @@ typedef enum {
                                                                                                  URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:TOS_PATH]]
                                                                                       showDoneButton:NO];
             [self.navigationController pushViewController:tosVC animated:YES];
-            [FlurryAnalytics logEvent:FY_READ_TERMS];
+            [Flurry logEvent:FY_READ_TERMS];
             break;
         }
         case AboutCellTagFAQ: {
@@ -421,7 +421,7 @@ typedef enum {
                                                                                                  URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:FAQ_PATH]]
                                                                                       showDoneButton:NO];
             [self.navigationController pushViewController:faqVC animated:YES];
-            [FlurryAnalytics logEvent:FY_READ_FAQ];
+            [Flurry logEvent:FY_READ_FAQ];
             break;
         }
         default: {
@@ -471,10 +471,10 @@ typedef enum {
                                               cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
                                               otherButtonTitles:nil];
         [alert show];
-        [FlurryAnalytics logEvent:FY_SENT_FEEDBACK];
+        [Flurry logEvent:FY_SENT_FEEDBACK];
     }
     else if (result == MFMailComposeResultCancelled) {
-        [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_FEEDBACK];
+        [Flurry logEvent:FY_ABANDONED_SENDING_FEEDBACK];
     }
     
     [self dismissViewControllerAnimated:YES completion:NULL];
@@ -492,10 +492,10 @@ typedef enum {
                                               cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
                                               otherButtonTitles:nil];
         [alert show];
-        [FlurryAnalytics logEvent:FY_SENT_SMS];
+        [Flurry logEvent:FY_SENT_SMS];
     }
     else if (result == MessageComposeResultCancelled) {
-        [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_SMS];
+        [Flurry logEvent:FY_ABANDONED_SENDING_SMS];
     }
     
     [self dismissViewControllerAnimated:YES completion:NULL];

@@ -50,9 +50,9 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     #endif
     
     // Configure Flurry
-    [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
-    [FlurryAnalytics setSessionReportsOnPauseEnabled:YES];
-    [FlurryAnalytics setSecureTransportEnabled:YES];
+    [Flurry startSession:FLURRY_APPLICATION_KEY];
+    [Flurry setSessionReportsOnPauseEnabled:YES];
+    [Flurry setSecureTransportEnabled:YES];
         
     // Create the app delegate's location manager
     self.locationManager_ = [[CLLocationManager alloc] init];
@@ -301,7 +301,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     self.triedToRegisterForRemoteNotifications = YES;
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidFailToUpdatePushTokenNotification object:application];
-    [FlurryAnalytics logEvent:FY_UNABLE_TO_REGISTER_PUSH];
+    [Flurry logEvent:FY_UNABLE_TO_REGISTER_PUSH];
     NSLog(@"Just Landed failed to register for remote notifications: %@", error);
 }
 

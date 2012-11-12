@@ -203,7 +203,7 @@ static NSArray *sAircraftTypes_;
                     }
                     @catch (NSException *exception) {
                         [self failToLookupWithReason:LookupFailureError];
-                        [FlurryAnalytics logEvent:FY_BAD_DATA];
+                        [Flurry logEvent:FY_BAD_DATA];
                         return;
                     }
                     
@@ -221,7 +221,7 @@ static NSArray *sAircraftTypes_;
                         case 400: {
                             // Invalid flight number
                             [self failToLookupWithReason:LookupFailureInvalidFlightNumber];
-                            [FlurryAnalytics logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
+                            [Flurry logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
                             break;
                         }
                         case 404: {
@@ -242,24 +242,24 @@ static NSArray *sAircraftTypes_;
                             
                             if (noCurrentFlight) {
                                 [self failToLookupWithReason:LookupFailureNoCurrentFlight];
-                                [FlurryAnalytics logEvent:FY_CURRENT_FLIGHT_NOT_FOUND_ERROR];
+                                [Flurry logEvent:FY_CURRENT_FLIGHT_NOT_FOUND_ERROR];
                             }
                             else {
                                 [self failToLookupWithReason:LookupFailureFlightNotFound];
-                                [FlurryAnalytics logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
+                                [Flurry logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
                             }
                             break;
                         }
                         case 503: {
                             //Outage
                             [self failToLookupWithReason:LookupFailureOutage];
-                            [FlurryAnalytics logEvent:FY_OUTAGE];
+                            [Flurry logEvent:FY_OUTAGE];
                             break;
                         }
                         default: {
                             // 500 errors etc.
                             [self failToLookupWithReason:LookupFailureError];
-                            [FlurryAnalytics logEvent:FY_SERVER_500];
+                            [Flurry logEvent:FY_SERVER_500];
                             break;
                         }
                     }
@@ -269,12 +269,12 @@ static NSArray *sAircraftTypes_;
                     if ([[JustLandedSession sharedSession] isJustLandedReachable]) {
                         // JL is reachable, there must be a server outage
                         [self failToLookupWithReason:LookupFailureOutage];
-                        [FlurryAnalytics logEvent:FY_OUTAGE];
+                        [Flurry logEvent:FY_OUTAGE];
                     }
                     else {
                         // JL is not reachable, they have no connection
                         [self failToLookupWithReason:LookupFailureNoConnection];
-                        [FlurryAnalytics logEvent:FY_NO_CONNECTION_ERROR];
+                        [Flurry logEvent:FY_NO_CONNECTION_ERROR];
                     }
                 }
             }];
@@ -321,7 +321,7 @@ static NSArray *sAircraftTypes_;
                     @catch (NSException *exception) {
                         // Problem updating the data
                         [self failToTrackWithReason:TrackFailureError];
-                        [FlurryAnalytics logEvent:FY_BAD_DATA];
+                        [Flurry logEvent:FY_BAD_DATA];
                         
                         // Restore the old data
                         [self updateWithFlightInfo:prevData];
@@ -340,31 +340,31 @@ static NSArray *sAircraftTypes_;
                         case 400: {
                             // Invalid flight number
                             [self failToTrackWithReason:TrackFailureInvalidFlightNumber];
-                            [FlurryAnalytics logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
+                            [Flurry logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
                             break;
                         }
                         case 404: {
                             // Flight not found
                             [self failToTrackWithReason:TrackFailureFlightNotFound];
-                            [FlurryAnalytics logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
+                            [Flurry logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
                             break;
                         }
                         case 410: {
                             // Old flight
                             [self failToTrackWithReason:TrackFailureOldFlight];
-                            [FlurryAnalytics logEvent:FY_OLD_FLIGHT_ERROR];
+                            [Flurry logEvent:FY_OLD_FLIGHT_ERROR];
                             break;
                         }
                         case 503: {
                             // Outage
                             [self failToTrackWithReason:TrackFailureOutage];
-                            [FlurryAnalytics logEvent:FY_OUTAGE];
+                            [Flurry logEvent:FY_OUTAGE];
                             break;
                         }
                         default: {
                             // 500 errors etc.
                             [self failToTrackWithReason:TrackFailureError];
-                            [FlurryAnalytics logEvent:FY_SERVER_500];
+                            [Flurry logEvent:FY_SERVER_500];
                             break;
                         }
                     }
@@ -374,12 +374,12 @@ static NSArray *sAircraftTypes_;
                     if ([[JustLandedSession sharedSession] isJustLandedReachable]) {
                         // JL is reachable, there must be a server outage
                         [self failToTrackWithReason:TrackFailureOutage];
-                        [FlurryAnalytics logEvent:FY_OUTAGE];
+                        [Flurry logEvent:FY_OUTAGE];
                     }
                     else {
                         // JL is not reachable, they have no connection
                         [self failToTrackWithReason:TrackFailureNoConnection];
-                        [FlurryAnalytics logEvent:FY_NO_CONNECTION_ERROR];
+                        [Flurry logEvent:FY_NO_CONNECTION_ERROR];
                     }
                 }
             }];

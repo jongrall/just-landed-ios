@@ -179,7 +179,7 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         [alert show];
-        [FlurryAnalytics logEvent:FY_ASKED_TO_RATE];
+        [Flurry logEvent:FY_ASKED_TO_RATE];
     }
 }
 
@@ -188,10 +188,10 @@
     if ([alertView cancelButtonIndex] != buttonIndex) {
         NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@&mt=8", APP_ID]];
         [[UIApplication sharedApplication] openURL:ratingURL];
-        [FlurryAnalytics logEvent:FY_RATED];
+        [Flurry logEvent:FY_RATED];
     }
     else {
-        [FlurryAnalytics logEvent:FY_DECLINED_TO_RATE];
+        [Flurry logEvent:FY_DECLINED_TO_RATE];
     }
 }
 

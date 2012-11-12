@@ -279,13 +279,13 @@ static NSArray *sAllAirlines_;
             NSString *code = [self airlineCode:airlineInfo];
             [[JustLandedSession sharedSession] addToRecentlyLookedUpAirlines:airlineInfo];
             [self.delegate didChooseAirlineCode:code];
-            [FlurryAnalytics logEvent:FY_CHOSE_AIRLINE];
+            [Flurry logEvent:FY_CHOSE_AIRLINE];
         }
         else {
             [[JustLandedSession sharedSession] clearRecentlyLookedUpAirlines];
             self.airlines_ = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
             [self.resultsTable_ reloadData];
-            [FlurryAnalytics logEvent:FY_CLEARED_RECENT];
+            [Flurry logEvent:FY_CLEARED_RECENT];
         }
     }
 }

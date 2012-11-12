@@ -144,7 +144,7 @@
 
 
 - (void)moreInfo {
-    [FlurryAnalytics logEvent:FY_VISITED_OPS_FEED];
+    [Flurry logEvent:FY_VISITED_OPS_FEED];
     
     if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]]) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]];

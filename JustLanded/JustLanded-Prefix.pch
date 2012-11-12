@@ -48,7 +48,7 @@
     #import "JLLoadingView.h"
 
     // 3rd Party
-    #import "FlurryAnalytics.h"
+    #import "Flurry.h"
     #import "AFHTTPRequestOperation.h"
     #import "AFJSONRequestOperation.h"
 

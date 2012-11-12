@@ -219,7 +219,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     if (animateFlip) {
         [[JustLandedSession sharedSession] incrementTrackCount];
         
-        [FlurryAnalytics logEvent:FY_BEGAN_TRACKING_FLIGHT 
+        [Flurry logEvent:FY_BEGAN_TRACKING_FLIGHT 
                    withParameters:@{@"Minutes Before Landing": [NSString stringWithFormat:@"%d", [aFlight minutesBeforeLanding]]}];
         
     }
@@ -268,7 +268,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     UINavigationController *airlineLookupNavVC = [[UINavigationController alloc] initWithRootViewController:airlineLookupVC];
     airlineLookupNavVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self presentViewController:airlineLookupNavVC animated:YES completion:NULL];
-    [FlurryAnalytics logEvent:FY_BEGAN_AIRLINE_LOOKUP];
+    [Flurry logEvent:FY_BEGAN_AIRLINE_LOOKUP];
 }
 
 
@@ -286,7 +286,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
                      completion:^{
                          [aboutController revealContent];
                      }];
-    [FlurryAnalytics logEvent:FY_VISITED_ABOUT_SCREEN];
+    [Flurry logEvent:FY_VISITED_ABOUT_SCREEN];
 }
 
 
@@ -371,7 +371,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
             self.flightResultsTableFrame_.hidden = NO;
         }
     
-        [FlurryAnalytics logEvent:FY_LOOKED_UP_FLIGHT 
+        [Flurry logEvent:FY_LOOKED_UP_FLIGHT 
                    withParameters:@{@"Number Of Results": [NSString stringWithFormat:@"%d", [flights count]]}];
     }
 }
@@ -781,13 +781,13 @@ static NSRegularExpression *sAirlineCodeRegex_;
                     case LookupErrorFlightNotFound: {
                         title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
                         url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, FNF_ANCHOR]];
-                        [FlurryAnalytics logEvent:FY_READ_FAQ];
+                        [Flurry logEvent:FY_READ_FAQ];
                         break;
                     }
                     default: {
                         title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
                         url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", WEB_HOST, FAQ_PATH, HRS48_ANCHOR]];
-                        [FlurryAnalytics logEvent:FY_READ_FAQ];
+                        [Flurry logEvent:FY_READ_FAQ];
                         break;
                     }
                 }
@@ -802,7 +802,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
         case LookupErrorOutage: {
             if ([alertView cancelButtonIndex] == buttonIndex) {
                 // TODO: They want to see more info... (we're using cancel as more info)
-                [FlurryAnalytics logEvent:FY_VISITED_OPS_FEED];
+                [Flurry logEvent:FY_VISITED_OPS_FEED];
                 
                 if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]]) {
                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:NATIVE_TWITTER_JL_OPS]];
@@ -914,7 +914,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     // If the user stopped tracking, pre-fill the field with the flight they were tracking
     if (userFlag) {
         self.flightNumberField.text = aFlight.flightNumber;
-        [FlurryAnalytics logEvent:FY_STOPPED_TRACKING_FLIGHT 
+        [Flurry logEvent:FY_STOPPED_TRACKING_FLIGHT 
                    withParameters:@{@"Flight Landed": (aFlight.status == LANDED) ? @"YES" : @"NO"}];
     }
     else {
@@ -951,7 +951,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
 
 - (void)cancelledAirlineLookup {
     [self dismissViewControllerAnimated:YES completion:NULL];
-    [FlurryAnalytics logEvent:FY_CANCELED_AIRLINE_LOOKUP];
+    [Flurry logEvent:FY_CANCELED_AIRLINE_LOOKUP];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

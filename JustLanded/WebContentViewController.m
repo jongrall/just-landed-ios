@@ -77,7 +77,6 @@
     NSString *userAgent = [self.webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
     [client setDefaultHeader:@"User-Agent" value:userAgent];
     
-    operation.acceptableStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(200, 4)];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *theOperation, id responseObject) {
         [self performSelector:@selector(indicateStoppedLoading) withObject:nil afterDelay:1.0]; // Delay prevents white flash as webview loads content
         NSString *responseString = [theOperation responseString];

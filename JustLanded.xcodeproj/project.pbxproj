@@ -76,6 +76,8 @@
 		115E8F3B14F6C8CA00E9F06B /* OriginAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3A14F6C8CA00E9F06B /* OriginAirport.m */; };
 		115E8F3F14F6C8EE00E9F06B /* DestinationAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3E14F6C8EE00E9F06B /* DestinationAirport.m */; };
 		116686C5153CAB5800D4E773 /* JLMultipartLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 116686C4153CAB5800D4E773 /* JLMultipartLabel.m */; };
+		1169AFAA165091D700612AB3 /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1169AFA9165091D700612AB3 /* libFlurry.a */; };
+		1169AFAB1650989B00612AB3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A714EB5AD600F7ED46 /* MobileCoreServices.framework */; };
 		116BE697161A5200004207FD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE696161A5200004207FD /* Default-568h@2x.png */; };
 		116BE6A1161A5227004207FD /* overlay_screens_bg-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE699161A5227004207FD /* overlay_screens_bg-568h@2x.png */; };
 		116BE6A2161A5227004207FD /* sky_bg-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69A161A5227004207FD /* sky_bg-568h@2x.png */; };
@@ -100,8 +102,6 @@
 		116CB90E14EF4E9F003AB446 /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8F914EF4E9F003AB446 /* AFImageRequestOperation.m */; };
 		116CB90F14EF4E9F003AB446 /* AFJSONRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8FA14EF4E9F003AB446 /* AFJSONRequestOperation.h */; };
 		116CB91014EF4E9F003AB446 /* AFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8FB14EF4E9F003AB446 /* AFJSONRequestOperation.m */; };
-		116CB91114EF4E9F003AB446 /* AFJSONUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8FC14EF4E9F003AB446 /* AFJSONUtilities.h */; };
-		116CB91214EF4E9F003AB446 /* AFJSONUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8FD14EF4E9F003AB446 /* AFJSONUtilities.m */; };
 		116CB91314EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8FE14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h */; };
 		116CB91414EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8FF14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m */; };
 		116CB91514EF4E9F003AB446 /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB90014EF4E9F003AB446 /* AFNetworking.h */; };
@@ -128,7 +128,6 @@
 		117C48D114EB65530049452F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAB14DCCDDF006D1DB4 /* UIKit.framework */; };
 		117C48D414EB65760049452F /* libABTableViewCell.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C48C214EB64F60049452F /* libABTableViewCell.a */; };
 		117C48D714EB66140049452F /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 117C48D614EB66140049452F /* Constants.m */; };
-		117C48DB14EB68D10049452F /* libFlurryAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C48DA14EB68D10049452F /* libFlurryAnalytics.a */; };
 		117E0E1D1559B2A800ED5762 /* JLLoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E1C1559B2A800ED5762 /* JLLoadingView.m */; };
 		117E0E211559B7BA00ED5762 /* JLNoConnectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E201559B7BA00ED5762 /* JLNoConnectionView.m */; };
 		117E0E241559C28B00ED5762 /* JLServerErrorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E231559C28900ED5762 /* JLServerErrorView.m */; };
@@ -485,6 +484,8 @@
 		115E8F3E14F6C8EE00E9F06B /* DestinationAirport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationAirport.m; sourceTree = "<group>"; };
 		116686C3153CAB5500D4E773 /* JLMultipartLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLMultipartLabel.h; sourceTree = "<group>"; };
 		116686C4153CAB5800D4E773 /* JLMultipartLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLMultipartLabel.m; sourceTree = "<group>"; };
+		1169AFA8165091D700612AB3 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		1169AFA9165091D700612AB3 /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
 		116BE696161A5200004207FD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		116BE699161A5227004207FD /* overlay_screens_bg-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "overlay_screens_bg-568h@2x.png"; sourceTree = "<group>"; };
 		116BE69A161A5227004207FD /* sky_bg-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sky_bg-568h@2x.png"; sourceTree = "<group>"; };
@@ -509,8 +510,6 @@
 		116CB8F914EF4E9F003AB446 /* AFImageRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFImageRequestOperation.m; sourceTree = "<group>"; };
 		116CB8FA14EF4E9F003AB446 /* AFJSONRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFJSONRequestOperation.h; sourceTree = "<group>"; };
 		116CB8FB14EF4E9F003AB446 /* AFJSONRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFJSONRequestOperation.m; sourceTree = "<group>"; };
-		116CB8FC14EF4E9F003AB446 /* AFJSONUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFJSONUtilities.h; sourceTree = "<group>"; };
-		116CB8FD14EF4E9F003AB446 /* AFJSONUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFJSONUtilities.m; sourceTree = "<group>"; };
 		116CB8FE14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkActivityIndicatorManager.h; sourceTree = "<group>"; };
 		116CB8FF14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkActivityIndicatorManager.m; sourceTree = "<group>"; };
 		116CB90014EF4E9F003AB446 /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworking.h; sourceTree = "<group>"; };
@@ -541,8 +540,6 @@
 		117C48CE14EB652F0049452F /* ABTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ABTableViewCell.m; sourceTree = SOURCE_ROOT; };
 		117C48D514EB66140049452F /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		117C48D614EB66140049452F /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
-		117C48D914EB68D10049452F /* FlurryAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryAnalytics.h; sourceTree = "<group>"; };
-		117C48DA14EB68D10049452F /* libFlurryAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurryAnalytics.a; sourceTree = "<group>"; };
 		117E0E1B1559B2A800ED5762 /* JLLoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLLoadingView.h; sourceTree = "<group>"; };
 		117E0E1C1559B2A800ED5762 /* JLLoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLLoadingView.m; sourceTree = "<group>"; };
 		117E0E1F1559B7BA00ED5762 /* JLNoConnectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLNoConnectionView.h; sourceTree = "<group>"; };
@@ -810,6 +807,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1169AFAB1650989B00612AB3 /* MobileCoreServices.framework in Frameworks */,
 				116CB92114EF7ABE003AB446 /* SystemConfiguration.framework in Frameworks */,
 				116CB8E914EF4E67003AB446 /* Foundation.framework in Frameworks */,
 			);
@@ -845,8 +843,8 @@
 				11C5DFAC14DCCDDF006D1DB4 /* UIKit.framework in Frameworks */,
 				11C5DFAE14DCCDDF006D1DB4 /* Foundation.framework in Frameworks */,
 				11C5DFB014DCCDDF006D1DB4 /* CoreGraphics.framework in Frameworks */,
-				117C48DB14EB68D10049452F /* libFlurryAnalytics.a in Frameworks */,
 				117592F61602909E00CE4B6F /* HockeySDK.framework in Frameworks */,
+				1169AFAA165091D700612AB3 /* libFlurry.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -872,6 +870,15 @@
 			path = Reachability;
 			sourceTree = "<group>";
 		};
+		1169AFA7165091D700612AB3 /* Flurry */ = {
+			isa = PBXGroup;
+			children = (
+				1169AFA8165091D700612AB3 /* Flurry.h */,
+				1169AFA9165091D700612AB3 /* libFlurry.a */,
+			);
+			path = Flurry;
+			sourceTree = "<group>";
+		};
 		116CB8F314EF4E9F003AB446 /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
@@ -883,8 +890,6 @@
 				116CB8F914EF4E9F003AB446 /* AFImageRequestOperation.m */,
 				116CB8FA14EF4E9F003AB446 /* AFJSONRequestOperation.h */,
 				116CB8FB14EF4E9F003AB446 /* AFJSONRequestOperation.m */,
-				116CB8FC14EF4E9F003AB446 /* AFJSONUtilities.h */,
-				116CB8FD14EF4E9F003AB446 /* AFJSONUtilities.m */,
 				116CB8FE14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h */,
 				116CB8FF14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m */,
 				116CB90014EF4E9F003AB446 /* AFNetworking.h */,
@@ -916,15 +921,6 @@
 				117C48CE14EB652F0049452F /* ABTableViewCell.m */,
 			);
 			path = ABTableViewCell;
-			sourceTree = "<group>";
-		};
-		117C48D814EB68D10049452F /* FlurryAnalytics */ = {
-			isa = PBXGroup;
-			children = (
-				117C48D914EB68D10049452F /* FlurryAnalytics.h */,
-				117C48DA14EB68D10049452F /* libFlurryAnalytics.a */,
-			);
-			path = FlurryAnalytics;
 			sourceTree = "<group>";
 		};
 		119EA1FF1538E33800BBFD5E /* Presentation */ = {
@@ -1135,7 +1131,7 @@
 			children = (
 				117C48C414EB64F60049452F /* ABTableViewCell */,
 				116CB8F314EF4E9F003AB446 /* AFNetworking */,
-				117C48D814EB68D10049452F /* FlurryAnalytics */,
+				1169AFA7165091D700612AB3 /* Flurry */,
 				11C5DFAA14DCCDDF006D1DB4 /* Frameworks */,
 				117592F31602907F00CE4B6F /* Hockey */,
 				11C5DFB114DCCDDF006D1DB4 /* JustLanded */,
@@ -1485,7 +1481,6 @@
 				116CB90B14EF4E9F003AB446 /* AFHTTPRequestOperation.h in Headers */,
 				116CB90D14EF4E9F003AB446 /* AFImageRequestOperation.h in Headers */,
 				116CB90F14EF4E9F003AB446 /* AFJSONRequestOperation.h in Headers */,
-				116CB91114EF4E9F003AB446 /* AFJSONUtilities.h in Headers */,
 				116CB91314EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h in Headers */,
 				116CB91514EF4E9F003AB446 /* AFNetworking.h in Headers */,
 				116CB91614EF4E9F003AB446 /* AFPropertyListRequestOperation.h in Headers */,
@@ -1919,7 +1914,6 @@
 				116CB90C14EF4E9F003AB446 /* AFHTTPRequestOperation.m in Sources */,
 				116CB90E14EF4E9F003AB446 /* AFImageRequestOperation.m in Sources */,
 				116CB91014EF4E9F003AB446 /* AFJSONRequestOperation.m in Sources */,
-				116CB91214EF4E9F003AB446 /* AFJSONUtilities.m in Sources */,
 				116CB91414EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				116CB91714EF4E9F003AB446 /* AFPropertyListRequestOperation.m in Sources */,
 				116CB91914EF4E9F003AB446 /* AFURLConnectionOperation.m in Sources */,
@@ -2135,7 +2129,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
-				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -2149,6 +2142,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Flurry\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2179,7 +2173,6 @@
 		115E8F4E14F74EED00E9F06B /* Adhoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
 				DSTROOT = /tmp/ABTableViewCell.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ABTableViewCell/ABTableViewCell-Prefix.pch";
@@ -2192,8 +2185,9 @@
 		115E8F4F14F74EED00E9F06B /* Adhoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				DSTROOT = /tmp/AFNetworking.dst;
+				GCC_WARN_STRICT_SELECTOR_MATCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2203,8 +2197,9 @@
 		116CB8F114EF4E67003AB446 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				DSTROOT = /tmp/AFNetworking.dst;
+				GCC_WARN_STRICT_SELECTOR_MATCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2214,8 +2209,9 @@
 		116CB8F214EF4E67003AB446 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				DSTROOT = /tmp/AFNetworking.dst;
+				GCC_WARN_STRICT_SELECTOR_MATCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2225,7 +2221,6 @@
 		117C48CB14EB64F60049452F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
 				DSTROOT = /tmp/ABTableViewCell.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ABTableViewCell/ABTableViewCell-Prefix.pch";
@@ -2238,7 +2233,6 @@
 		117C48CC14EB64F60049452F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
 				DSTROOT = /tmp/ABTableViewCell.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ABTableViewCell/ABTableViewCell-Prefix.pch";
@@ -2349,7 +2343,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
-				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -2363,6 +2356,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Flurry\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2377,7 +2371,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
-				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -2391,6 +2384,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Flurry\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",

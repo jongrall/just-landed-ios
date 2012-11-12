@@ -11,7 +11,7 @@
 #import "WebContentViewController.h"
 #import "JustLandedSession.h"
 #import "Flight.h"
-#import "FlurryAnalytics.h"
+#import "Flurry.h"
 #import "AppDelegate.h"
 #import "JLMessageComposeViewController.h"
 #import <CoreLocation/CoreLocation.h>
@@ -964,7 +964,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                                                       otherButtonTitles:NSLocalizedString(@"Send Text", @"Yes"), nil];
                 alert.tag = TextUponArrivalAlertTag;
                 [alert show];
-                [FlurryAnalytics logEvent:FY_PROMPTED_TO_SEND_ARRIVAL_SMS];
+                [Flurry logEvent:FY_PROMPTED_TO_SEND_ARRIVAL_SMS];
                 
                 // Clear local notifications so they can't respond to prompt to pick somene up again
                 [[UIApplication sharedApplication] cancelAllLocalNotifications];
@@ -989,7 +989,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             textNotification.userInfo = @{LocalNotificationTypeKey: @(JLLocalNotificationTypeTextOnArrival)};
             [[UIApplication sharedApplication] presentLocalNotificationNow:textNotification];
             self.hasBeenNotifiedToText_ = YES;
-            [FlurryAnalytics logEvent:FY_NOTIFIED_TO_SEND_ARRIVAL_SMS];
+            [Flurry logEvent:FY_NOTIFIED_TO_SEND_ARRIVAL_SMS];
         }
     }
     
@@ -1095,7 +1095,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         [self.trackedFlight_ trackWithLocation:newLocation pushToken:appDelegate.pushToken];
         
         // Update Flurry's location for this user
-        [FlurryAnalytics setLatitude:newLocation.coordinate.latitude
+        [Flurry setLatitude:newLocation.coordinate.latitude
                            longitude:newLocation.coordinate.longitude
                   horizontalAccuracy:newLocation.horizontalAccuracy
                     verticalAccuracy:newLocation.verticalAccuracy];
@@ -1113,7 +1113,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     switch ([error code]) {
         case kCLErrorLocationUnknown: {
             // Indicate that we don't have location even though we were supposed to be able to use it
-            [FlurryAnalytics logEvent:FY_UNABLE_TO_GET_LOCATION];
+            [Flurry logEvent:FY_UNABLE_TO_GET_LOCATION];
             break;
         }
         default:
@@ -1170,7 +1170,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapURL]];
     }
     
-    [FlurryAnalytics logEvent:FY_GOT_DIRECTIONS];
+    [Flurry logEvent:FY_GOT_DIRECTIONS];
 }
 
 
@@ -1246,7 +1246,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             [self composeTextOnAirportArrival];
         }
         else {
-            [FlurryAnalytics logEvent:FY_IGNORED_ARRIVAL_SMS_PROMPT];
+            [Flurry logEvent:FY_IGNORED_ARRIVAL_SMS_PROMPT];
         }
     }
     else {
@@ -1302,7 +1302,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webContentVC];
             navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             [self presentViewController:navController animated:YES completion:^{
-                [FlurryAnalytics logEvent:FY_READ_FAQ];
+                [Flurry logEvent:FY_READ_FAQ];
             }];
         }
     }
@@ -1357,7 +1357,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     [self presentViewController:smsComposer animated:YES completion:NULL];
     // Hack to fix MFMMessageCompose changing status bar type
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-    [FlurryAnalytics logEvent:FY_STARTED_SENDING_ARRIVED_SMS];
+    [Flurry logEvent:FY_STARTED_SENDING_ARRIVED_SMS];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1366,10 +1366,10 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
     if (result == MessageComposeResultSent) {
-        [FlurryAnalytics logEvent:FY_SENT_ARRIVED_SMS];
+        [Flurry logEvent:FY_SENT_ARRIVED_SMS];
     }
     else if (result == MessageComposeResultCancelled) {
-        [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_ARRIVED_SMS];
+        [Flurry logEvent:FY_ABANDONED_SENDING_ARRIVED_SMS];
     }
     
     [self dismissViewControllerAnimated:YES completion:NULL];
