@@ -119,9 +119,6 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 - (void)showMap;
 - (void)showWarning;
 
-// Bg task cleanup
-- (void)finishWakeupTrackTask;
-
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -877,18 +874,11 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 }
 
 - (void)stopTrackingUserInitiated:(BOOL)userInitiated {
-    [self.updateTimer_ invalidate];
-    [self.alternatingLabelTimer_ invalidate];
-    [self.locationManager_ stopUpdatingLocation];
-
     // Stop monitoring for movement
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate stopMonitoringMovement];
     
-    [self.flightProgressView_ stopAnimating];
     [self.delegate didFinishTrackingFlight:self.trackedFlight_ userInitiated:userInitiated];
-    self.delegate = nil;
-    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 
@@ -1015,7 +1005,10 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     }
     
     // End app delegate bg task if one was in progress
-    [self finishWakeupTrackTask];
+    if (appDelegate.wakeupTrackTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:appDelegate.wakeupTrackTask];
+        appDelegate.wakeupTrackTask = UIBackgroundTaskInvalid;
+    }
 }
 
 
@@ -1070,7 +1063,11 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     }
     
     // End app delegate bg task if one was in progress
-    [self finishWakeupTrackTask];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (appDelegate.wakeupTrackTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:appDelegate.wakeupTrackTask];
+        appDelegate.wakeupTrackTask = UIBackgroundTaskInvalid;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1376,20 +1373,12 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark - Background Task Cleanup
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (void)finishWakeupTrackTask {
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    if (appDelegate.wakeupTrackTask != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:appDelegate.wakeupTrackTask];
-        appDelegate.wakeupTrackTask = UIBackgroundTaskInvalid;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Memory Management
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)viewWillUnload {
+    [self.flightProgressView_ stopAnimating];
+}
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
