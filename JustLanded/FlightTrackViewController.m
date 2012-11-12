@@ -874,6 +874,11 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 }
 
 - (void)stopTrackingUserInitiated:(BOOL)userInitiated {
+    // Must invalidate the timers or they will retain self, preventing dealloc
+    [self.updateTimer_ invalidate];
+    [self.alternatingLabelTimer_ invalidate];
+    [self.flightProgressView_ stopAnimating];
+    
     // Stop monitoring for movement
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate stopMonitoringMovement];
@@ -1376,14 +1381,8 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 #pragma mark - Memory Management
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)viewWillUnload {
-    [self.flightProgressView_ stopAnimating];
-}
-
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [updateTimer_ invalidate];
-    [alternatingLabelTimer_ invalidate];
     [locationManager_ stopUpdatingLocation];
     locationManager_.delegate = nil;
     noConnectionOverlay_.delegate = nil;

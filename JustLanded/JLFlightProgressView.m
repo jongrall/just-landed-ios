@@ -298,8 +298,9 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
 }
 
 
-- (void)dealloc {
-    [animationTimer_ invalidate];
+- (void)removeFromSuperview {
+    [self.animationTimer_ invalidate]; // Stop the timer, to avoid retain timer retaining us if dev forgot to stop animating
+    [super removeFromSuperview];
 }
 
 @end

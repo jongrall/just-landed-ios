@@ -933,7 +933,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     [[JustLandedSession sharedSession] removeTrackedFlight:aFlight];
     [aFlight stopTracking];
     [self.flightNumberField becomeFirstResponder];
-    [self dismissViewControllerAnimated:YES completion:NULL];
+    [self dismissViewControllerAnimated:userFlag completion:NULL]; // Animate if user-initiated
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

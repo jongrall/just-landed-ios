@@ -180,8 +180,9 @@ const CGFloat LAYER4_SPEED = 5.0f;
 }
 
 
-- (void)dealloc {
-    [animationTimer_ invalidate];
+- (void)removeFromSuperview {
+    [self.animationTimer_ invalidate]; // Stop the timer in case the dev forgot to, otherwise retained
+    [super removeFromSuperview];
 }
 
 @end
