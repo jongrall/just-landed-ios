@@ -386,7 +386,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     switch (errorType) {
         case LookupErrorInvalidFlightNumber: {
             alertTitle = NSLocalizedString(@"Invalid Flight Number", @"Invalid Flight Number");
-            alertMessage = NSLocalizedString(@"Flight numbers are made up of an airline code and a number e.g.UA72. Don't know the airline code? We can look it up for you!",
+            alertMessage = NSLocalizedString(@"Flight numbers are made up of an airline code and a number e.g. UA72. Don't know the airline code? We can look it up for you!",
                                              @"Airline Code Explanation");
             otherButtonTitle = NSLocalizedString(@"Lookup Airline Code", @"Lookup Airline Code");
             break;
@@ -421,7 +421,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
         }
         case LookupErrorFlightNumberMissingAirlineCode: {
             alertTitle = NSLocalizedString(@"Missing Airline Code", @"Missing Airline Code");
-            alertMessage = NSLocalizedString(@"Flight numbers are made up of an airline code and a number e.g.UA72. Don't know the airline code? We can look it up for you!",
+            alertMessage = NSLocalizedString(@"Flight numbers are made up of an airline code and a number e.g. UA72. Don't know the airline code? We can look it up for you!",
                                              @"Airline Code Explanation");
             otherButtonTitle = NSLocalizedString(@"Lookup Airline Code", @"Lookup Airline Code");
             break;
