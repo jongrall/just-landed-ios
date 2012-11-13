@@ -70,33 +70,33 @@ static NSArray *sAircraftTypes_;
 
 + (void)initialize {
 	if (self == [Flight class]) {
-        sStatuses_ = [[NSArray alloc] initWithObjects:@"SCHEDULED",
+        sStatuses_ = @[@"SCHEDULED",
                      @"ON_TIME",
                      @"DELAYED",
                      @"CANCELED",
                      @"DIVERTED",
                      @"LANDED",
                      @"EARLY",
-                     @"UNKNOWN", nil];
-        sPushTypes_ = [[NSArray alloc] initWithObjects:@"FILED",
+                     @"UNKNOWN"];
+        sPushTypes_ = @[@"FILED",
                       @"DIVERTED",
                       @"CANCELED",
                       @"DEPARTED",
                       @"ARRIVED",
                       @"CHANGED", 
                       @"LEAVE_SOON",
-                      @"LEAVE_NOW", nil];
-        sAircraftTypes_ = [[NSArray alloc] initWithObjects:@"JET2",
+                      @"LEAVE_NOW"];
+        sAircraftTypes_ = @[@"JET2",
                       @"JET2REAR",
                       @"JET4",
                       @"PROP2",
-                      @"PROP4", nil];
+                      @"PROP4"];
 	}
 }
 
 
 + (NSString *)aircraftTypeToString:(AircraftType)anAircraftType {
-    return [sAircraftTypes_ objectAtIndex:anAircraftType];
+    return sAircraftTypes_[anAircraftType];
 }
 
 
@@ -199,11 +199,11 @@ static NSArray *sAircraftTypes_;
                             [listOfFlights addObject:[[Flight alloc] initWithFlightInfo:info]];
                         }
                         
-                        flights = [NSDictionary dictionaryWithObjectsAndKeys:listOfFlights, @"flights", nil];
+                        flights = @{@"flights": listOfFlights};
                     }
                     @catch (NSException *exception) {
                         [self failToLookupWithReason:LookupFailureError];
-                        [FlurryAnalytics logEvent:FY_BAD_DATA];
+                        [Flurry logEvent:FY_BAD_DATA];
                         return;
                     }
                     
@@ -221,7 +221,7 @@ static NSArray *sAircraftTypes_;
                         case 400: {
                             // Invalid flight number
                             [self failToLookupWithReason:LookupFailureInvalidFlightNumber];
-                            [FlurryAnalytics logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
+                            [Flurry logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
                             break;
                         }
                         case 404: {
@@ -242,24 +242,24 @@ static NSArray *sAircraftTypes_;
                             
                             if (noCurrentFlight) {
                                 [self failToLookupWithReason:LookupFailureNoCurrentFlight];
-                                [FlurryAnalytics logEvent:FY_CURRENT_FLIGHT_NOT_FOUND_ERROR];
+                                [Flurry logEvent:FY_CURRENT_FLIGHT_NOT_FOUND_ERROR];
                             }
                             else {
                                 [self failToLookupWithReason:LookupFailureFlightNotFound];
-                                [FlurryAnalytics logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
+                                [Flurry logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
                             }
                             break;
                         }
                         case 503: {
                             //Outage
                             [self failToLookupWithReason:LookupFailureOutage];
-                            [FlurryAnalytics logEvent:FY_OUTAGE];
+                            [Flurry logEvent:FY_OUTAGE];
                             break;
                         }
                         default: {
                             // 500 errors etc.
                             [self failToLookupWithReason:LookupFailureError];
-                            [FlurryAnalytics logEvent:FY_SERVER_500];
+                            [Flurry logEvent:FY_SERVER_500];
                             break;
                         }
                     }
@@ -269,12 +269,12 @@ static NSArray *sAircraftTypes_;
                     if ([[JustLandedSession sharedSession] isJustLandedReachable]) {
                         // JL is reachable, there must be a server outage
                         [self failToLookupWithReason:LookupFailureOutage];
-                        [FlurryAnalytics logEvent:FY_OUTAGE];
+                        [Flurry logEvent:FY_OUTAGE];
                     }
                     else {
                         // JL is not reachable, they have no connection
                         [self failToLookupWithReason:LookupFailureNoConnection];
-                        [FlurryAnalytics logEvent:FY_NO_CONNECTION_ERROR];
+                        [Flurry logEvent:FY_NO_CONNECTION_ERROR];
                     }
                 }
             }];
@@ -282,8 +282,7 @@ static NSArray *sAircraftTypes_;
 
 
 + (void)failToLookupWithReason:(FlightLookupFailedReason)aFailureReason {
-    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:aFailureReason] 
-                                                           forKey:FlightLookupFailedReasonKey];
+    NSDictionary *reasonDict = @{FlightLookupFailedReasonKey: [NSNumber numberWithInt:aFailureReason]};
     
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:FlightLookupFailedNotification 
                                                                     object:nil 
@@ -322,7 +321,7 @@ static NSArray *sAircraftTypes_;
                     @catch (NSException *exception) {
                         // Problem updating the data
                         [self failToTrackWithReason:TrackFailureError];
-                        [FlurryAnalytics logEvent:FY_BAD_DATA];
+                        [Flurry logEvent:FY_BAD_DATA];
                         
                         // Restore the old data
                         [self updateWithFlightInfo:prevData];
@@ -341,31 +340,31 @@ static NSArray *sAircraftTypes_;
                         case 400: {
                             // Invalid flight number
                             [self failToTrackWithReason:TrackFailureInvalidFlightNumber];
-                            [FlurryAnalytics logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
+                            [Flurry logEvent:FY_INVALID_FLIGHT_NUM_ERROR];
                             break;
                         }
                         case 404: {
                             // Flight not found
                             [self failToTrackWithReason:TrackFailureFlightNotFound];
-                            [FlurryAnalytics logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
+                            [Flurry logEvent:FY_FLIGHT_NOT_FOUND_ERROR];
                             break;
                         }
                         case 410: {
                             // Old flight
                             [self failToTrackWithReason:TrackFailureOldFlight];
-                            [FlurryAnalytics logEvent:FY_OLD_FLIGHT_ERROR];
+                            [Flurry logEvent:FY_OLD_FLIGHT_ERROR];
                             break;
                         }
                         case 503: {
                             // Outage
                             [self failToTrackWithReason:TrackFailureOutage];
-                            [FlurryAnalytics logEvent:FY_OUTAGE];
+                            [Flurry logEvent:FY_OUTAGE];
                             break;
                         }
                         default: {
                             // 500 errors etc.
                             [self failToTrackWithReason:TrackFailureError];
-                            [FlurryAnalytics logEvent:FY_SERVER_500];
+                            [Flurry logEvent:FY_SERVER_500];
                             break;
                         }
                     }
@@ -375,12 +374,12 @@ static NSArray *sAircraftTypes_;
                     if ([[JustLandedSession sharedSession] isJustLandedReachable]) {
                         // JL is reachable, there must be a server outage
                         [self failToTrackWithReason:TrackFailureOutage];
-                        [FlurryAnalytics logEvent:FY_OUTAGE];
+                        [Flurry logEvent:FY_OUTAGE];
                     }
                     else {
                         // JL is not reachable, they have no connection
                         [self failToTrackWithReason:TrackFailureNoConnection];
-                        [FlurryAnalytics logEvent:FY_NO_CONNECTION_ERROR];
+                        [Flurry logEvent:FY_NO_CONNECTION_ERROR];
                     }
                 }
             }];
@@ -388,8 +387,7 @@ static NSArray *sAircraftTypes_;
 
 
 - (void)failToTrackWithReason:(FlightTrackFailedReason)aFailureReason {
-    NSDictionary *reasonDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:aFailureReason] 
-                                                           forKey:FlightTrackFailedReasonKey];
+    NSDictionary *reasonDict = @{FlightTrackFailedReasonKey: [NSNumber numberWithInt:aFailureReason]};
     
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:FlightTrackFailedNotification 
                                                                     object:self 
@@ -541,25 +539,24 @@ static NSArray *sAircraftTypes_;
 
 
 - (NSDictionary *)flightData {
-    return [[NSDictionary alloc] initWithObjectsAndKeys:
-            self.flightID ? self.flightID : [NSNull null], @"flightID",
-            self.flightNumber ? self.flightNumber : [NSNull null], @"flightNumber",
-            [sAircraftTypes_ objectAtIndex:self.aircraftType], @"aircraftType",
+    return @{@"flightID": self.flightID ? self.flightID : [NSNull null],
+            @"flightNumber": self.flightNumber ? self.flightNumber : [NSNull null],
+            @"aircraftType": sAircraftTypes_[self.aircraftType],
             
-            self.actualArrivalTime ? [self.actualArrivalTime description] : [NSNull null], @"actualArrivalTime",
-            self.actualDepartureTime ? [self.actualDepartureTime description] : [NSNull null], @"actualDepartureTime",
-            self.estimatedArrivalTime ? [self.estimatedArrivalTime description] : [NSNull null], @"estimatedArrivalTime",
-            self.scheduledDepartureTime ? [self.scheduledDepartureTime description] : [NSNull null], @"scheduledDepartureTime",
-            self.lastUpdated ? [self.lastUpdated description] : [NSNull null], @"lastUpdated",
-            self.leaveForAirportTime ? [self.leaveForAirportTime description] : [NSNull null], @"leaveForAirportTime",
-            self.drivingTime >= 0.0 ? [NSNumber numberWithDouble:self.drivingTime] : [NSNull null], @"drivingTime",
-            [NSNumber numberWithDouble:self.scheduledFlightDuration], @"scheduledFlightDuration",
+            @"actualArrivalTime": self.actualArrivalTime ? [self.actualArrivalTime description] : [NSNull null],
+            @"actualDepartureTime": self.actualDepartureTime ? [self.actualDepartureTime description] : [NSNull null],
+            @"estimatedArrivalTime": self.estimatedArrivalTime ? [self.estimatedArrivalTime description] : [NSNull null],
+            @"scheduledDepartureTime": self.scheduledDepartureTime ? [self.scheduledDepartureTime description] : [NSNull null],
+            @"lastUpdated": self.lastUpdated ? [self.lastUpdated description] : [NSNull null],
+            @"leaveForAirportTime": self.leaveForAirportTime ? [self.leaveForAirportTime description] : [NSNull null],
+            @"drivingTime": self.drivingTime >= 0.0 ? @(self.drivingTime) : [NSNull null],
+            @"scheduledFlightDuration": @(self.scheduledFlightDuration),
             
-            self.origin ? [self.origin toJSONFriendlyDict] : [NSNull null], @"origin",
-            self.destination ? [self.destination toJSONFriendlyDict] : [NSNull null], @"destination",
+            @"origin": self.origin ? [self.origin toJSONFriendlyDict] : [NSNull null],
+            @"destination": self.destination ? [self.destination toJSONFriendlyDict] : [NSNull null],
             
-            [sStatuses_ objectAtIndex:self.status], @"status",
-            self.detailedStatus ? self.detailedStatus : [NSNull null], @"detailedStatus", nil];
+            @"status": sStatuses_[self.status],
+            @"detailedStatus": self.detailedStatus ? self.detailedStatus : [NSNull null]};
 }
 
 

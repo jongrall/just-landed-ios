@@ -50,9 +50,9 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     #endif
     
     // Configure Flurry
-    [FlurryAnalytics startSession:FLURRY_APPLICATION_KEY];
-    [FlurryAnalytics setSessionReportsOnPauseEnabled:YES];
-    [FlurryAnalytics setSecureTransportEnabled:YES];
+    [Flurry startSession:FLURRY_APPLICATION_KEY];
+    [Flurry setSessionReportsOnPauseEnabled:YES];
+    [Flurry setSecureTransportEnabled:YES];
         
     // Create the app delegate's location manager
     self.locationManager_ = [[CLLocationManager alloc] init];
@@ -76,13 +76,13 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
     // The app was launched because of a location change event, and they are tracking flights start a BG task to give it more time to finish
-    if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey] && isTrackingFlights) {        
+    if (launchOptions[UIApplicationLaunchOptionsLocationKey] && isTrackingFlights) {        
         [self beginWakeupTask];
     }
     // The app was launched because of a local notification
-    else if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey]) {
-        UILocalNotification *notification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
-        if (notification && [[[notification userInfo] objectForKey:LocalNotificationTypeKey] integerValue] == JLLocalNotificationTypeTextOnArrival) {
+    else if (launchOptions[UIApplicationLaunchOptionsLocalNotificationKey]) {
+        UILocalNotification *notification = launchOptions[UIApplicationLaunchOptionsLocalNotificationKey];
+        if (notification && [[notification userInfo][LocalNotificationTypeKey] integerValue] == JLLocalNotificationTypeTextOnArrival) {
             self.respondedToTextOnArrivalNotification = YES;
         }
     }
@@ -301,7 +301,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     self.triedToRegisterForRemoteNotifications = YES;
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidFailToUpdatePushTokenNotification object:application];
-    [FlurryAnalytics logEvent:FY_UNABLE_TO_REGISTER_PUSH];
+    [Flurry logEvent:FY_UNABLE_TO_REGISTER_PUSH];
     NSLog(@"Just Landed failed to register for remote notifications: %@", error);
 }
 

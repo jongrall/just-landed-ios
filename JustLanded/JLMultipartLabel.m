@@ -65,21 +65,21 @@
     CGRect remainingRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
     for (NSUInteger i = 0; i < [parts_ count]; i++) {
-        NSString *nextPart = [parts_ objectAtIndex:i];
+        NSString *nextPart = parts_[i];
         
         CGContextSaveGState(context);
         
         // Get the next offset, guard against programmer error
         CGSize nextOffset = CGSizeZero;
         if (offsets_) {
-            nextOffset = ([offsets_ count] > i) ? [[offsets_ objectAtIndex:i] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
+            nextOffset = ([offsets_ count] > i) ? [offsets_[i] CGSizeValue] : [[offsets_ lastObject] CGSizeValue];
         }
         
         LabelStyle *nextStyle;
         
         // Get the next style, guard against programmer error
         if (styles_) {
-            nextStyle = ([styles_ count] > i) ? [styles_ objectAtIndex:i] : [styles_ lastObject];
+            nextStyle = ([styles_ count] > i) ? styles_[i] : [styles_ lastObject];
         }
         else {
             break; // Unrecoverable, we need at least one text style

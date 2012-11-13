@@ -80,11 +80,15 @@ static NSArray *sAllAirlines_;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)loadView {
-    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f)];
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                0.0f,
+                                                                screenBounds.size.width,
+                                                                screenBounds.size.height - 64.0f)]; // Status bar + navbar
     mainView.backgroundColor = [UIColor whiteColor];
     self.view = mainView;
     
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 44.0f)];
+    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, screenBounds.size.width, 44.0f)];
     searchBar.placeholder = NSLocalizedString(@"Airline name e.g. 'Virgin'", @"Airline name prompt");
     searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
     searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -108,7 +112,10 @@ static NSArray *sAllAirlines_;
     self.searchBar_ = searchBar;
     [self.view addSubview:searchBar];
     
-    self.resultsTable_ = [[UITableView alloc] initWithFrame:CGRectMake(0.0f, 44.0f, 320.0f, self.view.frame.size.height - self.searchBar_.frame.size.height)
+    self.resultsTable_ = [[UITableView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                       44.0f,
+                                                                       screenBounds.size.width,
+                                                                       mainView.frame.size.height - searchBar.frame.size.height)
                                                       style:UITableViewStylePlain];
     self.resultsTable_.delegate = self;
     self.resultsTable_.dataSource = self;
@@ -118,7 +125,8 @@ static NSArray *sAllAirlines_;
 
     [self.view addSubview:self.resultsTable_];
     
-    self.noResultsLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLLookupStyles noAirlineResultsLabel] frame:AIRLINE_NO_RESULTS_LABEL_FRAME];
+    self.noResultsLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLLookupStyles noAirlineResultsLabel]
+                                                         frame:[JLLookupStyles airlineNoResultsLabelFrame]];
     self.noResultsLabel_.text = NSLocalizedString(@"No Matching Airlines :(", @"No Matching Airlines");
     [self.resultsTable_ addSubview:self.noResultsLabel_];
     self.noResultsLabel_.hidden = YES;
@@ -243,7 +251,7 @@ static NSArray *sAllAirlines_;
                                                  reuseIdentifier:@"AirlineResultCell"];
     }
     
-    id tableRowObj = [self.airlines_ objectAtIndex:indexPath.row];
+    id tableRowObj = (self.airlines_)[indexPath.row];
     
     if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
         NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
@@ -263,21 +271,21 @@ static NSArray *sAllAirlines_;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row < (NSInteger)[self.airlines_ count]) {
-        id tableRowObj = [self.airlines_ objectAtIndex:indexPath.row];
+        id tableRowObj = (self.airlines_)[indexPath.row];
         
         if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *airlineInfo = [self.airlines_ objectAtIndex:indexPath.row];
+            NSDictionary *airlineInfo = (self.airlines_)[indexPath.row];
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
             NSString *code = [self airlineCode:airlineInfo];
             [[JustLandedSession sharedSession] addToRecentlyLookedUpAirlines:airlineInfo];
             [self.delegate didChooseAirlineCode:code];
-            [FlurryAnalytics logEvent:FY_CHOSE_AIRLINE];
+            [Flurry logEvent:FY_CHOSE_AIRLINE];
         }
         else {
             [[JustLandedSession sharedSession] clearRecentlyLookedUpAirlines];
             self.airlines_ = [[JustLandedSession sharedSession] recentlyLookedUpAirlines];
             [self.resultsTable_ reloadData];
-            [FlurryAnalytics logEvent:FY_CLEARED_RECENT];
+            [Flurry logEvent:FY_CLEARED_RECENT];
         }
     }
 }
@@ -304,9 +312,11 @@ static NSArray *sAllAirlines_;
 - (void)keyboardWasShown:(NSNotification *)notification {
     // Adjust the results table height
     NSDictionary* info = [notification userInfo];
-    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    
-    self.resultsTable_.frame = CGRectMake(0.0f, 44.0f, 320.0f, self.view.frame.size.height - self.searchBar_.frame.size.height - kbSize.height);
+    CGSize kbSize = [info[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;    
+    self.resultsTable_.frame = CGRectMake(self.resultsTable_.frame.origin.x,
+                                          self.resultsTable_.frame.origin.y,
+                                          self.resultsTable_.frame.size.width,
+                                          self.view.frame.size.height - self.searchBar_.frame.size.height - kbSize.height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

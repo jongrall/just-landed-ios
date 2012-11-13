@@ -12,7 +12,7 @@
 @implementation NSDictionary (JLExtensions)
 
 - (id)objectForKeyOrNil:(id)key {
-	id obj = [self objectForKey:key];
+	id obj = self[key];
 	
 	//If the object being retrieved is an NSNull, just return nil
 	if ([obj isKindOfClass:[NSNull class]]) {

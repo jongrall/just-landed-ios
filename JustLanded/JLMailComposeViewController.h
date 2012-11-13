@@ -10,4 +10,6 @@
 
 @interface JLMailComposeViewController : MFMailComposeViewController
 
+- (void)setMFMailFieldAsFirstResponder;
+
 @end

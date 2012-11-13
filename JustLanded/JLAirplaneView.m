@@ -103,10 +103,11 @@
 }
 
 
-- (void)dealloc {
+- (void)removeFromSuperview {
+    // Stop the timers in case the dev forgot to stop animating, otherwise retained
     [animationStartTimer_ invalidate];
     [airplaneTimer_ invalidate];
+    [super removeFromSuperview];
 }
-
 
 @end

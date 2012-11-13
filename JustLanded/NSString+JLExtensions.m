@@ -10,6 +10,7 @@
 
 @implementation NSString (JLExtensions)
 
+
 - (NSString *)urlEncoded {
     NSString *encoded = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
                                                                           (__bridge CFStringRef)self,
@@ -17,6 +18,15 @@
                                                                           (CFStringRef) @"!*'();:@&=+$,/?%#[]",
                                                                           kCFStringEncodingUTF8));
     return encoded;
+}
+
+- (NSString *)imageName {
+    if ([self length] > 0) {
+        return [UIScreen isMainScreenWide] ? [NSString stringWithFormat:@"%@-568h", self] : self;
+    }
+    else {
+        return  nil;
+    }
 }
 
 @end

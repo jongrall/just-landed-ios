@@ -77,21 +77,16 @@
 		contentView = [[ABTableViewCellView alloc] initWithFrame:CGRectZero];
 		contentView.opaque = YES;
 		self.backgroundView = contentView;
-		[contentView release];
 		
 		selectedContentView = [[ABTableViewSelectedCellView alloc] initWithFrame:CGRectZero];
 		selectedContentView.opaque = YES;
 		self.selectedBackgroundView = selectedContentView;
-		[selectedContentView release];
 		
     }
 	
     return self;
 }
 
-- (void)dealloc {
-	[super dealloc];
-}
 
 - (void)setSelected:(BOOL)selected {
 	[selectedContentView setNeedsDisplay];

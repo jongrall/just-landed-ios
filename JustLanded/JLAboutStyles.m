@@ -10,15 +10,70 @@
 #import "TextStyle.h"
 #import "JLStyles.h"
 
-CGRect const ABOUT_TITLE_FRAME = {{20.0f, 18.0f}, {280.0f, 70.0f}};
-CGRect const TABLE_FRAME = {{7.0f, 67.0f}, {306.0f, 300.0f}};
-CGRect const COPYRIGHT_NOTICE_FRAME = {{20.0f, 429.0f}, {280.0f, 20.0f}};
-CGRect const CLOUD_LAYER_LOWER_FRAME = {{0.0f, 313.0f}, {320.0f, 125.0f}};
-CGRect const AIRPLANE_LOWER_FRAME = {{0.0f, 355.0f}, {320.0f, 24.0f}};
 NSTimeInterval const CLOUD_REVEAL_ANIMATION_DURATION = 0.45;
 NSTimeInterval const FADE_ANIMATION_DURATION = 0.15;
 
 @implementation JLAboutStyles
+
++ (CGRect)aboutTitleFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{20.0f, 38.0f}, {280.0f, 70.0f}};
+    }
+    else {
+        return (CGRect) {{20.0f, 18.0f}, {280.0f, 70.0f}};
+    }
+}
+
+
++ (CGRect)tableFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{7.0f, 87.0f}, {306.0f, 368.0f}};
+    }
+    else {
+        return (CGRect) {{7.0f, 67.0f}, {306.0f, 300.0f}};
+    }
+}
+
+
++ (CGRect)copyrightNoticeFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{20.0f, 517.0f}, {280.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{20.0f, 429.0f}, {280.0f, 20.0f}};
+    }
+}
+
+
++ (CGRect)cloudLayerLowerFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 401.0f}, {320.0f, 125.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 313.0f}, {320.0f, 125.0f}};
+    }
+}
+
+
++ (CGRect)cloudFooterLowerFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 526.0f}, {320.0f, 22.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 438.0f}, {320.0f, 22.0f}};
+    }
+}
+
+
++ (CGRect)airplaneLowerFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 375.0f}, {320.0f, 24.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 355.0f}, {320.0f, 24.0f}};
+    }
+}
+
 
 + (LabelStyle *)aboutTitleLabelStyle {
     static LabelStyle *sAboutTitleLabelStyle = nil;

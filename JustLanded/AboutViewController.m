@@ -34,10 +34,10 @@ typedef enum {
 @property (strong, nonatomic) JLButton *aboutButton_;
 @property (strong, nonatomic) JLLabel *aboutTitle_;
 @property (strong, nonatomic) UITableView *aboutTable_;
+@property (strong, nonatomic) UIImageView *cloudFooter_;
 @property (strong, nonatomic) JLLabel *copyrightLabel_;
 
 - (void)dismiss;
-- (BOOL)setMFMailFieldAsFirstResponder:(UIView *)view mfMailField:(NSString *)field;
 
 @end
 
@@ -55,37 +55,44 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)loadView {    
-    UIImageView *mainView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sky_bg"]];
-    mainView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 460.0f);
+    UIImageView *mainView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    mainView.image = [UIImage imageNamed:[@"sky_bg" imageName]];
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    mainView.frame = CGRectMake(0.0f,
+                                0.0f,
+                                screenBounds.size.width,
+                                screenBounds.size.height - 20.0f); // Status bar
     mainView.userInteractionEnabled = YES;
     self.view = mainView;
     
     // Add the about button
-    self.aboutButton_ = [[JLButton alloc] initWithButtonStyle:[JLAboutStyles aboutCloseButtonStyle] frame:ABOUT_BUTTON_FRAME]; // Frame matches lookup
+    self.aboutButton_ = [[JLButton alloc] initWithButtonStyle:[JLAboutStyles aboutCloseButtonStyle]
+                                                        frame:[JLLookupStyles aboutButtonFrame]]; // Frame matches lookup
     [self.aboutButton_ addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
     self.aboutButton_.enabled = NO;
     [self.view addSubview:self.aboutButton_];
     
     // Add the title
-    self.aboutTitle_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles aboutTitleLabelStyle] frame:ABOUT_TITLE_FRAME];
+    self.aboutTitle_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles aboutTitleLabelStyle]
+                                                     frame:[JLAboutStyles aboutTitleFrame]];
     self.aboutTitle_.text = NSLocalizedString(@"about", @"About Screen Title");
     self.aboutTitle_.hidden = YES; // Hidden at first
     [self.view addSubview:self.aboutTitle_];
     
     // Add the cloud layer
-    self.cloudLayer = [[JLCloudLayer alloc] initWithFrame:CLOUD_LAYER_FRAME]; // Frame matches lookup
+    self.cloudLayer = [[JLCloudLayer alloc] initWithFrame:[JLLookupStyles cloudLayerFrame]]; // Frame matches lookup
     self.cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     [self.view addSubview:self.cloudLayer];
     
     // Add the cloud foreground
-    UIImageView *cloudFooter = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
-                                                               resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
-    cloudFooter.frame = CLOUD_FOOTER_FRAME; // Frame matches lookup
-    cloudFooter.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:cloudFooter];
+    self.cloudFooter_ = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
+                                                            resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
+    self.cloudFooter_.frame = [JLLookupStyles cloudFooterFrame]; // Frame matches lookup
+    self.cloudFooter_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    [self.view addSubview:self.cloudFooter_];
     
     // Add the table
-    UITableView *table = [[UITableView alloc] initWithFrame:TABLE_FRAME 
+    UITableView *table = [[UITableView alloc] initWithFrame:[JLAboutStyles tableFrame]
                                                       style:UITableViewStylePlain];
     [table setBackgroundColor:[UIColor clearColor]];
     [table setDelegate:self];
@@ -98,7 +105,8 @@ typedef enum {
     [self.view addSubview:table];
     
     // Add the credits
-    self.copyrightLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle] frame:COPYRIGHT_NOTICE_FRAME];
+    self.copyrightLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle]
+                                                         frame:[JLAboutStyles copyrightNoticeFrame]];
     self.copyrightLabel_.text = [NSString stringWithFormat:NSLocalizedString(@"©2012 Little Details LLC. Just Landed %@", @"Copyright Notice"),
                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     self.copyrightLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
@@ -128,6 +136,7 @@ typedef enum {
     self.cloudLayer = nil;
     self.airplane = nil;
     self.aboutButton_ = nil;
+    self.cloudFooter_ = nil;
     self.aboutTitle_ = nil;
     self.aboutTable_ = nil;
     self.copyrightLabel_ = nil;
@@ -160,8 +169,9 @@ typedef enum {
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         self.cloudLayer.frame = CLOUD_LAYER_LOWER_FRAME;
-                         self.airplane.frame = AIRPLANE_LOWER_FRAME;
+                         self.cloudLayer.frame = [JLAboutStyles cloudLayerLowerFrame];
+                         self.cloudFooter_.frame = [JLAboutStyles cloudFooterLowerFrame];
+                         self.airplane.frame = [JLAboutStyles airplaneLowerFrame];
                      }
                      completion:^(BOOL finished) {
                          self.aboutTitle_.alpha = 0.0f;
@@ -218,8 +228,9 @@ typedef enum {
                                                delay:0.0
                                              options:UIViewAnimationOptionCurveEaseInOut
                                           animations:^{
-                                              self.cloudLayer.frame = CLOUD_LAYER_FRAME;
-                                              self.airplane.frame = AIRPLANE_FRAME;
+                                              self.cloudLayer.frame = [JLLookupStyles cloudLayerFrame];
+                                              self.cloudFooter_.frame = [JLLookupStyles cloudFooterFrame];
+                                              self.airplane.frame = [JLLookupStyles airplaneFrame];
                                           }
                                           completion:^(BOOL finishedAlso) {
                                               [[self.presentingViewController view] addSubview:self.airplane]; // Give the airplane back :)
@@ -237,22 +248,22 @@ typedef enum {
     NSMutableArray *tableRows = [[NSMutableArray alloc] init];
     
     if ([MFMailComposeViewController canSendMail]) {
-        [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFeedback]];
+        [tableRows addObject:@(AboutCellTagFeedback)];
     }
     
-    [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagFAQ]];
+    [tableRows addObject:@(AboutCellTagFAQ)];
     
     if ([MFMessageComposeViewController canSendText]) {
-        [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagSMS]];
+        [tableRows addObject:@(AboutCellTagSMS)];
     }
     if ([TWTweetComposeViewController canSendTweet]) {
-        [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTweet]];
+        [tableRows addObject:@(AboutCellTagTweet)];
     }
 
-    [tableRows addObject:[NSNumber numberWithInteger:AboutCellTagTerms]];
+    [tableRows addObject:@(AboutCellTagTerms)];
     
     if (row < [tableRows count]) {
-        return [[tableRows objectAtIndex:row] integerValue];
+        return [tableRows[row] integerValue];
     }
     else {
         return [[tableRows lastObject] integerValue]; // Should never happen
@@ -332,7 +343,7 @@ typedef enum {
     switch (tag) {
         case AboutCellTagFeedback: {
             JLMailComposeViewController *mailComposer = [[JLMailComposeViewController alloc] init];
-            [mailComposer setToRecipients:[NSArray arrayWithObject:@"feedback@getjustlanded.com"]];
+            [mailComposer setToRecipients:@[@"feedback@getjustlanded.com"]];
             [mailComposer setSubject:[NSString stringWithFormat:@"Feedback on JustLanded v%@",
                                       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
             [mailComposer setMailComposeDelegate:self];
@@ -340,40 +351,40 @@ typedef enum {
             [self presentViewController:mailComposer animated:YES completion:NULL];
             
             // WARN: Make the body first responder - this could get us rejected
-            [self setMFMailFieldAsFirstResponder:mailComposer.view mfMailField:@"MFComposeTextContentView"];
+            [mailComposer setMFMailFieldAsFirstResponder];
             
-            [FlurryAnalytics logEvent:FY_STARTED_SENDING_FEEDBACK];
+            [Flurry logEvent:FY_STARTED_SENDING_FEEDBACK];
             break;
         }
         case AboutCellTagSMS: {
             JLMessageComposeViewController *smsComposer = [[JLMessageComposeViewController alloc] init];
             [smsComposer setMessageComposeDelegate:self];
             
-            NSArray *possibleMessages = [NSArray arrayWithObjects:@"Check out the Just Landed iPhone app - it makes it easy to pick people up at the airport. http://bit.ly/QkAJfu",
+            NSArray *possibleMessages = @[@"Check out the Just Landed iPhone app - it makes it easy to pick people up at the airport. http://bit.ly/QkAJfu",
                                        @"No more waiting at airport arrivals with Just Landed for iPhone! http://bit.ly/SirUWY",
                                        @"I'm loving the Just Landed iPhone app. It tells you when to leave for the airport to pick someone up! http://bit.ly/NbLqkJ",
                                        @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/TkBoi2",
-                                       @"I've found an iPhone app called Just Landed that is great for tracking arriving flights! http://bit.ly/QkAYqH", nil];
+                                       @"I've found an iPhone app called Just Landed that is great for tracking arriving flights! http://bit.ly/QkAYqH"];
             NSUInteger randomIndex = arc4random() % [possibleMessages count];
-            [smsComposer setBody:[possibleMessages objectAtIndex:randomIndex]];
+            [smsComposer setBody:possibleMessages[randomIndex]];
             smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             [self presentViewController:smsComposer animated:YES completion:NULL];
             // Hack to fix MFMMessageCompose changing status bar type
             [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
-            [FlurryAnalytics logEvent:FY_STARTED_SENDING_SMS];
+            [Flurry logEvent:FY_STARTED_SENDING_SMS];
             break;
         }
         case AboutCellTagTweet: {
             TWTweetComposeViewController *tweetComposer = [[TWTweetComposeViewController alloc] init];
-            NSArray *possibleTweets = [NSArray arrayWithObjects:@"The @justlanded iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/PHaLQP",
+            NSArray *possibleTweets = @[@"The @justlanded iPhone app makes it easy to pick people up at the airport on time! http://bit.ly/PHaLQP",
                                        @"No more waiting at airport arrivals with @justlanded for iPhone! http://bit.ly/Q4A6mJ",
                                        @"The @justlanded iPhone app tells you when to leave for the airport to pick someone up! http://bit.ly/Ol9RsY",
                                        @"Problem solved: never be late to pick someone up at the airport again! http://bit.ly/TWHHpE",
-                                       @"The @justlanded iPhone app is great for tracking arriving flights. http://bit.ly/TksJw3", nil];
+                                       @"The @justlanded iPhone app is great for tracking arriving flights. http://bit.ly/TksJw3"];
             
             // Choose a random tweet for some variety
             NSUInteger randomIndex = arc4random() % [possibleTweets count];
-            [tweetComposer setInitialText:[possibleTweets objectAtIndex:randomIndex]];
+            [tweetComposer setInitialText:possibleTweets[randomIndex]];
             [tweetComposer setCompletionHandler:^(TWTweetComposeViewControllerResult result) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     // Always perform this on the main thread
@@ -384,17 +395,17 @@ typedef enum {
                                                               cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
                                                               otherButtonTitles:nil];
                         [alert show];
-                        [FlurryAnalytics logEvent:FY_POSTED_TWEET];
+                        [Flurry logEvent:FY_POSTED_TWEET];
                     }
                     else {
-                        [FlurryAnalytics logEvent:FY_ABANDONED_TWEETING];
+                        [Flurry logEvent:FY_ABANDONED_TWEETING];
                     }
                     
                     [self dismissViewControllerAnimated:NO completion:NULL];
                 });
             }];
             [self presentViewController:tweetComposer animated:YES completion:NULL];
-            [FlurryAnalytics logEvent:FY_STARTED_TWEETING];
+            [Flurry logEvent:FY_STARTED_TWEETING];
             break;
         }
         case AboutCellTagTerms: {
@@ -402,7 +413,7 @@ typedef enum {
                                                                                                  URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:TOS_PATH]]
                                                                                       showDoneButton:NO];
             [self.navigationController pushViewController:tosVC animated:YES];
-            [FlurryAnalytics logEvent:FY_READ_TERMS];
+            [Flurry logEvent:FY_READ_TERMS];
             break;
         }
         case AboutCellTagFAQ: {
@@ -410,7 +421,7 @@ typedef enum {
                                                                                                  URL:[NSURL URLWithString:[WEB_HOST stringByAppendingString:FAQ_PATH]]
                                                                                       showDoneButton:NO];
             [self.navigationController pushViewController:faqVC animated:YES];
-            [FlurryAnalytics logEvent:FY_READ_FAQ];
+            [Flurry logEvent:FY_READ_FAQ];
             break;
         }
         default: {
@@ -450,7 +461,6 @@ typedef enum {
 #pragma mark - MFMailComposeViewControllerDelegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 - (void)mailComposeController:(MFMailComposeViewController *)controller 
           didFinishWithResult:(MFMailComposeResult)result 
                         error:(NSError *)error {
@@ -461,39 +471,13 @@ typedef enum {
                                               cancelButtonTitle:NSLocalizedString(@"OK", @"OK") 
                                               otherButtonTitles:nil];
         [alert show];
-        [FlurryAnalytics logEvent:FY_SENT_FEEDBACK];
+        [Flurry logEvent:FY_SENT_FEEDBACK];
     }
     else if (result == MFMailComposeResultCancelled) {
-        [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_FEEDBACK];
+        [Flurry logEvent:FY_ABANDONED_SENDING_FEEDBACK];
     }
     
     [self dismissViewControllerAnimated:YES completion:NULL];
-}
-
-//Returns true if the ToAddress field was found any of the sub views and made first responder
-//passing in @"MFComposeSubjectView"     as the value for field makes the subject become first responder 
-//passing in @"MFComposeTextContentView" as the value for field makes the body become first responder 
-//passing in @"RecipientTextField"       as the value for field makes the to address field become first responder 
-- (BOOL)setMFMailFieldAsFirstResponder:(UIView *)view mfMailField:(NSString *)field {
-    for (UIView *subview in view.subviews) {
-        
-        NSString *className = [NSString stringWithFormat:@"%@", [subview class]];
-        if ([className isEqualToString:field]) {
-            //Found the sub view we need to set as first responder
-            [subview becomeFirstResponder];
-            return YES;
-        }
-        
-        if ([subview.subviews count] > 0) {
-            if ([self setMFMailFieldAsFirstResponder:subview mfMailField:field]){
-                //Field was found and made first responder in a subview
-                return YES;
-            }
-        }
-    }
-    
-    //field not found in this view.
-    return NO;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -508,10 +492,10 @@ typedef enum {
                                               cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
                                               otherButtonTitles:nil];
         [alert show];
-        [FlurryAnalytics logEvent:FY_SENT_SMS];
+        [Flurry logEvent:FY_SENT_SMS];
     }
     else if (result == MessageComposeResultCancelled) {
-        [FlurryAnalytics logEvent:FY_ABANDONED_SENDING_SMS];
+        [Flurry logEvent:FY_ABANDONED_SENDING_SMS];
     }
     
     [self dismissViewControllerAnimated:YES completion:NULL];

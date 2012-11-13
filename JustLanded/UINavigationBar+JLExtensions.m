@@ -21,12 +21,10 @@
                                                        forBarMetrics:UIBarMetricsDefault];
     
     TextStyle *navTitleStyle = [JLStyles navbarTitleStyle];
-    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                          navTitleStyle.font, UITextAttributeFont,
-                                                          navTitleStyle.color, UITextAttributeTextColor,
-                                                          navTitleStyle.shadowColor, UITextAttributeTextShadowColor,
-                                                          [NSValue valueWithCGSize:navTitleStyle.shadowOffset], UITextAttributeTextShadowOffset, 
-                                                          nil]];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: navTitleStyle.font,
+                                                          UITextAttributeTextColor: navTitleStyle.color,
+                                                          UITextAttributeTextShadowColor: navTitleStyle.shadowColor,
+                                                          UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:navTitleStyle.shadowOffset]}];
 }
 
 @end

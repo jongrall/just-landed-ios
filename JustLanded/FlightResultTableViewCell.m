@@ -11,8 +11,8 @@
 CGFloat const FlightResultTableViewCellWidth = 288.0f;
 CGFloat const FlightResultTableViewCellHeight = 60.0f;
 CGRect const toFromAirportRect_ = {{13.5f, 14.0f}, {FlightResultTableViewCellWidth - 27.0f, 30.0f}};
-CGRect const landingTimeRect_ = {{38.0f, 35.0f}, {FlightResultTableViewCellWidth - 51.5f - 60.0f, 30.0f}};
-CGRect const statusRect_ = {{38.0f + FlightResultTableViewCellWidth - 51.5f - 60.0f, 31.0f}, {60.0f, 30.0f}};
+CGRect const landingTimeRect_ = {{38.0f, 35.0f}, {FlightResultTableViewCellWidth - 51.5f - 60.0f, 20.0f}};
+CGRect const statusRect_ = {{38.0f + FlightResultTableViewCellWidth - 51.5f - 60.0f, 31.0f}, {60.0f, 20.0f}};
 CGSize const shadowOffset_ = {0.0f, -1.0f};
 CGPoint const flightIconOrigin_ = {13.5f, 34.0f};
 
@@ -237,7 +237,7 @@ static UIImage *sBottomBackgroundSelected_;
     // Draw the landing time text
     [landingTime_ drawInRect:landingTimeRect_
                     withFont:sLandingTimeFont_
-               lineBreakMode:UILineBreakModeTailTruncation
+               lineBreakMode:UILineBreakModeClip
                    alignment:UITextAlignmentLeft];
     
     // Draw the status text

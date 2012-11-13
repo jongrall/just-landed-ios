@@ -77,7 +77,6 @@
     NSString *userAgent = [self.webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
     [client setDefaultHeader:@"User-Agent" value:userAgent];
     
-    operation.acceptableStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(200, 4)];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *theOperation, id responseObject) {
         [self performSelector:@selector(indicateStoppedLoading) withObject:nil afterDelay:1.0]; // Delay prevents white flash as webview loads content
         NSString *responseString = [theOperation responseString];
@@ -87,17 +86,19 @@
                                      failure:^(AFHTTPRequestOperation *theOperation, NSError *failure) {
                                          [self indicateStoppedLoading];
                                          NSHTTPURLResponse *response = [theOperation response];
+                                         CGRect screenBounds = [[UIScreen mainScreen] bounds];
                                          
                                          if (!self.serverErrorOverlay_) {
                                              self.serverErrorOverlay_ = [[JLServerErrorView alloc] initWithFrame:CGRectMake(0.0f,
-                                                                                                                       0.0f,
-                                                                                                                       320.0f,
-                                                                                                                       460.0f) 
+                                                                                                                            0.0f,
+                                                                                                                            screenBounds.size.width,
+                                                                                                                            screenBounds.size.height - 20.0f) // Status bar
                                                                                                        errorType:ERROR_500];
+                                             // Move it under the navbar
                                              self.serverErrorOverlay_.frame = CGRectMake(0.0f,
-                                                                                         -44.0f,
-                                                                                         320.0f,
-                                                                                         460.0f);
+                                                                                         -44.0f, // Navbar height
+                                                                                         screenBounds.size.width,
+                                                                                         screenBounds.size.height - 20.0f); // Status bar
                                              self.serverErrorOverlay_.delegate = self;
                                          }
                                          
@@ -129,14 +130,16 @@
                                                  if (!self.noConnectionOverlay_) {
                                                      self.noConnectionOverlay_ = [[JLNoConnectionView alloc] initWithFrame:CGRectMake(0.0f,
                                                                                                                                       0.0f,
-                                                                                                                                      320.0f,
-                                                                                                                                      460.0f)];
+                                                                                                                                      screenBounds.size.width,
+                                                                                                                                      screenBounds.size.height - 20.0f)]; // Status bar
+                                                     // Move it under the navbar
                                                      self.noConnectionOverlay_.frame = CGRectMake(0.0f,
-                                                                                                  -44.0f,
-                                                                                                  320.0f,
-                                                                                                  460.0f);
+                                                                                                  -44.0f, // Navbar height
+                                                                                                  screenBounds.size.width,
+                                                                                                  screenBounds.size.height - 20.0f); // Status bar
+                                                     CGFloat noConnectionImageViewOriginY = [UIScreen isMainScreenWide] ? 110.0f : 70.0f;
                                                      self.noConnectionOverlay_.noConnectionImageView.frame = CGRectMake(self.noConnectionOverlay_.noConnectionImageView.frame.origin.x,
-                                                                                                                        70.0f,
+                                                                                                                        noConnectionImageViewOriginY,
                                                                                                                         self.noConnectionOverlay_.noConnectionImageView.frame.size.width,
                                                                                                                         self.noConnectionOverlay_.noConnectionImageView.frame.size.height);
                                                      self.noConnectionOverlay_.delegate = self;
@@ -159,14 +162,16 @@
     [self.webView setHidden:YES];
     
     if (!self.loadingOverlay_) {
+        CGRect screenBounds = [[UIScreen mainScreen] bounds];
         self.loadingOverlay_ = [[JLLoadingView alloc] initWithFrame:CGRectMake(0.0f,
                                                                                0.0f,
-                                                                               320.0f,
-                                                                               460.0f)];
+                                                                               screenBounds.size.width,
+                                                                               screenBounds.size.height - 20.0f)]; // Status bar
+        // Move it under the navbar
         self.loadingOverlay_.frame = CGRectMake(0.0f,
-                                                -44.0f,
-                                                320.0f,
-                                                460.0f);
+                                                -44.0f, // Navbar height
+                                                screenBounds.size.width,
+                                                screenBounds.size.height - 20.0f); // Status bar
     }
     
     [self.view addSubview:self.loadingOverlay_];
@@ -198,15 +203,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)loadView {
-    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f)];
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f,
+                                                                0.0f,
+                                                                screenBounds.size.width,
+                                                                screenBounds.size.height - 64.0f)]; // Status bar + navbar
     mainView.backgroundColor = [UIColor colorWithRed:231/255.0f green:228/255.0f blue:223.0f/255.0f alpha:1.0f];
     self.view = mainView;
     
     // Add a black BG
-    UIView *blackBG = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];
+    UIView *blackBG = [[UIView alloc] initWithFrame:CGRectMake(0.0f,
+                                                               200.0f,
+                                                               screenBounds.size.width,
+                                                               mainView.frame.size.height - 200.0f)];
     blackBG.backgroundColor = [UIColor blackColor];
     
-	self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f)];
+	self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, mainView.frame.size.width, mainView.frame.size.height)];
     self.webView.scrollView.alwaysBounceVertical = NO;
     self.webView.scrollView.alwaysBounceHorizontal = NO;
     self.webView.scrollView.bounces = NO;

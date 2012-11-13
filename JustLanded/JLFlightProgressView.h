@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "Flight.h"
 
-extern const CGSize FLIGHT_PROGRESS_VIEW_SIZE;
-
 @interface JLFlightProgressView : UIView
 
 @property (nonatomic) CGFloat progress;

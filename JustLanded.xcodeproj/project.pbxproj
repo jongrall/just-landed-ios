@@ -76,6 +76,23 @@
 		115E8F3B14F6C8CA00E9F06B /* OriginAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3A14F6C8CA00E9F06B /* OriginAirport.m */; };
 		115E8F3F14F6C8EE00E9F06B /* DestinationAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3E14F6C8EE00E9F06B /* DestinationAirport.m */; };
 		116686C5153CAB5800D4E773 /* JLMultipartLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 116686C4153CAB5800D4E773 /* JLMultipartLabel.m */; };
+		1169AFAA165091D700612AB3 /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1169AFA9165091D700612AB3 /* libFlurry.a */; };
+		1169AFAB1650989B00612AB3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A714EB5AD600F7ED46 /* MobileCoreServices.framework */; };
+		116BE697161A5200004207FD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE696161A5200004207FD /* Default-568h@2x.png */; };
+		116BE6A1161A5227004207FD /* overlay_screens_bg-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE699161A5227004207FD /* overlay_screens_bg-568h@2x.png */; };
+		116BE6A2161A5227004207FD /* sky_bg-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69A161A5227004207FD /* sky_bg-568h@2x.png */; };
+		116BE6A3161A5227004207FD /* tracking_footer_bg-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69B161A5227004207FD /* tracking_footer_bg-568h@2x.png */; };
+		116BE6A4161A5227004207FD /* tracking_header_bg_black-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69C161A5227004207FD /* tracking_header_bg_black-568h@2x.png */; };
+		116BE6A5161A5227004207FD /* tracking_header_bg_blue-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69D161A5227004207FD /* tracking_header_bg_blue-568h@2x.png */; };
+		116BE6A6161A5227004207FD /* tracking_header_bg_gray-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69E161A5227004207FD /* tracking_header_bg_gray-568h@2x.png */; };
+		116BE6A7161A5227004207FD /* tracking_header_bg_green-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE69F161A5227004207FD /* tracking_header_bg_green-568h@2x.png */; };
+		116BE6A8161A5227004207FD /* tracking_header_bg_red-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6A0161A5227004207FD /* tracking_header_bg_red-568h@2x.png */; };
+		116BE6CF161BD17C004207FD /* flight_on_ground_day-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6C9161BD17C004207FD /* flight_on_ground_day-568h@2x.png */; };
+		116BE6D0161BD17C004207FD /* flight_on_ground_night-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CA161BD17C004207FD /* flight_on_ground_night-568h@2x.png */; };
+		116BE6D1161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CB161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png */; };
+		116BE6D2161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CC161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png */; };
+		116BE6D3161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CD161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png */; };
+		116BE6D4161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE6CE161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png */; };
 		116CB8E914EF4E67003AB446 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAD14DCCDDF006D1DB4 /* Foundation.framework */; };
 		116CB90914EF4E9F003AB446 /* AFHTTPClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8F414EF4E9F003AB446 /* AFHTTPClient.h */; };
 		116CB90A14EF4E9F003AB446 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8F514EF4E9F003AB446 /* AFHTTPClient.m */; };
@@ -85,8 +102,6 @@
 		116CB90E14EF4E9F003AB446 /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8F914EF4E9F003AB446 /* AFImageRequestOperation.m */; };
 		116CB90F14EF4E9F003AB446 /* AFJSONRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8FA14EF4E9F003AB446 /* AFJSONRequestOperation.h */; };
 		116CB91014EF4E9F003AB446 /* AFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8FB14EF4E9F003AB446 /* AFJSONRequestOperation.m */; };
-		116CB91114EF4E9F003AB446 /* AFJSONUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8FC14EF4E9F003AB446 /* AFJSONUtilities.h */; };
-		116CB91214EF4E9F003AB446 /* AFJSONUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8FD14EF4E9F003AB446 /* AFJSONUtilities.m */; };
 		116CB91314EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB8FE14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h */; };
 		116CB91414EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 116CB8FF14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m */; };
 		116CB91514EF4E9F003AB446 /* AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 116CB90014EF4E9F003AB446 /* AFNetworking.h */; };
@@ -113,11 +128,11 @@
 		117C48D114EB65530049452F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11C5DFAB14DCCDDF006D1DB4 /* UIKit.framework */; };
 		117C48D414EB65760049452F /* libABTableViewCell.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C48C214EB64F60049452F /* libABTableViewCell.a */; };
 		117C48D714EB66140049452F /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 117C48D614EB66140049452F /* Constants.m */; };
-		117C48DB14EB68D10049452F /* libFlurryAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C48DA14EB68D10049452F /* libFlurryAnalytics.a */; };
 		117E0E1D1559B2A800ED5762 /* JLLoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E1C1559B2A800ED5762 /* JLLoadingView.m */; };
 		117E0E211559B7BA00ED5762 /* JLNoConnectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E201559B7BA00ED5762 /* JLNoConnectionView.m */; };
 		117E0E241559C28B00ED5762 /* JLServerErrorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E231559C28900ED5762 /* JLServerErrorView.m */; };
 		117E0E271559C8D600ED5762 /* JLSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 117E0E261559C8D400ED5762 /* JLSpinner.m */; };
+		1180826B1613E53C008275E0 /* UIScreen+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1180826A1613E53C008275E0 /* UIScreen+JLExtensions.m */; };
 		1190BF7A151925F200B1163F /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1190BF79151925F200B1163F /* AboutViewController.m */; };
 		1190CD24153A58E8005FA8E6 /* JLStyles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1190CD23153A58E8005FA8E6 /* JLStyles.m */; };
 		11963669158290350081AA63 /* tracking_footer_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1196364A158290350081AA63 /* tracking_footer_bg.png */; };
@@ -469,6 +484,23 @@
 		115E8F3E14F6C8EE00E9F06B /* DestinationAirport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationAirport.m; sourceTree = "<group>"; };
 		116686C3153CAB5500D4E773 /* JLMultipartLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLMultipartLabel.h; sourceTree = "<group>"; };
 		116686C4153CAB5800D4E773 /* JLMultipartLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLMultipartLabel.m; sourceTree = "<group>"; };
+		1169AFA8165091D700612AB3 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		1169AFA9165091D700612AB3 /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
+		116BE696161A5200004207FD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		116BE699161A5227004207FD /* overlay_screens_bg-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "overlay_screens_bg-568h@2x.png"; sourceTree = "<group>"; };
+		116BE69A161A5227004207FD /* sky_bg-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sky_bg-568h@2x.png"; sourceTree = "<group>"; };
+		116BE69B161A5227004207FD /* tracking_footer_bg-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_footer_bg-568h@2x.png"; sourceTree = "<group>"; };
+		116BE69C161A5227004207FD /* tracking_header_bg_black-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_header_bg_black-568h@2x.png"; sourceTree = "<group>"; };
+		116BE69D161A5227004207FD /* tracking_header_bg_blue-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_header_bg_blue-568h@2x.png"; sourceTree = "<group>"; };
+		116BE69E161A5227004207FD /* tracking_header_bg_gray-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_header_bg_gray-568h@2x.png"; sourceTree = "<group>"; };
+		116BE69F161A5227004207FD /* tracking_header_bg_green-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_header_bg_green-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6A0161A5227004207FD /* tracking_header_bg_red-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_header_bg_red-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6C9161BD17C004207FD /* flight_on_ground_day-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flight_on_ground_day-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CA161BD17C004207FD /* flight_on_ground_night-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flight_on_ground_night-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CB161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_animation_ground_night-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CC161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_animation_clouds_night-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CD161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_animation_clouds_day-568h@2x.png"; sourceTree = "<group>"; };
+		116BE6CE161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tracking_animation_ground_day-568h@2x.png"; sourceTree = "<group>"; };
 		116CB8E814EF4E67003AB446 /* libAFNetworking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAFNetworking.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		116CB8F414EF4E9F003AB446 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
 		116CB8F514EF4E9F003AB446 /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
@@ -478,8 +510,6 @@
 		116CB8F914EF4E9F003AB446 /* AFImageRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFImageRequestOperation.m; sourceTree = "<group>"; };
 		116CB8FA14EF4E9F003AB446 /* AFJSONRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFJSONRequestOperation.h; sourceTree = "<group>"; };
 		116CB8FB14EF4E9F003AB446 /* AFJSONRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFJSONRequestOperation.m; sourceTree = "<group>"; };
-		116CB8FC14EF4E9F003AB446 /* AFJSONUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFJSONUtilities.h; sourceTree = "<group>"; };
-		116CB8FD14EF4E9F003AB446 /* AFJSONUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFJSONUtilities.m; sourceTree = "<group>"; };
 		116CB8FE14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkActivityIndicatorManager.h; sourceTree = "<group>"; };
 		116CB8FF14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkActivityIndicatorManager.m; sourceTree = "<group>"; };
 		116CB90014EF4E9F003AB446 /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworking.h; sourceTree = "<group>"; };
@@ -510,8 +540,6 @@
 		117C48CE14EB652F0049452F /* ABTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ABTableViewCell.m; sourceTree = SOURCE_ROOT; };
 		117C48D514EB66140049452F /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		117C48D614EB66140049452F /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
-		117C48D914EB68D10049452F /* FlurryAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryAnalytics.h; sourceTree = "<group>"; };
-		117C48DA14EB68D10049452F /* libFlurryAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurryAnalytics.a; sourceTree = "<group>"; };
 		117E0E1B1559B2A800ED5762 /* JLLoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLLoadingView.h; sourceTree = "<group>"; };
 		117E0E1C1559B2A800ED5762 /* JLLoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLLoadingView.m; sourceTree = "<group>"; };
 		117E0E1F1559B7BA00ED5762 /* JLNoConnectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLNoConnectionView.h; sourceTree = "<group>"; };
@@ -520,6 +548,8 @@
 		117E0E231559C28900ED5762 /* JLServerErrorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLServerErrorView.m; sourceTree = "<group>"; };
 		117E0E251559C8D100ED5762 /* JLSpinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLSpinner.h; sourceTree = "<group>"; };
 		117E0E261559C8D400ED5762 /* JLSpinner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLSpinner.m; sourceTree = "<group>"; };
+		118082691613E53C008275E0 /* UIScreen+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+JLExtensions.h"; sourceTree = "<group>"; };
+		1180826A1613E53C008275E0 /* UIScreen+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+JLExtensions.m"; sourceTree = "<group>"; };
 		1190BF78151925F200B1163F /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
 		1190BF79151925F200B1163F /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
 		1190CD22153A58E8005FA8E6 /* JLStyles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLStyles.h; sourceTree = "<group>"; };
@@ -777,6 +807,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1169AFAB1650989B00612AB3 /* MobileCoreServices.framework in Frameworks */,
 				116CB92114EF7ABE003AB446 /* SystemConfiguration.framework in Frameworks */,
 				116CB8E914EF4E67003AB446 /* Foundation.framework in Frameworks */,
 			);
@@ -812,8 +843,8 @@
 				11C5DFAC14DCCDDF006D1DB4 /* UIKit.framework in Frameworks */,
 				11C5DFAE14DCCDDF006D1DB4 /* Foundation.framework in Frameworks */,
 				11C5DFB014DCCDDF006D1DB4 /* CoreGraphics.framework in Frameworks */,
-				117C48DB14EB68D10049452F /* libFlurryAnalytics.a in Frameworks */,
 				117592F61602909E00CE4B6F /* HockeySDK.framework in Frameworks */,
+				1169AFAA165091D700612AB3 /* libFlurry.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -839,6 +870,15 @@
 			path = Reachability;
 			sourceTree = "<group>";
 		};
+		1169AFA7165091D700612AB3 /* Flurry */ = {
+			isa = PBXGroup;
+			children = (
+				1169AFA8165091D700612AB3 /* Flurry.h */,
+				1169AFA9165091D700612AB3 /* libFlurry.a */,
+			);
+			path = Flurry;
+			sourceTree = "<group>";
+		};
 		116CB8F314EF4E9F003AB446 /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
@@ -850,8 +890,6 @@
 				116CB8F914EF4E9F003AB446 /* AFImageRequestOperation.m */,
 				116CB8FA14EF4E9F003AB446 /* AFJSONRequestOperation.h */,
 				116CB8FB14EF4E9F003AB446 /* AFJSONRequestOperation.m */,
-				116CB8FC14EF4E9F003AB446 /* AFJSONUtilities.h */,
-				116CB8FD14EF4E9F003AB446 /* AFJSONUtilities.m */,
 				116CB8FE14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h */,
 				116CB8FF14EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m */,
 				116CB90014EF4E9F003AB446 /* AFNetworking.h */,
@@ -883,15 +921,6 @@
 				117C48CE14EB652F0049452F /* ABTableViewCell.m */,
 			);
 			path = ABTableViewCell;
-			sourceTree = "<group>";
-		};
-		117C48D814EB68D10049452F /* FlurryAnalytics */ = {
-			isa = PBXGroup;
-			children = (
-				117C48D914EB68D10049452F /* FlurryAnalytics.h */,
-				117C48DA14EB68D10049452F /* libFlurryAnalytics.a */,
-			);
-			path = FlurryAnalytics;
 			sourceTree = "<group>";
 		};
 		119EA1FF1538E33800BBFD5E /* Presentation */ = {
@@ -1091,6 +1120,8 @@
 				11F96E57153ABF20003E4B1D /* UIImage+JLExtensions.m */,
 				1159C9F6155659C60086F04F /* UINavigationBar+JLExtensions.h */,
 				1159C9F7155659C70086F04F /* UINavigationBar+JLExtensions.m */,
+				118082691613E53C008275E0 /* UIScreen+JLExtensions.h */,
+				1180826A1613E53C008275E0 /* UIScreen+JLExtensions.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -1100,7 +1131,7 @@
 			children = (
 				117C48C414EB64F60049452F /* ABTableViewCell */,
 				116CB8F314EF4E9F003AB446 /* AFNetworking */,
-				117C48D814EB68D10049452F /* FlurryAnalytics */,
+				1169AFA7165091D700612AB3 /* Flurry */,
 				11C5DFAA14DCCDDF006D1DB4 /* Frameworks */,
 				117592F31602907F00CE4B6F /* Hockey */,
 				11C5DFB114DCCDDF006D1DB4 /* JustLanded */,
@@ -1188,14 +1219,15 @@
 		11DCC3F5153AD58C0097A7DB /* Backgrounds */ = {
 			isa = PBXGroup;
 			children = (
+				116BE696161A5200004207FD /* Default-568h@2x.png */,
 				11B6D5B41544DE9F006912E2 /* Default.png */,
 				11B6D5B51544DE9F006912E2 /* Default@2x.png */,
+				116BE6C9161BD17C004207FD /* flight_on_ground_day-568h@2x.png */,
 				11963664158290350081AA63 /* flight_on_ground_day.png */,
 				1154E876153D0A98005BFF2B /* flight_on_ground_day@2x.png */,
+				116BE6CA161BD17C004207FD /* flight_on_ground_night-568h@2x.png */,
 				11963665158290350081AA63 /* flight_on_ground_night.png */,
 				1154E877153D0A98005BFF2B /* flight_on_ground_night@2x.png */,
-				11963666158290350081AA63 /* sky_bg.png */,
-				11B6D5B81544E41B006912E2 /* sky_bg@2x.png */,
 				1196365F158290350081AA63 /* lookup_cloud_fg.png */,
 				11B6D5BA1544E45D006912E2 /* lookup_cloud_fg@2x.png */,
 				11963660158290350081AA63 /* lookup_clouds_1.png */,
@@ -1210,6 +1242,7 @@
 				11E1AD0C1554C6B40021EE16 /* nav_bg@2x.png */,
 				11963656158290350081AA63 /* no_connection.png */,
 				112896C01562257A0056DD34 /* no_connection@2x.png */,
+				116BE699161A5227004207FD /* overlay_screens_bg-568h@2x.png */,
 				11963657158290350081AA63 /* overlay_screens_bg.png */,
 				112896BE1562256C0056DD34 /* overlay_screens_bg@2x.png */,
 				11963658158290350081AA63 /* plane_contrail.png */,
@@ -1220,6 +1253,9 @@
 				11D95D231589214E00331366 /* query_field@2x.png */,
 				11963659158290350081AA63 /* server_down.png */,
 				112896C11562257A0056DD34 /* server_down@2x.png */,
+				116BE69A161A5227004207FD /* sky_bg-568h@2x.png */,
+				11963666158290350081AA63 /* sky_bg.png */,
+				11B6D5B81544E41B006912E2 /* sky_bg@2x.png */,
 				11963668158290350081AA63 /* table_cell_bottom.png */,
 				1108D271154C8D91007844D8 /* table_cell_bottom@2x.png */,
 				11963667158290350081AA63 /* table_cell_bottom_selected.png */,
@@ -1234,24 +1270,34 @@
 				1108D274154C8D91007844D8 /* table_cell_top_selected@2x.png */,
 				1196364E158290350081AA63 /* table_frame.png */,
 				1108D262154C7550007844D8 /* table_frame@2x.png */,
+				116BE6CD161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png */,
 				1196365B158290350081AA63 /* tracking_animation_clouds_day.png */,
 				1154E869153CF7E2005BFF2B /* tracking_animation_clouds_day@2x.png */,
+				116BE6CC161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png */,
 				1196365C158290350081AA63 /* tracking_animation_clouds_night.png */,
 				1154E86A153CF7E2005BFF2B /* tracking_animation_clouds_night@2x.png */,
+				116BE6CE161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png */,
 				1196365D158290350081AA63 /* tracking_animation_ground_day.png */,
 				1154E86B153CF7E2005BFF2B /* tracking_animation_ground_day@2x.png */,
+				116BE6CB161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png */,
 				1196365E158290350081AA63 /* tracking_animation_ground_night.png */,
 				1154E86C153CF7E2005BFF2B /* tracking_animation_ground_night@2x.png */,
+				116BE69B161A5227004207FD /* tracking_footer_bg-568h@2x.png */,
 				1196364A158290350081AA63 /* tracking_footer_bg.png */,
 				11DCC3F6153AD58C0097A7DB /* tracking_footer_bg@2x.png */,
+				116BE69C161A5227004207FD /* tracking_header_bg_black-568h@2x.png */,
 				11963651158290350081AA63 /* tracking_header_bg_black.png */,
 				11DCC3F7153AD58C0097A7DB /* tracking_header_bg_black@2x.png */,
+				116BE69D161A5227004207FD /* tracking_header_bg_blue-568h@2x.png */,
 				11963652158290350081AA63 /* tracking_header_bg_blue.png */,
 				11DCC3F8153AD58C0097A7DB /* tracking_header_bg_blue@2x.png */,
+				116BE69E161A5227004207FD /* tracking_header_bg_gray-568h@2x.png */,
 				11963653158290350081AA63 /* tracking_header_bg_gray.png */,
 				11DCC3F9153AD58C0097A7DB /* tracking_header_bg_gray@2x.png */,
+				116BE69F161A5227004207FD /* tracking_header_bg_green-568h@2x.png */,
 				11963654158290350081AA63 /* tracking_header_bg_green.png */,
 				11DCC3FA153AD58C0097A7DB /* tracking_header_bg_green@2x.png */,
+				116BE6A0161A5227004207FD /* tracking_header_bg_red-568h@2x.png */,
 				1196365A158290350081AA63 /* tracking_header_bg_red.png */,
 				11DCC3FB153AD58C0097A7DB /* tracking_header_bg_red@2x.png */,
 			);
@@ -1435,7 +1481,6 @@
 				116CB90B14EF4E9F003AB446 /* AFHTTPRequestOperation.h in Headers */,
 				116CB90D14EF4E9F003AB446 /* AFImageRequestOperation.h in Headers */,
 				116CB90F14EF4E9F003AB446 /* AFJSONRequestOperation.h in Headers */,
-				116CB91114EF4E9F003AB446 /* AFJSONUtilities.h in Headers */,
 				116CB91314EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.h in Headers */,
 				116CB91514EF4E9F003AB446 /* AFNetworking.h in Headers */,
 				116CB91614EF4E9F003AB446 /* AFPropertyListRequestOperation.h in Headers */,
@@ -1808,6 +1853,21 @@
 				11C6279C15FA6F0C00E2D27C /* disclosure_arrow_up.png in Resources */,
 				117592F71602909E00CE4B6F /* HockeySDKResources.bundle in Resources */,
 				11A2EBE61604189100BEA6EB /* alert.wav in Resources */,
+				116BE697161A5200004207FD /* Default-568h@2x.png in Resources */,
+				116BE6A1161A5227004207FD /* overlay_screens_bg-568h@2x.png in Resources */,
+				116BE6A2161A5227004207FD /* sky_bg-568h@2x.png in Resources */,
+				116BE6A3161A5227004207FD /* tracking_footer_bg-568h@2x.png in Resources */,
+				116BE6A4161A5227004207FD /* tracking_header_bg_black-568h@2x.png in Resources */,
+				116BE6A5161A5227004207FD /* tracking_header_bg_blue-568h@2x.png in Resources */,
+				116BE6A6161A5227004207FD /* tracking_header_bg_gray-568h@2x.png in Resources */,
+				116BE6A7161A5227004207FD /* tracking_header_bg_green-568h@2x.png in Resources */,
+				116BE6A8161A5227004207FD /* tracking_header_bg_red-568h@2x.png in Resources */,
+				116BE6CF161BD17C004207FD /* flight_on_ground_day-568h@2x.png in Resources */,
+				116BE6D0161BD17C004207FD /* flight_on_ground_night-568h@2x.png in Resources */,
+				116BE6D1161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png in Resources */,
+				116BE6D2161BD17C004207FD /* tracking_animation_clouds_night-568h@2x.png in Resources */,
+				116BE6D3161BD17C004207FD /* tracking_animation_clouds_day-568h@2x.png in Resources */,
+				116BE6D4161BD17C004207FD /* tracking_animation_ground_day-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1854,7 +1914,6 @@
 				116CB90C14EF4E9F003AB446 /* AFHTTPRequestOperation.m in Sources */,
 				116CB90E14EF4E9F003AB446 /* AFImageRequestOperation.m in Sources */,
 				116CB91014EF4E9F003AB446 /* AFJSONRequestOperation.m in Sources */,
-				116CB91214EF4E9F003AB446 /* AFJSONUtilities.m in Sources */,
 				116CB91414EF4E9F003AB446 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				116CB91714EF4E9F003AB446 /* AFPropertyListRequestOperation.m in Sources */,
 				116CB91914EF4E9F003AB446 /* AFURLConnectionOperation.m in Sources */,
@@ -1924,6 +1983,7 @@
 				1142AC0515F6FC0E00DD264D /* JLMessageComposeViewController.m in Sources */,
 				1106407915F8244F009584B7 /* JLAirplaneView.m in Sources */,
 				11E7EF5E16003FA30055C0F2 /* NSString+JLExtensions.m in Sources */,
+				1180826B1613E53C008275E0 /* UIScreen+JLExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2058,7 +2118,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "91ED1CAE-9C51-46BE-A9EF-9A579FA31CB4";
+				PROVISIONING_PROFILE = "B01B07E7-BC6C-4557-AFAF-EEF623C8AEC0";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -2069,7 +2129,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
-				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -2083,6 +2142,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Flurry\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2113,7 +2173,6 @@
 		115E8F4E14F74EED00E9F06B /* Adhoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
 				DSTROOT = /tmp/ABTableViewCell.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ABTableViewCell/ABTableViewCell-Prefix.pch";
@@ -2126,8 +2185,9 @@
 		115E8F4F14F74EED00E9F06B /* Adhoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				DSTROOT = /tmp/AFNetworking.dst;
+				GCC_WARN_STRICT_SELECTOR_MATCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2137,8 +2197,9 @@
 		116CB8F114EF4E67003AB446 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				DSTROOT = /tmp/AFNetworking.dst;
+				GCC_WARN_STRICT_SELECTOR_MATCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2148,8 +2209,9 @@
 		116CB8F214EF4E67003AB446 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				DSTROOT = /tmp/AFNetworking.dst;
+				GCC_WARN_STRICT_SELECTOR_MATCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -2159,7 +2221,6 @@
 		117C48CB14EB64F60049452F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
 				DSTROOT = /tmp/ABTableViewCell.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ABTableViewCell/ABTableViewCell-Prefix.pch";
@@ -2172,7 +2233,6 @@
 		117C48CC14EB64F60049452F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
 				DSTROOT = /tmp/ABTableViewCell.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ABTableViewCell/ABTableViewCell-Prefix.pch";
@@ -2283,7 +2343,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
-				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -2297,6 +2356,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Flurry\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2311,7 +2371,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
-				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -2325,6 +2384,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Flurry\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",

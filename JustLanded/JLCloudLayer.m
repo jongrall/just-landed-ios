@@ -160,19 +160,19 @@ const CGFloat LAYER4_SPEED = 5.0f;
 
 
 - (NSArray *)currentCloudOffsets {
-    return [NSArray arrayWithObjects:[NSNumber numberWithFloat:self.layer1Offset_],
-            [NSNumber numberWithFloat:self.layer2Offset_],
-            [NSNumber numberWithFloat:self.layer3Offset_],
-            [NSNumber numberWithFloat:self.layer4Offset_], nil];
+    return @[@(self.layer1Offset_),
+            @(self.layer2Offset_),
+            @(self.layer3Offset_),
+            @(self.layer4Offset_)];
 }
 
 
 - (void)setCurrentCloudOffsets:(NSArray *)someOffsets {
     NSAssert(someOffsets && [someOffsets count] == 4, @"Missing required number of offsets.");
-    self.layer1Offset_ = [[someOffsets objectAtIndex:0] floatValue];
-    self.layer2Offset_ = [[someOffsets objectAtIndex:1] floatValue];
-    self.layer3Offset_ = [[someOffsets objectAtIndex:2] floatValue];
-    self.layer4Offset_ = [[someOffsets objectAtIndex:3] floatValue];
+    self.layer1Offset_ = [someOffsets[0] floatValue];
+    self.layer2Offset_ = [someOffsets[1] floatValue];
+    self.layer3Offset_ = [someOffsets[2] floatValue];
+    self.layer4Offset_ = [someOffsets[3] floatValue];
     [self.layer1_ setContentOffset:CGPointMake(self.layer1Offset_, 0.0f) animated:NO];
     [self.layer2_ setContentOffset:CGPointMake(self.layer2Offset_, 0.0f) animated:NO];
     [self.layer3_ setContentOffset:CGPointMake(self.layer3Offset_, 0.0f) animated:NO];
@@ -180,8 +180,9 @@ const CGFloat LAYER4_SPEED = 5.0f;
 }
 
 
-- (void)dealloc {
-    [animationTimer_ invalidate];
+- (void)removeFromSuperview {
+    [self.animationTimer_ invalidate]; // Stop the timer in case the dev forgot to, otherwise retained
+    [super removeFromSuperview];
 }
 
 @end

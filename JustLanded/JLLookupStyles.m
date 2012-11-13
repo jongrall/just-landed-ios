@@ -9,26 +9,158 @@
 #import "JLLookupStyles.h"
 #import "TextStyle.h"
 
-CGRect const LOGO_FRAME = {{38.0f, 32.0f}, {255.0f, 43.0f}};
-CGRect const LOOKUP_BUTTON_FRAME = {{12.0f, 179.0f}, {296.0f, 56.0f}};
-CGRect const AIRPORT_CODES_LABEL_FRAME = {{20.0f, 204.0f}, {280.0f, 30.0f}};
-CGRect const AIRPORT_CODES_BUTTON_FRAME = {{229.0f, 201.0f}, {33.0f, 34.0f}};
-CGRect const AIRLINE_NO_RESULTS_LABEL_FRAME = {{20.0f, 57.0f}, {280.0f, 40.0f}};
-CGRect const ABOUT_BUTTON_FRAME = {{271.0f, 0.0f}, {49.0f, 49.0f}};
-CGRect const LOOKUP_INPUT_FRAME = {{14.0f, 117.0f}, {292.0f, 49.0f}};
-CGRect const LOOKUP_TEXTFIELD_FRAME = {{0.0f, 0.0f}, {288.0f, 49.0f}};
-CGRect const LOOKUP_LABEL_FRAME = {{0.0f, 0.0f}, {150.0f, 49.0f}};
-CGPoint const LOOKUP_SEPARATOR_ORIGIN = {113.5f , 12.0f};
-CGRect const LOOKUP_LABEL_TEXT_FRAME = {{0.0f, 15.0f}, {150.0f, 49.0f}};
-CGRect const LOOKUP_FIELD_FRAME = {{0.0f, 0.0f}, {100.0f, 49.0f}};
-CGRect const CLOUD_LAYER_FRAME = {{0.0f, 98.0f}, {320.0f, 340.0f}};
-CGRect const CLOUD_FOOTER_FRAME = {{0.0f, 438.0f}, {320.0f, 22.0f}};
-CGRect const AIRPLANE_FRAME = {{0.0f, 85.0f}, {320.0f, 22.0f}};
-CGRect const RESULTS_TABLE_FRAME = {{16.0f, 187.0f}, {288.0f, 257.0f}};
-CGRect const RESULTS_TABLE_CONTAINER_FRAME = {{15.0f, 185.0f}, {290.0f, 261.0f}};
-
-
 @implementation JLLookupStyles
+
++ (CGRect)logoFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{38.0f, 52.0f}, {255.0f, 43.0f}};
+    }
+    else {
+        return (CGRect) {{38.0f, 32.0f}, {255.0f, 43.0f}};
+    }
+}
+
+
++ (CGRect)lookupButtonFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{12.0f, 199.0f}, {296.0f, 56.0f}};
+    }
+    else {
+        return (CGRect) {{12.0f, 179.0f}, {296.0f, 56.0f}};
+    }
+}
+
+
++ (CGRect)airportCodesLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{20.0f, 272.0f}, {280.0f, 30.0f}};
+    }
+    else {
+        return (CGRect) {{20.0f, 204.0f}, {280.0f, 30.0f}};
+    }
+}
+
+
++ (CGRect)airportCodesButtonFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{229.0f, 269.0f}, {33.0f, 34.0f}};
+    }
+    else {
+        return (CGRect) {{229.0f, 201.0f}, {33.0f, 34.0f}};
+    }
+}
+
+
++ (CGRect)airlineNoResultsLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{20.0f, 101.0f}, {280.0f, 40.0f}};
+    }
+    else {
+        return (CGRect) {{20.0f, 57.0f}, {280.0f, 40.0f}};
+    }
+}
+
+
++ (CGRect)aboutButtonFrame {
+    return (CGRect) {{271.0f, 0.0f}, {49.0f, 49.0f}};
+}
+
+
++ (CGRect)lookupInputFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{14.0f, 137.0f}, {292.0f, 49.0f}};
+    }
+    else {
+        return (CGRect) {{14.0f, 117.0f}, {292.0f, 49.0f}};
+    }
+}
+
+
++ (CGRect)lookupTextFieldFrame {
+    return (CGRect) {{0.0f, 0.0f}, {288.0f, 49.0f}};
+}
+
+
++ (CGRect)lookupLabelFrame {
+    return (CGRect) {{0.0f, 0.0f}, {150.0f, 49.0f}};
+}
+
+
++ (CGPoint)lookupSeparatorOrigin {
+    return (CGPoint) {113.5f , 12.0f};
+}
+
+
++ (CGRect)lookupLabelTextFrame {
+    return (CGRect) {{0.0f, 15.0f}, {150.0f, 49.0f}};
+}
+
+
++ (CGRect)lookupFieldFrame {
+    return (CGRect) {{0.0f, 0.0f}, {100.0f, 49.0f}};
+}
+
+
++ (CGRect)lookupSpinnerFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{103.0f, 318.0f}, {114.0f, 115.0f}};
+    }
+    else {
+        return (CGRect) {{103.0f, 278.0f}, {114.0f, 115.0f}};
+    }
+}
+
+
++ (CGRect)cloudLayerFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 150.0f}, {320.0f, 340.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 98.0f}, {320.0f, 340.0f}};
+    }
+    
+}
+
+
++ (CGRect)cloudFooterFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 490.0f}, {320.0f, 58.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 438.0f}, {320.0f, 22.0f}};
+    }
+}
+
+
++ (CGRect)airplaneFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 105.0f}, {320.0f, 22.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 85.0f}, {320.0f, 22.0f}};
+    }
+}
+
+
++ (CGRect)resultsTableFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{16.0f, 207.0f}, {288.0f, 324.0f}};
+    }
+    else {
+        return (CGRect) {{16.0f, 187.0f}, {288.0f, 257.0f}};
+    }
+}
+
+
++ (CGRect)resultsTableContainerFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{15.0f, 205.0f}, {290.0f, 328.0f}};
+    }
+    else {
+       return (CGRect) {{15.0f, 185.0f}, {290.0f, 261.0f}}; 
+    }
+}
+
 
 + (ButtonStyle *)lookupButtonStyle {
     static ButtonStyle *sLookupButtonStyle;

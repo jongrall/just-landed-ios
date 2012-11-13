@@ -15,35 +15,233 @@
 #pragma mark Track Screen
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CGRect const TRACK_HEADER_FRAME = {{0.0f, 0.0f}, {320.0f, 150.0f}};
-CGRect const TRACK_FOOTER_FRAME = {{0.0f, 220.0f}, {320.0f, 240.0f}};
-CGPoint const LOOKUP_BUTTON_ORIGIN = {15.0f, 15.0f};
-CGRect const STATUS_LABEL_FRAME = {{136.0f, 11.0f}, {175.0f, 46.0f}};
-CGRect const ORIGIN_CODE_LABEL_FRAME = {{8.0f, 58.0f}, {137.0f, 70.0f}};
-CGRect const ORIGIN_CITY_LABEL_FRAME = {{8.0f, 117.0f}, {137.0f, 20.0f}};
-CGPoint const ARROW_ORIGIN = {144.0f, 76.0f};
-CGRect const DESTINATION_CODE_LABEL_FRAME = {{175.0f, 58.0f}, {137.0f, 70.0f}};
-CGRect const DESTINATION_CITY_LABEL_FRAME = {{175.0f, 117.0f}, {137.0f, 20.0f}};
-CGRect const FLIGHT_PROGRESS_FRAME = {{0.0f, 150.0f}, {320.0f, 70.0f}};
-CGRect const LANDS_AT_LABEL_FRAME = {{19.0f, 244.0f}, {120.0f, 20.0f}};
-CGRect const LANDS_AT_TIME_FRAME = {{19.0f, 253.0f}, {160.0f, 40.0f}};
-CGSize const TIME_UNIT_OFFSET = {1.0f, 23.0f};
-CGSize const TIME_UNIT_OFFSET_ALT = {1.0f, 11.0f};
-CGSize const TIMEZONE_OFFSET = {0.0f, 23.0f};
-CGRect const TERMINAL_LABEL_FRAME = {{19.0f, 317.0f}, {120.0f, 20.0f}};
-CGRect const TERMINAL_VALUE_FRAME = {{19.0f, 326.0f}, {160.0f, 40.0f}};
-CGRect const DRIVING_TIME_LABEL_FRAME = {{19.0f, 392.0f}, {120.0f, 20.0f}};
-CGRect const DRIVING_TIME_VALUE_FRAME = {{19.0f, 400.0f}, {200.0f, 40.0f}};
-CGRect const WARNING_BUTTON_FRAME = {{167.0f, 280.0f},{86.0f, 86.0f}};
-CGRect const DIRECTIONS_BUTTON_FRAME = {{267.0f, 412.0f}, {38.0f, 34.0f}};
-CGRect const LEAVE_IN_GAUGE_FRAME = {{115.0f, 236.0f}, {190.0f, 190.0f}};
-CGPoint const LEAVE_IN_VALUE_ORIGIN = {0.0f, 62.0f};
-CGPoint const LEAVE_IN_UNIT_ORIGIN = {0.0f, 120.0f};
-CGPoint const LEAVE_IN_INSTRUCTIONS_ORIGIN = {0.0f, 145.0f};
-CGPoint const LEAVE_NOW_ORIGIN = {0.0f, 65.0f};
-
 
 @implementation JLTrackStyles
+
++ (CGRect)trackHeaderFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 0.0f}, {320.0f, 170.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 0.0f}, {320.0f, 150.0f}};
+    }
+}
+
+
++ (CGRect)trackFooterFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 274.0f}, {320.0f, 274.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 220.0f}, {320.0f, 240.0f}};
+    }
+}
+
+
++ (CGPoint)lookupButtonOrigin {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGPoint) {15.0f, 19.0f};
+    }
+    else {
+        return (CGPoint) {15.0f, 15.0f};
+    }
+}
+
+
++ (CGRect)statusLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{136.0f, 19.0f}, {175.0f, 46.0f}};
+    }
+    else {
+        return (CGRect) {{136.0f, 15.0f}, {175.0f, 46.0f}};
+    }
+}
+
+
++ (CGRect)originCodeLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{8.0f, 67.0f}, {137.0f, 70.0f}};
+    }
+    else {
+        return (CGRect) {{8.0f, 58.0f}, {137.0f, 70.0f}};
+    }
+}
+
+
++ (CGRect)originCityLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{8.0f, 126.0f}, {137.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{8.0f, 117.0f}, {137.0f, 20.0f}};
+    }
+}
+
+
++ (CGPoint)arrowOrigin {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGPoint) {144.0f, 85.0f};
+    }
+    else {
+        return (CGPoint) {144.0f, 76.0f};
+    }
+}
+
+
++ (CGRect)destinationCodeLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{175.0f, 67.0f}, {137.0f, 70.0f}};
+    }
+    else {
+        return (CGRect) {{175.0f, 58.0f}, {137.0f, 70.0f}};
+    }
+}
+
+
++ (CGRect)destinationCityLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{175.0f, 126.0f}, {137.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{175.0f, 117.0f}, {137.0f, 20.0f}};
+    }
+}
+
+
++ (CGRect)flightProgressFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{0.0f, 170.0f}, {320.0f, 104.0f}};
+    }
+    else {
+        return (CGRect) {{0.0f, 150.0f}, {320.0f, 70.0f}};
+    }
+}
+
+
++ (CGRect)landsAtLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 296.0f}, {160.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 244.0f}, {160.0f, 20.0f}};
+    }
+}
+
+
++ (CGRect)landsAtTimeFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 308.0f}, {160.0f, 40.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 253.0f}, {160.0f, 40.0f}};
+    }
+}
+
+
++ (CGSize)timeUnitOffset {
+    return (CGSize) {1.0f, 23.0f};
+}
+
+
++ (CGSize)timeUnitOffsetAlt {
+    return (CGSize) {1.0f, 11.0f};
+}
+
+
++ (CGSize)timezoneOffset {
+    return (CGSize) {0.0f, 23.0f};
+}
+
+
++ (CGRect)terminalLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 387.0f}, {120.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 317.0f}, {120.0f, 20.0f}};
+    }
+}
+
+
++ (CGRect)terminalValueFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 399.0f}, {160.0f, 40.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 326.0f}, {160.0f, 40.0f}};
+    }
+}
+
+
++ (CGRect)drivingTimeLabelFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 478.0f}, {120.0f, 20.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 392.0f}, {120.0f, 20.0f}};
+    }
+}
+
+
++ (CGRect)drivingTimeValueFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{19.0f, 490.0f}, {200.0f, 40.0f}};
+    }
+    else {
+        return (CGRect) {{19.0f, 400.0f}, {200.0f, 40.0f}};
+    }
+}
+
+
++ (CGRect)warningButtonFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{167.0f, 360.0f},{86.0f, 86.0f}};
+    }
+    else {
+        return (CGRect) {{167.0f, 280.0f},{86.0f, 86.0f}};
+    }
+}
+
+
++ (CGRect)directionsButtonFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{267.0f, 498.0f}, {38.0f, 34.0f}};
+    }
+    else {
+        return (CGRect) {{267.0f, 412.0f}, {38.0f, 34.0f}};
+    }
+}
+
+
++ (CGRect)leaveInGaugeFrame {
+    if ([UIScreen isMainScreenWide]) {
+        return (CGRect) {{115.0f, 316.0f}, {190.0f, 190.0f}};
+    }
+    else {
+        return (CGRect) {{115.0f, 236.0f}, {190.0f, 190.0f}};
+    }
+}
+
+
++ (CGPoint)leaveInValueOrigin {
+    return (CGPoint) {0.0f, 62.0f};
+}
+
+
++ (CGPoint)leaveInUnitOrigin {
+    return (CGPoint) {0.0f, 120.0f};
+}
+
+
++ (CGPoint)leaveInInstructionsOrigin {
+    return (CGPoint) {0.0f, 145.0f};
+}
+
+
++ (CGPoint)leaveNowOrigin {
+    return (CGPoint) {0.0f, 65.0f};
+}
+
 
 + (ButtonStyle *)lookupButtonStyle {
     static ButtonStyle *sLookupButtonStyle;

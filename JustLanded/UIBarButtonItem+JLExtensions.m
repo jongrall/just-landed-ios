@@ -38,20 +38,16 @@
                                                     barMetrics:UIBarMetricsDefault];
     
     // Text styles
-    [[UIBarButtonItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                    buttonStyle.labelStyle.textStyle.font, UITextAttributeFont,
-                                                    buttonStyle.labelStyle.textStyle.color, UITextAttributeTextColor,
-                                                    buttonStyle.labelStyle.textStyle.shadowColor, UITextAttributeTextShadowColor,
-                                                    [NSValue valueWithCGSize:buttonStyle.labelStyle.textStyle.shadowOffset], UITextAttributeTextShadowOffset, 
-                                                    nil] 
+    [[UIBarButtonItem appearance] setTitleTextAttributes:@{UITextAttributeFont: buttonStyle.labelStyle.textStyle.font,
+                                                    UITextAttributeTextColor: buttonStyle.labelStyle.textStyle.color,
+                                                    UITextAttributeTextShadowColor: buttonStyle.labelStyle.textStyle.shadowColor,
+                                                    UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:buttonStyle.labelStyle.textStyle.shadowOffset]} 
                                           forState:UIControlStateNormal];
     
-    [[UIBarButtonItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                    buttonStyle.disabledLabelStyle.textStyle.font, UITextAttributeFont,
-                                                    buttonStyle.disabledLabelStyle.textStyle.color, UITextAttributeTextColor,
-                                                    buttonStyle.disabledLabelStyle.textStyle.shadowColor, UITextAttributeTextShadowColor,
-                                                    [NSValue valueWithCGSize:buttonStyle.disabledLabelStyle.textStyle.shadowOffset], UITextAttributeTextShadowOffset, 
-                                                    nil] 
+    [[UIBarButtonItem appearance] setTitleTextAttributes:@{UITextAttributeFont: buttonStyle.disabledLabelStyle.textStyle.font,
+                                                    UITextAttributeTextColor: buttonStyle.disabledLabelStyle.textStyle.color,
+                                                    UITextAttributeTextShadowColor: buttonStyle.disabledLabelStyle.textStyle.shadowColor,
+                                                    UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:buttonStyle.disabledLabelStyle.textStyle.shadowOffset]} 
                                           forState:UIControlStateDisabled];
     
     [[UIBarButtonItem appearance] setTitlePositionAdjustment:UIOffsetMake(0.0f, 1.0f)
