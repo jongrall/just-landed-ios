@@ -2118,7 +2118,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "B01B07E7-BC6C-4557-AFAF-EEF623C8AEC0";
+				PROVISIONING_PROFILE = "18228AD4-A83E-4260-AFD8-EFE69ECB1FC0";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -2140,7 +2140,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Flurry\"",
 				);
@@ -2354,7 +2353,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Flurry\"",
 				);
@@ -2382,7 +2380,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Flurry\"",
 				);
