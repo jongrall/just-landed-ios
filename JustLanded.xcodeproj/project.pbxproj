@@ -2140,7 +2140,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Flurry\"",
 				);
@@ -2354,7 +2353,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Flurry\"",
 				);
@@ -2382,7 +2380,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/FlurryAnalytics\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Flurry\"",
 				);
