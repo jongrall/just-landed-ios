@@ -39,6 +39,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 @property (strong, nonatomic) CLLocationManager *locationManager_;
 @property (strong, nonatomic) NSTimer *updateTimer_;
 @property (strong, nonatomic) NSTimer *alternatingLabelTimer_;
+@property (strong, nonatomic) NSTimer *loadingTimeoutTimer_;
 @property (strong, nonatomic) NSMutableArray *ignoredWarnings_;
 @property (nonatomic) BOOL showingValidData_;
 @property (nonatomic) BOOL hasBeenAskedToText_;
@@ -95,7 +96,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 - (NSString *)bagClaimValue;
 - (NSString *)blankValue;
 - (void)invalidateData;
-- (void)indicateUpdating;
+- (void)indicateUpdatingWithTimeout:(BOOL)timeoutFlag;
 - (void)indicateFinishedUpdating;
 - (void)updateDisplayedData;
 - (LeaveForAirportWarningType)warningToDisplay;
@@ -131,7 +132,9 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 @synthesize locationManager_;
 @synthesize updateTimer_;
 @synthesize alternatingLabelTimer_;
+@synthesize loadingTimeoutTimer_;
 @synthesize ignoredWarnings_;
+@synthesize showingValidData_;
 @synthesize hasBeenAskedToText_;
 @synthesize hasBeenNotifiedToText_;
 @synthesize noConnectionOverlay_;
@@ -163,51 +166,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         ignoredWarnings_ = [[NSMutableArray alloc] init];
         hasBeenAskedToText_ = NO;
         hasBeenNotifiedToText_ = NO;
-        
-        // Listen for update notifications for the Flight to trigger UI indicators
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(willTrackFlight:)
-                                                     name:WillTrackFlightNotification
-                                                   object:trackedFlight_];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didTrackFlight:)
-                                                     name:DidTrackFlightNotification
-                                                   object:trackedFlight_];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(flightTrackFailed:)
-                                                     name:FlightTrackFailedNotification
-                                                   object:trackedFlight_];
-        
-        // Track on push token update / failure
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(track)
-                                                     name:DidUpdatePushTokenNotification
-                                                   object:[UIApplication sharedApplication]];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(track)
-                                                     name:DidFailToUpdatePushTokenNotification
-                                                   object:[UIApplication sharedApplication]];
-        
-        
-        // Track on resume
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(track)
-                                                     name:UIApplicationWillEnterForegroundNotification
-                                                   object:[UIApplication sharedApplication]];
-        
-        // When going to the background, cover the screen with loading
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(invalidateData)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:[UIApplication sharedApplication]];
-        
-        [self indicateUpdating];
-        
-        // Track the flight if we've already tried to get the push token
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        if (appDelegate.triedToRegisterForRemoteNotifications) { // We already tried to get the push token
-            [self track];
-        }
+        showingValidData_ = NO;
     }
     
     return self;
@@ -284,6 +243,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                                                                  timeOfDay:self.trackedFlight_.timeOfDay
                                                               aircraftType:self.trackedFlight_.aircraftType];
     self.flightProgressView_.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [self.flightProgressView_ setProgress:[self.trackedFlight_ currentProgress]];
     
     // Add the lands at labels
     self.landsAtLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles flightDataLabelStyle]
@@ -417,6 +377,58 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     [self.view addSubview:self.leaveMeter_];
     [self.view addSubview:self.warningButton_];
     [self.view addSubview:self.directionsButton_];
+}
+
+
+- (void)viewDidLoad {
+    // Listen for update notifications for the Flight to trigger UI indicators
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(willTrackFlight:)
+                                                 name:WillTrackFlightNotification
+                                               object:trackedFlight_];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didTrackFlight:)
+                                                 name:DidTrackFlightNotification
+                                               object:trackedFlight_];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(flightTrackFailed:)
+                                                 name:FlightTrackFailedNotification
+                                               object:trackedFlight_];
+    
+    // Track on push token update / failure
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(track)
+                                                 name:DidUpdatePushTokenNotification
+                                               object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(track)
+                                                 name:DidFailToUpdatePushTokenNotification
+                                               object:[UIApplication sharedApplication]];
+    
+    // Track on resume
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(track)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:[UIApplication sharedApplication]];
+    
+    // When going to the background, cover the screen with loading
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(invalidateData)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:[UIApplication sharedApplication]];
+    
+    // Indicate updating
+    [self indicateUpdatingWithTimeout:YES];
+    
+    // Track the flight if we've already tried to get the push token
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (appDelegate.triedToRegisterForRemoteNotifications) { // We already tried to get the push token
+        [self track];
+    }
+    else {
+        // Try to register again, just in case something went wrong
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    }
 }
 
 
@@ -709,14 +721,16 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 - (void)invalidateData {
     // Invalidates that data and covers the screen with loading... so on resume we're showing the right thing.
     self.showingValidData_ = NO;
-    [self indicateUpdating];
+    [self indicateUpdatingWithTimeout:NO];
 }
 
 
-- (void)indicateUpdating {
+- (void)indicateUpdatingWithTimeout:(BOOL)timeoutFlag {
     [self.lookupButton_ setEnabled:NO];
     [self.noConnectionOverlay_ removeFromSuperview];
     [self.serverErrorOverlay_ removeFromSuperview];
+    [self.loadingOverlay_ removeFromSuperview];
+    [self.loadingTimeoutTimer_ invalidate];
     
     if (!self.showingValidData_ || ![self.trackedFlight_ isDataFresh]) {
         if (!self.loadingOverlay_) {
@@ -726,10 +740,21 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         [self.view addSubview:self.loadingOverlay_];
         [self.loadingOverlay_ startLoading];
     }
+    
+    if (timeoutFlag) {
+        // Failsafe to prevent loading timing issue rendering app unusable
+        self.loadingTimeoutTimer_ = [NSTimer timerWithTimeInterval:30.0
+                                                            target:self
+                                                          selector:@selector(indicateFinishedUpdating)
+                                                          userInfo:nil
+                                                           repeats:NO];
+        [[NSRunLoop currentRunLoop] addTimer:self.loadingTimeoutTimer_ forMode:NSRunLoopCommonModes];
+    }
 }
 
 
 - (void)indicateFinishedUpdating {
+    [self.loadingTimeoutTimer_ invalidate];
     [self.lookupButton_ setEnabled:YES]; // Disable untrack while tracking (can cause out-of-order bug)
     [self.loadingOverlay_ stopLoading];
     [self.loadingOverlay_ removeFromSuperview];
@@ -877,6 +902,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     // Must invalidate the timers or they will retain self, preventing dealloc
     [self.updateTimer_ invalidate];
     [self.alternatingLabelTimer_ invalidate];
+    [self.loadingTimeoutTimer_ invalidate];
     [self.flightProgressView_ stopAnimating];
     
     // Stop monitoring for movement
@@ -888,7 +914,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 
 - (void)willTrackFlight:(NSNotification *)notification {
-    [self indicateUpdating];
+    [self indicateUpdatingWithTimeout:YES];
 }
 
 

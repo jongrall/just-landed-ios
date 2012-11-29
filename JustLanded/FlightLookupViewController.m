@@ -218,10 +218,8 @@ static NSRegularExpression *sAirlineCodeRegex_;
     // If animated, was user-initiated, record the track
     if (animateFlip) {
         [[JustLandedSession sharedSession] incrementTrackCount];
-        
         [Flurry logEvent:FY_BEGAN_TRACKING_FLIGHT 
-                   withParameters:@{@"Minutes Before Landing": [NSString stringWithFormat:@"%d", [aFlight minutesBeforeLanding]]}];
-        
+          withParameters:@{@"Minutes Before Landing": [NSString stringWithFormat:@"%d", [aFlight minutesBeforeLanding]]}];
     }
 }
 
@@ -349,17 +347,18 @@ static NSRegularExpression *sAirlineCodeRegex_;
 
 
 - (void)didLookupFlight:(NSNotification *)notification {
-    NSArray *flights = [[notification userInfo] valueForKey:@"flights"];
+    id flights = [[notification userInfo] valueForKey:@"flights"];
     [self indicateStoppedLookingUp];
     
-    if (flights) {
-        self.flightResults_ = flights;
+    if ([flights isKindOfClass:[NSArray class]]) {
+        NSArray *results = (NSArray *)flights;
+        self.flightResults_ = results;
     
-        if ([flights count] == 0) {
+        if ([results count] == 0) {
             [self alertWithError:LookupErrorFlightNotFound];
         }
-        else if ([flights count] == 1) {
-            [self beginTrackingFlight:flights[0] animated:YES];
+        else if ([results count] == 1) {
+            [self beginTrackingFlight:results[0] animated:YES];
         }
         else {
             [self.flightResultsTable_ reloadData];
@@ -372,7 +371,11 @@ static NSRegularExpression *sAirlineCodeRegex_;
         }
     
         [Flurry logEvent:FY_LOOKED_UP_FLIGHT 
-                   withParameters:@{@"Number Of Results": [NSString stringWithFormat:@"%d", [flights count]]}];
+          withParameters:@{@"Number Of Results": [NSString stringWithFormat:@"%d", [results count]]}];
+    }
+    else {
+        // Should never run, included for completeness
+        [self alertWithError:LookupErrorFlightNotFound];
     }
 }
 
