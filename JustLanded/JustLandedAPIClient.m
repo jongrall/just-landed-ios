@@ -111,7 +111,7 @@
         failure:(void (^)(AFHTTPRequestOperation *, NSError *))failure {
     // Set custom timeout
     NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:path parameters:parameters];
-    [request setTimeoutInterval:15];
+    [request setTimeoutInterval:20];
     
     // Sign the request
     NSString *sig = [[self class] apiRequestSignatureWithPath:path params:parameters];
