@@ -3958,7 +3958,7 @@
 		<key>icao</key>
 		<string>HAL</string>
 		<key>iata</key>
-		<string>HA</string>
+		<string></string>
 		<key>name</key>
 		<string>Hawaiian Airlines</string>
 	</dict>
