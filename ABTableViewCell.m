@@ -29,40 +29,44 @@
 
 #import "ABTableViewCell.h"
 
-@interface ABTableViewCellView : UIView
+@interface ABTableViewCellContentView : UIView
+@property (weak, nonatomic) ABTableViewCell *parentCell;
 @end
 
-@interface ABTableViewSelectedCellView : UIView
+@implementation ABTableViewCellContentView
+
+- (id)initWithFrame:(CGRect)frame {
+	if((self = [super initWithFrame:frame])) {
+		self.contentMode = UIViewContentModeRedraw;
+	}
+
+	return self;
+}
+
+@end
+
+
+@interface ABTableViewCellView : ABTableViewCellContentView
 @end
 
 @implementation ABTableViewCellView
 
-- (id)initWithFrame:(CGRect)frame {
-	if((self = [super initWithFrame:frame])) {
-		self.contentMode = UIViewContentModeRedraw;
-	}
-	
-	return self;
-}
-
 - (void)drawRect:(CGRect)rect {
-	[(ABTableViewCell *)[self superview] drawContentView:rect highlighted:NO];
+    ABTableViewCell *theParentCell = self.parentCell;
+	[theParentCell drawContentView:rect highlighted:NO];
 }
 
 @end
 
+
+@interface ABTableViewSelectedCellView : ABTableViewCellContentView
+@end
+
 @implementation ABTableViewSelectedCellView
 
-- (id)initWithFrame:(CGRect)frame {
-	if((self = [super initWithFrame:frame])) {
-		self.contentMode = UIViewContentModeRedraw;
-	}
-	
-	return self;
-}
-
 - (void)drawRect:(CGRect)rect {
-	[(ABTableViewCell *)[self superview] drawContentView:rect highlighted:YES];
+    ABTableViewCell *theParentCell = self.parentCell;
+	[theParentCell drawContentView:rect highlighted:YES];
 }
 
 @end
@@ -74,14 +78,17 @@
 	self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
 	
     if(self) {
-		contentView = [[ABTableViewCellView alloc] initWithFrame:CGRectZero];
+        ABTableViewCellView *cellView = [[ABTableViewCellView alloc] initWithFrame:CGRectZero];
+        cellView.parentCell = self;
+		contentView = cellView;
 		contentView.opaque = YES;
 		self.backgroundView = contentView;
-		
-		selectedContentView = [[ABTableViewSelectedCellView alloc] initWithFrame:CGRectZero];
+
+        ABTableViewSelectedCellView *selectedCellView = [[ABTableViewSelectedCellView alloc] initWithFrame:CGRectZero];
+        selectedCellView.parentCell = self;
+		selectedContentView = selectedCellView;
 		selectedContentView.opaque = YES;
 		self.selectedBackgroundView = selectedContentView;
-		
     }
 	
     return self;
@@ -161,7 +168,10 @@
 }
 
 - (void)drawContentView:(CGRect)rect highlighted:(BOOL)highlighted {
-	// subclasses should implement this
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:[NSString stringWithFormat:@"Subclasses must override %@",
+                                           NSStringFromSelector(_cmd)]
+                                 userInfo:nil];
 }
 
 @end

@@ -68,6 +68,14 @@ static UIImage *sBottomBackgroundSelected_;
     });
 }
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
+        self.backgroundColor = [UIColor clearColor];
+    };
+
+    return self;
+}
+
 - (void)setToAirport:(NSString *)anAirport {
     if (toAirport_ != anAirport) {
         toAirport_ = [anAirport uppercaseString];

@@ -52,6 +52,15 @@ static CGRect sDividerRect_;
 }
 
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
+        self.backgroundColor = [UIColor clearColor];
+    };
+
+    return self;
+}
+
+
 - (void)setTitle:(NSString *)aTitle {
     if (title_ != aTitle) {
         title_ = [aTitle copy];

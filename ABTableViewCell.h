@@ -36,6 +36,6 @@
 	UIView* selectedContentView;
 }
 
-- (void)drawContentView:(CGRect)rect highlighted:(BOOL)highlighted; // subclasses should implement
+- (void)drawContentView:(CGRect)rect highlighted:(BOOL)highlighted; // subclasses must implement
 
 @end
