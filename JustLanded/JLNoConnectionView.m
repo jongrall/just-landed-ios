@@ -91,7 +91,8 @@
 
 - (void)tryAgain {
     self.tryAgainButton.enabled = NO;
-    [self.delegate tryConnectionAgain];
+    id<NoConnectionDelegate> noConnectionDelegate = _delegate;
+    [noConnectionDelegate tryConnectionAgain];
 }
 
 @end

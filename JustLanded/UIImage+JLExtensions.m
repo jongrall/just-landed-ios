@@ -74,8 +74,8 @@
     // Draw the image with a shadow
     if (shadowColor && coloredImage) {
         // New image size to make room for shadow
-        CGSize newImageSize = CGSizeMake(coloredImage.size.width + fabs(offset.width) + 2.0f * blur,
-                                         coloredImage.size.height + fabs(offset.height) + 2.0f * blur);
+        CGSize newImageSize = CGSizeMake(coloredImage.size.width + fabsf(offset.width) + 2.0f * blur,
+                                         coloredImage.size.height + fabsf(offset.height) + 2.0f * blur);
         
         // Calculate new image origin in its larger container based on shadow offset and blur
         CGPoint imageOrigin = CGPointZero;
@@ -124,7 +124,7 @@
     CGSize size = srcImage.size;
     UIGraphicsBeginImageContextWithOptions(size, NO, 0.0f);
     CGContextRef ctx = UIGraphicsGetCurrentContext();
-    CGFloat angleInRadians = degrees * M_PI / 180.0;
+    CGFloat angleInRadians = (CGFloat) (degrees * M_PI / 180.0);
 	
     CGContextTranslateCTM(ctx, srcImage.size.width/2.0f, srcImage.size.height/2.0f);
     CGContextRotateCTM(ctx, angleInRadians);

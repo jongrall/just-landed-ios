@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, RelativeDateKind) {
     OTHER_DATE = 0,
     YESTERDAY,
     TODAY,
     TOMORROW,
-} RelativeDateKind;
+};
 
 @interface NSDate (JLExtensions)
 

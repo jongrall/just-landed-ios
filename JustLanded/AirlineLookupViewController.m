@@ -144,13 +144,16 @@ static NSArray *sAllAirlines_;
     self.navigationController.navigationBar.layer.shadowOpacity = 0.0f;
 	self.navigationController.navigationBar.layer.shadowRadius = 0.0f;
 	self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
-    
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"Cancel") 
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wselector"
+    id<AirlineLookupDelegate> lookupDelegate = _delegate;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
                                                                               style:UIBarButtonItemStylePlain
-                                                                             target:self.delegate
+                                                                             target:lookupDelegate
                                                                              action:@selector(cancelledAirlineLookup)];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self 
+    #pragma clang diagnostic pop
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWasShown:) 
                                                  name:UIKeyboardDidShowNotification 
                                                object:nil];
@@ -250,8 +253,9 @@ static NSArray *sAllAirlines_;
         cell = [[AirlineResultTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
                                                  reuseIdentifier:@"AirlineResultCell"];
     }
-    
-    id tableRowObj = (self.airlines_)[indexPath.row];
+
+    NSUInteger airlineResultIndex = (NSUInteger) indexPath.row;
+    id tableRowObj = self.airlines_[airlineResultIndex];
     
     if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
         NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
@@ -271,14 +275,16 @@ static NSArray *sAllAirlines_;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row < (NSInteger)[self.airlines_ count]) {
-        id tableRowObj = (self.airlines_)[indexPath.row];
+        NSUInteger airlineResultIndex = (NSUInteger) indexPath.row;
+        id tableRowObj = self.airlines_[airlineResultIndex];
         
         if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *airlineInfo = (self.airlines_)[indexPath.row];
+            NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
             NSString *code = [self airlineCode:airlineInfo];
             [[JustLandedSession sharedSession] addToRecentlyLookedUpAirlines:airlineInfo];
-            [self.delegate didChooseAirlineCode:code];
+            id<AirlineLookupDelegate> lookupDelegate = _delegate;
+            [lookupDelegate didChooseAirlineCode:code];
             [Flurry logEvent:FY_CHOSE_AIRLINE];
         }
         else {
@@ -292,7 +298,7 @@ static NSArray *sAllAirlines_;
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.airlines_ count];
+    return (NSInteger) [self.airlines_ count];
 }
 
 

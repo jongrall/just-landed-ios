@@ -213,7 +213,7 @@
     NSTimeInterval secondsInYear = 365.0 * secondsInDay;
     
     // Ensure the interval is positive and rounded to whole seconds
-    NSTimeInterval interval = fabs(roundf([date timeIntervalSinceNow]));
+    NSTimeInterval interval = fabs(round([date timeIntervalSinceNow]));
     
     // Round up to nearest minute so 10 sec left returns 1 min left not 0 min left
     interval = ceil(interval / secondsInMinute) * secondsInMinute;
@@ -251,7 +251,7 @@
     NSTimeInterval secondsInYear = 365.0 * secondsInDay;
     
     // Ensure the interval is positive and rounded to whole seconds
-    NSTimeInterval interval = fabs(roundf(anInterval));
+    NSTimeInterval interval = fabs(round(anInterval));
     // Round up to nearest minute so 10 sec left returns 1 min left not 0 min left
     interval = ceil(interval / secondsInMinute) * secondsInMinute;
     

@@ -119,7 +119,7 @@
     BOOL sendFlightEvents = [[NSUserDefaults standardUserDefaults] boolForKey:SendFlightEventsPreferenceKey];
     BOOL sendReminders = [[NSUserDefaults standardUserDefaults] boolForKey:SendRemindersPreferenceKey];
     BOOL playFlightSounds = [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
-    NSUInteger reminderLeadTime = [[NSUserDefaults standardUserDefaults] integerForKey:ReminderLeadTimePreferenceKey];
+    NSInteger reminderLeadTime = [[NSUserDefaults standardUserDefaults] integerForKey:ReminderLeadTimePreferenceKey];
     
     return [[NSMutableDictionary alloc] initWithObjectsAndKeys:@(sendFlightEvents), SendFlightEventsPreferenceKey,
             @(sendReminders), SendRemindersPreferenceKey,
@@ -137,8 +137,8 @@
     NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
     
     if (trackCount) {
-        NSUInteger newCount = [trackCount integerValue] + 1;
-        trackCount = [NSNumber numberWithInt:newCount];
+        NSUInteger newCount = [trackCount unsignedIntegerValue] + 1;
+        trackCount = [NSNumber numberWithUnsignedInt:newCount];
     }
     else {
         trackCount = @1;
@@ -157,7 +157,7 @@
     BOOL appInForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
     
     if (trackCount && !hasBeenAsked && oldEnoughUser && appInForeground) {
-        NSUInteger currentCount = [trackCount integerValue];
+        NSUInteger currentCount = [trackCount unsignedIntegerValue];
         
         if (currentCount >= RATINGS_USAGE_THRESHOLD && ![[[BITHockeyManager sharedHockeyManager] crashManager] didCrashInLastSession]) {
             return YES;

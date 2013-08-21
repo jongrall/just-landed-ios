@@ -107,7 +107,7 @@
 	//Handle title vertical movement when selected/highlighted relative to the content rect
     UIEdgeInsets labelInsets = self.style.labelInsets;
     CGSize shadowOffset = self.style.labelStyle.textStyle.shadowOffset;
-    CGSize shadowSize = CGSizeMake(fabs(shadowOffset.width), fabs(shadowOffset.height));
+    CGSize shadowSize = CGSizeMake(fabsf(shadowOffset.width), fabsf(shadowOffset.height));
     
 	switch (self.state) {
         case UIControlStateSelected:

@@ -172,11 +172,11 @@
         // Override text alignment
         LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:defaultStyle.labelStyle.textStyle 
                                                        backgroundColor:defaultStyle.labelStyle.backgroundColor
-                                                             alignment:UITextAlignmentLeft
+                                                             alignment:NSTextAlignmentLeft
                                                          lineBreakMode:defaultStyle.labelStyle.lineBreakMode];
         LabelStyle *disabledStyle = [[LabelStyle alloc] initWithTextStyle:defaultStyle.disabledLabelStyle.textStyle
                                                           backgroundColor:defaultStyle.disabledLabelStyle.backgroundColor
-                                                                alignment:UITextAlignmentLeft 
+                                                                alignment:NSTextAlignmentLeft 
                                                             lineBreakMode:defaultStyle.disabledLabelStyle.lineBreakMode];
         
         // Create from the default style and ovverride the icon and insets
@@ -268,8 +268,8 @@
         
         LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                        backgroundColor:nil
-                                                             alignment:UITextAlignmentLeft 
-                                                         lineBreakMode:UILineBreakModeTailTruncation];
+                                                             alignment:NSTextAlignmentLeft 
+                                                         lineBreakMode:NSLineBreakByTruncatingTail];
         
         
         sAirportCodesLabelButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle 
@@ -303,8 +303,8 @@
         
         sFlightFieldLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                        backgroundColor:nil 
-                                                             alignment:UITextAlignmentLeft 
-                                                         lineBreakMode:UILineBreakModeClip];
+                                                             alignment:NSTextAlignmentLeft 
+                                                         lineBreakMode:NSLineBreakByClipping];
         
     });
     
@@ -318,15 +318,15 @@
     
     dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f]
-                                                         color:[UIColor colorWithRed:51.0/255.0f green:51.0/255.0f blue:51.0/255.0f alpha:1.0f]
+                                                         color:[UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
                                                    shadowColor:nil 
                                                   shadowOffset:CGSizeZero 
                                                     shadowBlur:0.0f];
         
         sFlightFieldTextStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil 
-                                                            alignment:UITextAlignmentLeft 
-                                                        lineBreakMode:UILineBreakModeClip];
+                                                            alignment:NSTextAlignmentLeft 
+                                                        lineBreakMode:NSLineBreakByClipping];
         
     });
     
@@ -340,15 +340,15 @@
     
     dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:23.0f]
-                                                         color:[UIColor colorWithRed:215.0/255.0f green:51.0/255.0f blue:51.0/255.0f alpha:1.0f]
+                                                         color:[UIColor colorWithRed:215.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f]
                                                    shadowColor:nil
                                                   shadowOffset:CGSizeZero
                                                     shadowBlur:0.0f];
         
         sFlightFieldErrorTextStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil
-                                                            alignment:UITextAlignmentLeft
-                                                        lineBreakMode:UILineBreakModeClip];
+                                                            alignment:NSTextAlignmentLeft
+                                                        lineBreakMode:NSLineBreakByClipping];
         
     });
     
@@ -369,8 +369,8 @@
         
         sAirlineNoResultsLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil 
-                                                            alignment:UITextAlignmentCenter 
-                                                        lineBreakMode:UILineBreakModeClip];
+                                                            alignment:NSTextAlignmentCenter 
+                                                        lineBreakMode:NSLineBreakByClipping];
         
     });
     

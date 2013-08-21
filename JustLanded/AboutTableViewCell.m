@@ -125,8 +125,8 @@ static CGRect sDividerRect_;
     
     [title_ drawInRect:titleRect_
               withFont:sTitleFont_
-         lineBreakMode:UILineBreakModeTailTruncation
-             alignment:UITextAlignmentLeft];
+         lineBreakMode:NSLineBreakByTruncatingTail
+             alignment:NSTextAlignmentLeft];
 
     // Stop drawing shadows
     CGContextRestoreGState(context);

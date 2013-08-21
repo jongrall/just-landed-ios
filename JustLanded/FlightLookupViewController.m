@@ -16,7 +16,7 @@
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, LookupErrorType) {
     LookupErrorInvalidFlightNumber = 0,
     LookupErrorFlightNotFound,
     LookupErrorNonexistentAirline,
@@ -25,7 +25,7 @@ typedef enum {
     LookupErrorOutage,
     LookupErrorNoConnection,
     LookupErrorServerError,
-} LookupErrorType;
+};
 
 
 @interface FlightLookupViewController ()
@@ -297,7 +297,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
 - (void)flightLookupFailed:(NSNotification *)notification {
     [self indicateStoppedLookingUp];
     
-    FlightLookupFailedReason reason = [[[notification userInfo] valueForKey:FlightLookupFailedReasonKey] integerValue];
+    FlightLookupFailedReason reason = (FlightLookupFailedReason) [[[notification userInfo] valueForKey:FlightLookupFailedReasonKey] integerValue];
     
     switch (reason) {
         case LookupFailureInvalidFlightNumber: {
@@ -830,7 +830,8 @@ static NSRegularExpression *sAirlineCodeRegex_;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    Flight *chosenFlight = (self.flightResults_)[[indexPath row]];
+    NSUInteger chosenResult = (NSUInteger)[indexPath row];
+    Flight *chosenFlight = self.flightResults_[chosenResult];
     [self beginTrackingFlight:chosenFlight animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -846,8 +847,9 @@ static NSRegularExpression *sAirlineCodeRegex_;
         cell.backgroundView.opaque = NO;
         cell.selectedBackgroundView.opaque = NO;
     }
-    
-    Flight *aFlight = (self.flightResults_)[[indexPath row]];
+
+    NSUInteger resultIndex = (NSUInteger)[indexPath row];
+    Flight *aFlight = self.flightResults_[resultIndex];
     
     // Figure out the cell type
     if (indexPath.row == 0) {
@@ -888,7 +890,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.flightResults_ count];
+    return (NSInteger)[self.flightResults_ count];
 }
 
 

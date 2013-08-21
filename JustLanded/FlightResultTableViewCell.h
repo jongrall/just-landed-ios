@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "ABTableViewCell.h"
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, FlightResultCellType) {
     TOP = 0,
     MIDDLE,
     BOTTOM,
-} FlightResultCellType;
+};
 
 extern CGFloat const FlightResultTableViewCellWidth;
 extern CGFloat const FlightResultTableViewCellHeight;

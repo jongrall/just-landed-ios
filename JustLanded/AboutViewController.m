@@ -20,13 +20,13 @@
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, AboutCellTag) {
     AboutCellTagFeedback = 0,
     AboutCellTagFAQ,
     AboutCellTagSMS,
     AboutCellTagTweet,
     AboutCellTagTerms,
-} AboutCellTag;
+};
 
 
 @interface AboutViewController () <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate>
@@ -244,7 +244,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (AboutCellTag)tagForIndexPath:(NSIndexPath *)indexPath {
-    NSUInteger row = [indexPath row];
+    NSUInteger row = (NSUInteger) [indexPath row];
     NSMutableArray *tableRows = [[NSMutableArray alloc] init];
     
     if ([MFMailComposeViewController canSendMail]) {
@@ -263,10 +263,10 @@ typedef enum {
     [tableRows addObject:@(AboutCellTagTerms)];
     
     if (row < [tableRows count]) {
-        return [tableRows[row] integerValue];
+        return [tableRows[row] unsignedIntegerValue];
     }
     else {
-        return [[tableRows lastObject] integerValue]; // Should never happen
+        return [[tableRows lastObject] unsignedIntegerValue]; // Should never happen
     }
 }
 
@@ -440,7 +440,7 @@ typedef enum {
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSUInteger numRows = 2;
+    NSInteger numRows = 2;
     
     if ([MFMailComposeViewController canSendMail]) {
         numRows++;

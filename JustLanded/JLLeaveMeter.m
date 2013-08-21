@@ -198,8 +198,8 @@
         CGContextSaveGState(context);
         UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width / 2.0f, rect.size.height / 2.0f) 
                                                             radius:rect.size.width / 2.0f
-                                                        startAngle:(130.0f * M_PI / 180.0f) // Slight buffer added
-                                                          endAngle:((130.0f * M_PI / 180.0f) + ((rotationDegrees + 25.0f) * M_PI / 180.0f))
+                                                        startAngle:(CGFloat) (130.0f * M_PI / 180.0f) // Slight buffer added
+                                                          endAngle:(CGFloat) ((130.0f * M_PI / 180.0f) + ((rotationDegrees + 25.0f) * M_PI / 180.0f))
                                                          clockwise:YES];
         [path addLineToPoint:CGPointMake(rect.size.width / 2.0f, rect.size.width / 2.0f)];
         [path closePath];
@@ -210,10 +210,10 @@
         CGContextSaveGState(context);
         // Change clip path slightly
         path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width / 2.0f, rect.size.height / 2.0f) 
-                                                            radius:rect.size.width / 2.0f
-                                                        startAngle:(135.0f * M_PI / 180.0f)
-                                                          endAngle:((135.0f * M_PI / 180.0f) + (rotationDegrees * M_PI / 180.0f))
-                                                         clockwise:YES];
+                                              radius:rect.size.width / 2.0f
+                                          startAngle:(CGFloat) (135.0f * M_PI / 180.0f)
+                                            endAngle:(CGFloat) ((135.0f * M_PI / 180.0f) + (rotationDegrees * M_PI / 180.0f))
+                                           clockwise:YES];
         [path addLineToPoint:CGPointMake(rect.size.width / 2.0f, rect.size.width / 2.0f)];
         [path closePath];
         [path addClip];

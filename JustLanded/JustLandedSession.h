@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, JustLandedSoundType) {
     TakeOffSound = 0,
     AnnouncementSound,
     LandingSound
-} JustLandedSoundType;
+};
 
 @class Flight;
 

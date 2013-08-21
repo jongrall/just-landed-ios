@@ -21,14 +21,14 @@
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, LeaveForAirportWarningType) {
     WarningTypeNone = 8008,
     WarningTypeDisabledLocationServices,
     WarningTypeDeniedLocationServices,
     WarningTypeRestrictedLocationServices,
     WarningTypeDisallowedNotifications,
     WarningTypeTooFarFromDestination,
-} LeaveForAirportWarningType;
+};
 
 NSUInteger const TextUponArrivalAlertTag = 65009;
 
@@ -907,8 +907,9 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     // Stop monitoring for movement
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate stopMonitoringMovement];
-    
-    [self.delegate didFinishTrackingFlight:self.trackedFlight_ userInitiated:userInitiated];
+
+    id<FlightTrackViewControllerDelegate> trackDelegate = _delegate;
+    [trackDelegate didFinishTrackingFlight:self.trackedFlight_ userInitiated:userInitiated];
 }
 
 
@@ -994,9 +995,12 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         else {
             // They're not in a situation where we should prompt them to send a text on arrival
             // Ask them to rate after a few seconds, if eligible
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wselector"
             [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible)
                                                     withObject:nil
                                                     afterDelay:3.0];
+            #pragma clang diagnostic pop
         }
     }
     else { // The app is not in the foreground
@@ -1046,7 +1050,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     // Stop loading animation
     [self indicateFinishedUpdating];
     
-    FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
+    FlightTrackFailedReason reason = (FlightTrackFailedReason)[[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
     
     switch (reason) {
         case TrackFailureFlightNotFound:
@@ -1109,7 +1113,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     if (loc == nil) return NO;
     
     // Decide whether it's acceptable age and accuracy range
-    NSTimeInterval locAgeSecs = abs([loc.timestamp timeIntervalSinceNow]);
+    NSTimeInterval locAgeSecs = fabs([loc.timestamp timeIntervalSinceNow]);
     return locAgeSecs <= LOCATION_MAXIMUM_ACCEPTABLE_AGE && loc.horizontalAccuracy <= LOCATION_MAXIMUM_ACCEPTABLE_ERROR;
 }
 
@@ -1124,8 +1128,8 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         // Update Flurry's location for this user
         [Flurry setLatitude:newLocation.coordinate.latitude
                            longitude:newLocation.coordinate.longitude
-                  horizontalAccuracy:newLocation.horizontalAccuracy
-                    verticalAccuracy:newLocation.verticalAccuracy];
+                  horizontalAccuracy:(float)newLocation.horizontalAccuracy
+                    verticalAccuracy:(float)newLocation.verticalAccuracy];
         
         // Stop updating now that we have an acceptable location
         [self.locationManager_ stopUpdatingLocation];
@@ -1162,7 +1166,11 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 }
 
 - (void)showMap {
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wselector"
     if ([MKMapItem class] && [MKMapItem respondsToSelector:@selector(openMapsWithItems:launchOptions:)]) {
+    #pragma clang diagnostic pop
+
         // iOS6 and later uses native Apple Maps with MKMapItems
         MKPlacemark *airportMark = [[MKPlacemark alloc] initWithCoordinate:self.trackedFlight_.destination.location.coordinate
                                                          addressDictionary:nil];
@@ -1279,6 +1287,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     else {
         NSString *title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
         NSURL *fixURL = nil;
+        NSUInteger alertTag = (NSUInteger) alertView.tag;
         
         if ([alertView cancelButtonIndex] != buttonIndex) {
             switch (alertView.tag) {
@@ -1305,7 +1314,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                     break;
             }
         }
-        else if (alertView.tag > WarningTypeNone && alertView.tag <= WarningTypeTooFarFromDestination){
+        else if (alertTag > WarningTypeNone && alertTag <= WarningTypeTooFarFromDestination){
             // They want to ignore the warning
             if (![ignoredWarnings_ containsObject:@(alertView.tag)]) {
                 [ignoredWarnings_ addObject:@(alertView.tag)];

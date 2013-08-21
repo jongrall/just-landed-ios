@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, FlightInputErrorState) {
     FlightInputNoError = 0,
     FlightInputError,
-} FlightInputErrorState;
+};
 
 
 @interface JLFlightInputField : UITextField

@@ -51,7 +51,10 @@
 
 + (NSString *)apiRequestSignatureWithPath:(NSString *)path params:(NSDictionary *)params {
     // Sort the parameter keys
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wselector"
     NSArray *sortedKeys = [[params allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    #pragma clang diagnostic pop
     NSArray *sortedValues = [params objectsForKeys:sortedKeys notFoundMarker:[NSNull null]];
     NSMutableArray *parts = [[NSMutableArray alloc] init];
     

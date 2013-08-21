@@ -195,13 +195,13 @@
         
         LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                        backgroundColor:nil 
-                                                             alignment:UITextAlignmentCenter 
-                                                         lineBreakMode:UILineBreakModeTailTruncation];
+                                                             alignment:NSTextAlignmentCenter
+                                                         lineBreakMode:NSLineBreakByTruncatingTail];
         
         LabelStyle *disabledLabelStyle = [[LabelStyle alloc] initWithTextStyle:disabledTextStyle 
                                                                backgroundColor:nil 
-                                                                     alignment:UITextAlignmentCenter 
-                                                                 lineBreakMode:UILineBreakModeTailTruncation];
+                                                                     alignment:NSTextAlignmentCenter 
+                                                                 lineBreakMode:NSLineBreakByTruncatingTail];
         
         
         UIImage *upImage = [[UIImage imageNamed:@"nav_button_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 7.0f, 0.0f, 7.0f)];
@@ -244,13 +244,13 @@
         
         LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                        backgroundColor:nil 
-                                                             alignment:UITextAlignmentCenter 
-                                                         lineBreakMode:UILineBreakModeTailTruncation];
+                                                             alignment:NSTextAlignmentCenter 
+                                                         lineBreakMode:NSLineBreakByTruncatingTail];
         
         LabelStyle *disabledLabelStyle = [[LabelStyle alloc] initWithTextStyle:disabledTextStyle 
                                                                backgroundColor:nil 
-                                                                     alignment:UITextAlignmentCenter 
-                                                                 lineBreakMode:UILineBreakModeTailTruncation];
+                                                                     alignment:NSTextAlignmentCenter 
+                                                                 lineBreakMode:NSLineBreakByTruncatingTail];
         
         
         UIImage *upImage = [[UIImage imageNamed:@"nav_button_back_up"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 21.0f, 0.0f, 7.0f)];
@@ -287,8 +287,8 @@
         
         sLoadingLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                    backgroundColor:nil
-                                                         alignment:UITextAlignmentCenter
-                                                     lineBreakMode:UILineBreakModeTailTruncation];
+                                                         alignment:NSTextAlignmentCenter
+                                                     lineBreakMode:NSLineBreakByTruncatingTail];
     });
     
     return sLoadingLabelStyle;
@@ -308,8 +308,8 @@
         
         sNoConnectionLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                         backgroundColor:nil
-                                                              alignment:UITextAlignmentCenter
-                                                          lineBreakMode:UILineBreakModeTailTruncation];
+                                                              alignment:NSTextAlignmentCenter
+                                                          lineBreakMode:NSLineBreakByTruncatingTail];
     });
     
     return sNoConnectionLabelStyle;
@@ -329,8 +329,8 @@
         
         sErrorDescriptionLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                             backgroundColor:nil
-                                                                  alignment:UITextAlignmentCenter
-                                                              lineBreakMode:UILineBreakModeWordWrap];
+                                                                  alignment:NSTextAlignmentCenter
+                                                              lineBreakMode:NSLineBreakByWordWrapping];
     });
     
     return sErrorDescriptionLabelStyle;
@@ -350,8 +350,8 @@
         
         LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                        backgroundColor:nil 
-                                                             alignment:UITextAlignmentCenter 
-                                                         lineBreakMode:UILineBreakModeClip];
+                                                             alignment:NSTextAlignmentCenter 
+                                                         lineBreakMode:NSLineBreakByClipping];
         
         TextStyle *disabledTextStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifLightBoldOfSize:24.0f] 
                                                                  color:[UIColor colorWithRed:204.0f/255.0f green:64.0f/255.0f blue:2.0f/255.0f alpha:1.0f]
@@ -361,8 +361,8 @@
         
         LabelStyle *disabledLabelStyle = [[LabelStyle alloc] initWithTextStyle:disabledTextStyle
                                                                backgroundColor:nil 
-                                                                     alignment:UITextAlignmentCenter 
-                                                                 lineBreakMode:UILineBreakModeClip];
+                                                                     alignment:NSTextAlignmentCenter 
+                                                                 lineBreakMode:NSLineBreakByClipping];
         
         sDefaultButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
                                                    disabledLabelStyle:disabledLabelStyle

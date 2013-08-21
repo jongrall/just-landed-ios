@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "JLNoConnectionView.h"
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, ErrorType) {
     ERROR_500 = 0,
     ERROR_503,
-} ErrorType;
+};
 
 
 @interface JLServerErrorView : JLNoConnectionView

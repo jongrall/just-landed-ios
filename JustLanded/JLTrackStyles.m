@@ -246,7 +246,7 @@
 + (ButtonStyle *)lookupButtonStyle {
     static ButtonStyle *sLookupButtonStyle;
     static dispatch_once_t sOncePredicate;
-    
+
     dispatch_once(&sOncePredicate, ^{
         TextStyle *textStyle = [[TextStyle alloc] initWithFont:[JLStyles sansSerifRomanOfSize:14.0f]
                                                          color:[UIColor whiteColor]
@@ -256,8 +256,8 @@
         
         LabelStyle *labelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                        backgroundColor:nil 
-                                                             alignment:UITextAlignmentLeft 
-                                                         lineBreakMode:UILineBreakModeClip];
+                                                             alignment:NSTextAlignmentLeft
+                                                         lineBreakMode:NSLineBreakByClipping];
         
         sLookupButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
                                                   disabledLabelStyle:nil
@@ -339,8 +339,8 @@
         
         sStatusLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                   backgroundColor:nil
-                                                        alignment:UITextAlignmentRight
-                                                    lineBreakMode:UILineBreakModeClip];
+                                                        alignment:NSTextAlignmentRight
+                                                    lineBreakMode:NSLineBreakByClipping];
     });
     
     return sStatusLabelStyle;
@@ -360,8 +360,8 @@
         
         sAirportCodeStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                   backgroundColor:nil 
-                                                        alignment:UITextAlignmentCenter 
-                                                    lineBreakMode:UILineBreakModeClip];
+                                                        alignment:NSTextAlignmentCenter
+                                                    lineBreakMode:NSLineBreakByClipping];
     });
     
     return sAirportCodeStyle;
@@ -381,8 +381,8 @@
         
         sCityNameStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                backgroundColor:nil 
-                                                     alignment:UITextAlignmentCenter 
-                                                 lineBreakMode:UILineBreakModeTailTruncation];
+                                                     alignment:NSTextAlignmentCenter 
+                                                 lineBreakMode:NSLineBreakByTruncatingTail];
     });
     
     return sCityNameStyle;
@@ -402,8 +402,8 @@
         
         sFlightDataLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil
-                                                            alignment:UITextAlignmentLeft
-                                                        lineBreakMode:UILineBreakModeClip];
+                                                            alignment:NSTextAlignmentLeft
+                                                        lineBreakMode:NSLineBreakByClipping];
     });
     
     return sFlightDataLabelStyle;
@@ -423,8 +423,8 @@
         
         sFlightDataValueStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil
-                                                            alignment:UITextAlignmentLeft
-                                                        lineBreakMode:UILineBreakModeClip];
+                                                            alignment:NSTextAlignmentLeft
+                                                        lineBreakMode:NSLineBreakByClipping];
     });
     
     return sFlightDataValueStyle;
@@ -444,8 +444,8 @@
         
         sTimeUnitLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                     backgroundColor:nil
-                                                          alignment:UITextAlignmentLeft
-                                                      lineBreakMode:UILineBreakModeClip];
+                                                          alignment:NSTextAlignmentLeft
+                                                      lineBreakMode:NSLineBreakByClipping];
     });
     
     return sTimeUnitLabelStyle;
@@ -465,8 +465,8 @@
         
         sTimezoneLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                     backgroundColor:nil
-                                                          alignment:UITextAlignmentLeft
-                                                      lineBreakMode:UILineBreakModeClip];
+                                                          alignment:NSTextAlignmentLeft
+                                                      lineBreakMode:NSLineBreakByClipping];
     });
     
     return sTimezoneLabelStyle;
@@ -486,8 +486,8 @@
         
         sLeaveTimeLargeLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                           backgroundColor:nil 
-                                                                alignment:UITextAlignmentCenter 
-                                                            lineBreakMode:UILineBreakModeClip];
+                                                                alignment:NSTextAlignmentCenter 
+                                                            lineBreakMode:NSLineBreakByClipping];
     });
     
     return sLeaveTimeLargeLabelStyle;
@@ -507,8 +507,8 @@
         
         sLeaveTimeLargeUnitStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                          backgroundColor:nil 
-                                                               alignment:UITextAlignmentCenter 
-                                                           lineBreakMode:UILineBreakModeClip];
+                                                               alignment:NSTextAlignmentCenter 
+                                                           lineBreakMode:NSLineBreakByClipping];
     });
     
     return sLeaveTimeLargeUnitStyle;
@@ -528,8 +528,8 @@
         
         sLeaveTimeSmallLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                           backgroundColor:nil 
-                                                                alignment:UITextAlignmentCenter 
-                                                            lineBreakMode:UILineBreakModeClip];
+                                                                alignment:NSTextAlignmentCenter 
+                                                            lineBreakMode:NSLineBreakByClipping];
     });
     
     return sLeaveTimeSmallLabelStyle;
@@ -549,8 +549,8 @@
         
         sLeaveTimeSmallUnitStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                          backgroundColor:nil 
-                                                               alignment:UITextAlignmentCenter 
-                                                           lineBreakMode:UILineBreakModeClip];
+                                                               alignment:NSTextAlignmentCenter 
+                                                           lineBreakMode:NSLineBreakByClipping];
     });
     
     return sLeaveTimeSmallUnitStyle;
@@ -570,8 +570,8 @@
         
         sLeaveInstructionsLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                              backgroundColor:nil 
-                                                                   alignment:UITextAlignmentCenter 
-                                                               lineBreakMode:UILineBreakModeClip];
+                                                                   alignment:NSTextAlignmentCenter 
+                                                               lineBreakMode:NSLineBreakByClipping];
     });
     
     return sLeaveInstructionsLabelStyle;
@@ -591,8 +591,8 @@
         
         sLeaveNowStyle = [[LabelStyle alloc] initWithTextStyle:textStyle 
                                                backgroundColor:nil
-                                                     alignment:UITextAlignmentCenter
-                                                 lineBreakMode:UILineBreakModeWordWrap];
+                                                     alignment:NSTextAlignmentCenter
+                                                 lineBreakMode:NSLineBreakByWordWrapping];
     });
     
     return sLeaveNowStyle;

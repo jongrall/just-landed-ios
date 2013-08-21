@@ -10,11 +10,11 @@
 #import <UIKit/UIKit.h>
 #import "ABTableViewCell.h"
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, AboutCellType) {
     TOP = 0,
     MIDDLE,
     BOTTOM,
-} AboutCellType;
+};
 
 extern CGFloat const AboutTableViewCellWidth;
 extern CGFloat const AboutTableViewCellHeight;

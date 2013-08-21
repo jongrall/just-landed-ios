@@ -11,7 +11,10 @@
 @implementation NSNotificationCenter (JLExtensions)
 
 - (void)postNotificationOnMainThread:(NSNotification *)notification {
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wselector"
 	[self performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:YES];
+    #pragma clang diagnostic pop
 }
 
 

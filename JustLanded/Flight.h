@@ -15,12 +15,12 @@
 #pragma mark - Constants Associated w/ Flight Class
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, TimeOfDay) {
     DAY = 0,
     NIGHT,
-} TimeOfDay;
+};
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, FlightStatus) {
     SCHEDULED = 0,
     ON_TIME,
     DELAYED,
@@ -29,9 +29,9 @@ typedef enum {
     LANDED,
     EARLY,
     UNKNOWN,
-} FlightStatus;
+};
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, PushType) {
     FlightFiled = 0,
     FlightDiverted,
     FlightCanceled,
@@ -41,33 +41,33 @@ typedef enum {
     LeaveSoonReminder,
     LeaveNowReminder,
     UnknownFlightAlert,
-} PushType;
+};
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, AircraftType) {
     JET2 = 0,
     JET2REAR,
     JET4,
     PROP2,
     PROP4
-} AircraftType;
+};
 
-typedef enum {
-    LookupFailureInvalidFlightNumber,
+typedef NS_ENUM(NSUInteger, FlightLookupFailedReason) {
+    LookupFailureInvalidFlightNumber = 0,
     LookupFailureFlightNotFound,
     LookupFailureNoCurrentFlight,
     LookupFailureNoConnection,
     LookupFailureError,
     LookupFailureOutage,
-} FlightLookupFailedReason;
+};
 
-typedef enum {
-    TrackFailureInvalidFlightNumber,
+typedef NS_ENUM(NSUInteger, FlightTrackFailedReason) {
+    TrackFailureInvalidFlightNumber = 0,
     TrackFailureFlightNotFound,
     TrackFailureOldFlight,
     TrackFailureNoConnection,
     TrackFailureError,
     TrackFailureOutage,
-} FlightTrackFailedReason;
+};
 
 
 extern NSString * const WillLookupFlightNotification;
