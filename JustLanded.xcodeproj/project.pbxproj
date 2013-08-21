@@ -1128,7 +1128,6 @@
 				11C5DFB114DCCDDF006D1DB4 /* JustLanded */,
 				11C5DFD514DCCDDF006D1DB4 /* JustLandedTests */,
 				11C5DFA814DCCDDF006D1DB4 /* Products */,
-				111A6F8315F007560006FB37 /* Reachability */,
 				11FCB44C17C477F00082F0FA /* Third Party */,
 			);
 			sourceTree = "<group>";
@@ -1488,6 +1487,7 @@
 				116CB8F314EF4E9F003AB446 /* AFNetworking */,
 				1169AFA7165091D700612AB3 /* Flurry */,
 				11FCB44417C477DA0082F0FA /* HockeySDK.embeddedframework */,
+				111A6F8315F007560006FB37 /* Reachability */,
 			);
 			name = "Third Party";
 			sourceTree = "<group>";
