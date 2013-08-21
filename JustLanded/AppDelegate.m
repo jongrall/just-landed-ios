@@ -46,7 +46,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
                                                          liveIdentifier:HOCKEY_APP_ID_PRODUCTION
                                                                delegate:self];
     [[BITHockeyManager sharedHockeyManager] startManager];
-    [[[BITHockeyManager sharedHockeyManager] crashManager] setCrashManagerStatus:BITCrashManagerStatusAutoSend]; // Auto send crashes
+    [[[BITHockeyManager sharedHockeyManager] crashManager] setCrashManagerStatus:BITCrashManagerStatusAutoSend];
     #endif
     
     // Configure Flurry
@@ -165,7 +165,9 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     return nil;
 }
 
-- (NSString *)userNameForCrashManager:(BITCrashManager *)crashManager {
+
+- (NSString *)userNameForHockeyManager:(BITHockeyManager *)hockeyManager
+                      componentManager:(BITHockeyBaseManager *)componentManager {
     return [[JustLandedSession sharedSession] UUID];
 }
 
