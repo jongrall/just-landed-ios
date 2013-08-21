@@ -11,7 +11,6 @@
 #import "WebContentViewController.h"
 #import "JustLandedSession.h"
 #import "Flight.h"
-#import "Flurry.h"
 #import "AppDelegate.h"
 #import "JLMessageComposeViewController.h"
 #import <CoreLocation/CoreLocation.h>

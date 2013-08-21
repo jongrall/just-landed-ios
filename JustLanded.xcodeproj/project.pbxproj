@@ -76,7 +76,6 @@
 		115E8F3B14F6C8CA00E9F06B /* OriginAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3A14F6C8CA00E9F06B /* OriginAirport.m */; };
 		115E8F3F14F6C8EE00E9F06B /* DestinationAirport.m in Sources */ = {isa = PBXBuildFile; fileRef = 115E8F3E14F6C8EE00E9F06B /* DestinationAirport.m */; };
 		116686C5153CAB5800D4E773 /* JLMultipartLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 116686C4153CAB5800D4E773 /* JLMultipartLabel.m */; };
-		1169AFAA165091D700612AB3 /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1169AFA9165091D700612AB3 /* libFlurry.a */; };
 		1169AFAB1650989B00612AB3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A714EB5AD600F7ED46 /* MobileCoreServices.framework */; };
 		116BE697161A5200004207FD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE696161A5200004207FD /* Default-568h@2x.png */; };
 		116BE6A1161A5227004207FD /* overlay_screens_bg-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 116BE699161A5227004207FD /* overlay_screens_bg-568h@2x.png */; };
@@ -351,6 +350,7 @@
 		11F96E6C153AC342003E4B1D /* lookup@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F96E64153AC342003E4B1D /* lookup@2x.png */; };
 		11FA36E215883E940004149F /* airlines.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11FA36E115883E940004149F /* airlines.plist */; };
 		11FA36E7158852E20004149F /* AirlineResultTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FA36E6158852E20004149F /* AirlineResultTableViewCell.m */; };
+		11FCB44317C474560082F0FA /* libFlurry_4.2.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11FCB44217C474560082F0FA /* libFlurry_4.2.3.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -485,7 +485,6 @@
 		116686C3153CAB5500D4E773 /* JLMultipartLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLMultipartLabel.h; sourceTree = "<group>"; };
 		116686C4153CAB5800D4E773 /* JLMultipartLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLMultipartLabel.m; sourceTree = "<group>"; };
 		1169AFA8165091D700612AB3 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
-		1169AFA9165091D700612AB3 /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
 		116BE696161A5200004207FD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		116BE699161A5227004207FD /* overlay_screens_bg-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "overlay_screens_bg-568h@2x.png"; sourceTree = "<group>"; };
 		116BE69A161A5227004207FD /* sky_bg-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sky_bg-568h@2x.png"; sourceTree = "<group>"; };
@@ -792,6 +791,7 @@
 		11FA36E115883E940004149F /* airlines.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = airlines.plist; sourceTree = "<group>"; };
 		11FA36E5158852E20004149F /* AirlineResultTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirlineResultTableViewCell.h; sourceTree = "<group>"; };
 		11FA36E6158852E20004149F /* AirlineResultTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirlineResultTableViewCell.m; sourceTree = "<group>"; };
+		11FCB44217C474560082F0FA /* libFlurry_4.2.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.2.3.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -836,6 +836,7 @@
 				11AE97F614EB5FB700F7ED46 /* AudioToolbox.framework in Frameworks */,
 				11AE97F714EB5FB700F7ED46 /* CoreLocation.framework in Frameworks */,
 				11AE97AC14EB5AFC00F7ED46 /* libz.dylib in Frameworks */,
+				11FCB44317C474560082F0FA /* libFlurry_4.2.3.a in Frameworks */,
 				117C48D414EB65760049452F /* libABTableViewCell.a in Frameworks */,
 				116CB92014EF4F78003AB446 /* libAFNetworking.a in Frameworks */,
 				11AE97A814EB5AD600F7ED46 /* MobileCoreServices.framework in Frameworks */,
@@ -844,7 +845,6 @@
 				11C5DFAE14DCCDDF006D1DB4 /* Foundation.framework in Frameworks */,
 				11C5DFB014DCCDDF006D1DB4 /* CoreGraphics.framework in Frameworks */,
 				117592F61602909E00CE4B6F /* HockeySDK.framework in Frameworks */,
-				1169AFAA165091D700612AB3 /* libFlurry.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -874,7 +874,7 @@
 			isa = PBXGroup;
 			children = (
 				1169AFA8165091D700612AB3 /* Flurry.h */,
-				1169AFA9165091D700612AB3 /* libFlurry.a */,
+				11FCB44217C474560082F0FA /* libFlurry_4.2.3.a */,
 			);
 			path = Flurry;
 			sourceTree = "<group>";
@@ -2159,8 +2159,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Flurry\"",
+					"$(SRCROOT)",
+					"$(SRCROOT)/Flurry",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2397,8 +2397,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Flurry\"",
+					"$(SRCROOT)",
+					"$(SRCROOT)/Flurry",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2436,8 +2436,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/Flurry\"",
+					"$(SRCROOT)",
+					"$(SRCROOT)/Flurry",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
