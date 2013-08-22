@@ -200,7 +200,9 @@ typedef NS_ENUM(NSUInteger, AboutCellTag) {
         airplane_ = anAirplane;
     
         // Side effect - adds the plane to the view
-        [[self view] insertSubview:airplane_ belowSubview:self.aboutTable_];
+        if (self.view) {
+            [[self mainContentView] insertSubview:airplane_ belowSubview:self.aboutTable_];
+        }
     }
 }
 
@@ -229,7 +231,8 @@ typedef NS_ENUM(NSUInteger, AboutCellTag) {
                                               self.airplane.frame = [JLLookupStyles airplaneFrame];
                                           }
                                           completion:^(BOOL finishedAlso) {
-                                              [[self.presentingViewController view] addSubview:self.airplane]; // Give the airplane back :)
+                                              JLViewController *presentingVC = (JLViewController *)self.presentingViewController;
+                                              [[presentingVC mainContentView] addSubview:self.airplane]; // Give the airplane back :)
                                               [self dismissViewControllerAnimated:NO completion:NULL]; // Instant transition
                                           }];
                      }];
