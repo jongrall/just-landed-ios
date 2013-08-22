@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JLViewController.h"
 
 @protocol AirlineLookupDelegate
 - (void)didChooseAirlineCode:(NSString *)airlineCode;
@@ -14,7 +15,7 @@
 @end
 
 
-@interface AirlineLookupViewController : UIViewController <UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface AirlineLookupViewController : JLViewController <UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) id <AirlineLookupDelegate> delegate;
 

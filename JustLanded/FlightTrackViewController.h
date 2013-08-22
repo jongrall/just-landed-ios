@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JLViewController.h"
 
 @class FlightTrackViewController;
 @class Flight;
@@ -16,9 +17,9 @@
 @end
 
 
-@interface FlightTrackViewController : UIViewController
+@interface FlightTrackViewController : JLViewController
 
-@property (weak, nonatomic) id <FlightTrackViewControllerDelegate> delegate;
+@property (weak, nonatomic) id <FlightTrackViewControllerDelegate> trackDelegate;
 
 - (id)initWithFlight:(Flight *)aFlight;
 - (void)track;

@@ -209,7 +209,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
 - (void)beginTrackingFlight:(Flight *)aFlight animated:(BOOL)animateFlip {
     [[JustLandedSession sharedSession] addTrackedFlight:aFlight];
     FlightTrackViewController *controller = [[FlightTrackViewController alloc] initWithFlight:aFlight];
-    controller.delegate = self;
+    controller.trackDelegate = self;
     controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self.cloudLayer_ stopAnimating]; // Stop animating the clouds
     [self.airplane_ stopAnimating];
@@ -276,7 +276,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     // HACK: Causes loadview to fire, which causes offsetting clouds before animation to work, and adds airplane to aboutController view
     aboutController.airplane = self.airplane_;
     aboutController.cloudLayer.currentCloudOffsets = self.cloudLayer_.currentCloudOffsets;
-    
+
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:aboutController];
     navController.navigationBarHidden = YES;
     [self presentViewController:navController
@@ -473,26 +473,28 @@ static NSRegularExpression *sAirlineCodeRegex_;
 - (void)loadView {
     // Configure the main view
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    UIImageView *mainView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0f,
-                                                                          0.0f,
-                                                                          screenBounds.size.width,
-                                                                          screenBounds.size.height - 20.0f)]; // Status bar
+    UIImageView *mainView = [[UIImageView alloc] initWithFrame:[UIScreen mainContentViewFrame]];
     mainView.backgroundColor = [UIColor blackColor];
     mainView.image = [UIImage imageNamed:[@"sky_bg" imageName]];
     mainView.userInteractionEnabled = YES;
-    self.view = mainView;
+    self.mainContentView = mainView;
+
+    UIView *backgroundView = [[UIView alloc] initWithFrame:screenBounds];
+    backgroundView.backgroundColor = [UIColor blackColor];
+    [backgroundView addSubview:mainView];
+    self.view = backgroundView;
     
     // Add the cloud layer
     self.cloudLayer_ = [[JLCloudLayer alloc] initWithFrame:[JLLookupStyles cloudLayerFrame]];
     self.cloudLayer_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:self.cloudLayer_];
+    [self.mainContentView addSubview:self.cloudLayer_];
     
     // Add the cloud footer
     UIImageView *cloudFooter = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
                                                                resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
     cloudFooter.frame = [JLLookupStyles cloudFooterFrame];
     cloudFooter.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:cloudFooter];
+    [self.mainContentView addSubview:cloudFooter];
     
     // Add the logo
     UIImageView *logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
@@ -500,13 +502,13 @@ static NSRegularExpression *sAirlineCodeRegex_;
     if ([UIScreen isMainScreenWide]) {
         logo.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     }
-    [self.view addSubview:logo];
+    [self.mainContentView addSubview:logo];
     
     // Add the about button
     JLButton *aboutButton = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles aboutButtonStyle]
                                                             frame:[JLLookupStyles aboutButtonFrame]];
     [aboutButton addTarget:self action:@selector(showAboutScreen) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:aboutButton];
+    [self.mainContentView addSubview:aboutButton];
     
     // Add the input field
     JLFlightInputField *flightNumField = [[JLFlightInputField alloc] initWithFrame:[JLLookupStyles lookupTextFieldFrame]];
@@ -519,7 +521,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     lookupInputContainer.userInteractionEnabled = YES;
     [lookupInputContainer addSubview:flightNumField];
     lookupInputContainer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:lookupInputContainer];
+    [self.mainContentView addSubview:lookupInputContainer];
     
     // Add the airport codes button and the airport codes label
     self.airportCodesLabelButton_ = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles airportCodesLabelButtonStyle]
@@ -529,14 +531,14 @@ static NSRegularExpression *sAirlineCodeRegex_;
     self.airportCodesLabelButton_.alpha = [[self class] isFlightNumValid:self.flightNumberField.text] ? 0.0f : 1.0f;
     [self.airportCodesLabelButton_ addTarget:self action:@selector(lookupCodes) forControlEvents:UIControlEventTouchUpInside];
     self.airportCodesLabelButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:self.airportCodesLabelButton_];
+    [self.mainContentView addSubview:self.airportCodesLabelButton_];
     
     self.airportCodesButton_ = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles airportCodesButtonStyle]
                                                                frame:[JLLookupStyles airportCodesButtonFrame]];
     self.airportCodesButton_.alpha = [[self class] isFlightNumValid:self.flightNumberField.text] ? 0.0f : 1.0f;
     [self.airportCodesButton_ addTarget:self action:@selector(lookupCodes) forControlEvents:UIControlEventTouchUpInside];
     self.airportCodesButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:self.airportCodesButton_];
+    [self.mainContentView addSubview:self.airportCodesButton_];
     
     // Add the lookup button
     JLButton *lookupButton = [[JLButton alloc] initWithButtonStyle:[JLLookupStyles lookupButtonStyle]
@@ -546,7 +548,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     [lookupButton addTarget:self action:@selector(doLookup) forControlEvents:UIControlEventTouchUpInside];
     lookupButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.lookupButton_ = lookupButton;
-    [self.view addSubview:lookupButton];
+    [self.mainContentView addSubview:lookupButton];
     
     // Add the results table
     UITableView *resultsTable = [[UITableView alloc] initWithFrame:[JLLookupStyles resultsTableFrame]
@@ -562,23 +564,23 @@ static NSRegularExpression *sAirlineCodeRegex_;
     resultsTable.scrollIndicatorInsets = UIEdgeInsetsMake(2.0f, 0.0f, 2.0f, 2.0f);
     resultsTable.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.flightResultsTable_ = resultsTable;
-    [self.view addSubview:resultsTable];
+    [self.mainContentView addSubview:resultsTable];
     
     // Add the airplane
     self.airplane_ = [[JLAirplaneView alloc] initWithFrame:[JLLookupStyles airplaneFrame]];
-    [self.view addSubview:self.airplane_];
+    [self.mainContentView addSubview:self.airplane_];
     
     // Add the table frame
     UIImage *tableFrame = [[UIImage imageNamed:@"table_frame"] resizableImageWithCapInsets:UIEdgeInsetsMake(11.0f, 11.0f, 11.0f, 11.0f)];
     self.flightResultsTableFrame_ = [[UIImageView alloc] initWithImage:tableFrame];
     self.flightResultsTableFrame_.frame = [JLLookupStyles resultsTableContainerFrame];
     self.flightResultsTableFrame_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:self.flightResultsTableFrame_];
+    [self.mainContentView addSubview:self.flightResultsTableFrame_];
     
     // Add the lookup spinner
     self.lookupSpinner_ = [[JLSpinner alloc] initWithFrame:[JLLookupStyles lookupSpinnerFrame]];
     self.lookupSpinner_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:self.lookupSpinner_];
+    [self.mainContentView addSubview:self.lookupSpinner_];
 }
 
 

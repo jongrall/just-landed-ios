@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JLViewController.h"
 
-@interface AboutViewController : UIViewController
+@interface AboutViewController : JLViewController
 
 @property (strong, nonatomic) JLCloudLayer *cloudLayer;
 @property (strong, nonatomic) JLAirplaneView *airplane;

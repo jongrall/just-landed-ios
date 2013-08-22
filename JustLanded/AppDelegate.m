@@ -36,6 +36,12 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Status bar style
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    else
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
     // Initialization
     self.pushToken = nil;
     self.wakeupTrackTask = UIBackgroundTaskInvalid;
@@ -91,6 +97,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     
     // Show the flight lookup UI
     self.mainViewController_ = [[FlightLookupViewController alloc] init];
+
     self.window.rootViewController = self.mainViewController_;
     [self.window makeKeyAndVisible];
     
@@ -104,6 +111,11 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     }
     
     return YES;
+}
+
+
+- (NSUInteger)supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 

@@ -6,11 +6,12 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+#import "JLViewController.h"
 #import "FlightTrackViewController.h"
 #import "AirlineLookupViewController.h"
 #import "Flight.h"
 
-@interface FlightLookupViewController : UIViewController <FlightTrackViewControllerDelegate, AirlineLookupDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
+@interface FlightLookupViewController : JLViewController <FlightTrackViewControllerDelegate, AirlineLookupDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
 @property (strong, readonly, nonatomic) JLFlightInputField *flightNumberField;
 

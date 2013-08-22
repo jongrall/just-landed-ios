@@ -21,4 +21,16 @@
     return sWideScreen;
 }
 
+
++ (CGRect)mainContentViewFrame {
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+        return CGRectMake(0.0f, 0.0f, screenBounds.size.width, screenBounds.size.height - statusBarHeight);
+    } else {
+        return CGRectMake(0.0f, statusBarHeight, screenBounds.size.width, screenBounds.size.height - statusBarHeight);
+    }
+}
+
 @end

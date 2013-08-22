@@ -11,5 +11,6 @@
 @interface UIScreen (JLExtensions)
 
 + (BOOL)isMainScreenWide;
++ (CGRect)mainContentViewFrame;
 
 @end

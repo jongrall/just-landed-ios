@@ -224,6 +224,7 @@
 		11A2EBE61604189100BEA6EB /* alert.wav in Resources */ = {isa = PBXBuildFile; fileRef = 11A2EBE51604189100BEA6EB /* alert.wav */; };
 		11A3CF6617C54DC300746688 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A914EB5ADE00F7ED46 /* SystemConfiguration.framework */; };
 		11A3CF6817C55E0F00746688 /* AFNetworking-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 11A3CF6717C55E0F00746688 /* AFNetworking-Prefix.pch */; };
+		11A3CF6F17C58DC200746688 /* JLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11A3CF6E17C58DC200746688 /* JLViewController.m */; };
 		11A64F9315F6A80B008ED7E6 /* WebContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11A64F9215F6A80B008ED7E6 /* WebContentViewController.m */; };
 		11AE979E14EB5A4100F7ED46 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */; };
 		11AE97A814EB5AD600F7ED46 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11AE97A714EB5AD600F7ED46 /* MobileCoreServices.framework */; };
@@ -652,6 +653,8 @@
 		119EA22C153A3EE700BBFD5E /* JLLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLLabel.m; sourceTree = "<group>"; };
 		11A2EBE51604189100BEA6EB /* alert.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = alert.wav; sourceTree = "<group>"; };
 		11A3CF6717C55E0F00746688 /* AFNetworking-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AFNetworking-Prefix.pch"; sourceTree = "<group>"; };
+		11A3CF6D17C58DC200746688 /* JLViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLViewController.h; sourceTree = "<group>"; };
+		11A3CF6E17C58DC200746688 /* JLViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLViewController.m; sourceTree = "<group>"; };
 		11A64F9015F6A7F4008ED7E6 /* WebContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContentViewController.h; sourceTree = "<group>"; };
 		11A64F9215F6A80B008ED7E6 /* WebContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebContentViewController.m; sourceTree = "<group>"; };
 		11AE979C14EB5A2200F7ED46 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -1009,6 +1012,8 @@
 				1142AC0415F6FC0E00DD264D /* JLMessageComposeViewController.m */,
 				11A64F9015F6A7F4008ED7E6 /* WebContentViewController.h */,
 				11A64F9215F6A80B008ED7E6 /* WebContentViewController.m */,
+				11A3CF6D17C58DC200746688 /* JLViewController.h */,
+				11A3CF6E17C58DC200746688 /* JLViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -2019,6 +2024,7 @@
 				1142AC0515F6FC0E00DD264D /* JLMessageComposeViewController.m in Sources */,
 				1106407915F8244F009584B7 /* JLAirplaneView.m in Sources */,
 				11E7EF5E16003FA30055C0F2 /* NSString+JLExtensions.m in Sources */,
+				11A3CF6F17C58DC200746688 /* JLViewController.m in Sources */,
 				1180826B1613E53C008275E0 /* UIScreen+JLExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
