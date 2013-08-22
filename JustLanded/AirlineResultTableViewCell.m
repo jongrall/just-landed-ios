@@ -45,6 +45,11 @@ static UIColor *sSelectedTextColor_;
 }
 
 
+- (UIEdgeInsets)separatorInset {
+    return UIEdgeInsetsZero;
+}
+
+
 - (void)setAirlineName:(NSString *)aName {
     if (airlineName_ != aName) {
         airlineName_ = [aName stringByAppendingString:@" "];

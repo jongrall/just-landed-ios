@@ -123,6 +123,10 @@ static NSArray *sAllAirlines_;
     self.resultsTable_.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.resultsTable_.autoresizingMask = UIViewAutoresizingFlexibleHeight;
 
+    if ([self.resultsTable_ respondsToSelector:@selector(separatorInset)]) {
+        self.resultsTable_.separatorInset = UIEdgeInsetsZero;
+    }
+
     [self.view addSubview:self.resultsTable_];
     
     self.noResultsLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLLookupStyles noAirlineResultsLabel]
