@@ -12,19 +12,23 @@
 
 + (void)initialize {
     [super initialize];
-    
-    // Custom navbar
-    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"nav_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(7.0, 0.0, 37.0, 0.0)]
-                                       forBarMetrics:UIBarMetricsDefault];
-    
-    [[UINavigationBar appearance] setTitleVerticalPositionAdjustment:3.5f
-                                                       forBarMetrics:UIBarMetricsDefault];
-    
-    TextStyle *navTitleStyle = [JLStyles navbarTitleStyle];
-    [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: navTitleStyle.font,
-                                                          UITextAttributeTextColor: navTitleStyle.color,
-                                                          UITextAttributeTextShadowColor: navTitleStyle.shadowColor,
-                                                          UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:navTitleStyle.shadowOffset]}];
+
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+        // Custom navbar
+        [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"nav_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(7.0, 0.0, 37.0, 0.0)]
+                                           forBarMetrics:UIBarMetricsDefault];
+
+        [[UINavigationBar appearance] setTitleVerticalPositionAdjustment:3.5f
+                                                           forBarMetrics:UIBarMetricsDefault];
+
+        TextStyle *navTitleStyle = [JLStyles navbarTitleStyle];
+        [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: navTitleStyle.font,
+                                                               UITextAttributeTextColor: navTitleStyle.color,
+                                                               UITextAttributeTextShadowColor: navTitleStyle.shadowColor,
+                                                               UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:navTitleStyle.shadowOffset]}];
+    } else {
+        // Load resources for iOS 7 or later
+    }
 }
 
 @end
