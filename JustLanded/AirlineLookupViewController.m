@@ -112,7 +112,6 @@ static NSArray *sAllAirlines_;
     }
 
     self.searchBar_ = searchBar;
-    self.navigationController.searchDisplayController.displaysSearchBarInNavigationBar = YES;
     [self.view addSubview:searchBar];
     
     self.resultsTable_ = [[UITableView alloc] initWithFrame:CGRectMake(0.0f,
