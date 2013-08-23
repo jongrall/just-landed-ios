@@ -265,7 +265,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     airlineLookupVC.delegate = self;
     UINavigationController *airlineLookupNavVC = [[UINavigationController alloc] initWithRootViewController:airlineLookupVC];
     airlineLookupNavVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self presentViewController:airlineLookupNavVC animated:YES completion:NULL];
+    [self presentViewController:airlineLookupNavVC animated:NO completion:NULL];
     [Flurry logEvent:FY_BEGAN_AIRLINE_LOOKUP];
 }
 

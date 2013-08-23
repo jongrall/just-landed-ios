@@ -338,6 +338,8 @@
 		11E1AD3B1554FFB20021EE16 /* JLAboutStyles.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E1AD3A1554FFB20021EE16 /* JLAboutStyles.m */; };
 		11E7EF5B16002AF70055C0F2 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11E7EF5816002AEE0055C0F2 /* MapKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		11E7EF5E16003FA30055C0F2 /* NSString+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E7EF5D16003FA30055C0F2 /* NSString+JLExtensions.m */; };
+		11E968AC17C6F00B00DB0A62 /* UISearchBar+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E968AB17C6F00B00DB0A62 /* UISearchBar+JLExtensions.m */; };
+		11E968AF17C6F92C00DB0A62 /* UIView+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E968AE17C6F92C00DB0A62 /* UIView+JLExtensions.m */; };
 		11F0E97C1555D82E0044B50C /* nav_button_back_down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */; };
 		11F0E97D1555D82E0044B50C /* nav_button_back_up@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */; };
 		11F112EC15117A170008D301 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F112E915117A0A0008D301 /* Twitter.framework */; };
@@ -781,6 +783,10 @@
 		11E7EF5816002AEE0055C0F2 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		11E7EF5C16003FA30055C0F2 /* NSString+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+JLExtensions.h"; sourceTree = "<group>"; };
 		11E7EF5D16003FA30055C0F2 /* NSString+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+JLExtensions.m"; sourceTree = "<group>"; };
+		11E968AA17C6F00B00DB0A62 /* UISearchBar+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UISearchBar+JLExtensions.h"; sourceTree = "<group>"; };
+		11E968AB17C6F00B00DB0A62 /* UISearchBar+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UISearchBar+JLExtensions.m"; sourceTree = "<group>"; };
+		11E968AD17C6F92C00DB0A62 /* UIView+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+JLExtensions.h"; sourceTree = "<group>"; };
+		11E968AE17C6F92C00DB0A62 /* UIView+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+JLExtensions.m"; sourceTree = "<group>"; };
 		11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_down@2x.png"; sourceTree = "<group>"; };
 		11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_up@2x.png"; sourceTree = "<group>"; };
 		11F112E915117A0A0008D301 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
@@ -1125,6 +1131,10 @@
 				1159C9F7155659C70086F04F /* UINavigationBar+JLExtensions.m */,
 				118082691613E53C008275E0 /* UIScreen+JLExtensions.h */,
 				1180826A1613E53C008275E0 /* UIScreen+JLExtensions.m */,
+				11E968AA17C6F00B00DB0A62 /* UISearchBar+JLExtensions.h */,
+				11E968AB17C6F00B00DB0A62 /* UISearchBar+JLExtensions.m */,
+				11E968AD17C6F92C00DB0A62 /* UIView+JLExtensions.h */,
+				11E968AE17C6F92C00DB0A62 /* UIView+JLExtensions.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -1990,6 +2000,7 @@
 				116CBA5614F343A8003AB446 /* FlightResultTableViewCell.m in Sources */,
 				116CBA9214F45BF9003AB446 /* NSData+JLExtensions.m in Sources */,
 				115E8F3B14F6C8CA00E9F06B /* OriginAirport.m in Sources */,
+				11E968AC17C6F00B00DB0A62 /* UISearchBar+JLExtensions.m in Sources */,
 				115E8F3F14F6C8EE00E9F06B /* DestinationAirport.m in Sources */,
 				1190BF7A151925F200B1163F /* AboutViewController.m in Sources */,
 				11019B45151970E200F7F0F2 /* AboutTableViewCell.m in Sources */,
@@ -2008,6 +2019,7 @@
 				1140A75F154374DA0017AF79 /* JLMultipartOverUnderLabel.m in Sources */,
 				11B6D5C61544E5BE006912E2 /* JLLookupStyles.m in Sources */,
 				11B6D5D915452292006912E2 /* JLFlightInputField.m in Sources */,
+				11E968AF17C6F92C00DB0A62 /* UIView+JLExtensions.m in Sources */,
 				1148447F1545BC0200CCB0B8 /* JLCloudLayer.m in Sources */,
 				11E1AD3B1554FFB20021EE16 /* JLAboutStyles.m in Sources */,
 				11B5001E155505FE00923FFE /* UIBarButtonItem+JLExtensions.m in Sources */,

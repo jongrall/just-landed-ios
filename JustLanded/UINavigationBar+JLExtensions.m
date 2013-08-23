@@ -12,6 +12,7 @@
 
 + (void)initialize {
     [super initialize];
+    TextStyle *navTitleStyle = [JLStyles navbarTitleStyle];
 
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
         // Custom navbar
@@ -21,13 +22,14 @@
         [[UINavigationBar appearance] setTitleVerticalPositionAdjustment:3.5f
                                                            forBarMetrics:UIBarMetricsDefault];
 
-        TextStyle *navTitleStyle = [JLStyles navbarTitleStyle];
         [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: navTitleStyle.font,
                                                                UITextAttributeTextColor: navTitleStyle.color,
                                                                UITextAttributeTextShadowColor: navTitleStyle.shadowColor,
                                                                UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:navTitleStyle.shadowOffset]}];
     } else {
-        // Load resources for iOS 7 or later
+        [[UINavigationBar appearance] setTintColor:[JLLookupStyles flightFieldLabelStyle].textStyle.color];
+        [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: navTitleStyle.font,
+                                                               UITextAttributeTextColor: [JLLookupStyles flightFieldTextStyle].textStyle.color}];
     }
 }
 

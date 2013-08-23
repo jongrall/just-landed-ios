@@ -58,7 +58,12 @@
         [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-2.0f, 2.0f) 
                                                              forBarMetrics:UIBarMetricsDefault];
     } else {
+        // Text styles
+        [[UIBarButtonItem appearance] setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:18.0f]}
+                                                    forState:UIControlStateNormal];
 
+        [[UIBarButtonItem appearance] setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:18.0f]}
+                                                    forState:UIControlStateDisabled];
     }
 }
 

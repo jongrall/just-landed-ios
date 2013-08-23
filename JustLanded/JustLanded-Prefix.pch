@@ -23,6 +23,8 @@
     #import "UIImage+JLExtensions.h"
     #import "UIBarButtonItem+JLExtensions.h"
     #import "NSNotificationCenter+JLExtensions.h"
+    #import "UISearchBar+JLExtensions.h"
+    #import "UIView+JLExtensions.h"
 
     // Styles
     #import "JLStyles.h"

@@ -70,6 +70,10 @@ static NSArray *sAllAirlines_;
             [airlinesWithClear addObject:@"Clear Recent"];
             airlines_ = airlinesWithClear;
         }
+
+        if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
+            self.edgesForExtendedLayout = UIRectEdgeNone;
+        }
     }
     
     return self;
@@ -87,7 +91,7 @@ static NSArray *sAllAirlines_;
                                                                 screenBounds.size.height - 64.0f)]; // Status bar + navbar
     mainView.backgroundColor = [UIColor whiteColor];
     self.view = mainView;
-    
+
     UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, screenBounds.size.width, 44.0f)];
     searchBar.placeholder = NSLocalizedString(@"Airline name e.g. 'Virgin'", @"Airline name prompt");
     searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -96,20 +100,19 @@ static NSArray *sAllAirlines_;
     searchBar.keyboardType = UIKeyboardTypeDefault;
     searchBar.delegate = self;
 
-    UIImage *bgImage = [[UIImage imageNamed:@"query_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 2.0f, 0.0f, 2.0f)];
-    [[UISearchBar appearance] setBackgroundImage:bgImage];
-    UIImage *fieldBg = [[UIImage imageNamed:@"query_field"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 15.0f, 0.0f, 15.0f)];
-    [[UISearchBar appearance] setSearchFieldBackgroundImage:fieldBg forState:UIControlStateNormal];
-    [[UISearchBar appearance] setSearchTextPositionAdjustment:UIOffsetMake(0.0f, 2.0f)];
-    
-    for (UIView *subview in [searchBar subviews]) {
-        if ([subview isKindOfClass:[UITextField class]]) {
-            UITextField *field = (UITextField *)subview;
-            [field setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
-        }
+    UITextField *searchField = (UITextField *)[searchBar findViewOfKindInViewHierarchy:[UITextField class]];
+
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+        [searchField setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
+        searchField.textColor = [JLLookupStyles flightFieldTextStyle].textStyle.color;
+    } else {
+        [searchField setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
+        searchField.tintColor = [JLLookupStyles lookupFieldTintColor];
+        searchField.textColor = [JLLookupStyles flightFieldTextStyle].textStyle.color;
     }
-    
+
     self.searchBar_ = searchBar;
+    self.navigationController.searchDisplayController.displaysSearchBarInNavigationBar = YES;
     [self.view addSubview:searchBar];
     
     self.resultsTable_ = [[UITableView alloc] initWithFrame:CGRectMake(0.0f,
@@ -141,13 +144,15 @@ static NSArray *sAllAirlines_;
     [super viewDidLoad];
 	
     self.navigationItem.title = NSLocalizedString(@"Airline Lookup", @"Airline Lookup");
-    
-    // Custom navbar shadow
-    self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-	self.navigationController.navigationBar.layer.shadowColor = [[UIColor clearColor] CGColor];
-    self.navigationController.navigationBar.layer.shadowOpacity = 0.0f;
-	self.navigationController.navigationBar.layer.shadowRadius = 0.0f;
-	self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
+
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+        // Custom navbar shadow
+        self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
+        self.navigationController.navigationBar.layer.shadowColor = [[UIColor clearColor] CGColor];
+        self.navigationController.navigationBar.layer.shadowOpacity = 0.0f;
+        self.navigationController.navigationBar.layer.shadowRadius = 0.0f;
+        self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
+    }
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wselector"
@@ -163,12 +168,6 @@ static NSArray *sAllAirlines_;
                                                object:nil];
     
     [self.searchBar_ becomeFirstResponder];
-}
-
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
 }
 
 
