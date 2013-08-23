@@ -12,9 +12,9 @@
 
 @interface AirlineLookupViewController ()
 
+@property (strong, nonatomic) UISearchBar *searchBar_;
 @property (strong, nonatomic) NSArray *airlines_;
 @property (strong, nonatomic) JLLabel *noResultsLabel_;
-@property (strong, nonatomic) UISearchBar *searchBar_;
 @property (strong, nonatomic) UITableView *resultsTable_;
 
 - (void)keyboardWasShown:(NSNotification *)notification;

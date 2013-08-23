@@ -951,15 +951,16 @@ static NSRegularExpression *sAirlineCodeRegex_;
     [self disallowLookup];
     self.flightNumberField.text = airlineCode;
     self.flightNumberField.errorState = FlightInputNoError;
+    [self dismissViewControllerAnimated:YES completion:NULL];
     [self resetFlightInputKeyboard];
     [self.flightNumberField becomeFirstResponder];
-    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 
 - (void)cancelledAirlineLookup {
     [self dismissViewControllerAnimated:YES completion:NULL];
     [Flurry logEvent:FY_CANCELED_AIRLINE_LOOKUP];
+    [self.flightNumberField becomeFirstResponder];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
