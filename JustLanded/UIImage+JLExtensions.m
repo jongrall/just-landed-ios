@@ -40,7 +40,7 @@
 	
 	// get a reference to that context we created
 	CGContextRef context = UIGraphicsGetCurrentContext();
-	
+
 	// set the fill color
 	[color setFill];
 	
@@ -137,7 +137,6 @@
     // Draw the rotated image with a not-rotated shadow
     if (shadowColor && rotatedImage) {
         // begin a new image context, to draw our colored image onto
-
         UIGraphicsBeginImageContextWithOptions(size, NO, 0.0f);
         
         // get a reference to that context we created

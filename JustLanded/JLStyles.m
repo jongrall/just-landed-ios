@@ -381,4 +381,9 @@
     return sDefaultButtonStyle;
 }
 
+
++ (UIColor *)justLandedOrange {
+    return [UIColor colorWithRed:255.0f/255.0f green:91.0f/255.0f blue:0.0f alpha:1.0f];
+}
+
 @end

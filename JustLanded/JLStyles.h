@@ -31,5 +31,6 @@
 + (LabelStyle *)noConnectionLabelStyle;
 + (LabelStyle *)errorDescriptionLabelStyle;
 + (ButtonStyle *)defaultButtonStyle;
++ (UIColor *)justLandedOrange;
 
 @end

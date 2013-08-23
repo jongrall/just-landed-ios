@@ -162,6 +162,11 @@
 }
 
 
++ (UIColor *)lookupFieldTintColor {
+    return [UIColor colorWithRed:92.0f/255.0f green:135.0f/255.0f blue:153.0f/255.0f alpha:1.0f];
+}
+
+
 + (ButtonStyle *)lookupButtonStyle {
     static ButtonStyle *sLookupButtonStyle;
     static dispatch_once_t sOncePredicate;

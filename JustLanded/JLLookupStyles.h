@@ -30,6 +30,7 @@
 + (CGRect)airplaneFrame;
 + (CGRect)resultsTableFrame;
 + (CGRect)resultsTableContainerFrame;
++ (UIColor *)lookupFieldTintColor;
 + (ButtonStyle *)lookupButtonStyle;
 + (ButtonStyle *)aboutButtonStyle;
 + (ButtonStyle *)airportCodesButtonStyle;
