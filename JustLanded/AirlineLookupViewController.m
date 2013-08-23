@@ -70,10 +70,6 @@ static NSArray *sAllAirlines_;
             [airlinesWithClear addObject:@"Clear Recent"];
             airlines_ = airlinesWithClear;
         }
-
-        if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
-            self.edgesForExtendedLayout = UIRectEdgeNone;
-        }
     }
     
     return self;
@@ -101,14 +97,11 @@ static NSArray *sAllAirlines_;
     searchBar.delegate = self;
 
     UITextField *searchField = (UITextField *)[searchBar findViewOfKindInViewHierarchy:[UITextField class]];
+    [searchField setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
+    searchField.textColor = [JLLookupStyles flightFieldTextStyle].textStyle.color;
 
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
-        [searchField setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
-        searchField.textColor = [JLLookupStyles flightFieldTextStyle].textStyle.color;
-    } else {
-        [searchField setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
         searchField.tintColor = [JLLookupStyles lookupFieldTintColor];
-        searchField.textColor = [JLLookupStyles flightFieldTextStyle].textStyle.color;
     }
 
     self.searchBar_ = searchBar;
@@ -125,10 +118,6 @@ static NSArray *sAllAirlines_;
     self.resultsTable_.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.resultsTable_.autoresizingMask = UIViewAutoresizingFlexibleHeight;
 
-    if ([self.resultsTable_ respondsToSelector:@selector(separatorInset)]) {
-        self.resultsTable_.separatorInset = UIEdgeInsetsZero;
-    }
-
     [self.view addSubview:self.resultsTable_];
     
     self.noResultsLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLLookupStyles noAirlineResultsLabel]
@@ -144,14 +133,12 @@ static NSArray *sAllAirlines_;
 	
     self.navigationItem.title = NSLocalizedString(@"Airline Lookup", @"Airline Lookup");
 
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
-        // Custom navbar shadow
-        self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-        self.navigationController.navigationBar.layer.shadowColor = [[UIColor clearColor] CGColor];
-        self.navigationController.navigationBar.layer.shadowOpacity = 0.0f;
-        self.navigationController.navigationBar.layer.shadowRadius = 0.0f;
-        self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
-    }
+    // Custom navbar shadow
+    self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
+    self.navigationController.navigationBar.layer.shadowColor = [[UIColor clearColor] CGColor];
+    self.navigationController.navigationBar.layer.shadowOpacity = 0.0f;
+    self.navigationController.navigationBar.layer.shadowRadius = 0.0f;
+    self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wselector"

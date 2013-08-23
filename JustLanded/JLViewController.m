@@ -29,4 +29,9 @@
     return UIInterfaceOrientationMaskPortrait;
 }
 
+
+- (UIRectEdge)edgesForExtendedLayout {
+    return UIRectEdgeNone;
+}
+
 @end

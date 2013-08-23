@@ -12,25 +12,31 @@
 
 + (void)initialize {
     [super initialize];
+
+    // Custom navbar
     TextStyle *navTitleStyle = [JLStyles navbarTitleStyle];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: navTitleStyle.font,
+                                                           UITextAttributeTextColor: navTitleStyle.color,
+                                                           UITextAttributeTextShadowColor: navTitleStyle.shadowColor,
+                                                           UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:navTitleStyle.shadowOffset]}];
 
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
-        // Custom navbar
-        [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"nav_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(7.0, 0.0, 37.0, 0.0)]
-                                           forBarMetrics:UIBarMetricsDefault];
-
         [[UINavigationBar appearance] setTitleVerticalPositionAdjustment:3.5f
                                                            forBarMetrics:UIBarMetricsDefault];
-
-        [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: navTitleStyle.font,
-                                                               UITextAttributeTextColor: navTitleStyle.color,
-                                                               UITextAttributeTextShadowColor: navTitleStyle.shadowColor,
-                                                               UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:navTitleStyle.shadowOffset]}];
+        [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"nav_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(7.0, 0.0, 37.0, 0.0)]
+                                           forBarMetrics:UIBarMetricsDefault];
     } else {
-        [[UINavigationBar appearance] setTintColor:[JLLookupStyles flightFieldLabelStyle].textStyle.color];
-        [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: navTitleStyle.font,
-                                                               UITextAttributeTextColor: [JLLookupStyles flightFieldTextStyle].textStyle.color}];
+        [[UINavigationBar appearance] setTitleVerticalPositionAdjustment:2.0f
+                                                           forBarMetrics:UIBarMetricsDefault];
+        [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"nav_bg_newstyle"]
+                                           forBarMetrics:UIBarMetricsDefault];
+        [[UINavigationBar appearance] setTintColor:[JLLookupStyles flightFieldTextStyle].textStyle.color];
     }
+}
+
+
+- (UIBarStyle)barStyle {
+    return UIBarStyleBlackOpaque;
 }
 
 @end

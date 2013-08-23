@@ -340,6 +340,8 @@
 		11E7EF5E16003FA30055C0F2 /* NSString+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E7EF5D16003FA30055C0F2 /* NSString+JLExtensions.m */; };
 		11E968AC17C6F00B00DB0A62 /* UISearchBar+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E968AB17C6F00B00DB0A62 /* UISearchBar+JLExtensions.m */; };
 		11E968AF17C6F92C00DB0A62 /* UIView+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E968AE17C6F92C00DB0A62 /* UIView+JLExtensions.m */; };
+		11E968B217C7239E00DB0A62 /* nav_bg_newstyle.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E968B017C7239E00DB0A62 /* nav_bg_newstyle.png */; };
+		11E968B317C7239E00DB0A62 /* nav_bg_newstyle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E968B117C7239E00DB0A62 /* nav_bg_newstyle@2x.png */; };
 		11F0E97C1555D82E0044B50C /* nav_button_back_down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */; };
 		11F0E97D1555D82E0044B50C /* nav_button_back_up@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */; };
 		11F112EC15117A170008D301 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F112E915117A0A0008D301 /* Twitter.framework */; };
@@ -787,6 +789,8 @@
 		11E968AB17C6F00B00DB0A62 /* UISearchBar+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UISearchBar+JLExtensions.m"; sourceTree = "<group>"; };
 		11E968AD17C6F92C00DB0A62 /* UIView+JLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+JLExtensions.h"; sourceTree = "<group>"; };
 		11E968AE17C6F92C00DB0A62 /* UIView+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+JLExtensions.m"; sourceTree = "<group>"; };
+		11E968B017C7239E00DB0A62 /* nav_bg_newstyle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nav_bg_newstyle.png; sourceTree = "<group>"; };
+		11E968B117C7239E00DB0A62 /* nav_bg_newstyle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_bg_newstyle@2x.png"; sourceTree = "<group>"; };
 		11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_down@2x.png"; sourceTree = "<group>"; };
 		11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_up@2x.png"; sourceTree = "<group>"; };
 		11F112E915117A0A0008D301 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
@@ -1250,6 +1254,8 @@
 				11B6D5BE1544E45D006912E2 /* lookup_clouds_4@2x.png */,
 				1196364B158290350081AA63 /* nav_bg.png */,
 				11E1AD0C1554C6B40021EE16 /* nav_bg@2x.png */,
+				11E968B017C7239E00DB0A62 /* nav_bg_newstyle.png */,
+				11E968B117C7239E00DB0A62 /* nav_bg_newstyle@2x.png */,
 				11963656158290350081AA63 /* no_connection.png */,
 				112896C01562257A0056DD34 /* no_connection@2x.png */,
 				116BE699161A5227004207FD /* overlay_screens_bg-568h@2x.png */,
@@ -1710,6 +1716,7 @@
 				1154E879153D0A98005BFF2B /* flight_on_ground_night@2x.png in Resources */,
 				1154E87F153DF07A005BFF2B /* JET4_day@2x.png in Resources */,
 				1154E880153DF07A005BFF2B /* JET4_night@2x.png in Resources */,
+				11E968B317C7239E00DB0A62 /* nav_bg_newstyle@2x.png in Resources */,
 				1140A76515438E3C0017AF79 /* gauge_color@2x.png in Resources */,
 				1140A76615438E3C0017AF79 /* gauge_inset@2x.png in Resources */,
 				1140A76715438E3C0017AF79 /* gauge_top@2x.png in Resources */,
@@ -1913,6 +1920,7 @@
 				116BE6A6161A5227004207FD /* tracking_header_bg_gray-568h@2x.png in Resources */,
 				116BE6A7161A5227004207FD /* tracking_header_bg_green-568h@2x.png in Resources */,
 				116BE6A8161A5227004207FD /* tracking_header_bg_red-568h@2x.png in Resources */,
+				11E968B217C7239E00DB0A62 /* nav_bg_newstyle.png in Resources */,
 				116BE6CF161BD17C004207FD /* flight_on_ground_day-568h@2x.png in Resources */,
 				116BE6D0161BD17C004207FD /* flight_on_ground_night-568h@2x.png in Resources */,
 				116BE6D1161BD17C004207FD /* tracking_animation_ground_night-568h@2x.png in Resources */,
