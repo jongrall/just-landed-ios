@@ -342,6 +342,10 @@
 		11E968AF17C6F92C00DB0A62 /* UIView+JLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E968AE17C6F92C00DB0A62 /* UIView+JLExtensions.m */; };
 		11E968B217C7239E00DB0A62 /* nav_bg_newstyle.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E968B017C7239E00DB0A62 /* nav_bg_newstyle.png */; };
 		11E968B317C7239E00DB0A62 /* nav_bg_newstyle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11E968B117C7239E00DB0A62 /* nav_bg_newstyle@2x.png */; };
+		11EA23F617CAF8C80068EC98 /* Icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 11EA23F217CAF8C80068EC98 /* Icon-40.png */; };
+		11EA23F717CAF8C80068EC98 /* Icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11EA23F317CAF8C80068EC98 /* Icon-40@2x.png */; };
+		11EA23F817CAF8C80068EC98 /* Icon-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 11EA23F417CAF8C80068EC98 /* Icon-60.png */; };
+		11EA23F917CAF8C80068EC98 /* Icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11EA23F517CAF8C80068EC98 /* Icon-60@2x.png */; };
 		11F0E97C1555D82E0044B50C /* nav_button_back_down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */; };
 		11F0E97D1555D82E0044B50C /* nav_button_back_up@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */; };
 		11F112EC15117A170008D301 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F112E915117A0A0008D301 /* Twitter.framework */; };
@@ -791,6 +795,10 @@
 		11E968AE17C6F92C00DB0A62 /* UIView+JLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+JLExtensions.m"; sourceTree = "<group>"; };
 		11E968B017C7239E00DB0A62 /* nav_bg_newstyle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nav_bg_newstyle.png; sourceTree = "<group>"; };
 		11E968B117C7239E00DB0A62 /* nav_bg_newstyle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_bg_newstyle@2x.png"; sourceTree = "<group>"; };
+		11EA23F217CAF8C80068EC98 /* Icon-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40.png"; sourceTree = "<group>"; };
+		11EA23F317CAF8C80068EC98 /* Icon-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40@2x.png"; sourceTree = "<group>"; };
+		11EA23F417CAF8C80068EC98 /* Icon-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60.png"; sourceTree = "<group>"; };
+		11EA23F517CAF8C80068EC98 /* Icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@2x.png"; sourceTree = "<group>"; };
 		11F0E97A1555D82E0044B50C /* nav_button_back_down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_down@2x.png"; sourceTree = "<group>"; };
 		11F0E97B1555D82E0044B50C /* nav_button_back_up@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_button_back_up@2x.png"; sourceTree = "<group>"; };
 		11F112E915117A0A0008D301 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
@@ -1020,10 +1028,10 @@
 				1159C9D715562E6C0086F04F /* JLMailComposeViewController.m */,
 				1142AC0315F6FC0E00DD264D /* JLMessageComposeViewController.h */,
 				1142AC0415F6FC0E00DD264D /* JLMessageComposeViewController.m */,
-				11A64F9015F6A7F4008ED7E6 /* WebContentViewController.h */,
-				11A64F9215F6A80B008ED7E6 /* WebContentViewController.m */,
 				11A3CF6D17C58DC200746688 /* JLViewController.h */,
 				11A3CF6E17C58DC200746688 /* JLViewController.m */,
+				11A64F9015F6A7F4008ED7E6 /* WebContentViewController.h */,
+				11A64F9215F6A80B008ED7E6 /* WebContentViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1420,6 +1428,10 @@
 				11C6275215F8754F00E2D27C /* faq_down@2x.png */,
 				11C6278415FA6EE300E2D27C /* faq_up.png */,
 				11C6275115F8754F00E2D27C /* faq_up@2x.png */,
+				11EA23F217CAF8C80068EC98 /* Icon-40.png */,
+				11EA23F317CAF8C80068EC98 /* Icon-40@2x.png */,
+				11EA23F417CAF8C80068EC98 /* Icon-60.png */,
+				11EA23F517CAF8C80068EC98 /* Icon-60@2x.png */,
 				11F96E60153AC342003E4B1D /* Icon-Small.png */,
 				11F96E61153AC342003E4B1D /* Icon-Small@2x.png */,
 				11F96E62153AC342003E4B1D /* Icon.png */,
@@ -1692,6 +1704,7 @@
 				11F96E6C153AC342003E4B1D /* lookup@2x.png in Resources */,
 				11DCC409153AD58C0097A7DB /* tracking_footer_bg@2x.png in Resources */,
 				11DCC40A153AD58C0097A7DB /* tracking_header_bg_black@2x.png in Resources */,
+				11EA23F817CAF8C80068EC98 /* Icon-60.png in Resources */,
 				11DCC40B153AD58C0097A7DB /* tracking_header_bg_blue@2x.png in Resources */,
 				11DCC40C153AD58C0097A7DB /* tracking_header_bg_gray@2x.png in Resources */,
 				11DCC40D153AD58C0097A7DB /* tracking_header_bg_green@2x.png in Resources */,
@@ -1717,6 +1730,7 @@
 				1154E87F153DF07A005BFF2B /* JET4_day@2x.png in Resources */,
 				1154E880153DF07A005BFF2B /* JET4_night@2x.png in Resources */,
 				11E968B317C7239E00DB0A62 /* nav_bg_newstyle@2x.png in Resources */,
+				11EA23F717CAF8C80068EC98 /* Icon-40@2x.png in Resources */,
 				1140A76515438E3C0017AF79 /* gauge_color@2x.png in Resources */,
 				1140A76615438E3C0017AF79 /* gauge_inset@2x.png in Resources */,
 				1140A76715438E3C0017AF79 /* gauge_top@2x.png in Resources */,
@@ -1727,6 +1741,7 @@
 				11B6D5B71544DE9F006912E2 /* Default@2x.png in Resources */,
 				11B6D5B91544E41B006912E2 /* sky_bg@2x.png in Resources */,
 				11B6D5BF1544E45D006912E2 /* lookup_cloud_fg@2x.png in Resources */,
+				11EA23F917CAF8C80068EC98 /* Icon-60@2x.png in Resources */,
 				11B6D5C01544E45D006912E2 /* lookup_clouds_1@2x.png in Resources */,
 				11B6D5C11544E45D006912E2 /* lookup_clouds_2@2x.png in Resources */,
 				11B6D5C21544E45D006912E2 /* lookup_clouds_3@2x.png in Resources */,
@@ -1858,6 +1873,7 @@
 				119636EF1582909D0081AA63 /* PROP2_night_lights.png in Resources */,
 				119636F01582909D0081AA63 /* PROP2_night.png in Resources */,
 				119636F11582909D0081AA63 /* PROP4_day.png in Resources */,
+				11EA23F617CAF8C80068EC98 /* Icon-40.png in Resources */,
 				119636F21582909D0081AA63 /* PROP4_night_lights.png in Resources */,
 				119636F31582909D0081AA63 /* PROP4_night.png in Resources */,
 				119636F81582909D0081AA63 /* arrow.png in Resources */,
