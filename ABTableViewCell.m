@@ -28,6 +28,7 @@
 //
 
 #import "ABTableViewCell.h"
+#import "Constants.h"
 
 @interface ABTableViewCellContentView : UIView
 @property (weak, nonatomic) ABTableViewCell *parentCell;
@@ -69,15 +70,25 @@
 	[theParentCell drawContentView:rect highlighted:YES];
 }
 
+
+- (CGRect)frame {
+    ABTableViewCell *theParentCell = self.parentCell;
+    return theParentCell.backgroundView.frame;
+}
+
+
+- (void)setFrame:(CGRect)frame {
+    ABTableViewCell *theParentCell = self.parentCell;
+    [super setFrame:theParentCell.backgroundView.frame];
+}
+
 @end
 
 
 @implementation ABTableViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-	self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-	
-    if(self) {
+    if((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
         ABTableViewCellView *cellView = [[ABTableViewCellView alloc] initWithFrame:CGRectZero];
         cellView.parentCell = self;
 		contentView = cellView;
@@ -105,6 +116,7 @@
 	[super setSelected:selected];
 }
 
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
 	[selectedContentView setNeedsDisplay];
 
@@ -114,6 +126,7 @@
 	
 	[super setSelected:selected animated:animated];
 }
+
 
 - (void)setHighlighted:(BOOL)highlighted {
 	[selectedContentView setNeedsDisplay];
@@ -125,6 +138,7 @@
 	[super setHighlighted:highlighted];
 }
 
+
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
 	[selectedContentView setNeedsDisplay];
 	
@@ -135,13 +149,14 @@
 	[super setHighlighted:highlighted animated:animated];
 }
 
+
 - (void)setFrame:(CGRect)f {
 	[super setFrame:f];
 	CGRect b = [self bounds];
-	// b.size.height -= 1; // leave room for the separator line
 	[contentView setFrame:b];
 	[selectedContentView setFrame:b];
 }
+
 
 - (void)setNeedsDisplay {
 	[super setNeedsDisplay];
@@ -152,6 +167,7 @@
 	}
 }
 
+
 - (void)setNeedsDisplayInRect:(CGRect)rect {
 	[super setNeedsDisplayInRect:rect];
     [contentView setNeedsDisplayInRect:rect];
@@ -161,11 +177,13 @@
 	}
 }
 
+
 - (void)layoutSubviews {
 	[super layoutSubviews];
 	self.contentView.hidden = YES;
 	[self.contentView removeFromSuperview];
 }
+
 
 - (void)drawContentView:(CGRect)rect highlighted:(BOOL)highlighted {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException

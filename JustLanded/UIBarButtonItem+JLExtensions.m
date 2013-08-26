@@ -61,12 +61,27 @@
 
 - (void)adoptJustLandedStyle {
     if (!iOS_6_OrEarlier()) {
-        // Text styles
-        [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:18.0f]}
-                                                    forState:UIControlStateNormal];
+        ButtonStyle *buttonStyle = [JLStyles navbarButtonStyle];
+        self.style = UIBarButtonItemStyleBordered;
 
-        [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:18.0f]}
-                                                    forState:UIControlStateDisabled];
+        // Text styles
+        [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:16.0f],
+                                       UITextAttributeTextColor: buttonStyle.labelStyle.textStyle.color,
+                                       UITextAttributeTextShadowColor: buttonStyle.labelStyle.textStyle.shadowColor,
+                                       UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:buttonStyle.labelStyle.textStyle.shadowOffset]}
+                            forState:UIControlStateNormal];
+
+        [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:16.0f],
+                                       UITextAttributeTextColor: buttonStyle.disabledLabelStyle.textStyle.color,
+                                       UITextAttributeTextShadowColor: buttonStyle.disabledLabelStyle.textStyle.shadowColor,
+                                       UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:buttonStyle.disabledLabelStyle.textStyle.shadowOffset]}
+                            forState:UIControlStateDisabled];
+
+        [self setTitlePositionAdjustment:UIOffsetMake(0.0f, -2.0f)
+                                                   forBarMetrics:UIBarMetricsDefault];
+
+        [self setBackButtonTitlePositionAdjustment:UIOffsetMake(0.0f, -2.0f)
+                                                             forBarMetrics:UIBarMetricsDefault];
     }
 }
 

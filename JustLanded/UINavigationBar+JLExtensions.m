@@ -35,7 +35,7 @@
         [self setTitleVerticalPositionAdjustment:2.0f forBarMetrics:UIBarMetricsDefault];
         [self setBackgroundImage:[UIImage imageNamed:@"nav_bg_newstyle"]
                                            forBarMetrics:UIBarMetricsDefault];
-        [self setTintColor:[JLLookupStyles flightFieldTextStyle].textStyle.color];
+        [self setTintColor:[UIColor whiteColor]];
         [self setBarStyle:UIBarStyleBlackOpaque];
     }
 
