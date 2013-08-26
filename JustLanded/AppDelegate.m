@@ -37,7 +37,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Status bar style
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1)
+    if (iOS_6_OrEarlier())
          [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     else
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];

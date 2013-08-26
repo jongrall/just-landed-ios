@@ -89,20 +89,13 @@ static NSArray *sAllAirlines_;
     self.view = mainView;
 
     UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, screenBounds.size.width, 44.0f)];
+    [searchBar adoptJustLandedStyle];
     searchBar.placeholder = NSLocalizedString(@"Airline name e.g. 'Virgin'", @"Airline name prompt");
     searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
     searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
     searchBar.spellCheckingType = UITextSpellCheckingTypeNo;
     searchBar.keyboardType = UIKeyboardTypeDefault;
     searchBar.delegate = self;
-
-    UITextField *searchField = (UITextField *)[searchBar findViewOfKindInViewHierarchy:[UITextField class]];
-    [searchField setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
-    searchField.textColor = [JLLookupStyles flightFieldTextStyle].textStyle.color;
-
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
-        searchField.tintColor = [JLLookupStyles lookupFieldTintColor];
-    }
 
     self.searchBar_ = searchBar;
     [self.view addSubview:searchBar];
@@ -133,20 +126,15 @@ static NSArray *sAllAirlines_;
 	
     self.navigationItem.title = NSLocalizedString(@"Airline Lookup", @"Airline Lookup");
 
-    // Custom navbar shadow
-    self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-    self.navigationController.navigationBar.layer.shadowColor = [[UIColor clearColor] CGColor];
-    self.navigationController.navigationBar.layer.shadowOpacity = 0.0f;
-    self.navigationController.navigationBar.layer.shadowRadius = 0.0f;
-    self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
-
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wselector"
     id<AirlineLookupDelegate> lookupDelegate = _delegate;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:lookupDelegate
-                                                                             action:@selector(cancelledAirlineLookup)];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
+                                                                     style:UIBarButtonItemStylePlain
+                                                                    target:lookupDelegate
+                                                                    action:@selector(cancelledAirlineLookup)];
+    [cancelButton adoptJustLandedStyle];
+    self.navigationItem.leftBarButtonItem = cancelButton;
     #pragma clang diagnostic pop
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWasShown:) 

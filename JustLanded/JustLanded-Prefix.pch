@@ -25,6 +25,7 @@
     #import "NSNotificationCenter+JLExtensions.h"
     #import "UISearchBar+JLExtensions.h"
     #import "UIView+JLExtensions.h"
+    #import "UINavigationBar+JLExtensions.h"
 
     // Styles
     #import "JLStyles.h"

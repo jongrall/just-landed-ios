@@ -10,4 +10,6 @@
 
 @interface UISearchBar (JLExtensions)
 
+- (void)adoptJustLandedStyle;
+
 @end

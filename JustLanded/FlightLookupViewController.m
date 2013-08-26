@@ -590,6 +590,12 @@ static NSRegularExpression *sAirlineCodeRegex_;
 }
 
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self.flightNumberField becomeFirstResponder];
+}
+
+
 - (void)viewDidUnload {
     [super viewDidUnload];
     

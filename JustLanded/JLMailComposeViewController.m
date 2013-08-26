@@ -6,7 +6,6 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-@import QuartzCore;
 #import "JLMailComposeViewController.h"
 
 @interface JLMailComposeViewController ()
@@ -18,15 +17,15 @@
 
 @implementation JLMailComposeViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    // Customize the navbar    
-    self.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);
-    self.navigationBar.layer.shadowColor = [[UIColor blackColor] CGColor];
-    self.navigationBar.layer.shadowOpacity = 0.5f;
-    self.navigationBar.layer.shadowRadius = 0.25f;
-    self.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    if (iOS_6_OrEarlier()) {
+        [self.navigationBar adoptJustLandedStyle];
+        [self.topViewController.navigationItem.leftBarButtonItem adoptJustLandedStyle];
+        [self.topViewController.navigationItem.rightBarButtonItem adoptJustLandedStyle];
+    }
 }
 
 

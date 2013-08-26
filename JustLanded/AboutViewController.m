@@ -125,10 +125,12 @@ typedef NS_ENUM(NSUInteger, AboutCellTag) {
     [self.cloudLayer startAnimating];
     
     // Override back button
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Back", @"Back")
-                                                                             style:UIBarButtonItemStylePlain
-                                                                            target:nil 
-                                                                            action:nil];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Back", @"Back")
+                                                                   style:UIBarButtonItemStylePlain
+                                                                  target:nil
+                                                                  action:nil];
+    [backButton adoptJustLandedStyle];
+    self.navigationItem.backBarButtonItem = backButton;
 }
 
 
@@ -343,7 +345,7 @@ typedef NS_ENUM(NSUInteger, AboutCellTag) {
         case AboutCellTagFeedback: {
             JLMailComposeViewController *mailComposer = [[JLMailComposeViewController alloc] init];
             [mailComposer setToRecipients:@[@"feedback@getjustlanded.com"]];
-            [mailComposer setSubject:[NSString stringWithFormat:@"Feedback on JustLanded v%@",
+            [mailComposer setSubject:[NSString stringWithFormat:@"Feedback on Just Landed v%@",
                                       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
             [mailComposer setMailComposeDelegate:self];
             mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -369,7 +371,7 @@ typedef NS_ENUM(NSUInteger, AboutCellTag) {
             smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             [self presentViewController:smsComposer animated:YES completion:NULL];
             
-            if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+            if (iOS_6_OrEarlier()) {
                 // Hack to fix MFMMessageCompose changing status bar type
                 [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
             }

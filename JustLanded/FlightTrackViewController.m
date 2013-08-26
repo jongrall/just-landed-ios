@@ -1388,7 +1388,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self presentViewController:smsComposer animated:YES completion:NULL];
 
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+    if (iOS_6_OrEarlier()) {
         // Hack to fix MFMMessageCompose changing status bar type
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     }

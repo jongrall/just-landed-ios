@@ -238,19 +238,15 @@
     [super viewDidLoad];
 	self.navigationItem.title = self.contentTitle_;
     
-    // Customize the navbar
-    self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);
-    self.navigationController.navigationBar.layer.shadowColor = [[UIColor blackColor] CGColor];
-    self.navigationController.navigationBar.layer.shadowOpacity = 0.5f;
-    self.navigationController.navigationBar.layer.shadowRadius = 0.25f;
-    self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
-    
     // Customize the right bar button item
     if (self.showDoneButton_) {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"Done")
-                                                                                  style:UIBarButtonItemStylePlain
-                                                                                 target:self
-                                                                                 action:@selector(dismiss)];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"Done")
+                                                                       style:UIBarButtonItemStylePlain
+                                                                      target:self
+                                                                      action:@selector(dismiss)];
+        [doneButton adoptJustLandedStyle];
+        self.navigationItem.rightBarButtonItem = doneButton;
+        [self.navigationItem.leftBarButtonItem adoptJustLandedStyle];
     }
 
 	[self loadContent];

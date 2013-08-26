@@ -10,4 +10,6 @@
 
 @interface UINavigationBar (JLExtensions)
 
+- (void)adoptJustLandedStyle;
+
 @end

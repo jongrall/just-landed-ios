@@ -10,5 +10,6 @@
 
 @interface UIBarButtonItem (JLExtensions)
 
+- (void)adoptJustLandedStyle;
 
 @end

@@ -95,7 +95,7 @@
     LabelStyle *labelStyle = [JLLookupStyles flightFieldTextStyle];
     TextStyle *textStyle = labelStyle.textStyle;
 
-    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
+    if (!iOS_6_OrEarlier()) {
         rect = CGRectMake(rect.origin.x, rect.origin.y + 15.5f, rect.size.width, rect.size.height);
     }
 
@@ -111,7 +111,7 @@
 
 
 - (CGRect)textRectForBounds:(CGRect)bounds {
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+    if (iOS_6_OrEarlier()) {
         return CGRectMake(bounds.origin.x + 143.0f, bounds.origin.y + 15.0f, bounds.size.width - 170.0f, 30.0f);
     } else {
         CGRect textRect = [super textRectForBounds:bounds];
@@ -124,7 +124,7 @@
 
 
 - (CGRect)editingRectForBounds:(CGRect)bounds {
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+    if (iOS_6_OrEarlier()) {
         return CGRectMake(bounds.origin.x + 143.0f, bounds.origin.y + 14.0f, bounds.size.width - 170.0f, 30.0f);
     } else {
         CGRect editingRect = [super editingRectForBounds:bounds];
@@ -137,7 +137,7 @@
 
 
 - (CGRect)placeholderRectForBounds:(CGRect)bounds {
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+    if (iOS_6_OrEarlier()) {
         return CGRectMake(bounds.origin.x + 143.0f, bounds.origin.y + 15.0f, bounds.size.width - 170.0f, 30.0f);
     } else {
         CGRect placeholderRect = [super placeholderRectForBounds:bounds];

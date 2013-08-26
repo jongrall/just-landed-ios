@@ -23,10 +23,10 @@
 
 
 + (CGRect)mainContentViewFrame {
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    CGFloat statusBarHeight = 20.0f; // Assumed fixed
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
 
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+    if (iOS_6_OrEarlier()) {
         return CGRectMake(0.0f, 0.0f, screenBounds.size.width, screenBounds.size.height - statusBarHeight);
     } else {
         return CGRectMake(0.0f, statusBarHeight, screenBounds.size.width, screenBounds.size.height - statusBarHeight);

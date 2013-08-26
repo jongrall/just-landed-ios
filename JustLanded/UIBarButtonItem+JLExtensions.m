@@ -12,9 +12,7 @@
 @implementation UIBarButtonItem (JLExtensions)
 
 + (void)initialize {
-    [super initialize];
-
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+    if (iOS_6_OrEarlier()) {
         ButtonStyle *buttonStyle = [JLStyles navbarButtonStyle];
         ButtonStyle *backButtonStyle = [JLStyles navbarBackButtonStyle];
 
@@ -54,15 +52,20 @@
 
         [[UIBarButtonItem appearance] setTitlePositionAdjustment:UIOffsetMake(0.0f, 1.0f)
                                                    forBarMetrics:UIBarMetricsDefault];
-        
-        [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-2.0f, 2.0f) 
+
+        [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-2.0f, 2.0f)
                                                              forBarMetrics:UIBarMetricsDefault];
-    } else {
+    }
+}
+
+
+- (void)adoptJustLandedStyle {
+    if (!iOS_6_OrEarlier()) {
         // Text styles
-        [[UIBarButtonItem appearance] setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:18.0f]}
+        [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:18.0f]}
                                                     forState:UIControlStateNormal];
 
-        [[UIBarButtonItem appearance] setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:18.0f]}
+        [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:18.0f]}
                                                     forState:UIControlStateDisabled];
     }
 }

@@ -10,6 +10,8 @@ typedef NS_ENUM(NSUInteger, JLLocalNotificationTypes) {
     JLLocalNotificationTypeTextOnArrival = 137,
 };
 
+BOOL iOS_6_OrEarlier(void);
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSUserDefaults & Other Keys

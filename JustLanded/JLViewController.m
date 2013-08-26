@@ -10,6 +10,11 @@
 
 @implementation JLViewController
 
+
+- (void)viewDidLoad {
+    [self.navigationController.navigationBar adoptJustLandedStyle];
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
 }
