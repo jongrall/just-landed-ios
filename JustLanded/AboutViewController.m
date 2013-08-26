@@ -109,7 +109,7 @@ typedef NS_ENUM(NSUInteger, AboutCellTag) {
     // Add the credits
     self.copyrightLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle]
                                                          frame:[JLAboutStyles copyrightNoticeFrame]];
-    self.copyrightLabel_.text = [NSString stringWithFormat:NSLocalizedString(@"©2012 Little Details LLC. Just Landed %@", @"Copyright Notice"),
+    self.copyrightLabel_.text = [NSString stringWithFormat:NSLocalizedString(@"©2013 Little Details LLC. Just Landed %@", @"Copyright Notice"),
                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     self.copyrightLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.copyrightLabel_.hidden = YES; // Hidden at first
