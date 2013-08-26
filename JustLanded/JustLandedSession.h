@@ -18,7 +18,7 @@ typedef NS_ENUM(NSUInteger, JustLandedSoundType) {
 
 @interface JustLandedSession : NSObject
 
-+ (JustLandedSession *)sharedSession;
++ (instancetype)sharedSession;
 
 // User management & prefs
 - (NSString *)UUID;

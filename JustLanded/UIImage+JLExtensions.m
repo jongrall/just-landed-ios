@@ -23,7 +23,7 @@
 @implementation UIImage (JLExtensions)
 
 
-+ (UIImage *)imageNamed:(NSString *)name withColor:(UIColor *)color {
++ (instancetype)imageNamed:(NSString *)name withColor:(UIColor *)color {
 	if (name == nil) {
 		return nil;
 	}
@@ -67,7 +67,7 @@
 }
 
 
-+ (UIImage *)imageNamed:(NSString *)name withColor:(UIColor *)color shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowBlur:(CGFloat)blur {
++ (instancetype)imageNamed:(NSString *)name withColor:(UIColor *)color shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowBlur:(CGFloat)blur {
 	// Create a colored version of the source image
     UIImage *coloredImage = [UIImage imageNamed:name withColor:color];
     
@@ -118,7 +118,7 @@
 }
 
 
-+ (UIImage *)imageNamed:(NSString *)name rotatedDegreesClockwise:(double)degrees shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowBlur:(CGFloat)blur {
++ (instancetype)imageNamed:(NSString *)name rotatedDegreesClockwise:(double)degrees shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowBlur:(CGFloat)blur {
     // Create a rotated version of the source image
     UIImage *srcImage = [UIImage imageNamed:name];
     CGSize size = srcImage.size;

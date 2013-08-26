@@ -17,8 +17,8 @@ typedef NS_ENUM(NSUInteger, RelativeDateKind) {
 
 @interface NSDate (JLExtensions)
 
-+ (NSDate *)dateWithTimestamp:(NSNumber *)timestamp;
-+ (NSDate *)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag;
++ (instancetype)dateWithTimestamp:(NSNumber *)timestamp;
++ (instancetype)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag;
 + (RelativeDateKind)currentDateRelativeToDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
 + (NSString *)sanitizeTimeZoneString:(NSString *)tzString;
 + (NSString *)naturalDateStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;

@@ -12,12 +12,12 @@
 
 @implementation NSDate (JLExtensions)
 
-+ (NSDate *)dateWithTimestamp:(NSNumber *)timestamp {
++ (instancetype)dateWithTimestamp:(NSNumber *)timestamp {
     return [self dateWithTimestamp:timestamp returnNilForZero:NO];
 }
 
 
-+ (NSDate *)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag {
++ (instancetype)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag {
     if (timestamp && [timestamp isKindOfClass:[NSNumber class]]) {
         if (flag && [timestamp integerValue] == 0) {
             return nil;

@@ -19,7 +19,7 @@
 
 @implementation JustLandedAPIClient
 
-+ (JustLandedAPIClient *)sharedClient {
++ (instancetype)sharedClient {
     static JustLandedAPIClient *sSharedClient_ = nil;
     static dispatch_once_t sOncePredicate;
     

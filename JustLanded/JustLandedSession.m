@@ -35,7 +35,7 @@
 
 @synthesize currentlyTrackedFlights_;
 
-+ (JustLandedSession *)sharedSession {
++ (instancetype)sharedSession {
     static JustLandedSession *sSharedSession_ = nil;
     static dispatch_once_t sOncePredicate;
     
