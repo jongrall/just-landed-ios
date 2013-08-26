@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import QuartzCore;
 #import "AirlineLookupViewController.h"
 #import "AirlineResultTableViewCell.h"
-#import <QuartzCore/QuartzCore.h>
 
 @interface AirlineLookupViewController ()
 

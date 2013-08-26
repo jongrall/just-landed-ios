@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import QuartzCore;
 #import "JLMessageComposeViewController.h"
-#import <QuartzCore/QuartzCore.h>
 
 @implementation JLMessageComposeViewController
 

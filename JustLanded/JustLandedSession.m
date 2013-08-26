@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import AudioToolbox;
 #import "JustLandedSession.h"
-#import <AudioToolbox/AudioToolbox.h>
 #import "Flight.h"
 #import <HockeySDK/HockeySDK.h>
 #import "Reachability.h"

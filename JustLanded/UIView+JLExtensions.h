@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface UIView (JLExtensions)
 

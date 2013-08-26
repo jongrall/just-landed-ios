@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
+@import UIKit;
+@import CoreLocation;
 
 extern NSString * const DidUpdatePushTokenNotification;
 extern NSString * const DidFailToUpdatePushTokenNotification;

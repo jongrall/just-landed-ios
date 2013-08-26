@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 #import "JLNoConnectionView.h"
 
 typedef NS_ENUM(NSUInteger, ErrorType) {

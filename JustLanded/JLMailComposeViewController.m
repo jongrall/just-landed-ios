@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import QuartzCore;
 #import "JLMailComposeViewController.h"
-#import <QuartzCore/QuartzCore.h>
 
 @interface JLMailComposeViewController ()
 

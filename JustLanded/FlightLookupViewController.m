@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import QuartzCore;
 #import "FlightLookupViewController.h"
 #import "FlightResultTableViewCell.h"
 #import "AboutViewController.h"
 #import "WebContentViewController.h"
-#import <QuartzCore/QuartzCore.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
@@ -265,8 +265,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
     airlineLookupVC.delegate = self;
     UINavigationController *airlineLookupNavVC = [[UINavigationController alloc] initWithRootViewController:airlineLookupVC];
     airlineLookupNavVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [airlineLookupVC view];
-    [self presentViewController:airlineLookupNavVC animated:NO completion:NULL];
+    [self presentViewController:airlineLookupNavVC animated:YES completion:NULL];
     [Flurry logEvent:FY_BEGAN_AIRLINE_LOOKUP];
 }
 

@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import QuartzCore;
 #import "WebContentViewController.h"
 #import "AFHTTPRequestOperation.h"
 #import "AFHTTPClient.h"
-#import <QuartzCore/QuartzCore.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

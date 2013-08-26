@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import CoreLocation;
+@import MapKit;
 #import "FlightTrackViewController.h"
 #import "AboutViewController.h"
 #import "WebContentViewController.h"
@@ -13,8 +15,6 @@
 #import "Flight.h"
 #import "AppDelegate.h"
 #import "JLMessageComposeViewController.h"
-#import <CoreLocation/CoreLocation.h>
-#import <MapKit/MapKit.h>
 #import <Availability.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

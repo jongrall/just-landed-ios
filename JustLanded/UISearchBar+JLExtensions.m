@@ -21,7 +21,6 @@
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
         [[UISearchBar appearance] setSearchTextPositionAdjustment:UIOffsetMake(0.0f, 2.0f)];
     } else {
-        [[UISearchBar appearance] setSearchBarStyle:UISearchBarStyleProminent];
         [[UISearchBar appearance] setSearchTextPositionAdjustment:UIOffsetMake(7.0f, 2.0f)];
     }
 }

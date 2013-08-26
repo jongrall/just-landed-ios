@@ -8,7 +8,6 @@
 
 #import "NSDictionary+JLExtensions.h"
 
-
 @implementation NSDictionary (JLExtensions)
 
 - (id)objectForKeyOrNil:(id)key {
