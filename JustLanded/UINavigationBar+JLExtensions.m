@@ -37,6 +37,8 @@
                                            forBarMetrics:UIBarMetricsDefault];
         [self setTintColor:[UIColor whiteColor]];
         [self setBarStyle:UIBarStyleBlackOpaque];
+        [self setBackIndicatorImage:[UIImage imageNamed:@"empty"]];
+        [self setBackIndicatorTransitionMaskImage:[UIImage imageNamed:@"empty"]];
     }
 
     self.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);

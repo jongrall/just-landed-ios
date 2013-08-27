@@ -62,25 +62,48 @@
 - (void)adoptJustLandedStyle {
     if (!iOS_6_OrEarlier()) {
         ButtonStyle *buttonStyle = [JLStyles navbarButtonStyle];
+        ButtonStyle *backButtonStyle = [JLStyles navbarBackButtonStyle];
+        [self setStyle:UIBarButtonItemStyleBordered];
+
+        // Normal button background images
+        [self setBackgroundImage:buttonStyle.upImage
+                        forState:UIControlStateNormal
+                      barMetrics:UIBarMetricsDefault];
+        [self setBackgroundImage:buttonStyle.downImage
+                        forState:UIControlStateSelected
+                      barMetrics:UIBarMetricsDefault];
+        [self setBackgroundImage:buttonStyle.downImage
+                        forState:UIControlStateHighlighted
+                      barMetrics:UIBarMetricsDefault];
+
+        [self setBackButtonBackgroundImage:backButtonStyle.upImage
+                                  forState:UIControlStateNormal
+                                barMetrics:UIBarMetricsDefault];
+        [self setBackButtonBackgroundImage:backButtonStyle.downImage
+                                  forState:UIControlStateSelected
+                                barMetrics:UIBarMetricsDefault];
+        [self setBackButtonBackgroundImage:backButtonStyle.downImage
+                                  forState:UIControlStateHighlighted
+                                barMetrics:UIBarMetricsDefault];
 
         // Text styles
-        [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:16.0f],
+        [self setTitleTextAttributes:@{UITextAttributeFont: buttonStyle.labelStyle.textStyle.font,
                                        UITextAttributeTextColor: buttonStyle.labelStyle.textStyle.color,
                                        UITextAttributeTextShadowColor: buttonStyle.labelStyle.textStyle.shadowColor,
                                        UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:buttonStyle.labelStyle.textStyle.shadowOffset]}
                             forState:UIControlStateNormal];
 
-        [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:16.0f],
+        [self setTitleTextAttributes:@{UITextAttributeFont: buttonStyle.disabledLabelStyle.textStyle.font,
                                        UITextAttributeTextColor: buttonStyle.disabledLabelStyle.textStyle.color,
                                        UITextAttributeTextShadowColor: buttonStyle.disabledLabelStyle.textStyle.shadowColor,
                                        UITextAttributeTextShadowOffset: [NSValue valueWithCGSize:buttonStyle.disabledLabelStyle.textStyle.shadowOffset]}
                             forState:UIControlStateDisabled];
 
-        [self setTitlePositionAdjustment:UIOffsetMake(0.0f, -2.0f)
-                                                   forBarMetrics:UIBarMetricsDefault];
+        [self setTitlePositionAdjustment:UIOffsetMake(0.0f, 1.0f)
+                           forBarMetrics:UIBarMetricsDefault];
 
-        [self setBackButtonTitlePositionAdjustment:UIOffsetMake(0.0f, -2.0f)
-                                                             forBarMetrics:UIBarMetricsDefault];
+        [self setBackButtonTitlePositionAdjustment:UIOffsetMake(-2.0f, -2.0f)
+                                     forBarMetrics:UIBarMetricsDefault];
     }
 }
 

@@ -22,6 +22,17 @@
 }
 
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!iOS_6_OrEarlier()) {
+        for (UIWindow *aWindow in [UIApplication sharedApplication].windows) {
+            aWindow.layer.masksToBounds = YES;
+            aWindow.layer.cornerRadius = 6.0f;
+        }
+    }
+}
+
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }

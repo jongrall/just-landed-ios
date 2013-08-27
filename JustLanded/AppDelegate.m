@@ -92,9 +92,9 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
             self.respondedToTextOnArrivalNotification = YES;
         }
     }
-    
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
+
     // Show the flight lookup UI
     self.mainViewController_ = [[FlightLookupViewController alloc] init];
 
