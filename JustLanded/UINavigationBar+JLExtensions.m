@@ -39,10 +39,10 @@
         [self setBarStyle:UIBarStyleBlackOpaque];
     }
 
-    self.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-    self.layer.shadowColor = [[UIColor clearColor] CGColor];
-    self.layer.shadowOpacity = 0.0f;
-    self.layer.shadowRadius = 0.0f;
+    self.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);
+    self.layer.shadowColor = [[UIColor blackColor] CGColor];
+    self.layer.shadowOpacity = 0.5f;
+    self.layer.shadowRadius = 0.25f;
     self.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self bounds]] CGPath]; //Optimization avoids offscreen render pass
 }
 
