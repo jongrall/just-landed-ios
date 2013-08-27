@@ -363,7 +363,13 @@
                                                                backgroundColor:nil 
                                                                      alignment:NSTextAlignmentCenter 
                                                                  lineBreakMode:NSLineBreakByClipping];
-        
+
+        UIEdgeInsets buttonInsets = UIEdgeInsetsMake(-3.0f, 0.0f, 0.0f, 0.0f);
+
+        if (!iOS_6_OrEarlier()) {
+            buttonInsets = UIEdgeInsetsMake(-5.0f, 0.0f, 0.0f, 0.0f);
+        }
+
         sDefaultButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
                                                    disabledLabelStyle:disabledLabelStyle
                                                       backgroundColor:nil
@@ -373,7 +379,7 @@
                                                             iconImage:nil
                                                     iconDisabledImage:nil
                                                            iconOrigin:CGPointZero 
-                                                          labelInsets:UIEdgeInsetsMake(-3.0f, 0.0f, 0.0f, 0.0f) 
+                                                          labelInsets:buttonInsets
                                                       downLabelOffset:CGSizeMake(0.0f, 5.0f) 
                                                   disabledLabelOffset:CGSizeMake(0.0f, 2.0f)];
     });
