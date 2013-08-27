@@ -49,11 +49,21 @@
 
 
 + (CGRect)statusLabelFrame {
-    if ([UIScreen isMainScreenWide]) {
-        return (CGRect) {{136.0f, 19.0f}, {175.0f, 46.0f}};
+    if (iOS_6_OrEarlier()) {
+        if ([UIScreen isMainScreenWide]) {
+            return (CGRect) {{136.0f, 19.0f}, {175.0f, 46.0f}};
+        }
+        else {
+            return (CGRect) {{136.0f, 15.0f}, {175.0f, 46.0f}};
+        }
     }
     else {
-        return (CGRect) {{136.0f, 15.0f}, {175.0f, 46.0f}};
+        if ([UIScreen isMainScreenWide]) {
+            return (CGRect) {{128.0f, 19.0f}, {175.0f, 46.0f}};
+        }
+        else {
+            return (CGRect) {{128.0f, 15.0f}, {175.0f, 46.0f}};
+        }
     }
 }
 
@@ -144,12 +154,22 @@
 
 
 + (CGSize)timeUnitOffsetAlt {
-    return (CGSize) {1.0f, 11.0f};
+    if (iOS_6_OrEarlier()) {
+        return (CGSize) {1.0f, 11.0f};
+    }
+    else {
+        return (CGSize) {2.0f, 11.0f};
+    }
 }
 
 
 + (CGSize)timezoneOffset {
-    return (CGSize) {0.0f, 23.0f};
+    if (iOS_6_OrEarlier()) {
+        return (CGSize) {0.0f, 23.0f};
+    }
+    else {
+        return (CGSize) {0.5f, 23.0f};
+    }
 }
 
 
@@ -258,7 +278,13 @@
                                                        backgroundColor:nil 
                                                              alignment:NSTextAlignmentLeft
                                                          lineBreakMode:NSLineBreakByClipping];
-        
+
+        UIEdgeInsets buttonInsets = UIEdgeInsetsMake(8.0f, 32.0f, 4.0f, 11.0f);
+
+        if (!iOS_6_OrEarlier()) {
+            buttonInsets = UIEdgeInsetsMake(4.0f, 32.0f, 4.0f, 11.0f);
+        }
+
         sLookupButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
                                                   disabledLabelStyle:nil
                                                      backgroundColor:nil
@@ -268,7 +294,7 @@
                                                            iconImage:nil
                                                    iconDisabledImage:nil
                                                           iconOrigin:CGPointMake(10.0f, 7.0f)
-                                                         labelInsets:UIEdgeInsetsMake(8.0f, 32.0f, 4.0f, 11.0f)
+                                                         labelInsets:buttonInsets
                                                      downLabelOffset:CGSizeMake(0.0f, 1.0f)
                                                  disabledLabelOffset:CGSizeZero];
     });

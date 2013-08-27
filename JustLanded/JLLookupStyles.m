@@ -183,7 +183,13 @@
                                                           backgroundColor:defaultStyle.disabledLabelStyle.backgroundColor
                                                                 alignment:NSTextAlignmentLeft 
                                                             lineBreakMode:defaultStyle.disabledLabelStyle.lineBreakMode];
-        
+
+        UIEdgeInsets buttonInsets = UIEdgeInsetsMake(-3.0f, 104.0f, 0.0f, 20.0f);
+
+        if (!iOS_6_OrEarlier()) {
+            buttonInsets = UIEdgeInsetsMake(-5.0f, 104.0f, 0.0f, 20.0f);
+        }
+
         // Create from the default style and ovverride the icon and insets
         sLookupButtonStyle = [[ButtonStyle alloc] initWithLabelStyle:labelStyle
                                                   disabledLabelStyle:disabledStyle
@@ -202,7 +208,7 @@
                                                                             shadowOffset:defaultStyle.disabledLabelStyle.textStyle.shadowOffset
                                                                               shadowBlur:defaultStyle.disabledLabelStyle.textStyle.shadowBlur]
                                                           iconOrigin:CGPointMake(73.0f, 11.0f)
-                                                         labelInsets:UIEdgeInsetsMake(-3.0f, 104.0f, 0.0f, 20.0f) 
+                                                         labelInsets:buttonInsets
                                                      downLabelOffset:defaultStyle.downLabelOffset 
                                                  disabledLabelOffset:defaultStyle.disabledLabelOffset];
     });
