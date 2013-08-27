@@ -62,7 +62,6 @@
 - (void)adoptJustLandedStyle {
     if (!iOS_6_OrEarlier()) {
         ButtonStyle *buttonStyle = [JLStyles navbarButtonStyle];
-        self.style = UIBarButtonItemStyleBordered;
 
         // Text styles
         [self setTitleTextAttributes:@{UITextAttributeFont: [JLStyles sansSerifLightBoldOfSize:16.0f],

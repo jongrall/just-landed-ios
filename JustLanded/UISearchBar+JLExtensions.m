@@ -36,5 +36,4 @@
     [searchField setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
     searchField.textColor = [JLLookupStyles flightFieldTextStyle].textStyle.color;
 }
-
 @end
