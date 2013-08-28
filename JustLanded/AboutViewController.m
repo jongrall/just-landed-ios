@@ -55,14 +55,14 @@ typedef NS_ENUM(NSUInteger, AboutCellTag) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)loadView {
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
     UIImageView *mainView = [[UIImageView alloc] initWithFrame:[UIScreen mainContentViewFrame]];
     mainView.backgroundColor = [UIColor blackColor];
     mainView.image = [UIImage imageNamed:[@"sky_bg" imageName]];
     mainView.userInteractionEnabled = YES;
+    mainView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     self.mainContentView = mainView;
 
-    UIView *backgroundView = [[UIView alloc] initWithFrame:screenBounds];
+    UIView *backgroundView = [[UIView alloc] initWithFrame:[UIScreen mainContentViewBounds]];
     backgroundView.backgroundColor = [UIColor blackColor];
     [backgroundView addSubview:mainView];
     self.view = backgroundView;

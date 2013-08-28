@@ -12,5 +12,6 @@
 
 + (BOOL)isMainScreenWide;
 + (CGRect)mainContentViewFrame;
++ (CGRect)mainContentViewBounds;
 
 @end

@@ -177,12 +177,13 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 - (void)loadView {
     // Set up the main view
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
     UIView *mainView = [[UIView alloc] initWithFrame:[UIScreen mainContentViewFrame]];
     [mainView setBackgroundColor:[UIColor blackColor]];
+    mainView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    mainView.autoresizesSubviews = YES;
     self.mainContentView = mainView;
 
-    UIView *backgroundView = [[UIView alloc] initWithFrame:screenBounds];
+    UIView *backgroundView = [[UIView alloc] initWithFrame:[UIScreen mainContentViewBounds]];
     backgroundView.backgroundColor = [UIColor blackColor];
     [backgroundView addSubview:mainView];
     self.view = backgroundView;
