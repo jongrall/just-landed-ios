@@ -145,6 +145,17 @@ static NSArray *sAllAirlines_;
 }
 
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!iOS_6_OrEarlier()) {
+        for (UIWindow *aWindow in [UIApplication sharedApplication].windows) {
+            aWindow.layer.masksToBounds = YES;
+            aWindow.layer.cornerRadius = 6.0f;
+        }
+    }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Search Bar Delegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

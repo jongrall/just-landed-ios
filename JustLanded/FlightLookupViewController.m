@@ -596,10 +596,8 @@ static NSRegularExpression *sAirlineCodeRegex_;
 
     if (!iOS_6_OrEarlier()) {
         for (UIWindow *aWindow in [UIApplication sharedApplication].windows) {
-            if ([[[UIApplication sharedApplication] delegate] window] != aWindow) {
-                aWindow.layer.masksToBounds = YES;
-                aWindow.layer.cornerRadius = 6.0f;
-            }
+            aWindow.layer.masksToBounds = YES;
+            aWindow.layer.cornerRadius = 6.0f;
         }
     }
 }
