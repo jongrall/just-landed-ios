@@ -13,6 +13,7 @@
 @interface AirlineLookupViewController ()
 
 @property (strong, nonatomic) UISearchBar *searchBar_;
+@property (strong, nonatomic) UIImageView *airlineSearchPlaceholder_;
 @property (strong, nonatomic) NSArray *airlines_;
 @property (strong, nonatomic) JLLabel *noResultsLabel_;
 @property (strong, nonatomic) UITableView *resultsTable_;
@@ -100,6 +101,13 @@ static NSArray *sAllAirlines_;
     self.searchBar_ = searchBar;
     [self.view addSubview:searchBar];
 
+    if (!iOS_6_OrEarlier()) {
+        UIImageView *placeholderBar = [[UIImageView alloc] initWithFrame:searchBar.frame];
+        placeholderBar.image = [UIImage imageNamed:@"airline_search_placeholder"];
+        self.airlineSearchPlaceholder_ = placeholderBar;
+        [self.view addSubview:placeholderBar];
+    }
+
     self.resultsTable_ = [[UITableView alloc] initWithFrame:CGRectMake(0.0f,
                                                                        44.0f,
                                                                        screenBounds.size.width,
@@ -123,7 +131,6 @@ static NSArray *sAllAirlines_;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-	
     self.navigationItem.title = NSLocalizedString(@"Airline Lookup", @"Airline Lookup");
 
     #pragma clang diagnostic push
@@ -140,7 +147,6 @@ static NSArray *sAllAirlines_;
                                              selector:@selector(keyboardWasShown:) 
                                                  name:UIKeyboardDidShowNotification 
                                                object:nil];
-    
     [self.searchBar_ becomeFirstResponder];
 }
 
@@ -155,11 +161,9 @@ static NSArray *sAllAirlines_;
     }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Search Bar Delegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 - (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     NSString *oldTerm = [[searchBar text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -172,6 +176,7 @@ static NSArray *sAllAirlines_;
     
     return YES;
 }
+
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     NSString *searchTerm = [searchText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -233,6 +238,7 @@ static NSArray *sAllAirlines_;
         return iataCode;
     }
 }
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     AirlineResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AirlineResultCell"];
@@ -311,6 +317,15 @@ static NSArray *sAllAirlines_;
                                           self.resultsTable_.frame.origin.y,
                                           self.resultsTable_.frame.size.width,
                                           self.view.frame.size.height - self.searchBar_.frame.size.height - kbSize.height);
+
+    if (!iOS_6_OrEarlier()) {
+        [self performSelector:@selector(hidePlaceholderBar) withObject:nil afterDelay:0.5];
+    }
+}
+
+
+- (void)hidePlaceholderBar {
+    self.airlineSearchPlaceholder_.hidden = YES;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
