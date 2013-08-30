@@ -405,8 +405,10 @@ typedef NS_ENUM(NSUInteger, AboutCellTag) {
                     else {
                         [Flurry logEvent:FY_ABANDONED_TWEETING];
                     }
-                    
-                    [self dismissViewControllerAnimated:NO completion:NULL];
+
+                    if (iOS_6_OrEarlier()) {
+                        [self dismissViewControllerAnimated:NO completion:NULL];
+                    }
                 });
             }];
             [self presentViewController:tweetComposer animated:YES completion:NULL];
