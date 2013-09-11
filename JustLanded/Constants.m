@@ -9,6 +9,10 @@
 #import "Constants.h"
 #include "TargetConditionals.h"
 
+BOOL iOS_6_OrEarlier(void) {
+    return floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark NSUserDefaults Keys

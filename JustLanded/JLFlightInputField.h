@@ -6,12 +6,12 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, FlightInputErrorState) {
     FlightInputNoError = 0,
     FlightInputError,
-} FlightInputErrorState;
+};
 
 
 @interface JLFlightInputField : UITextField

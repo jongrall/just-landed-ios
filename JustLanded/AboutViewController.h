@@ -6,9 +6,10 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+#import "JLViewController.h"
 
-@interface AboutViewController : UIViewController
+@interface AboutViewController : JLViewController
 
 @property (strong, nonatomic) JLCloudLayer *cloudLayer;
 @property (strong, nonatomic) JLAirplaneView *airplane;

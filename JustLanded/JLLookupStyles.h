@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 #import "LabelStyle.h"
 #import "ButtonStyle.h"
 
@@ -30,6 +30,7 @@
 + (CGRect)airplaneFrame;
 + (CGRect)resultsTableFrame;
 + (CGRect)resultsTableContainerFrame;
++ (UIColor *)lookupFieldTintColor;
 + (ButtonStyle *)lookupButtonStyle;
 + (ButtonStyle *)aboutButtonStyle;
 + (ButtonStyle *)airportCodesButtonStyle;

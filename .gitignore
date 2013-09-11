@@ -17,5 +17,6 @@ test-coverage
 *~
 *bulkloader-progress*
 *bulkloader-log*
+lto-llvm.o-*
 output.html
 MANIFEST

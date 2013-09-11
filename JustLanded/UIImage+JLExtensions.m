@@ -23,7 +23,7 @@
 @implementation UIImage (JLExtensions)
 
 
-+ (UIImage *)imageNamed:(NSString *)name withColor:(UIColor *)color {
++ (instancetype)imageNamed:(NSString *)name withColor:(UIColor *)color {
 	if (name == nil) {
 		return nil;
 	}
@@ -40,7 +40,7 @@
 	
 	// get a reference to that context we created
 	CGContextRef context = UIGraphicsGetCurrentContext();
-	
+
 	// set the fill color
 	[color setFill];
 	
@@ -67,15 +67,15 @@
 }
 
 
-+ (UIImage *)imageNamed:(NSString *)name withColor:(UIColor *)color shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowBlur:(CGFloat)blur {
++ (instancetype)imageNamed:(NSString *)name withColor:(UIColor *)color shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowBlur:(CGFloat)blur {
 	// Create a colored version of the source image
     UIImage *coloredImage = [UIImage imageNamed:name withColor:color];
     
     // Draw the image with a shadow
     if (shadowColor && coloredImage) {
         // New image size to make room for shadow
-        CGSize newImageSize = CGSizeMake(coloredImage.size.width + fabs(offset.width) + 2.0f * blur,
-                                         coloredImage.size.height + fabs(offset.height) + 2.0f * blur);
+        CGSize newImageSize = CGSizeMake(coloredImage.size.width + fabsf(offset.width) + 2.0f * blur,
+                                         coloredImage.size.height + fabsf(offset.height) + 2.0f * blur);
         
         // Calculate new image origin in its larger container based on shadow offset and blur
         CGPoint imageOrigin = CGPointZero;
@@ -118,13 +118,13 @@
 }
 
 
-+ (UIImage *)imageNamed:(NSString *)name rotatedDegreesClockwise:(double)degrees shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowBlur:(CGFloat)blur {
++ (instancetype)imageNamed:(NSString *)name rotatedDegreesClockwise:(double)degrees shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowBlur:(CGFloat)blur {
     // Create a rotated version of the source image
     UIImage *srcImage = [UIImage imageNamed:name];
     CGSize size = srcImage.size;
     UIGraphicsBeginImageContextWithOptions(size, NO, 0.0f);
     CGContextRef ctx = UIGraphicsGetCurrentContext();
-    CGFloat angleInRadians = degrees * M_PI / 180.0;
+    CGFloat angleInRadians = (CGFloat) (degrees * M_PI / 180.0);
 	
     CGContextTranslateCTM(ctx, srcImage.size.width/2.0f, srcImage.size.height/2.0f);
     CGContextRotateCTM(ctx, angleInRadians);
@@ -137,7 +137,6 @@
     // Draw the rotated image with a not-rotated shadow
     if (shadowColor && rotatedImage) {
         // begin a new image context, to draw our colored image onto
-
         UIGraphicsBeginImageContextWithOptions(size, NO, 0.0f);
         
         // get a reference to that context we created

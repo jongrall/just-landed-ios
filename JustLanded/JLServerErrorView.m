@@ -34,6 +34,7 @@
                                                                                 errorDescriptionLabelOriginY,
                                                                                 aFrame.size.width - 20.0f,
                                                                                 50.0f)];
+        errorDescriptionLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         
         CGFloat moreInfoButtonOriginY = [UIScreen isMainScreenWide] ? 401.0f : 313.0f;
         moreInfoButton_ = [[JLButton alloc] initWithButtonStyle:[JLStyles defaultButtonStyle]
@@ -41,6 +42,7 @@
                                                                            moreInfoButtonOriginY,
                                                                            aFrame.size.width - 20.0f,
                                                                            56.0f)];
+        moreInfoButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         moreInfoButton_.titleLabel.shadowOffset = CGSizeMake(0.0f, -1.0f);
         [moreInfoButton_ setTitle:NSLocalizedString(@"More Info", @"More Info") forState:UIControlStateNormal];
         [moreInfoButton_ addTarget:self action:@selector(moreInfo) forControlEvents:UIControlEventTouchUpInside];

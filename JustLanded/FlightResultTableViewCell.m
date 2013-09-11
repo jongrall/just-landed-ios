@@ -68,6 +68,14 @@ static UIImage *sBottomBackgroundSelected_;
     });
 }
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
+        self.backgroundColor = [UIColor clearColor];
+    };
+
+    return self;
+}
+
 - (void)setToAirport:(NSString *)anAirport {
     if (toAirport_ != anAirport) {
         toAirport_ = [anAirport uppercaseString];
@@ -210,13 +218,13 @@ static UIImage *sBottomBackgroundSelected_;
     CGSize fromAirportSize = [fromAirport_ drawAtPoint:toFromAirportRect_.origin
                                               forWidth:toFromAirportRect_.size.width / 2.0f
                                               withFont:sToFromAirportFont_
-                                         lineBreakMode:UILineBreakModeTailTruncation];
+                                         lineBreakMode:NSLineBreakByTruncatingTail];
     
     [toAirport_ drawAtPoint:CGPointMake(toFromAirportRect_.origin.x + fromAirportSize.width + arrowIcon_.size.width + 8.0f,
                                         toFromAirportRect_.origin.y)
                    forWidth:toFromAirportRect_.size.width / 2.0f
                    withFont:sToFromAirportFont_
-              lineBreakMode:UILineBreakModeTailTruncation];
+              lineBreakMode:NSLineBreakByTruncatingTail];
     
     
     // Stop drawing shadows
@@ -237,14 +245,14 @@ static UIImage *sBottomBackgroundSelected_;
     // Draw the landing time text
     [landingTime_ drawInRect:landingTimeRect_
                     withFont:sLandingTimeFont_
-               lineBreakMode:UILineBreakModeClip
-                   alignment:UITextAlignmentLeft];
+               lineBreakMode:NSLineBreakByClipping
+                   alignment:NSTextAlignmentLeft];
     
     // Draw the status text
     [status_ drawInRect:statusRect_
                withFont:sStatusFont_
-          lineBreakMode:UILineBreakModeTailTruncation
-              alignment:UITextAlignmentRight];
+          lineBreakMode:NSLineBreakByTruncatingTail
+              alignment:NSTextAlignmentRight];
     
     CGContextRestoreGState(context);
     

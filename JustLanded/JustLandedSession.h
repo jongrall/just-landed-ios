@@ -6,19 +6,19 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, JustLandedSoundType) {
     TakeOffSound = 0,
     AnnouncementSound,
     LandingSound
-} JustLandedSoundType;
+};
 
 @class Flight;
 
 @interface JustLandedSession : NSObject
 
-+ (JustLandedSession *)sharedSession;
++ (instancetype)sharedSession;
 
 // User management & prefs
 - (NSString *)UUID;

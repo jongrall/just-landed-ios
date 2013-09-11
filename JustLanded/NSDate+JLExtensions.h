@@ -6,19 +6,19 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, RelativeDateKind) {
     OTHER_DATE = 0,
     YESTERDAY,
     TODAY,
     TOMORROW,
-} RelativeDateKind;
+};
 
 @interface NSDate (JLExtensions)
 
-+ (NSDate *)dateWithTimestamp:(NSNumber *)timestamp;
-+ (NSDate *)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag;
++ (instancetype)dateWithTimestamp:(NSNumber *)timestamp;
++ (instancetype)dateWithTimestamp:(NSNumber *)timestamp returnNilForZero:(BOOL)flag;
 + (RelativeDateKind)currentDateRelativeToDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;
 + (NSString *)sanitizeTimeZoneString:(NSString *)tzString;
 + (NSString *)naturalDateStringFromDate:(NSDate *)date withTimezone:(NSTimeZone *)tz;

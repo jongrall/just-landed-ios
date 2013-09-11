@@ -52,6 +52,15 @@ static CGRect sDividerRect_;
 }
 
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
+        self.backgroundColor = [UIColor clearColor];
+    };
+
+    return self;
+}
+
+
 - (void)setTitle:(NSString *)aTitle {
     if (title_ != aTitle) {
         title_ = [aTitle copy];
@@ -125,8 +134,8 @@ static CGRect sDividerRect_;
     
     [title_ drawInRect:titleRect_
               withFont:sTitleFont_
-         lineBreakMode:UILineBreakModeTailTruncation
-             alignment:UITextAlignmentLeft];
+         lineBreakMode:NSLineBreakByTruncatingTail
+             alignment:NSTextAlignmentLeft];
 
     // Stop drawing shadows
     CGContextRestoreGState(context);

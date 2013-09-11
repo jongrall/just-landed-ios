@@ -37,11 +37,16 @@ static UIColor *sSelectedTextColor_;
             sClearFont_ = [JLStyles sansSerifLightBoldOfSize:18.0f];
             sSelectedCellBackgroundColor_ = [UIColor colorWithRed:107.0f/255.0f green:157.0f/255.0f blue:178.0f/255.0f alpha:1.0f];
             sCellBackgroundColor_ = [UIColor whiteColor];
-            sTextColor_ = [UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0 blue:51.0f/255.0f alpha:1.0f];
+            sTextColor_ = [UIColor colorWithRed:51.0f/255.0f green:51.0f/255.0f blue:51.0f/255.0f alpha:1.0f];
             sSelectedTextColor_ = [UIColor whiteColor];
             sClearTextColor_ = [UIColor colorWithRed:107.0f/255.0f green:157.0f/255.0f blue:178.0f/255.0f alpha:1.0f];
         }
     });
+}
+
+
+- (UIEdgeInsets)separatorInset {
+    return UIEdgeInsetsZero;
 }
 
 
@@ -104,21 +109,21 @@ static UIColor *sSelectedTextColor_;
         // Draw the text
         CGSize nameSize = [airlineName_ drawInRect:textRect_
                                           withFont:sNameFont_
-                                     lineBreakMode:UILineBreakModeMiddleTruncation
-                                         alignment:UITextAlignmentLeft];
+                                     lineBreakMode:NSLineBreakByTruncatingMiddle
+                                         alignment:NSTextAlignmentLeft];
         [airlineCode_ drawInRect:CGRectMake(textRect_.origin.x + nameSize.width,
                                             textRect_.origin.y,
                                             textRect_.size.width - nameSize.width,
                                             textRect_.size.height)
                         withFont:sCodeFont_
-                   lineBreakMode:UILineBreakModeTailTruncation
-                       alignment:UITextAlignmentLeft];
+                   lineBreakMode:NSLineBreakByTruncatingTail
+                       alignment:NSTextAlignmentLeft];
     }
     else {
         [clearText_ drawInRect:textRect_
                       withFont:sClearFont_
-                 lineBreakMode:UILineBreakModeTailTruncation
-                     alignment:UITextAlignmentCenter];
+                 lineBreakMode:NSLineBreakByTruncatingTail
+                     alignment:NSTextAlignmentCenter];
     }
 }
 

@@ -6,15 +6,16 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import QuartzCore;
 #import "AirlineLookupViewController.h"
 #import "AirlineResultTableViewCell.h"
-#import <QuartzCore/QuartzCore.h>
 
 @interface AirlineLookupViewController ()
 
+@property (strong, nonatomic) UISearchBar *searchBar_;
+@property (strong, nonatomic) UIImageView *airlineSearchPlaceholder_;
 @property (strong, nonatomic) NSArray *airlines_;
 @property (strong, nonatomic) JLLabel *noResultsLabel_;
-@property (strong, nonatomic) UISearchBar *searchBar_;
 @property (strong, nonatomic) UITableView *resultsTable_;
 
 - (void)keyboardWasShown:(NSNotification *)notification;
@@ -87,8 +88,9 @@ static NSArray *sAllAirlines_;
                                                                 screenBounds.size.height - 64.0f)]; // Status bar + navbar
     mainView.backgroundColor = [UIColor whiteColor];
     self.view = mainView;
-    
+
     UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, screenBounds.size.width, 44.0f)];
+    [searchBar adoptJustLandedStyle];
     searchBar.placeholder = NSLocalizedString(@"Airline name e.g. 'Virgin'", @"Airline name prompt");
     searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
     searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -96,22 +98,16 @@ static NSArray *sAllAirlines_;
     searchBar.keyboardType = UIKeyboardTypeDefault;
     searchBar.delegate = self;
 
-    UIImage *bgImage = [[UIImage imageNamed:@"query_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 2.0f, 0.0f, 2.0f)];
-    [[UISearchBar appearance] setBackgroundImage:bgImage];
-    UIImage *fieldBg = [[UIImage imageNamed:@"query_field"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 15.0f, 0.0f, 15.0f)];
-    [[UISearchBar appearance] setSearchFieldBackgroundImage:fieldBg forState:UIControlStateNormal];
-    [[UISearchBar appearance] setSearchTextPositionAdjustment:UIOffsetMake(0.0f, 2.0f)];
-    
-    for (UIView *subview in [searchBar subviews]) {
-        if ([subview isKindOfClass:[UITextField class]]) {
-            UITextField *field = (UITextField *)subview;
-            [field setFont:[JLStyles sansSerifLightBoldOfSize:18.0f]];
-        }
-    }
-    
     self.searchBar_ = searchBar;
     [self.view addSubview:searchBar];
-    
+
+    if (!iOS_6_OrEarlier()) {
+        UIImageView *placeholderBar = [[UIImageView alloc] initWithFrame:searchBar.frame];
+        placeholderBar.image = [UIImage imageNamed:@"airline_search_placeholder"];
+        self.airlineSearchPlaceholder_ = placeholderBar;
+        [self.view addSubview:placeholderBar];
+    }
+
     self.resultsTable_ = [[UITableView alloc] initWithFrame:CGRectMake(0.0f,
                                                                        44.0f,
                                                                        screenBounds.size.width,
@@ -135,40 +131,39 @@ static NSArray *sAllAirlines_;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-	
     self.navigationItem.title = NSLocalizedString(@"Airline Lookup", @"Airline Lookup");
-    
-    // Custom navbar shadow
-    self.navigationController.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-	self.navigationController.navigationBar.layer.shadowColor = [[UIColor clearColor] CGColor];
-    self.navigationController.navigationBar.layer.shadowOpacity = 0.0f;
-	self.navigationController.navigationBar.layer.shadowRadius = 0.0f;
-	self.navigationController.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
-    
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"Cancel") 
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:self.delegate
-                                                                             action:@selector(cancelledAirlineLookup)];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self 
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wselector"
+    id<AirlineLookupDelegate> lookupDelegate = _delegate;
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
+                                                                     style:UIBarButtonItemStylePlain
+                                                                    target:lookupDelegate
+                                                                    action:@selector(cancelledAirlineLookup)];
+    [cancelButton adoptJustLandedStyle];
+    self.navigationItem.leftBarButtonItem = cancelButton;
+    #pragma clang diagnostic pop
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWasShown:) 
                                                  name:UIKeyboardDidShowNotification 
                                                object:nil];
-    
     [self.searchBar_ becomeFirstResponder];
 }
 
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!iOS_6_OrEarlier()) {
+        for (UIWindow *aWindow in [UIApplication sharedApplication].windows) {
+            aWindow.layer.masksToBounds = YES;
+            aWindow.layer.cornerRadius = 6.0f;
+        }
+    }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Search Bar Delegate Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 - (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     NSString *oldTerm = [[searchBar text] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -181,6 +176,7 @@ static NSArray *sAllAirlines_;
     
     return YES;
 }
+
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     NSString *searchTerm = [searchText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -243,6 +239,7 @@ static NSArray *sAllAirlines_;
     }
 }
 
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     AirlineResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AirlineResultCell"];
     
@@ -250,8 +247,9 @@ static NSArray *sAllAirlines_;
         cell = [[AirlineResultTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
                                                  reuseIdentifier:@"AirlineResultCell"];
     }
-    
-    id tableRowObj = (self.airlines_)[indexPath.row];
+
+    NSUInteger airlineResultIndex = (NSUInteger) indexPath.row;
+    id tableRowObj = self.airlines_[airlineResultIndex];
     
     if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
         NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
@@ -271,14 +269,16 @@ static NSArray *sAllAirlines_;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row < (NSInteger)[self.airlines_ count]) {
-        id tableRowObj = (self.airlines_)[indexPath.row];
+        NSUInteger airlineResultIndex = (NSUInteger) indexPath.row;
+        id tableRowObj = self.airlines_[airlineResultIndex];
         
         if ([tableRowObj isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *airlineInfo = (self.airlines_)[indexPath.row];
+            NSDictionary *airlineInfo = (NSDictionary *)tableRowObj;
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
             NSString *code = [self airlineCode:airlineInfo];
             [[JustLandedSession sharedSession] addToRecentlyLookedUpAirlines:airlineInfo];
-            [self.delegate didChooseAirlineCode:code];
+            id<AirlineLookupDelegate> lookupDelegate = _delegate;
+            [lookupDelegate didChooseAirlineCode:code];
             [Flurry logEvent:FY_CHOSE_AIRLINE];
         }
         else {
@@ -292,7 +292,7 @@ static NSArray *sAllAirlines_;
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.airlines_ count];
+    return (NSInteger) [self.airlines_ count];
 }
 
 
@@ -317,6 +317,15 @@ static NSArray *sAllAirlines_;
                                           self.resultsTable_.frame.origin.y,
                                           self.resultsTable_.frame.size.width,
                                           self.view.frame.size.height - self.searchBar_.frame.size.height - kbSize.height);
+
+    if (!iOS_6_OrEarlier()) {
+        [self performSelector:@selector(hidePlaceholderBar) withObject:nil afterDelay:0.5];
+    }
+}
+
+
+- (void)hidePlaceholderBar {
+    self.airlineSearchPlaceholder_.hidden = YES;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

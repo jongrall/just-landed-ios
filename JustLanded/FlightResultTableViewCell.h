@@ -6,14 +6,14 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 #import "ABTableViewCell.h"
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, FlightResultCellType) {
     TOP = 0,
     MIDDLE,
     BOTTOM,
-} FlightResultCellType;
+};
 
 extern CGFloat const FlightResultTableViewCellWidth;
 extern CGFloat const FlightResultTableViewCellHeight;

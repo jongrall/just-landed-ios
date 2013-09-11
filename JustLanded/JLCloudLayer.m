@@ -125,16 +125,16 @@ const CGFloat LAYER4_SPEED = 5.0f;
 
 
 - (void)animationTick {
-    CGFloat newLayer1Offset = layer1Offset_ + ([animationTimer_ timeInterval] * LAYER1_SPEED);
+    CGFloat newLayer1Offset = layer1Offset_ + ((CGFloat) [animationTimer_ timeInterval] * LAYER1_SPEED);
     newLayer1Offset = (newLayer1Offset > [layer1_ contentSize].width - 320.0f) ? newLayer1Offset - ([layer1_ contentSize].width - 320.0f):
                                                                                     newLayer1Offset;
-    CGFloat newLayer2Offset = layer2Offset_ + ([animationTimer_ timeInterval] * LAYER2_SPEED);
+    CGFloat newLayer2Offset = layer2Offset_ + ((CGFloat) [animationTimer_ timeInterval] * LAYER2_SPEED);
     newLayer2Offset = (newLayer2Offset > [layer2_ contentSize].width - 320.0f) ? newLayer2Offset - ([layer2_ contentSize].width - 320.0f):
                                                                                     newLayer2Offset;
-    CGFloat newLayer3Offset = layer3Offset_ + ([animationTimer_ timeInterval] * LAYER3_SPEED);
+    CGFloat newLayer3Offset = layer3Offset_ + ((CGFloat) [animationTimer_ timeInterval] * LAYER3_SPEED);
     newLayer3Offset = (newLayer3Offset > [layer3_ contentSize].width - 320.0f) ? newLayer3Offset - ([layer3_ contentSize].width - 320.0f):
                                                                                     newLayer3Offset;
-    CGFloat newLayer4Offset = layer4Offset_ + ([animationTimer_ timeInterval] * LAYER4_SPEED);
+    CGFloat newLayer4Offset = layer4Offset_ + ((CGFloat) [animationTimer_ timeInterval] * LAYER4_SPEED);
     newLayer4Offset = (newLayer4Offset > [layer4_ contentSize].width - 320.0f) ? newLayer4Offset - ([layer4_ contentSize].width - 320.0f):
                                                                                     newLayer4Offset;
     

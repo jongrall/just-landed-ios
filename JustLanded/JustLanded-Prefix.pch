@@ -5,13 +5,15 @@
 
 #import <Availability.h>
 
-#ifndef __IPHONE_4_0
-#warning "This project uses features only available in iOS SDK 4.0 and later."
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
 #endif
 
 #ifdef __OBJC__
-    #import <Foundation/Foundation.h>
-    #import <UIKit/UIKit.h>
+    @import Foundation;
+    @import UIKit;
+    @import SystemConfiguration;
+    @import MobileCoreServices;
     #import "Constants.h"
 
     // Categories
@@ -23,6 +25,9 @@
     #import "UIImage+JLExtensions.h"
     #import "UIBarButtonItem+JLExtensions.h"
     #import "NSNotificationCenter+JLExtensions.h"
+    #import "UISearchBar+JLExtensions.h"
+    #import "UIView+JLExtensions.h"
+    #import "UINavigationBar+JLExtensions.h"
 
     // Styles
     #import "JLStyles.h"

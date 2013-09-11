@@ -6,7 +6,8 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+#import "JLViewController.h"
 
 @protocol AirlineLookupDelegate
 - (void)didChooseAirlineCode:(NSString *)airlineCode;
@@ -14,7 +15,7 @@
 @end
 
 
-@interface AirlineLookupViewController : UIViewController <UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface AirlineLookupViewController : JLViewController <UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) id <AirlineLookupDelegate> delegate;
 

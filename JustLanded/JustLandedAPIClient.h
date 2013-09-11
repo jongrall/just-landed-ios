@@ -6,13 +6,13 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "AFHTTPClient.h"
 
 
 @interface JustLandedAPIClient : AFHTTPClient
 
-+ (JustLandedAPIClient *)sharedClient;
++ (instancetype)sharedClient;
 + (NSString *)lookupPathWithFlightNumber:(NSString *)flightNumber;
 + (NSString *)trackPathWithFlightNumber:(NSString *)flightNumber flightID:(NSString *)flightID;
 + (NSString *)stopTrackingPathWithFlightID:(NSString *)flightID;

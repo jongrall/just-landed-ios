@@ -6,8 +6,7 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
+@import Foundation;
 
 @interface NSDictionary (JLExtensions)
 
