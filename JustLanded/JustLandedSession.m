@@ -188,7 +188,15 @@
 // Handle ratings alert
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if ([alertView cancelButtonIndex] != buttonIndex) {
-        NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@&mt=8", APP_ID]];
+        NSURL *ratingURL;
+
+        if (iOS_6_OrEarlier()) {
+            ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@&mt=8", APP_ID]];
+        }
+        else {
+            ratingURL = [NSURL URLWithString:@"itms-apps://itunes.com/apps/justlanded"];
+        }
+
         [[UIApplication sharedApplication] openURL:ratingURL];
         [Flurry logEvent:FY_RATED];
     }
