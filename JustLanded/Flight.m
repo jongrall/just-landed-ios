@@ -299,8 +299,8 @@ static NSArray *sAircraftTypes_;
     NSMutableDictionary *trackingParams = [[JustLandedSession sharedSession] currentTrackingPreferences];
     
     if (aLocation) {
-        [trackingParams setValue:[NSNumber numberWithFloat:aLocation.coordinate.latitude] forKey:@"latitude"];
-        [trackingParams setValue:[NSNumber numberWithFloat:aLocation.coordinate.longitude] forKey:@"longitude"];
+        [trackingParams setValue:[NSNumber numberWithDouble:aLocation.coordinate.latitude] forKey:@"latitude"];
+        [trackingParams setValue:[NSNumber numberWithDouble:aLocation.coordinate.longitude] forKey:@"longitude"];
     }
     
     if (aPushToken) {
@@ -419,11 +419,11 @@ static NSArray *sAircraftTypes_;
     else {
         if (self.estimatedArrivalTime) {
             NSTimeInterval timeToLanding = [self.estimatedArrivalTime timeIntervalSinceNow];
-            return (NSUInteger) abs(round(timeToLanding / 60.0));
+            return (NSUInteger) fabs(round(timeToLanding / 60.0));
         }
         else if (self.scheduledArrivalTime) {
             NSTimeInterval timeToLanding = [self.scheduledArrivalTime timeIntervalSinceNow];
-            return (NSUInteger) abs(round(timeToLanding / 60.0));
+            return (NSUInteger) fabs(round(timeToLanding / 60.0));
         }
         else {
             return 0; // Shouldn't happen
@@ -447,7 +447,7 @@ static NSArray *sAircraftTypes_;
             return 0.9999f; // Delay before reporting landed
         }
         else {
-            return (float) timeSinceTakeoff / totalFlightTime; // Return the fraction of the flight completed
+            return (CGFloat) (timeSinceTakeoff / totalFlightTime); // Return the fraction of the flight completed
         }
     }
 }

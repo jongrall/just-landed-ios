@@ -1,0 +1,27 @@
+//
+//  AFNetworking-Prefix.pch
+//  JustLanded
+//
+//  Created by Jon Grall on 8/21/13.
+//  Copyright (c) 2013 Little Details LLC. All rights reserved.
+//
+
+#ifndef JustLanded_AFNetworkingPrefixHeader_pch
+#define JustLanded_AFNetworkingPrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+//
+// Prefix header for all source files of the 'JustLanded' target in the 'JustLanded' project
+//  Copyright (c) 2012 Little Details LLC. All rights reserved.
+//
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+
+#endif
+
+
+#endif

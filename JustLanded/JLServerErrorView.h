@@ -6,13 +6,13 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 #import "JLNoConnectionView.h"
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, ErrorType) {
     ERROR_500 = 0,
     ERROR_503,
-} ErrorType;
+};
 
 
 @interface JLServerErrorView : JLNoConnectionView

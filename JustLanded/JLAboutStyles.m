@@ -88,8 +88,8 @@ NSTimeInterval const FADE_ANIMATION_DURATION = 0.15;
         
         sAboutTitleLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                       backgroundColor:nil
-                                                            alignment:UITextAlignmentCenter
-                                                        lineBreakMode:UILineBreakModeTailTruncation];
+                                                            alignment:NSTextAlignmentCenter
+                                                        lineBreakMode:NSLineBreakByTruncatingTail];
     });
 
     return sAboutTitleLabelStyle;
@@ -109,8 +109,8 @@ NSTimeInterval const FADE_ANIMATION_DURATION = 0.15;
         
         sCopyrightLabelStyle = [[LabelStyle alloc] initWithTextStyle:textStyle
                                                      backgroundColor:nil 
-                                                           alignment:UITextAlignmentCenter 
-                                                       lineBreakMode:UILineBreakModeTailTruncation];
+                                                           alignment:NSTextAlignmentCenter 
+                                                       lineBreakMode:NSLineBreakByTruncatingTail];
     }); 
     
     return sCopyrightLabelStyle;

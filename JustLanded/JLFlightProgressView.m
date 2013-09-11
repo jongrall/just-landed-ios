@@ -205,10 +205,10 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
         
     if (zeroContentSize) {
         // Randomize the start point
-        CGFloat randomOffset = (float) (arc4random() % ((int) self.groundLayer_.contentSize.width));
+        CGFloat randomOffset = (CGFloat) (arc4random() % ((NSUInteger) self.groundLayer_.contentSize.width));
         self.currentGroundOffset_ = randomOffset;
         [self.groundLayer_ setContentOffset:CGPointMake(randomOffset, 0.0f) animated:NO];
-        randomOffset = (float) (arc4random() % ((int) self.cloudLayer_.contentSize.width));
+        randomOffset = (CGFloat) (arc4random() % ((NSUInteger) self.cloudLayer_.contentSize.width));
         self.currentCloudOffset_ = randomOffset;
         [self.cloudLayer_ setContentOffset:CGPointMake(randomOffset, 0.0f) animated:NO];
     }
@@ -235,17 +235,17 @@ const CGFloat CLOUD_LAYER_POINTS_PER_SEC = 40.0f;
     CGFloat newCloudOffset;
         
     if (currentGroundOffset_ >= groundLayer_.contentSize.width - 320.0f) {
-        newGroundOffset = (currentGroundOffset_ - (groundLayer_.contentSize.width - 320.0f)) + (GROUND_LAYER_POINTS_PER_SEC * animationTimer_.timeInterval);
+        newGroundOffset = (currentGroundOffset_ - (groundLayer_.contentSize.width - 320.0f)) + (GROUND_LAYER_POINTS_PER_SEC * (CGFloat) animationTimer_.timeInterval);
     }
     else {
-        newGroundOffset = currentGroundOffset_ + (GROUND_LAYER_POINTS_PER_SEC * animationTimer_.timeInterval);
+        newGroundOffset = currentGroundOffset_ + (GROUND_LAYER_POINTS_PER_SEC * (CGFloat) animationTimer_.timeInterval);
     }
 
     if (self.currentCloudOffset_ >= cloudLayer_.contentSize.width - 320.0f) {
-        newCloudOffset = (currentCloudOffset_ - (cloudLayer_.contentSize.width - 320.0f)) + (CLOUD_LAYER_POINTS_PER_SEC * animationTimer_.timeInterval);
+        newCloudOffset = (currentCloudOffset_ - (cloudLayer_.contentSize.width - 320.0f)) + (CLOUD_LAYER_POINTS_PER_SEC * (CGFloat) animationTimer_.timeInterval);
     }
     else {
-        newCloudOffset = currentCloudOffset_ + (CLOUD_LAYER_POINTS_PER_SEC * animationTimer_.timeInterval);
+        newCloudOffset = currentCloudOffset_ + (CLOUD_LAYER_POINTS_PER_SEC * (CGFloat) animationTimer_.timeInterval);
     }
     
     self.currentGroundOffset_ = newGroundOffset;

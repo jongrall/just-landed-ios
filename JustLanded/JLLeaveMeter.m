@@ -15,7 +15,7 @@
 @property (strong, nonatomic) UIImage *meterGradient_;
 @property (strong, nonatomic) JLMultipartOverUnderLabel *largeTimeLabel_;
 @property (strong, nonatomic) JLMultipartOverUnderLabel *smallTimeLabel_;
-@property (strong, nonatomic) JLLabel *leaveInstructionsLabel_;
+@property (strong, nonatomic) JLMultipartOverUnderLabel *leaveInstructionsLabel_;
 @property (strong, nonatomic) JLMultipartOverUnderLabel *leaveNowLabel_;
 
 @end
@@ -67,13 +67,16 @@
         smallTimeLabel_.hidden = YES;
         
         CGPoint leaveInInstructionsOrigin = [JLTrackStyles leaveInInstructionsOrigin];
-        leaveInstructionsLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLTrackStyles leaveInstructionsLabelStyle] 
-                                                                     frame:CGRectMake(leaveInInstructionsOrigin.x,
-                                                                                      leaveInInstructionsOrigin.y,
-                                                                                      aFrame.size.width,
-                                                                                      80.0f)];
-        
-        leaveInstructionsLabel_.text = NSLocalizedString(@"YOU SHOULD\nLEAVE IN", @"Leave Instructions Label");
+        leaveInstructionsLabel_ = [[JLMultipartOverUnderLabel alloc] initWithLabelStyles:@[[JLTrackStyles leaveInstructionsLabelStyle],
+                                                                                          [JLTrackStyles leaveInstructionsLabelStyle]]
+                                                                                  frame:CGRectMake(leaveInInstructionsOrigin.x,
+                                                                                                   leaveInInstructionsOrigin.y,
+                                                                                                   aFrame.size.width,
+                                                                                                   80.0f)];
+
+        leaveInstructionsLabel_.parts = @[@"YOU SHOULD", @"LEAVE IN"];
+        leaveInstructionsLabel_.offsets = @[[NSValue valueWithCGSize:CGSizeZero],
+                                            [NSValue valueWithCGSize:CGSizeMake(0.0f, 14.0f)]];
         leaveInstructionsLabel_.hidden = YES;
         
         CGPoint leaveNowOrigin = [JLTrackStyles leaveNowOrigin];
@@ -198,8 +201,8 @@
         CGContextSaveGState(context);
         UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width / 2.0f, rect.size.height / 2.0f) 
                                                             radius:rect.size.width / 2.0f
-                                                        startAngle:(130.0f * M_PI / 180.0f) // Slight buffer added
-                                                          endAngle:((130.0f * M_PI / 180.0f) + ((rotationDegrees + 25.0f) * M_PI / 180.0f))
+                                                        startAngle:(CGFloat) (130.0f * M_PI / 180.0f) // Slight buffer added
+                                                          endAngle:(CGFloat) ((130.0f * M_PI / 180.0f) + ((rotationDegrees + 25.0f) * M_PI / 180.0f))
                                                          clockwise:YES];
         [path addLineToPoint:CGPointMake(rect.size.width / 2.0f, rect.size.width / 2.0f)];
         [path closePath];
@@ -210,10 +213,10 @@
         CGContextSaveGState(context);
         // Change clip path slightly
         path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width / 2.0f, rect.size.height / 2.0f) 
-                                                            radius:rect.size.width / 2.0f
-                                                        startAngle:(135.0f * M_PI / 180.0f)
-                                                          endAngle:((135.0f * M_PI / 180.0f) + (rotationDegrees * M_PI / 180.0f))
-                                                         clockwise:YES];
+                                              radius:rect.size.width / 2.0f
+                                          startAngle:(CGFloat) (135.0f * M_PI / 180.0f)
+                                            endAngle:(CGFloat) ((135.0f * M_PI / 180.0f) + (rotationDegrees * M_PI / 180.0f))
+                                           clockwise:YES];
         [path addLineToPoint:CGPointMake(rect.size.width / 2.0f, rect.size.width / 2.0f)];
         [path closePath];
         [path addClip];

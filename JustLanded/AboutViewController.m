@@ -6,27 +6,27 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import Twitter.TWTweetComposeViewController;
+@import MessageUI.MFMailComposeViewController;
+@import MessageUI.MFMessageComposeViewController;
+@import QuartzCore;
 #import "AboutViewController.h"
 #import "AboutTableViewCell.h"
 #import "WebContentViewController.h"
 #import "JLMailComposeViewController.h"
 #import "JLMessageComposeViewController.h"
-#import <Twitter/TWTweetComposeViewController.h>
-#import <MessageUI/MFMailComposeViewController.h>
-#import <MessageUI/MFMessageComposeViewController.h>
-#import <QuartzCore/QuartzCore.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, AboutCellTag) {
     AboutCellTagFeedback = 0,
     AboutCellTagFAQ,
     AboutCellTagSMS,
     AboutCellTagTweet,
     AboutCellTagTerms,
-} AboutCellTag;
+};
 
 
 @interface AboutViewController () <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate>
@@ -54,42 +54,44 @@ typedef enum {
 #pragma mark - View lifecycle
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)loadView {    
-    UIImageView *mainView = [[UIImageView alloc] initWithFrame:CGRectZero];
+- (void)loadView {
+    UIImageView *mainView = [[UIImageView alloc] initWithFrame:[UIScreen mainContentViewFrame]];
+    mainView.backgroundColor = [UIColor blackColor];
     mainView.image = [UIImage imageNamed:[@"sky_bg" imageName]];
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    mainView.frame = CGRectMake(0.0f,
-                                0.0f,
-                                screenBounds.size.width,
-                                screenBounds.size.height - 20.0f); // Status bar
     mainView.userInteractionEnabled = YES;
-    self.view = mainView;
+    mainView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    self.mainContentView = mainView;
+
+    UIView *backgroundView = [[UIView alloc] initWithFrame:[UIScreen mainContentViewBounds]];
+    backgroundView.backgroundColor = [UIColor blackColor];
+    [backgroundView addSubview:mainView];
+    self.view = backgroundView;
     
     // Add the about button
     self.aboutButton_ = [[JLButton alloc] initWithButtonStyle:[JLAboutStyles aboutCloseButtonStyle]
                                                         frame:[JLLookupStyles aboutButtonFrame]]; // Frame matches lookup
     [self.aboutButton_ addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
     self.aboutButton_.enabled = NO;
-    [self.view addSubview:self.aboutButton_];
+    [self.mainContentView addSubview:self.aboutButton_];
     
     // Add the title
     self.aboutTitle_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles aboutTitleLabelStyle]
                                                      frame:[JLAboutStyles aboutTitleFrame]];
     self.aboutTitle_.text = NSLocalizedString(@"about", @"About Screen Title");
     self.aboutTitle_.hidden = YES; // Hidden at first
-    [self.view addSubview:self.aboutTitle_];
+    [self.mainContentView addSubview:self.aboutTitle_];
     
     // Add the cloud layer
     self.cloudLayer = [[JLCloudLayer alloc] initWithFrame:[JLLookupStyles cloudLayerFrame]]; // Frame matches lookup
     self.cloudLayer.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:self.cloudLayer];
+    [self.mainContentView addSubview:self.cloudLayer];
     
     // Add the cloud foreground
     self.cloudFooter_ = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"lookup_cloud_fg"]
                                                             resizableImageWithCapInsets:UIEdgeInsetsMake(9.0f, 9.0f, 9.0f, 9.0f)]];
     self.cloudFooter_.frame = [JLLookupStyles cloudFooterFrame]; // Frame matches lookup
     self.cloudFooter_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    [self.view addSubview:self.cloudFooter_];
+    [self.mainContentView addSubview:self.cloudFooter_];
     
     // Add the table
     UITableView *table = [[UITableView alloc] initWithFrame:[JLAboutStyles tableFrame]
@@ -102,17 +104,17 @@ typedef enum {
     [table setHidden:YES]; // Hidden at first
     [table setRowHeight:AboutTableViewCellHeight];
     self.aboutTable_ = table;
-    [self.view addSubview:table];
+    [self.mainContentView addSubview:table];
     
     // Add the credits
     self.copyrightLabel_ = [[JLLabel alloc] initWithLabelStyle:[JLAboutStyles copyrightLabelStyle]
                                                          frame:[JLAboutStyles copyrightNoticeFrame]];
-    self.copyrightLabel_.text = [NSString stringWithFormat:NSLocalizedString(@"©2012 Little Details LLC. Just Landed %@", @"Copyright Notice"),
+    self.copyrightLabel_.text = [NSString stringWithFormat:NSLocalizedString(@"©2013 Little Details LLC. Just Landed %@", @"Copyright Notice"),
                                  [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
     self.copyrightLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     self.copyrightLabel_.hidden = YES; // Hidden at first
     
-    [self.view addSubview:self.copyrightLabel_];
+    [self.mainContentView addSubview:self.copyrightLabel_];
 }
 
 
@@ -123,10 +125,12 @@ typedef enum {
     [self.cloudLayer startAnimating];
     
     // Override back button
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Back", @"Back")
-                                                                             style:UIBarButtonItemStylePlain
-                                                                            target:nil 
-                                                                            action:nil];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Back", @"Back")
+                                                                   style:UIBarButtonItemStylePlain
+                                                                  target:nil
+                                                                  action:nil];
+    [backButton adoptJustLandedStyle];
+    self.navigationItem.backBarButtonItem = backButton;
 }
 
 
@@ -154,12 +158,6 @@ typedef enum {
         [self.navigationController setNavigationBarHidden:NO animated:YES];
     }
     [super viewWillDisappear:animated];
-}
-
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Portrait only
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 
@@ -204,7 +202,9 @@ typedef enum {
         airplane_ = anAirplane;
     
         // Side effect - adds the plane to the view
-        [[self view] insertSubview:airplane_ belowSubview:self.aboutTable_];
+        if (self.view) {
+            [[self mainContentView] insertSubview:airplane_ belowSubview:self.aboutTable_];
+        }
     }
 }
 
@@ -233,7 +233,8 @@ typedef enum {
                                               self.airplane.frame = [JLLookupStyles airplaneFrame];
                                           }
                                           completion:^(BOOL finishedAlso) {
-                                              [[self.presentingViewController view] addSubview:self.airplane]; // Give the airplane back :)
+                                              JLViewController *presentingVC = (JLViewController *)self.presentingViewController;
+                                              [[presentingVC mainContentView] addSubview:self.airplane]; // Give the airplane back :)
                                               [self dismissViewControllerAnimated:NO completion:NULL]; // Instant transition
                                           }];
                      }];
@@ -244,7 +245,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (AboutCellTag)tagForIndexPath:(NSIndexPath *)indexPath {
-    NSUInteger row = [indexPath row];
+    NSUInteger row = (NSUInteger) [indexPath row];
     NSMutableArray *tableRows = [[NSMutableArray alloc] init];
     
     if ([MFMailComposeViewController canSendMail]) {
@@ -263,10 +264,10 @@ typedef enum {
     [tableRows addObject:@(AboutCellTagTerms)];
     
     if (row < [tableRows count]) {
-        return [tableRows[row] integerValue];
+        return [tableRows[row] unsignedIntegerValue];
     }
     else {
-        return [[tableRows lastObject] integerValue]; // Should never happen
+        return [[tableRows lastObject] unsignedIntegerValue]; // Should never happen
     }
 }
 
@@ -344,7 +345,7 @@ typedef enum {
         case AboutCellTagFeedback: {
             JLMailComposeViewController *mailComposer = [[JLMailComposeViewController alloc] init];
             [mailComposer setToRecipients:@[@"feedback@getjustlanded.com"]];
-            [mailComposer setSubject:[NSString stringWithFormat:@"Feedback on JustLanded v%@",
+            [mailComposer setSubject:[NSString stringWithFormat:@"Feedback on Just Landed v%@",
                                       [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
             [mailComposer setMailComposeDelegate:self];
             mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -369,8 +370,12 @@ typedef enum {
             [smsComposer setBody:possibleMessages[randomIndex]];
             smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             [self presentViewController:smsComposer animated:YES completion:NULL];
-            // Hack to fix MFMMessageCompose changing status bar type
-            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+            
+            if (iOS_6_OrEarlier()) {
+                // Hack to fix MFMMessageCompose changing status bar type
+                [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+            }
+
             [Flurry logEvent:FY_STARTED_SENDING_SMS];
             break;
         }
@@ -400,8 +405,10 @@ typedef enum {
                     else {
                         [Flurry logEvent:FY_ABANDONED_TWEETING];
                     }
-                    
-                    [self dismissViewControllerAnimated:NO completion:NULL];
+
+                    if (iOS_6_OrEarlier()) {
+                        [self dismissViewControllerAnimated:NO completion:NULL];
+                    }
                 });
             }];
             [self presentViewController:tweetComposer animated:YES completion:NULL];
@@ -440,7 +447,7 @@ typedef enum {
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSUInteger numRows = 2;
+    NSInteger numRows = 2;
     
     if ([MFMailComposeViewController canSendMail]) {
         numRows++;

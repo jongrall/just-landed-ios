@@ -21,4 +21,27 @@
     return sWideScreen;
 }
 
+
++ (CGRect)mainContentViewFrame {
+    CGFloat statusBarHeight = 20.0f; // Assumed fixed
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+
+    if (iOS_6_OrEarlier()) {
+        return CGRectMake(0.0f, 0.0f, screenBounds.size.width, screenBounds.size.height - statusBarHeight);
+    } else {
+        return CGRectMake(0.0f, statusBarHeight, screenBounds.size.width, screenBounds.size.height - statusBarHeight);
+    }
+}
+
+
++ (CGRect)mainContentViewBounds {
+    CGFloat statusBarHeight = 20.0f; // Assumed fixed
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+
+    if (iOS_6_OrEarlier())
+        return CGRectMake(0.0f, 0.0f, screenBounds.size.width, screenBounds.size.height - statusBarHeight);
+    else
+        return screenBounds;
+}
+
 @end

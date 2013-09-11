@@ -36,6 +36,12 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Status bar style
+    if (iOS_6_OrEarlier())
+         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    else
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
     // Initialization
     self.pushToken = nil;
     self.wakeupTrackTask = UIBackgroundTaskInvalid;
@@ -46,7 +52,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
                                                          liveIdentifier:HOCKEY_APP_ID_PRODUCTION
                                                                delegate:self];
     [[BITHockeyManager sharedHockeyManager] startManager];
-    [[[BITHockeyManager sharedHockeyManager] crashManager] setCrashManagerStatus:BITCrashManagerStatusAutoSend]; // Auto send crashes
+    [[[BITHockeyManager sharedHockeyManager] crashManager] setCrashManagerStatus:BITCrashManagerStatusAutoSend];
     #endif
     
     // Configure Flurry
@@ -86,11 +92,12 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
             self.respondedToTextOnArrivalNotification = YES;
         }
     }
-    
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
+
     // Show the flight lookup UI
     self.mainViewController_ = [[FlightLookupViewController alloc] init];
+
     self.window.rootViewController = self.mainViewController_;
     [self.window makeKeyAndVisible];
     
@@ -104,6 +111,11 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     }
     
     return YES;
+}
+
+
+- (NSUInteger)supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 
@@ -165,7 +177,9 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     return nil;
 }
 
-- (NSString *)userNameForCrashManager:(BITCrashManager *)crashManager {
+
+- (NSString *)userNameForHockeyManager:(BITHockeyManager *)hockeyManager
+                      componentManager:(BITHockeyBaseManager *)componentManager {
     return [[JustLandedSession sharedSession] UUID];
 }
 

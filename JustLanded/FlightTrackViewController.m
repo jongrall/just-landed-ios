@@ -6,30 +6,29 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import CoreLocation;
+@import MapKit;
 #import "FlightTrackViewController.h"
 #import "AboutViewController.h"
 #import "WebContentViewController.h"
 #import "JustLandedSession.h"
 #import "Flight.h"
-#import "Flurry.h"
 #import "AppDelegate.h"
 #import "JLMessageComposeViewController.h"
-#import <CoreLocation/CoreLocation.h>
-#import <MapKit/MapKit.h>
 #import <Availability.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Private Interface
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, LeaveForAirportWarningType) {
     WarningTypeNone = 8008,
     WarningTypeDisabledLocationServices,
     WarningTypeDeniedLocationServices,
     WarningTypeRestrictedLocationServices,
     WarningTypeDisallowedNotifications,
     WarningTypeTooFarFromDestination,
-} LeaveForAirportWarningType;
+};
 
 NSUInteger const TextUponArrivalAlertTag = 65009;
 
@@ -178,14 +177,17 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 - (void)loadView {
     // Set up the main view
-    CGRect screenBounds = [[UIScreen mainScreen] bounds];
-    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0.0f,
-                                                                0.0f,
-                                                                screenBounds.size.width,
-                                                                screenBounds.size.height - 20.0f)]; // Status bar
+    UIView *mainView = [[UIView alloc] initWithFrame:[UIScreen mainContentViewFrame]];
     [mainView setBackgroundColor:[UIColor blackColor]];
-    self.view = mainView;
-    
+    mainView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    mainView.autoresizesSubviews = YES;
+    self.mainContentView = mainView;
+
+    UIView *backgroundView = [[UIView alloc] initWithFrame:[UIScreen mainContentViewBounds]];
+    backgroundView.backgroundColor = [UIColor blackColor];
+    [backgroundView addSubview:mainView];
+    self.view = backgroundView;
+
     // Create the footer background
     self.footerBackground_ = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[@"tracking_footer_bg" imageName]]];
     [self.footerBackground_ setFrame:[JLTrackStyles trackFooterFrame]];
@@ -352,31 +354,31 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     [self setStatus:self.trackedFlight_.status];
     
     // Add them to the view
-    [self.view addSubview:self.footerBackground_];
-    [self.view addSubview:self.headerBackground_];
-    [self.view addSubview:self.lookupButton_];
-    [self.view addSubview:self.statusLabel_];
-    [self.view addSubview:self.arrowView_];
-    [self.view addSubview:self.originCityLabel_];
-    [self.view addSubview:self.originCodeLabel_];
-    [self.view addSubview:self.destinationCityLabel_];
-    [self.view addSubview:self.destinationCodeLabel_];
-    [self.view addSubview:self.flightProgressView_];
-    [self.view addSubview:self.landsAtLabel_];
-    [self.view addSubview:self.landsAtTimeLabel_];
-    [self.view addSubview:self.landsInLabel_];
-    [self.view addSubview:self.landsInTimeLabel_];
-    [self.view addSubview:self.terminalLabel_];
-    [self.view addSubview:self.terminalValueLabel_];
-    [self.view addSubview:self.gateLabel_];
-    [self.view addSubview:self.gateValueLabel_];
-    [self.view addSubview:self.drivingTimeLabel_];
-    [self.view addSubview:self.drivingTimeValueLabel_];
-    [self.view addSubview:self.bagClaimLabel_];
-    [self.view addSubview:self.bagClaimValueLabel_];
-    [self.view addSubview:self.leaveMeter_];
-    [self.view addSubview:self.warningButton_];
-    [self.view addSubview:self.directionsButton_];
+    [self.mainContentView addSubview:self.footerBackground_];
+    [self.mainContentView addSubview:self.headerBackground_];
+    [self.mainContentView addSubview:self.lookupButton_];
+    [self.mainContentView addSubview:self.statusLabel_];
+    [self.mainContentView addSubview:self.arrowView_];
+    [self.mainContentView addSubview:self.originCityLabel_];
+    [self.mainContentView addSubview:self.originCodeLabel_];
+    [self.mainContentView addSubview:self.destinationCityLabel_];
+    [self.mainContentView addSubview:self.destinationCodeLabel_];
+    [self.mainContentView addSubview:self.flightProgressView_];
+    [self.mainContentView addSubview:self.landsAtLabel_];
+    [self.mainContentView addSubview:self.landsAtTimeLabel_];
+    [self.mainContentView addSubview:self.landsInLabel_];
+    [self.mainContentView addSubview:self.landsInTimeLabel_];
+    [self.mainContentView addSubview:self.terminalLabel_];
+    [self.mainContentView addSubview:self.terminalValueLabel_];
+    [self.mainContentView addSubview:self.gateLabel_];
+    [self.mainContentView addSubview:self.gateValueLabel_];
+    [self.mainContentView addSubview:self.drivingTimeLabel_];
+    [self.mainContentView addSubview:self.drivingTimeValueLabel_];
+    [self.mainContentView addSubview:self.bagClaimLabel_];
+    [self.mainContentView addSubview:self.bagClaimValueLabel_];
+    [self.mainContentView addSubview:self.leaveMeter_];
+    [self.mainContentView addSubview:self.warningButton_];
+    [self.mainContentView addSubview:self.directionsButton_];
 }
 
 
@@ -461,12 +463,6 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     self.warningButton_ = nil;
     self.directionsButton_ = nil;
     self.leaveMeter_ = nil;
-}
-
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Only supports portrait
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -734,10 +730,10 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     
     if (!self.showingValidData_ || ![self.trackedFlight_ isDataFresh]) {
         if (!self.loadingOverlay_) {
-            self.loadingOverlay_ = [[JLLoadingView alloc] initWithFrame:self.view.bounds];
+            self.loadingOverlay_ = [[JLLoadingView alloc] initWithFrame:self.mainContentView.bounds];
         }
         
-        [self.view addSubview:self.loadingOverlay_];
+        [self.mainContentView addSubview:self.loadingOverlay_];
         [self.loadingOverlay_ startLoading];
     }
     
@@ -908,8 +904,9 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     // Stop monitoring for movement
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate stopMonitoringMovement];
-    
-    [self.delegate didFinishTrackingFlight:self.trackedFlight_ userInitiated:userInitiated];
+
+    id<FlightTrackViewControllerDelegate> trackDelegate = _trackDelegate;
+    [trackDelegate didFinishTrackingFlight:self.trackedFlight_ userInitiated:userInitiated];
 }
 
 
@@ -995,9 +992,12 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         else {
             // They're not in a situation where we should prompt them to send a text on arrival
             // Ask them to rate after a few seconds, if eligible
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wselector"
             [[JustLandedSession sharedSession] performSelector:@selector(showRatingRequestIfEligible)
                                                     withObject:nil
                                                     afterDelay:3.0];
+            #pragma clang diagnostic pop
         }
     }
     else { // The app is not in the foreground
@@ -1047,7 +1047,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     // Stop loading animation
     [self indicateFinishedUpdating];
     
-    FlightTrackFailedReason reason = [[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
+    FlightTrackFailedReason reason = (FlightTrackFailedReason)[[[notification userInfo] valueForKey:FlightTrackFailedReasonKey] intValue];
     
     switch (reason) {
         case TrackFailureFlightNotFound:
@@ -1061,12 +1061,12 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             // No connection
             if (![self.trackedFlight_ isDataFresh] || !self.showingValidData_) { // Only show no connection if the data is old
                 if (!self.noConnectionOverlay_) {
-                    self.noConnectionOverlay_ = [[JLNoConnectionView alloc] initWithFrame:self.view.bounds];
+                    self.noConnectionOverlay_ = [[JLNoConnectionView alloc] initWithFrame:self.mainContentView.bounds];
                     self.noConnectionOverlay_.delegate = self;
                 }
                 self.noConnectionOverlay_.tryAgainButton.enabled = YES;
                 
-                [self.view addSubview:self.noConnectionOverlay_];
+                [self.mainContentView addSubview:self.noConnectionOverlay_];
             }
             break;
         }
@@ -1074,7 +1074,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
             // Error or outage
             if (![self.trackedFlight_ isDataFresh] || !self.showingValidData_) { // Only show 500 if data is old or no data
                 if (!self.serverErrorOverlay_) {
-                    self.serverErrorOverlay_ = [[JLServerErrorView alloc] initWithFrame:self.view.bounds
+                    self.serverErrorOverlay_ = [[JLServerErrorView alloc] initWithFrame:self.mainContentView.bounds
                                                                          errorType:ERROR_500];
                     self.serverErrorOverlay_.delegate = self;
                 }
@@ -1087,7 +1087,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                     self.serverErrorOverlay_.errorType = ERROR_500;
                 }
                 
-                [self.view addSubview:self.serverErrorOverlay_];
+                [self.mainContentView addSubview:self.serverErrorOverlay_];
             }
             break;
         }
@@ -1110,7 +1110,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     if (loc == nil) return NO;
     
     // Decide whether it's acceptable age and accuracy range
-    NSTimeInterval locAgeSecs = abs([loc.timestamp timeIntervalSinceNow]);
+    NSTimeInterval locAgeSecs = fabs([loc.timestamp timeIntervalSinceNow]);
     return locAgeSecs <= LOCATION_MAXIMUM_ACCEPTABLE_AGE && loc.horizontalAccuracy <= LOCATION_MAXIMUM_ACCEPTABLE_ERROR;
 }
 
@@ -1125,8 +1125,8 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
         // Update Flurry's location for this user
         [Flurry setLatitude:newLocation.coordinate.latitude
                            longitude:newLocation.coordinate.longitude
-                  horizontalAccuracy:newLocation.horizontalAccuracy
-                    verticalAccuracy:newLocation.verticalAccuracy];
+                  horizontalAccuracy:(float)newLocation.horizontalAccuracy
+                    verticalAccuracy:(float)newLocation.verticalAccuracy];
         
         // Stop updating now that we have an acceptable location
         [self.locationManager_ stopUpdatingLocation];
@@ -1163,7 +1163,11 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 }
 
 - (void)showMap {
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wselector"
     if ([MKMapItem class] && [MKMapItem respondsToSelector:@selector(openMapsWithItems:launchOptions:)]) {
+    #pragma clang diagnostic pop
+
         // iOS6 and later uses native Apple Maps with MKMapItems
         MKPlacemark *airportMark = [[MKPlacemark alloc] initWithCoordinate:self.trackedFlight_.destination.location.coordinate
                                                          addressDictionary:nil];
@@ -1280,6 +1284,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     else {
         NSString *title = NSLocalizedString(@"F.A.Q.", @"F.A.Q.");
         NSURL *fixURL = nil;
+        NSUInteger alertTag = (NSUInteger) alertView.tag;
         
         if ([alertView cancelButtonIndex] != buttonIndex) {
             switch (alertView.tag) {
@@ -1306,7 +1311,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
                     break;
             }
         }
-        else if (alertView.tag > WarningTypeNone && alertView.tag <= WarningTypeTooFarFromDestination){
+        else if (alertTag > WarningTypeNone && alertTag <= WarningTypeTooFarFromDestination){
             // They want to ignore the warning
             if (![ignoredWarnings_ containsObject:@(alertView.tag)]) {
                 [ignoredWarnings_ addObject:@(alertView.tag)];
@@ -1383,8 +1388,12 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     [smsComposer setBody:smsMessage];
     smsComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self presentViewController:smsComposer animated:YES completion:NULL];
-    // Hack to fix MFMMessageCompose changing status bar type
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+
+    if (iOS_6_OrEarlier()) {
+        // Hack to fix MFMMessageCompose changing status bar type
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    }
+
     [Flurry logEvent:FY_STARTED_SENDING_ARRIVED_SMS];
 }
 

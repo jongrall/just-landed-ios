@@ -6,9 +6,11 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, JLLocalNotificationTypes) {
     JLLocalNotificationTypeTextOnArrival = 137,
-} JLLocalNotificationTypes;
+};
+
+BOOL iOS_6_OrEarlier(void);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

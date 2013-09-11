@@ -31,11 +31,12 @@
     self = [super initWithFrame:aFrame];
     if (self) {
         self.backgroundColor = [UIColor clearColor];
-        self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+        self.autoresizingMask = UIViewAutoresizingFlexibleHeight;
         
         // Add background
         UIImageView *backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[@"overlay_screens_bg" imageName]]];
         backgroundView.frame = aFrame;
+        backgroundView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
  
         // Add no connection graphic
         UIImage *noConnImg = [UIImage imageNamed:@"no_connection" 
@@ -44,6 +45,7 @@
                                     shadowOffset:CGSizeMake(0.0f, 1.0f) 
                                       shadowBlur:0.0f];
         noConnectionImageView_ = [[UIImageView alloc] initWithImage:noConnImg];
+        noConnectionImageView_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         CGFloat noConnectionImageOriginY = [UIScreen isMainScreenWide] ? 90.0f : 50.0f;
         noConnectionImageView_.frame = CGRectMake((aFrame.size.width - noConnImg.size.width) / 2.0f,
                                                  noConnectionImageOriginY,
@@ -52,6 +54,7 @@
         
         // Add divider
         divider_ = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"divider"]];
+        divider_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         CGFloat dividerOriginY = [UIScreen isMainScreenWide] ? 431.0f : 343.0f;
         divider_.frame = CGRectMake((320.0f - divider_.frame.size.width) / 2.0f,
                                     dividerOriginY,
@@ -65,6 +68,7 @@
                                                                             noConnectionLabelOriginY,
                                                                             aFrame.size.width - 20.0f,
                                                                             30.0f)];
+        noConnectionLabel_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         noConnectionLabel_.text = NSLocalizedString(@"No Internet Connection", @"No Internet Connection");
         
         // Add retry button
@@ -74,6 +78,7 @@
                                                                            tryAgainButtonOriginY,
                                                                            aFrame.size.width - 20.0f,
                                                                            56.0f)];
+        tryAgainButton_.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [tryAgainButton_ addTarget:self
                                 action:@selector(tryAgain) 
                       forControlEvents:UIControlEventTouchUpInside];
@@ -91,7 +96,8 @@
 
 - (void)tryAgain {
     self.tryAgainButton.enabled = NO;
-    [self.delegate tryConnectionAgain];
+    id<NoConnectionDelegate> noConnectionDelegate = _delegate;
+    [noConnectionDelegate tryConnectionAgain];
 }
 
 @end

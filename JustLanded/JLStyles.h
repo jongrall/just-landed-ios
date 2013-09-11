@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "Flight.h"
 #import "TextStyle.h"
 #import "ButtonStyle.h"
@@ -31,5 +31,6 @@
 + (LabelStyle *)noConnectionLabelStyle;
 + (LabelStyle *)errorDescriptionLabelStyle;
 + (ButtonStyle *)defaultButtonStyle;
++ (UIColor *)justLandedOrange;
 
 @end

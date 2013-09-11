@@ -28,41 +28,58 @@
 //
 
 #import "ABTableViewCell.h"
+#import "Constants.h"
 
-@interface ABTableViewCellView : UIView
+@interface ABTableViewCellContentView : UIView
+@property (weak, nonatomic) ABTableViewCell *parentCell;
 @end
 
-@interface ABTableViewSelectedCellView : UIView
+@implementation ABTableViewCellContentView
+
+- (id)initWithFrame:(CGRect)frame {
+	if((self = [super initWithFrame:frame])) {
+		self.contentMode = UIViewContentModeRedraw;
+	}
+
+	return self;
+}
+
+@end
+
+
+@interface ABTableViewCellView : ABTableViewCellContentView
 @end
 
 @implementation ABTableViewCellView
 
-- (id)initWithFrame:(CGRect)frame {
-	if((self = [super initWithFrame:frame])) {
-		self.contentMode = UIViewContentModeRedraw;
-	}
-	
-	return self;
-}
-
 - (void)drawRect:(CGRect)rect {
-	[(ABTableViewCell *)[self superview] drawContentView:rect highlighted:NO];
+    ABTableViewCell *theParentCell = self.parentCell;
+	[theParentCell drawContentView:rect highlighted:NO];
 }
 
 @end
 
+
+@interface ABTableViewSelectedCellView : ABTableViewCellContentView
+@end
+
 @implementation ABTableViewSelectedCellView
 
-- (id)initWithFrame:(CGRect)frame {
-	if((self = [super initWithFrame:frame])) {
-		self.contentMode = UIViewContentModeRedraw;
-	}
-	
-	return self;
+- (void)drawRect:(CGRect)rect {
+    ABTableViewCell *theParentCell = self.parentCell;
+	[theParentCell drawContentView:rect highlighted:YES];
 }
 
-- (void)drawRect:(CGRect)rect {
-	[(ABTableViewCell *)[self superview] drawContentView:rect highlighted:YES];
+
+- (CGRect)frame {
+    ABTableViewCell *theParentCell = self.parentCell;
+    return theParentCell.backgroundView.frame;
+}
+
+
+- (void)setFrame:(CGRect)frame {
+    ABTableViewCell *theParentCell = self.parentCell;
+    [super setFrame:theParentCell.backgroundView.frame];
 }
 
 @end
@@ -71,17 +88,18 @@
 @implementation ABTableViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-	self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-	
-    if(self) {
-		contentView = [[ABTableViewCellView alloc] initWithFrame:CGRectZero];
+    if((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
+        ABTableViewCellView *cellView = [[ABTableViewCellView alloc] initWithFrame:CGRectZero];
+        cellView.parentCell = self;
+		contentView = cellView;
 		contentView.opaque = YES;
 		self.backgroundView = contentView;
-		
-		selectedContentView = [[ABTableViewSelectedCellView alloc] initWithFrame:CGRectZero];
+
+        ABTableViewSelectedCellView *selectedCellView = [[ABTableViewSelectedCellView alloc] initWithFrame:CGRectZero];
+        selectedCellView.parentCell = self;
+		selectedContentView = selectedCellView;
 		selectedContentView.opaque = YES;
 		self.selectedBackgroundView = selectedContentView;
-		
     }
 	
     return self;
@@ -98,6 +116,7 @@
 	[super setSelected:selected];
 }
 
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
 	[selectedContentView setNeedsDisplay];
 
@@ -107,6 +126,7 @@
 	
 	[super setSelected:selected animated:animated];
 }
+
 
 - (void)setHighlighted:(BOOL)highlighted {
 	[selectedContentView setNeedsDisplay];
@@ -118,6 +138,7 @@
 	[super setHighlighted:highlighted];
 }
 
+
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
 	[selectedContentView setNeedsDisplay];
 	
@@ -128,13 +149,14 @@
 	[super setHighlighted:highlighted animated:animated];
 }
 
+
 - (void)setFrame:(CGRect)f {
 	[super setFrame:f];
 	CGRect b = [self bounds];
-	// b.size.height -= 1; // leave room for the separator line
 	[contentView setFrame:b];
 	[selectedContentView setFrame:b];
 }
+
 
 - (void)setNeedsDisplay {
 	[super setNeedsDisplay];
@@ -145,6 +167,7 @@
 	}
 }
 
+
 - (void)setNeedsDisplayInRect:(CGRect)rect {
 	[super setNeedsDisplayInRect:rect];
     [contentView setNeedsDisplayInRect:rect];
@@ -154,14 +177,19 @@
 	}
 }
 
+
 - (void)layoutSubviews {
 	[super layoutSubviews];
 	self.contentView.hidden = YES;
 	[self.contentView removeFromSuperview];
 }
 
+
 - (void)drawContentView:(CGRect)rect highlighted:(BOOL)highlighted {
-	// subclasses should implement this
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:[NSString stringWithFormat:@"Subclasses must override %@",
+                                           NSStringFromSelector(_cmd)]
+                                 userInfo:nil];
 }
 
 @end

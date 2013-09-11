@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <MessageUI/MessageUI.h>
+@import MessageUI.MFMessageComposeViewController;
 
 @interface JLMessageComposeViewController : MFMessageComposeViewController
 

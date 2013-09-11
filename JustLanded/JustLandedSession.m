@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
+@import AudioToolbox;
 #import "JustLandedSession.h"
-#import <AudioToolbox/AudioToolbox.h>
 #import "Flight.h"
 #import <HockeySDK/HockeySDK.h>
 #import "Reachability.h"
@@ -35,7 +35,7 @@
 
 @synthesize currentlyTrackedFlights_;
 
-+ (JustLandedSession *)sharedSession {
++ (instancetype)sharedSession {
     static JustLandedSession *sSharedSession_ = nil;
     static dispatch_once_t sOncePredicate;
     
@@ -119,7 +119,7 @@
     BOOL sendFlightEvents = [[NSUserDefaults standardUserDefaults] boolForKey:SendFlightEventsPreferenceKey];
     BOOL sendReminders = [[NSUserDefaults standardUserDefaults] boolForKey:SendRemindersPreferenceKey];
     BOOL playFlightSounds = [[NSUserDefaults standardUserDefaults] boolForKey:PlayFlightSoundsPreferenceKey];
-    NSUInteger reminderLeadTime = [[NSUserDefaults standardUserDefaults] integerForKey:ReminderLeadTimePreferenceKey];
+    NSInteger reminderLeadTime = [[NSUserDefaults standardUserDefaults] integerForKey:ReminderLeadTimePreferenceKey];
     
     return [[NSMutableDictionary alloc] initWithObjectsAndKeys:@(sendFlightEvents), SendFlightEventsPreferenceKey,
             @(sendReminders), SendRemindersPreferenceKey,
@@ -137,8 +137,8 @@
     NSNumber *trackCount = [[NSUserDefaults standardUserDefaults] objectForKey:FlightsTrackedCountKey];
     
     if (trackCount) {
-        NSUInteger newCount = [trackCount integerValue] + 1;
-        trackCount = [NSNumber numberWithInt:newCount];
+        NSUInteger newCount = [trackCount unsignedIntegerValue] + 1;
+        trackCount = [NSNumber numberWithUnsignedInt:newCount];
     }
     else {
         trackCount = @1;
@@ -157,7 +157,7 @@
     BOOL appInForeground = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
     
     if (trackCount && !hasBeenAsked && oldEnoughUser && appInForeground) {
-        NSUInteger currentCount = [trackCount integerValue];
+        NSUInteger currentCount = [trackCount unsignedIntegerValue];
         
         if (currentCount >= RATINGS_USAGE_THRESHOLD && ![[[BITHockeyManager sharedHockeyManager] crashManager] didCrashInLastSession]) {
             return YES;
@@ -188,7 +188,15 @@
 // Handle ratings alert
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if ([alertView cancelButtonIndex] != buttonIndex) {
-        NSURL *ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@&mt=8", APP_ID]];
+        NSURL *ratingURL;
+
+        if (iOS_6_OrEarlier()) {
+            ratingURL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@&mt=8", APP_ID]];
+        }
+        else {
+            ratingURL = [NSURL URLWithString:@"itms-apps://itunes.com/apps/justlanded"];
+        }
+
         [[UIApplication sharedApplication] openURL:ratingURL];
         [Flurry logEvent:FY_RATED];
     }

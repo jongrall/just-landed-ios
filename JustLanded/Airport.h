@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Little Details LLC. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreLocation/CoreLocation.h>
+@import Foundation;
+@import CoreLocation;
 
 @interface Airport : NSObject <NSCoding>
 

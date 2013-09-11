@@ -7,25 +7,31 @@
 //
 
 #import "JLMessageComposeViewController.h"
-#import <QuartzCore/QuartzCore.h>
 
 @implementation JLMessageComposeViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    // Customize the navbar
-    self.navigationBar.layer.shadowOffset = CGSizeMake(0.0f, 0.5f);
-    self.navigationBar.layer.shadowColor = [[UIColor blackColor] CGColor];
-    self.navigationBar.layer.shadowOpacity = 0.5f;
-    self.navigationBar.layer.shadowRadius = 0.25f;
-    self.navigationBar.layer.shadowPath = [[UIBezierPath bezierPathWithRect:[self.navigationController.navigationBar bounds]] CGPath]; //Optimization avoids offscreen render pass
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    if (iOS_6_OrEarlier()) {
+        [self.navigationBar adoptJustLandedStyle];
+        [self.topViewController.navigationItem.leftBarButtonItem adoptJustLandedStyle];
+        [self.topViewController.navigationItem.rightBarButtonItem adoptJustLandedStyle];
+    }
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!iOS_6_OrEarlier()) {
+        for (UIWindow *aWindow in [UIApplication sharedApplication].windows) {
+            aWindow.layer.masksToBounds = YES;
+            aWindow.layer.cornerRadius = 6.0f;
+        }
+    }
 }
+
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
