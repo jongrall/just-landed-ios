@@ -12,6 +12,8 @@
 #ifdef __OBJC__
     @import Foundation;
     @import UIKit;
+    @import SystemConfiguration;
+    @import MobileCoreServices;
     #import "Constants.h"
 
     // Categories
