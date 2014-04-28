@@ -64,9 +64,9 @@ NSString *const LocalNotificationTypeKey = @"local_notification_type";
         NSString * const WEB_HOST = @"http://localhost:8082";
         NSString * const BASE_URL = @"http://localhost:8082/api/v1/";
     #else
-        NSString * const JL_HOST_NAME = @"75-101-52-232.dsl.static.sonic.net";
-        NSString * const WEB_HOST = @"http://75-101-52-232.dsl.static.sonic.net:8082";
-        NSString * const BASE_URL = @"http://75-101-52-232.dsl.static.sonic.net:8082/api/v1/";
+        NSString * const JL_HOST_NAME = @"75-101-52-119.dsl.static.sonic.net";
+        NSString * const WEB_HOST = @"http://75-101-52-119.dsl.static.sonic.net:8082";
+        NSString * const BASE_URL = @"http://75-101-52-119.dsl.static.sonic.net:8082/api/v1/";
     #endif
 NSUInteger const API_VERSION = 1;
 NSString * const API_USERNAME = @"iOS-Development";
