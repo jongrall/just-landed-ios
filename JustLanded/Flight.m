@@ -469,8 +469,8 @@ static NSArray *sAircraftTypes_;
         // For each instance variable that is archived, we decode it
         self.flightID = [aDecoder decodeObjectForKey:@"flightID"];
         self.flightNumber = [aDecoder decodeObjectForKey:@"flightNumber"];
-        self.aircraftType = [aDecoder decodeIntegerForKey:@"aircraftType"];
-        self.timeOfDay = [aDecoder decodeIntegerForKey:@"timeOfDay"];
+        self.aircraftType = (NSUInteger)[aDecoder decodeIntegerForKey:@"aircraftType"];
+        self.timeOfDay = (NSUInteger)[aDecoder decodeIntegerForKey:@"timeOfDay"];
         
         self.actualArrivalTime = [aDecoder decodeObjectForKey:@"actualArrivalTime"];
         self.actualDepartureTime = [aDecoder decodeObjectForKey:@"actualDepartureTime"];
@@ -485,7 +485,7 @@ static NSArray *sAircraftTypes_;
         self.origin = [aDecoder decodeObjectForKey:@"origin"];
         self.destination = [aDecoder decodeObjectForKey:@"destination"];
         
-        self.status = [aDecoder decodeIntegerForKey:@"status"];
+        self.status = (NSUInteger)[aDecoder decodeIntegerForKey:@"status"];
         self.detailedStatus = [aDecoder decodeObjectForKey:@"detailedStatus"];
         
         self.lastTracked = [aDecoder decodeObjectForKey:@"_lastTracked"];

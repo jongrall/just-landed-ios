@@ -79,7 +79,7 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     
     // Register for push notifications
     self.triedToRegisterForRemoteNotifications = NO;
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
     
     // The app was launched because of a location change event, and they are tracking flights start a BG task to give it more time to finish
     if (launchOptions[UIApplicationLaunchOptionsLocationKey] && isTrackingFlights) {        
@@ -309,6 +309,11 @@ NSString * const DidFailToUpdatePushTokenNotification = @"DidFailToUpdatePushTok
     self.pushToken = [deviceToken hexString];
     self.triedToRegisterForRemoteNotifications = YES;
     [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadName:DidUpdatePushTokenNotification object:application];
+
+    UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeAlert | UIUserNotificationTypeSound)
+                                                                                         categories:nil];
+
+    [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
 }
 
 

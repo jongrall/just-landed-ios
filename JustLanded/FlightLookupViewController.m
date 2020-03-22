@@ -587,6 +587,7 @@ static NSRegularExpression *sAirlineCodeRegex_;
 - (void)viewDidLoad {
     [self.cloudLayer_ startAnimating];
     [self.airplane_ startAnimating];
+    [super viewDidLoad];
 }
 
 

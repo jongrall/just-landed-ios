@@ -13,6 +13,7 @@
 
 - (void)viewDidLoad {
     [self.navigationController.navigationBar adoptJustLandedStyle];
+    [super viewDidLoad];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -30,7 +31,7 @@
 }
 
 
-- (NSUInteger)supportedInterfaceOrientations {
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskPortrait;
 }
 

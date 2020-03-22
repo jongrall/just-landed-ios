@@ -429,8 +429,10 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
     }
     else {
         // Try to register again, just in case something went wrong
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
     }
+
+    [super viewDidLoad];
 }
 
 
@@ -884,7 +886,7 @@ NSUInteger const TextUponArrivalAlertTag = 65009;
 
 - (void)track {
     // If location services are enabled, use them and let them trigger a /track
-    if ([CLLocationManager locationServicesEnabled]) {
+    if (NO && [CLLocationManager locationServicesEnabled]) {
         [self.locationManager_ startUpdatingLocation];
     }
     else {
